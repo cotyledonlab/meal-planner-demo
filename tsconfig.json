@@ -1,0 +1,25 @@
+{
+  "files": [],
+  "references": [
+    { "path": "apps/web" },
+    { "path": "packages/api" },
+    { "path": "packages/db" },
+    { "path": "packages/ai" },
+    { "path": "packages/shared" }
+  ],
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "lib": ["ES2023", "DOM"],
+    "allowJs": false,
+    "strict": true,
+    "noImplicitAny": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "types": ["node"],
+    "baseUrl": "."
+  }
+}

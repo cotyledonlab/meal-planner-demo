@@ -1,0 +1,23 @@
+{
+  "name": "meal-mind",
+  "private": true,
+  "version": "0.1.0",
+  "packageManager": "pnpm@9.10.0",
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "test": "turbo test",
+    "typecheck": "turbo typecheck",
+    "format": "prettier --check .",
+    "format:write": "prettier --write ."
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.8",
+    "eslint": "^8.57.0",
+    "eslint-config-next": "^14.2.3",
+    "prettier": "^3.2.5",
+    "turbo": "^2.1.1",
+    "typescript": "^5.4.3"
+  }
+}

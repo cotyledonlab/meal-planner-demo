@@ -1,0 +1,595 @@
+openapi: 3.1.0
+info:
+  title: MealMind Weekly Plan Generator API
+  version: 0.1.0
+  description: >
+    Contracts for onboarding households, generating weekly plans, swapping meals,
+    and exporting artifacts for the MealMind demo.
+servers:
+  - url: https://demo.mealmind.app
+  - url: http://localhost:3000
+tags:
+  - name: Households
+  - name: Plans
+  - name: Exports
+paths:
+  /api/households:
+    post:
+      tags: [Households]
+      summary: Create or update a household profile
+      operationId: upsertHousehold
+      security:
+        - sessionCookie: []
+        - guestToken: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HouseholdInput'
+      responses:
+        '200':
+          description: Household profile updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Household'
+        '201':
+          description: Household profile created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Household'
+        '400':
+          description: Validation failed
+        '401':
+          description: Authentication required for invitees
+        '409':
+          description: Conflicting preference selections
+  /api/plans:
+    post:
+      tags: [Plans]
+      summary: Generate a weekly plan for a household
+      operationId: generatePlan
+      security:
+        - sessionCookie: []
+        - guestToken: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PlanRequest'
+      responses:
+        '202':
+          description: Plan generation accepted; use status stream for progress
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlanGenerationAccepted'
+        '200':
+          description: Cached plan reused
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Plan'
+        '400':
+          description: Request exceeds 21 meal limit or fails guard checks
+        '401':
+          description: Authentication required for invitees
+        '429':
+          description: Daily token or cost budget exceeded
+  /api/plans/{planId}:
+    get:
+      tags: [Plans]
+      summary: Retrieve the active plan with recipes and shopping list
+      operationId: getPlan
+      security:
+        - sessionCookie: []
+        - guestToken: []
+      parameters:
+        - $ref: '#/components/parameters/PlanId'
+      responses:
+        '200':
+          description: Plan retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Plan'
+        '401':
+          description: Authentication required
+        '404':
+          description: Plan not found or superseded
+  /api/plans/{planId}/swap:
+    post:
+      tags: [Plans]
+      summary: Swap a single meal within a plan
+      operationId: swapMeal
+      security:
+        - sessionCookie: []
+      parameters:
+        - $ref: '#/components/parameters/PlanId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MealSwapRequest'
+      responses:
+        '200':
+          description: Meal replaced successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Meal'
+        '400':
+          description: Replacement violates constraints
+        '404':
+          description: Plan or meal slot not found
+  /api/plans/{planId}/regenerate-day:
+    post:
+      tags: [Plans]
+      summary: Regenerate all meals in a day
+      operationId: regenerateDay
+      security:
+        - sessionCookie: []
+      parameters:
+        - $ref: '#/components/parameters/PlanId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DayRegenerationRequest'
+      responses:
+        '200':
+          description: Day replaced successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlanDay'
+        '400':
+          description: Replacement violates constraints
+        '404':
+          description: Plan day not found
+  /api/plans/{planId}/events:
+    get:
+      tags: [Plans]
+      summary: Stream plan generation status events
+      operationId: planEvents
+      security:
+        - sessionCookie: []
+        - guestToken: []
+      parameters:
+        - $ref: '#/components/parameters/PlanId'
+      responses:
+        '200':
+          description: Server-sent events stream
+          content:
+            text/event-stream:
+              schema:
+                $ref: '#/components/schemas/PlanStatusEvent'
+        '404':
+          description: Plan generation not found
+  /api/plans/{planId}/exports/pdf:
+    get:
+      tags: [Exports]
+      summary: Download plan summary PDF
+      operationId: exportPlanPdf
+      security:
+        - sessionCookie: []
+        - guestToken: []
+      parameters:
+        - $ref: '#/components/parameters/PlanId'
+      responses:
+        '200':
+          description: PDF download
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: Plan not found
+  /api/plans/{planId}/exports/csv:
+    get:
+      tags: [Exports]
+      summary: Download shopping list CSV
+      operationId: exportShoppingListCsv
+      security:
+        - sessionCookie: []
+        - guestToken: []
+      parameters:
+        - $ref: '#/components/parameters/PlanId'
+      responses:
+        '200':
+          description: CSV download
+          content:
+            text/csv:
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: Plan not found
+components:
+  securitySchemes:
+    sessionCookie:
+      type: apiKey
+      in: cookie
+      name: next-auth.session-token
+    guestToken:
+      type: apiKey
+      in: header
+      name: x-guest-token
+  parameters:
+    PlanId:
+      name: planId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+  schemas:
+    HouseholdInput:
+      type: object
+      required:
+        - name
+        - headcount
+        - adults
+        - kids
+        - allergies
+        - dislikes
+        - preferredCuisines
+        - budgetBand
+        - equipment
+        - dietTags
+        - macroEmphasis
+        - maxCookTimeMinutes
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 80
+        headcount:
+          type: integer
+          minimum: 1
+        adults:
+          type: integer
+          minimum: 0
+        kids:
+          type: integer
+          minimum: 0
+        allergies:
+          type: array
+          items:
+            type: string
+        dislikes:
+          type: array
+          items:
+            type: string
+        preferredCuisines:
+          type: array
+          items:
+            type: string
+        budgetBand:
+          type: string
+          enum: [economical, moderate, premium]
+        equipment:
+          type: array
+          items:
+            type: string
+            enum: [oven, instantPot, airFryer, stovetop, microwave, grill, slowCooker]
+        dietTags:
+          type: array
+          items:
+            type: string
+        macroEmphasis:
+          type: string
+          enum: [highProtein, highFiber, lowFat, balanced]
+        maxCookTimeMinutes:
+          type: integer
+          minimum: 10
+        cuisineConflictsAllowed:
+          type: boolean
+          default: false
+    Household:
+      allOf:
+        - $ref: '#/components/schemas/HouseholdInput'
+        - type: object
+          required: [id, createdAt, updatedAt]
+          properties:
+            id:
+              type: string
+              format: uuid
+            userId:
+              type: string
+              format: uuid
+              nullable: true
+            createdAt:
+              type: string
+              format: date-time
+            updatedAt:
+              type: string
+              format: date-time
+    PlanRequest:
+      type: object
+      required:
+        - householdId
+        - startDate
+        - days
+        - mealsPerDay
+        - budgetBand
+        - calorieTarget
+      properties:
+        householdId:
+          type: string
+          format: uuid
+        startDate:
+          type: string
+          format: date
+        days:
+          type: integer
+          minimum: 3
+          maximum: 7
+        mealsPerDay:
+          type: integer
+          minimum: 1
+          maximum: 3
+        budgetBand:
+          type: string
+          enum: [economical, moderate, premium]
+        calorieTarget:
+          type: object
+          required: [min, max]
+          properties:
+            min:
+              type: integer
+              minimum: 1200
+            max:
+              type: integer
+              minimum: 1500
+        reuseCache:
+          type: boolean
+          default: true
+    PlanGenerationAccepted:
+      type: object
+      required: [planId, statusUrl, eventsUrl]
+      properties:
+        planId:
+          type: string
+          format: uuid
+        statusUrl:
+          type: string
+          format: uri
+          description: Polling endpoint during generation
+        eventsUrl:
+          type: string
+          format: uri
+          description: SSE endpoint for real-time updates
+    Plan:
+      type: object
+      required:
+        - id
+        - householdId
+        - startDate
+        - days
+        - mealsPerDay
+        - budgetBand
+        - calorieTarget
+        - totals
+        - daysSchedule
+        - recipes
+        - shoppingList
+      properties:
+        id:
+          type: string
+          format: uuid
+        householdId:
+          type: string
+          format: uuid
+        startDate:
+          type: string
+          format: date
+        days:
+          type: integer
+        mealsPerDay:
+          type: integer
+        budgetBand:
+          type: string
+          enum: [economical, moderate, premium]
+        calorieTarget:
+          $ref: '#/components/schemas/PlanRequest/properties/calorieTarget'
+        totals:
+          type: object
+          properties:
+            calories:
+              type: integer
+            protein:
+              type: integer
+            carbs:
+              type: integer
+            fat:
+              type: integer
+        daysSchedule:
+          type: array
+          items:
+            $ref: '#/components/schemas/PlanDay'
+        recipes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Recipe'
+        shoppingList:
+          type: array
+          items:
+            $ref: '#/components/schemas/ShoppingItem'
+        disclaimer:
+          type: string
+          example: "Nutrition information is informational only and not medical advice."
+    PlanDay:
+      type: object
+      required: [id, date, meals]
+      properties:
+        id:
+          type: string
+          format: uuid
+        date:
+          type: string
+          format: date
+        meals:
+          type: array
+          items:
+            $ref: '#/components/schemas/Meal'
+    Meal:
+      type: object
+      required:
+        - id
+        - slot
+        - recipeId
+        - source
+      properties:
+        id:
+          type: string
+          format: uuid
+        slot:
+          type: string
+          enum: [breakfast, lunch, dinner]
+        recipeId:
+          type: string
+          format: uuid
+        source:
+          type: string
+          enum: [original, swapped, regenerated]
+    Recipe:
+      type: object
+      required:
+        - id
+        - planId
+        - title
+        - ingredients
+        - steps
+        - nutrition
+        - allergens
+        - estimatedTimeMinutes
+        - requiredEquipment
+        - tags
+      properties:
+        id:
+          type: string
+          format: uuid
+        planId:
+          type: string
+          format: uuid
+        title:
+          type: string
+          maxLength: 120
+        ingredients:
+          type: array
+          items:
+            type: object
+            required: [name, quantity, unit, category]
+            properties:
+              name:
+                type: string
+              quantity:
+                type: number
+                minimum: 0
+              unit:
+                type: string
+              category:
+                type: string
+                enum: [produce, pantry, dairy, protein, frozen, bakery, other]
+              notes:
+                type: string
+                nullable: true
+        steps:
+          type: array
+          items:
+            type: string
+        nutrition:
+          type: object
+          required: [calories, protein, carbs, fat]
+          properties:
+            calories:
+              type: integer
+            protein:
+              type: integer
+            carbs:
+              type: integer
+            fat:
+              type: integer
+        allergens:
+          type: array
+          items:
+            type: string
+        estimatedTimeMinutes:
+          type: integer
+        requiredEquipment:
+          type: array
+          items:
+            type: string
+        tags:
+          type: array
+          items:
+            type: string
+    ShoppingItem:
+      type: object
+      required:
+        - id
+        - name
+        - quantity
+        - unit
+        - category
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        quantity:
+          type: number
+        unit:
+          type: string
+        category:
+          type: string
+          enum: [produce, pantry, dairy, protein, frozen, bakery, other]
+    MealSwapRequest:
+      type: object
+      required:
+        - planDayId
+        - slot
+      properties:
+        planDayId:
+          type: string
+          format: uuid
+        slot:
+          type: string
+          enum: [breakfast, lunch, dinner]
+        reason:
+          type: string
+          maxLength: 140
+    DayRegenerationRequest:
+      type: object
+      required:
+        - planDayId
+      properties:
+        planDayId:
+          type: string
+          format: uuid
+        includeLeftovers:
+          type: boolean
+          default: false
+    PlanStatusEvent:
+      type: object
+      required:
+        - event
+        - detail
+        - timestamp
+      properties:
+        event:
+          type: string
+          enum: [queued, planning, recipes, shoppingList, validating, complete, failed]
+        detail:
+          type: string
+        timestamp:
+          type: string
+          format: date-time

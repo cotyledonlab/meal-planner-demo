@@ -1,0 +1,9 @@
+.env*
+node_modules
+.turbo
+.next
+.DS_Store
+dist
+coverage
+.vercel
+/tests/e2e/.playwright
