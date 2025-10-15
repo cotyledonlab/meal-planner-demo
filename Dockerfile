@@ -17,6 +17,9 @@ RUN corepack enable && corepack prepare pnpm@9.10.0 --activate
 # Copy package files
 COPY package.json pnpm-lock.yaml ./
 
+# Copy prisma schema (needed for postinstall prisma generate)
+COPY prisma ./prisma
+
 # Install dependencies
 RUN pnpm install --frozen-lockfile
 
