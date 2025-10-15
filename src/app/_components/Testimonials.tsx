@@ -3,7 +3,7 @@ export default function Testimonials() {
   const testimonials = [
     {
       quote:
-        'Since using this app, my Sunday meal prep takes half the time — and we&apos;re saving €20 a week!',
+        'Since using this app, my Sunday meal prep takes half the time — and we’re saving €20 a week!',
       author: 'Aoife',
       location: 'Cork',
       initials: 'A',
