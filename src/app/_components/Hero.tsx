@@ -1,0 +1,46 @@
+// Hero section with headline, subtext, CTAs, and background image
+// Image source: Unsplash – "home cooking": https://unsplash.com/photos/QJ6x9wy_Ol4
+import Image from 'next/image';
+
+export default function Hero() {
+  return (
+    <section className="relative isolate overflow-hidden bg-white">
+      {/* Background image */}
+      <div className="absolute inset-0 -z-10">
+        <Image
+          src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=1920&q=80"
+          alt="Fresh ingredients for home cooking in an Irish kitchen"
+          fill
+          className="object-cover opacity-20"
+          priority
+        />
+      </div>
+
+      <div className="mx-auto max-w-7xl px-6 py-16 sm:py-20 lg:py-24">
+        <div className="mx-auto max-w-2xl text-center">
+          <h1 className="text-4xl font-semibold tracking-tight text-gray-900 sm:text-5xl">
+            Simplify Your Weekly Meals — Without Breaking the Bank
+          </h1>
+          <p className="mt-6 text-base text-gray-600 sm:text-lg">
+            Plan, prep, and shop smarter with weekly recipes and cost-saving supermarket insights.
+            Your meal plan, recipes, and shopping list — in minutes, not hours.
+          </p>
+          <div className="mt-10 flex items-center justify-center gap-4">
+            <a
+              href="#pricing"
+              className="rounded-full bg-emerald-600 px-8 py-3 text-base font-semibold text-white shadow-sm transition hover:bg-emerald-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
+            >
+              Get Started Free
+            </a>
+            <a
+              href="#pricing"
+              className="rounded-full bg-white px-8 py-3 text-base font-semibold text-emerald-700 shadow-sm ring-1 ring-emerald-600 transition hover:bg-emerald-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
+            >
+              See Premium
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}

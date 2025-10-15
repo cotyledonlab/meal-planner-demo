@@ -5,8 +5,9 @@ import { type Metadata } from 'next';
 import { TRPCReactProvider } from '~/trpc/react';
 
 export const metadata: Metadata = {
-  title: 'Meal Planner Demo',
-  description: 'AI-powered meal planning application built with T3 Stack',
+  title: 'MealMind AI - Simplify Your Weekly Meals',
+  description:
+    'Plan, prep, and shop smarter with weekly recipes and cost-saving supermarket insights. Built for families in Ireland. Free meal plans and shopping lists.',
   icons: [{ rel: 'icon', url: '/favicon.ico' }],
 };
 
