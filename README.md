@@ -146,6 +146,19 @@ To learn more about the T3 Stack:
 - [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available)
 - [T3 Stack GitHub](https://github.com/t3-oss/create-t3-app)
 
+## AI Assistant Guidelines
+
+Development guidelines for AI assistants (GitHub Copilot, Cursor, etc.) are maintained in **`AGENTS.md`** at the repository root. This consolidated file contains:
+
+- Project overview and core flow
+- Active technologies and versions
+- Project structure
+- Development commands
+- Code style and guidelines
+- Security and performance requirements
+
+All AI assistant configurations have been consolidated into this single file for consistency and ease of maintenance.
+
 ## Project Documentation
 
 Additional project specifications and documentation can be found in the `specs/` directory.

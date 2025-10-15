@@ -31,11 +31,13 @@
 # 5. Multi-Agent Support
 #    - Handles agent-specific file paths and naming conventions
 #    - Supports: Claude, Gemini, Copilot, Cursor, Qwen, opencode, Codex, Windsurf, Kilo Code, Auggie CLI, or Amazon Q Developer CLI
+#    - Copilot and Cursor now consolidated into AGENTS.md
 #    - Can update single agents or all existing agent files
-#    - Creates default Claude file if no agent files exist
+#    - Creates default AGENTS.md file if no agent files exist
 #
 # Usage: ./update-agent-context.sh [agent_type]
 # Agent types: claude|gemini|copilot|cursor|qwen|opencode|codex|windsurf|kilocode|auggie|q
+# Note: copilot and cursor both update AGENTS.md (consolidated)
 # Leave empty to update all existing agent files
 
 set -e
@@ -58,18 +60,23 @@ eval $(get_feature_paths)
 NEW_PLAN="$IMPL_PLAN"  # Alias for compatibility with existing code
 AGENT_TYPE="${1:-}"
 
-# Agent-specific file paths  
+# Agent-specific file paths
+# AGENTS.md is now the consolidated file for most agents
+AGENTS_FILE="$REPO_ROOT/AGENTS.md"
 CLAUDE_FILE="$REPO_ROOT/CLAUDE.md"
 GEMINI_FILE="$REPO_ROOT/GEMINI.md"
-COPILOT_FILE="$REPO_ROOT/.github/copilot-instructions.md"
-CURSOR_FILE="$REPO_ROOT/.cursor/rules/specify-rules.mdc"
+COPILOT_FILE="$AGENTS_FILE"  # Consolidated into AGENTS.md
+CURSOR_FILE="$AGENTS_FILE"   # Consolidated into AGENTS.md
 QWEN_FILE="$REPO_ROOT/QWEN.md"
-AGENTS_FILE="$REPO_ROOT/AGENTS.md"
 WINDSURF_FILE="$REPO_ROOT/.windsurf/rules/specify-rules.md"
 KILOCODE_FILE="$REPO_ROOT/.kilocode/rules/specify-rules.md"
 AUGGIE_FILE="$REPO_ROOT/.augment/rules/specify-rules.md"
 ROO_FILE="$REPO_ROOT/.roo/rules/specify-rules.md"
-Q_FILE="$REPO_ROOT/AGENTS.md"
+Q_FILE="$AGENTS_FILE"        # Already uses AGENTS.md
+
+# Legacy copilot file path (for backward compatibility check)
+LEGACY_COPILOT_FILE="$REPO_ROOT/.github/copilot-instructions.md"
+LEGACY_CURSOR_FILE="$REPO_ROOT/.cursor/rules/specify-rules.mdc"
 
 # Template file
 TEMPLATE_FILE="$REPO_ROOT/.specify/templates/agent-file-template.md"
@@ -555,10 +562,10 @@ update_specific_agent() {
             update_agent_file "$GEMINI_FILE" "Gemini CLI"
             ;;
         copilot)
-            update_agent_file "$COPILOT_FILE" "GitHub Copilot"
+            update_agent_file "$COPILOT_FILE" "GitHub Copilot (consolidated)"
             ;;
         cursor)
-            update_agent_file "$CURSOR_FILE" "Cursor IDE"
+            update_agent_file "$CURSOR_FILE" "Cursor IDE (consolidated)"
             ;;
         qwen)
             update_agent_file "$QWEN_FILE" "Qwen Code"
@@ -606,13 +613,9 @@ update_all_existing_agents() {
         found_agent=true
     fi
     
-    if [[ -f "$COPILOT_FILE" ]]; then
-        update_agent_file "$COPILOT_FILE" "GitHub Copilot"
-        found_agent=true
-    fi
-    
-    if [[ -f "$CURSOR_FILE" ]]; then
-        update_agent_file "$CURSOR_FILE" "Cursor IDE"
+    # Check for copilot/cursor (now consolidated into AGENTS.md)
+    if [[ -f "$LEGACY_COPILOT_FILE" ]] || [[ -f "$LEGACY_CURSOR_FILE" ]]; then
+        update_agent_file "$AGENTS_FILE" "Copilot/Cursor (consolidated)"
         found_agent=true
     fi
     
@@ -651,10 +654,10 @@ update_all_existing_agents() {
         found_agent=true
     fi
     
-    # If no agent files exist, create a default Claude file
+    # If no agent files exist, create a default AGENTS.md file
     if [[ "$found_agent" == false ]]; then
-        log_info "No existing agent files found, creating default Claude file..."
-        update_agent_file "$CLAUDE_FILE" "Claude Code"
+        log_info "No existing agent files found, creating default AGENTS.md file..."
+        update_agent_file "$AGENTS_FILE" "All Agents (consolidated)"
     fi
 }
 print_summary() {
