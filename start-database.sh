@@ -71,7 +71,13 @@ if [ "$DB_PASSWORD" = "password" ]; then
   fi
   # Generate a random URL-safe password
   DB_PASSWORD=$(openssl rand -base64 12 | tr '+/' '-_')
-  sed -i '' "s#:password@#:$DB_PASSWORD@#" .env
+  # Detect OS and set sed in-place syntax
+  if [[ "$(uname)" == "Darwin" ]]; then
+    SED_INPLACE=(-i '')
+  else
+    SED_INPLACE=(-i)
+  fi
+  sed "${SED_INPLACE[@]}" "s#:password@#:$DB_PASSWORD@#" .env
 fi
 
 $DOCKER_CMD run -d \
