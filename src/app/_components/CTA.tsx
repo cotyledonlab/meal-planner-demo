@@ -13,10 +13,10 @@ export default function CTA() {
           </p>
           <div className="mt-8">
             <a
-              href="#pricing"
+              href="/planner"
               className="inline-block rounded-full bg-emerald-600 px-8 py-3 text-base font-semibold text-white shadow-sm transition hover:bg-emerald-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
             >
-              Get Started Free
+              Try the Planner
             </a>
           </div>
           <p className="mt-6 text-sm text-gray-600">Built for families in Ireland 🇮🇪</p>

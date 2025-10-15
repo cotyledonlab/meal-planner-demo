@@ -1,0 +1,47 @@
+{
+  "categories": [
+    {
+      "name": "Produce",
+      "items": [
+        { "id": "p1", "name": "Bell peppers (3)", "checked": false },
+        { "id": "p2", "name": "Broccoli (1 head)", "checked": false },
+        { "id": "p3", "name": "Carrots (500g)", "checked": false },
+        { "id": "p4", "name": "Cherry tomatoes (250g)", "checked": false },
+        { "id": "p5", "name": "Garlic (1 bulb)", "checked": false },
+        { "id": "p6", "name": "Onions (3)", "checked": false },
+        { "id": "p7", "name": "Potatoes (1.5kg)", "checked": false },
+        { "id": "p8", "name": "Spinach (200g)", "checked": false }
+      ]
+    },
+    {
+      "name": "Protein",
+      "items": [
+        { "id": "pr1", "name": "Chicken breast (800g)", "checked": false },
+        { "id": "pr2", "name": "Minced beef (500g)", "checked": false },
+        { "id": "pr3", "name": "Salmon fillets (400g)", "checked": false }
+      ]
+    },
+    {
+      "name": "Dairy",
+      "items": [
+        { "id": "d1", "name": "Butter (250g)", "checked": false },
+        { "id": "d2", "name": "Cheddar cheese (200g)", "checked": false },
+        { "id": "d3", "name": "Milk (1L)", "checked": false },
+        { "id": "d4", "name": "Mozzarella (150g)", "checked": false }
+      ]
+    },
+    {
+      "name": "Pantry",
+      "items": [
+        { "id": "pa1", "name": "Coconut milk (400ml)", "checked": false },
+        { "id": "pa2", "name": "Lasagne sheets (250g)", "checked": false },
+        { "id": "pa3", "name": "Olive oil", "checked": false },
+        { "id": "pa4", "name": "Pasta (500g)", "checked": false },
+        { "id": "pa5", "name": "Rice (1kg)", "checked": false },
+        { "id": "pa6", "name": "Soy sauce", "checked": false },
+        { "id": "pa7", "name": "Thai red curry paste", "checked": false },
+        { "id": "pa8", "name": "Tinned tomatoes (2x400g)", "checked": false }
+      ]
+    }
+  ]
+}
