@@ -47,7 +47,7 @@ services:
       - DATABASE_URL=postgresql://postgres:password@postgres:5432/meal-planner-demo
       - NODE_ENV=production
       - NEXTAUTH_URL=http://localhost:3000
-      - AUTH_SECRET=supersecretchangethisinsecuredefault
+      - AUTH_SECRET=${AUTH_SECRET}
       - SKIP_ENV_VALIDATION=1
     depends_on:
       postgres:
