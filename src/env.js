@@ -51,5 +51,5 @@ if (
   !env.skipValidation &&
   ((env.AUTH_DISCORD_ID && !env.AUTH_DISCORD_SECRET) || (!env.AUTH_DISCORD_ID && env.AUTH_DISCORD_SECRET))
 ) {
-  throw new Error('Both AUTH_DISCORD_ID and AUTH_DISCORD_SECRET must be provided together for Discord authentication.');
+  throw new Error('Invalid Discord auth configuration: set both AUTH_DISCORD_ID and AUTH_DISCORD_SECRET, or remove both.');
 }
