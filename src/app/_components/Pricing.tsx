@@ -40,7 +40,7 @@ export default function Pricing() {
             Choose the plan that works for you
           </h2>
           <p className="mt-4 text-base text-gray-600 sm:text-lg">
-            Start free and upgrade when you're ready for more features.
+            Start free and upgrade when you&apos;re ready for more features.
           </p>
         </div>
 
