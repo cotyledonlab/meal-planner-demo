@@ -65,9 +65,7 @@ export default function Pricing() {
                 <span className="text-4xl font-semibold tracking-tight text-gray-900">
                   {tier.price}
                 </span>
-                {tier.period && (
-                  <span className="text-base text-gray-600">{tier.period}</span>
-                )}
+                {tier.period && <span className="text-base text-gray-600">{tier.period}</span>}
               </div>
               <ul className="mt-8 space-y-3">
                 {tier.features.map((feature) => (

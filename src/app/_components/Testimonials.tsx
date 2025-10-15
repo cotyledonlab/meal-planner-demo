@@ -15,8 +15,7 @@ export default function Testimonials() {
       initials: 'C',
     },
     {
-      quote:
-        'The free version already made our dinners so much easier. Just upgraded to Premium!',
+      quote: 'The free version already made our dinners so much easier. Just upgraded to Premium!',
       author: 'Niamh',
       location: 'Galway',
       initials: 'N',
