@@ -48,7 +48,7 @@ export const env = createEnv({
 
 // Validate that Discord auth credentials are provided together
 if (
-  !env.skipValidation &&
+  !process.env.SKIP_ENV_VALIDATION &&
   ((env.AUTH_DISCORD_ID && !env.AUTH_DISCORD_SECRET) || (!env.AUTH_DISCORD_ID && env.AUTH_DISCORD_SECRET))
 ) {
   throw new Error('Invalid Discord auth configuration: set both AUTH_DISCORD_ID and AUTH_DISCORD_SECRET, or remove both.');
