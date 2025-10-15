@@ -1,5 +1,8 @@
 # meal-planner-demo Development Guidelines
 
+> **⚠️ DEPRECATED**: This file has been consolidated into `/AGENTS.md` at the repository root.
+> Please refer to `/AGENTS.md` for the latest guidelines. See `COPILOT_MIGRATION.md` for details.
+
 Auto-generated from all feature plans. Last updated: 2025-10-15
 
 ## Project Overview
