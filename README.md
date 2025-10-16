@@ -114,11 +114,12 @@ When running with Docker Compose:
 - `pnpm dev` - Start development server with Turbo
 - `pnpm build` - Build for production
 - `pnpm start` - Start production server
+- `pnpm check` - Run linting and type checking (recommended before commits)
 - `pnpm lint` - Run ESLint
 - `pnpm lint:fix` - Run ESLint and fix issues
 - `pnpm typecheck` - Run TypeScript compiler check
 - `pnpm format:check` - Check code formatting
-- `pnpm format:write` - Format code
+- `pnpm format:write` - Format code (recommended before commits)
 - `pnpm db:push` - Push database schema changes
 - `pnpm db:generate` - Generate Prisma migrations
 - `pnpm db:studio` - Open Prisma Studio
@@ -158,6 +159,28 @@ Development guidelines for AI assistants (GitHub Copilot, Cursor, etc.) are main
 - Security and performance requirements
 
 All AI assistant configurations have been consolidated into this single file for consistency and ease of maintenance.
+
+## Contributing
+
+We welcome contributions! Please see [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines on:
+
+- Setting up your development environment
+- Code quality standards and best practices
+- Pre-merge CI checks (linting, type checking, formatting, build, security)
+- How to resolve common CI failures
+- Pull request process
+
+### Quick Pre-Commit Checklist
+
+Before submitting a PR, ensure:
+
+```bash
+pnpm check         # Lint + type check
+pnpm format:write  # Auto-format code
+pnpm build         # Verify build succeeds
+```
+
+All pull requests must pass automated CI checks including linting, type checking, formatting validation, build verification, and security scanning.
 
 ## Project Documentation
 
