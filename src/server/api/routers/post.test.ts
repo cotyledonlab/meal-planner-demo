@@ -22,7 +22,7 @@ describe('postRouter', () => {
     it('should return a greeting with the provided text', async () => {
       const { postRouter } = await import('./post');
       const { createMockPublicContext } = await import('~/test/mocks');
-      
+
       const ctx = createMockPublicContext();
       const caller = postRouter.createCaller(ctx);
 
@@ -36,7 +36,7 @@ describe('postRouter', () => {
     it('should handle empty string input', async () => {
       const { postRouter } = await import('./post');
       const { createMockPublicContext } = await import('~/test/mocks');
-      
+
       const ctx = createMockPublicContext();
       const caller = postRouter.createCaller(ctx);
 
@@ -50,7 +50,7 @@ describe('postRouter', () => {
     it('should handle special characters in input', async () => {
       const { postRouter } = await import('./post');
       const { createMockPublicContext } = await import('~/test/mocks');
-      
+
       const ctx = createMockPublicContext();
       const caller = postRouter.createCaller(ctx);
 
@@ -66,7 +66,7 @@ describe('postRouter', () => {
     it('should create a post with valid input', async () => {
       const { postRouter } = await import('./post');
       const { createMockContext, mockPrismaClient } = await import('~/test/mocks');
-      
+
       const mockPost = {
         id: 1,
         name: 'Test Post',
@@ -94,7 +94,7 @@ describe('postRouter', () => {
     it('should require authentication', async () => {
       const { postRouter } = await import('./post');
       const { createMockPublicContext } = await import('~/test/mocks');
-      
+
       const ctx = createMockPublicContext();
       const caller = postRouter.createCaller(ctx);
 
@@ -104,7 +104,7 @@ describe('postRouter', () => {
     it('should validate input name is not empty', async () => {
       const { postRouter } = await import('./post');
       const { createMockContext } = await import('~/test/mocks');
-      
+
       const ctx = createMockContext();
       const caller = postRouter.createCaller(ctx);
 
@@ -116,7 +116,7 @@ describe('postRouter', () => {
     it('should return the latest post for the authenticated user', async () => {
       const { postRouter } = await import('./post');
       const { createMockContext, mockPrismaClient } = await import('~/test/mocks');
-      
+
       const mockPost = {
         id: 1,
         name: 'Latest Post',
@@ -142,7 +142,7 @@ describe('postRouter', () => {
     it('should return null when no posts exist', async () => {
       const { postRouter } = await import('./post');
       const { createMockContext, mockPrismaClient } = await import('~/test/mocks');
-      
+
       mockPrismaClient.post.findFirst.mockResolvedValue(null);
 
       const ctx = createMockContext();
@@ -156,7 +156,7 @@ describe('postRouter', () => {
     it('should require authentication', async () => {
       const { postRouter } = await import('./post');
       const { createMockPublicContext } = await import('~/test/mocks');
-      
+
       const ctx = createMockPublicContext();
       const caller = postRouter.createCaller(ctx);
 
@@ -168,7 +168,7 @@ describe('postRouter', () => {
     it('should return secret message for authenticated users', async () => {
       const { postRouter } = await import('./post');
       const { createMockContext } = await import('~/test/mocks');
-      
+
       const ctx = createMockContext();
       const caller = postRouter.createCaller(ctx);
 
@@ -180,7 +180,7 @@ describe('postRouter', () => {
     it('should require authentication', async () => {
       const { postRouter } = await import('./post');
       const { createMockPublicContext } = await import('~/test/mocks');
-      
+
       const ctx = createMockPublicContext();
       const caller = postRouter.createCaller(ctx);
 

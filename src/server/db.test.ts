@@ -29,7 +29,7 @@ describe('db', () => {
 
   it('should create a PrismaClient instance', async () => {
     const { db } = await import('./db');
-    
+
     expect(db).toBeDefined();
     expect(db).toHaveProperty('user');
     expect(db).toHaveProperty('post');
@@ -38,7 +38,7 @@ describe('db', () => {
 
   it('should export a singleton database instance', async () => {
     const { db } = await import('./db');
-    
+
     expect(db).toBeDefined();
     expect(typeof db).toBe('object');
   });

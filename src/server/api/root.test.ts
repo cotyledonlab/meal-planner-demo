@@ -16,7 +16,7 @@ vi.mock('~/server/db', () => ({
 describe('appRouter', () => {
   it('should contain post router', async () => {
     const { appRouter } = await import('./root');
-    
+
     expect(appRouter._def.procedures).toHaveProperty('post.hello');
     expect(appRouter._def.procedures).toHaveProperty('post.create');
     expect(appRouter._def.procedures).toHaveProperty('post.getLatest');
@@ -25,7 +25,7 @@ describe('appRouter', () => {
 
   it('should create a caller factory', async () => {
     const { createCaller } = await import('./root');
-    
+
     expect(createCaller).toBeDefined();
     expect(typeof createCaller).toBe('function');
   });
