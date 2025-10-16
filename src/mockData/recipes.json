@@ -1,0 +1,65 @@
+[
+  {
+    "id": "1",
+    "title": "Chicken & Vegetable Stir Fry",
+    "image": "https://images.unsplash.com/photo-1512058564366-18510be2db19?w=600&q=80",
+    "kcal": 420,
+    "prepTime": "25 min",
+    "tags": ["high-protein", "balanced", "quick"],
+    "day": "Monday"
+  },
+  {
+    "id": "2",
+    "title": "Mediterranean Pasta Salad",
+    "image": "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=600&q=80",
+    "kcal": 380,
+    "prepTime": "20 min",
+    "tags": ["vegetarian", "balanced"],
+    "day": "Tuesday"
+  },
+  {
+    "id": "3",
+    "title": "Beef Shepherd's Pie",
+    "image": "https://images.unsplash.com/photo-1516684732162-798a0062be99?w=600&q=80",
+    "kcal": 520,
+    "prepTime": "45 min",
+    "tags": ["family", "comfort"],
+    "day": "Wednesday"
+  },
+  {
+    "id": "4",
+    "title": "Thai Red Curry with Rice",
+    "image": "https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?w=600&q=80",
+    "kcal": 450,
+    "prepTime": "30 min",
+    "tags": ["balanced", "spicy"],
+    "day": "Thursday"
+  },
+  {
+    "id": "5",
+    "title": "Salmon with Roasted Vegetables",
+    "image": "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=600&q=80",
+    "kcal": 490,
+    "prepTime": "35 min",
+    "tags": ["high-protein", "healthy"],
+    "day": "Friday"
+  },
+  {
+    "id": "6",
+    "title": "Vegetable Lasagne",
+    "image": "https://images.unsplash.com/photo-1574894709920-11b28e7367e3?w=600&q=80",
+    "kcal": 440,
+    "prepTime": "50 min",
+    "tags": ["vegetarian", "family"],
+    "day": "Saturday"
+  },
+  {
+    "id": "7",
+    "title": "Roast Chicken with Potatoes",
+    "image": "https://images.unsplash.com/photo-1598103442097-8b74394b95c6?w=600&q=80",
+    "kcal": 550,
+    "prepTime": "60 min",
+    "tags": ["family", "traditional"],
+    "day": "Sunday"
+  }
+]
