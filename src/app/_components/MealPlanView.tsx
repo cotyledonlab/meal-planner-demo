@@ -1,9 +1,18 @@
 'use client';
 
 import Image from 'next/image';
-import recipesData from '~/mockData/recipes.json';
+import recipesData from '~/mockData/recipes.json' satisfies Recipe[];
 import type { MealPreferences } from './MealPlanWizard';
 
+type Recipe = {
+  id: string | number;
+  day: string | number;
+  title: string;
+ image: string;
+ kcal: number;
+ prepTime: string | number;
+ tags: string[];
+};
 interface MealPlanViewProps {
   preferences: MealPreferences;
   onViewShoppingList: () => void;
