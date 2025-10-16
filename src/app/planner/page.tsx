@@ -6,7 +6,7 @@ import MealPlanView from '~/app/_components/MealPlanView';
 import ShoppingList from '~/app/_components/ShoppingList';
 import PremiumPreviewModal from '~/app/_components/PremiumPreviewModal';
 
-type Step = 'wizard' | 'plan' | 'shopping' | 'premium';
+type Step = 'wizard' | 'plan' | 'shopping';
 
 export default function PlannerPage() {
   const [step, setStep] = useState<Step>('wizard');
