@@ -26,7 +26,12 @@ export default function PremiumPreviewModal({ onClose }: PremiumPreviewModalProp
             aria-label="Close modal"
           >
             <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
           </button>
         </div>
@@ -51,10 +56,7 @@ export default function PremiumPreviewModal({ onClose }: PremiumPreviewModalProp
             </thead>
             <tbody className="divide-y divide-gray-200 bg-white">
               {storesData.map((store) => (
-                <tr
-                  key={store.name}
-                  className={store.isCheapest ? 'bg-emerald-50' : ''}
-                >
+                <tr key={store.name} className={store.isCheapest ? 'bg-emerald-50' : ''}>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-semibold text-gray-900">{store.name}</span>
@@ -87,7 +89,8 @@ export default function PremiumPreviewModal({ onClose }: PremiumPreviewModalProp
         <div className="mt-6 rounded-lg bg-emerald-50 p-4">
           <p className="text-sm text-emerald-900">
             💡 <strong>With Premium:</strong> Shop at {cheapestStore?.name} this week and save up to{' '}
-            €{Math.abs(storesData[storesData.length - 1]?.savings ?? 0).toFixed(2)} compared to other stores!
+            €{Math.abs(storesData[storesData.length - 1]?.savings ?? 0).toFixed(2)} compared to
+            other stores!
           </p>
         </div>
 

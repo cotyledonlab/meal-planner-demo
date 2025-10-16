@@ -57,7 +57,10 @@ export default function ShoppingList({ onComparePrices }: ShoppingListProps) {
         {/* Shopping list */}
         <div className="space-y-6">
           {categories.map((category, categoryIndex) => (
-            <div key={category.name} className="rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200">
+            <div
+              key={category.name}
+              className="rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200"
+            >
               <h2 className="text-lg font-semibold text-gray-900">{category.name}</h2>
               <ul className="mt-4 space-y-3">
                 {category.items.map((item: Item) => (
@@ -92,7 +95,9 @@ export default function ShoppingList({ onComparePrices }: ShoppingListProps) {
           >
             Compare Prices (Premium Preview)
           </button>
-          <p className="mt-3 text-sm text-gray-500">See how much you could save at different stores</p>
+          <p className="mt-3 text-sm text-gray-500">
+            See how much you could save at different stores
+          </p>
         </div>
       </div>
     </div>
