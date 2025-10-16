@@ -1,7 +1,7 @@
 import { vi } from 'vitest';
 
 // Mock Prisma Client
-export const mockPrismaClient = {
+export const mockPrismaClient: any = {
   post: {
     create: vi.fn(),
     findFirst: vi.fn(),
@@ -26,7 +26,7 @@ export const mockPrismaClient = {
   $queryRawUnsafe: vi.fn(),
   $transaction: vi.fn(),
   $on: vi.fn(),
-} as any;
+};
 
 // Mock NextAuth session
 export const mockSession = {
@@ -40,17 +40,17 @@ export const mockSession = {
 };
 
 // Mock tRPC context
-export const createMockContext = (overrides = {}) => ({
+export const createMockContext = (overrides = {}): any => ({
   db: mockPrismaClient,
   session: mockSession,
   headers: new Headers(),
   ...overrides,
-} as any);
+});
 
 // Mock tRPC context without session (for public procedures)
-export const createMockPublicContext = (overrides = {}) => ({
+export const createMockPublicContext = (overrides = {}): any => ({
   db: mockPrismaClient,
   session: null,
   headers: new Headers(),
   ...overrides,
-} as any);
+});
