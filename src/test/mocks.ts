@@ -1,0 +1,49 @@
+import { vi } from 'vitest';
+
+// Mock Prisma Client
+export const mockPrismaClient = {
+  post: {
+    create: vi.fn(),
+    findFirst: vi.fn(),
+    findMany: vi.fn(),
+    findUnique: vi.fn(),
+    update: vi.fn(),
+    delete: vi.fn(),
+  },
+  user: {
+    create: vi.fn(),
+    findFirst: vi.fn(),
+    findMany: vi.fn(),
+    findUnique: vi.fn(),
+    update: vi.fn(),
+    delete: vi.fn(),
+  },
+  $disconnect: vi.fn(),
+};
+
+// Mock NextAuth session
+export const mockSession = {
+  user: {
+    id: 'test-user-id',
+    email: 'test@example.com',
+    name: 'Test User',
+    image: null,
+  },
+  expires: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+};
+
+// Mock tRPC context
+export const createMockContext = (overrides = {}) => ({
+  db: mockPrismaClient,
+  session: mockSession,
+  headers: new Headers(),
+  ...overrides,
+});
+
+// Mock tRPC context without session (for public procedures)
+export const createMockPublicContext = (overrides = {}) => ({
+  db: mockPrismaClient,
+  session: null,
+  headers: new Headers(),
+  ...overrides,
+});
