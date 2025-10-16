@@ -1,5 +1,7 @@
 # Meal Planner Demo
 
+[![CI](https://github.com/cotyledonlab/meal-planner-demo/actions/workflows/ci.yml/badge.svg)](https://github.com/cotyledonlab/meal-planner-demo/actions/workflows/ci.yml)
+
 This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
 
 ## Tech Stack
