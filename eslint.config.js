@@ -7,7 +7,7 @@ const compat = new FlatCompat({
 
 export default tseslint.config(
   {
-    ignores: ['.next'],
+    ignores: ['.next', 'coverage'],
   },
   ...compat.extends('next/core-web-vitals'),
   {
@@ -30,6 +30,17 @@ export default tseslint.config(
         'error',
         { checksVoidReturn: { attributes: false } },
       ],
+    },
+  },
+  {
+    files: ['**/*.test.ts', '**/*.test.tsx', 'src/test/**/*.ts'],
+    rules: {
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/no-unsafe-call': 'off',
+      '@typescript-eslint/no-unsafe-argument': 'off',
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/unbound-method': 'off',
     },
   },
   {
