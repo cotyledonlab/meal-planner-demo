@@ -19,9 +19,9 @@ describe('tRPC Context', () => {
     it('should create context with headers and session', async () => {
       const { auth } = await import('~/server/auth');
       const mockSession = {
-        user: { id: 'test-id', email: 'test@example.com' },
+        user: { id: 'test-id', email: 'test@example.com', name: 'Test', image: null },
         expires: new Date().toISOString(),
-      };
+      } as any;
       vi.mocked(auth).mockResolvedValue(mockSession);
 
       const headers = new Headers();
@@ -36,7 +36,7 @@ describe('tRPC Context', () => {
 
     it('should create context with null session when not authenticated', async () => {
       const { auth } = await import('~/server/auth');
-      vi.mocked(auth).mockResolvedValue(null);
+      vi.mocked(auth).mockResolvedValue(null as any);
 
       const headers = new Headers();
       const ctx = await createTRPCContext({ headers });

@@ -19,7 +19,14 @@ export const mockPrismaClient = {
     delete: vi.fn(),
   },
   $disconnect: vi.fn(),
-};
+  $connect: vi.fn(),
+  $executeRaw: vi.fn(),
+  $executeRawUnsafe: vi.fn(),
+  $queryRaw: vi.fn(),
+  $queryRawUnsafe: vi.fn(),
+  $transaction: vi.fn(),
+  $on: vi.fn(),
+} as any;
 
 // Mock NextAuth session
 export const mockSession = {
@@ -38,7 +45,7 @@ export const createMockContext = (overrides = {}) => ({
   session: mockSession,
   headers: new Headers(),
   ...overrides,
-});
+} as any);
 
 // Mock tRPC context without session (for public procedures)
 export const createMockPublicContext = (overrides = {}) => ({
@@ -46,4 +53,4 @@ export const createMockPublicContext = (overrides = {}) => ({
   session: null,
   headers: new Headers(),
   ...overrides,
-});
+} as any);
