@@ -51,6 +51,7 @@ export default function SignUpPage() {
       }
 
       // Auto sign-in after successful registration
+      // FIXME return a session token from the server to negate the need to resend cleartext password
       const result = await signIn('credentials', {
         email: formData.email,
         password: formData.password,

@@ -12,7 +12,7 @@ const signUpSchema = z.object({
     .max(128, 'Password must be at most 128 characters')
     .regex(/[A-Z]/, 'Password must include at least one uppercase letter')
     .regex(/[0-9]/, 'Password must include at least one number'),
-  name: z.string().min(1, 'Name is required').optional(),
+  name: z.string().min(1, 'Name is required'),
 });
 
 export async function POST(request: Request) {
