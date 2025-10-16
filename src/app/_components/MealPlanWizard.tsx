@@ -25,9 +25,7 @@ export default function MealPlanWizard({ onComplete }: MealPlanWizardProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/50 p-4">
       <div className="w-full max-w-lg rounded-2xl bg-white p-8 shadow-xl">
-        <h2 className="text-2xl font-semibold text-gray-900">
-          Let&apos;s plan your week!
-        </h2>
+        <h2 className="text-2xl font-semibold text-gray-900">Let&apos;s plan your week!</h2>
         <p className="mt-2 text-sm text-gray-600">
           Answer a few quick questions to get your personalised meal plan.
         </p>

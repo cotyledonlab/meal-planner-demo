@@ -8,10 +8,10 @@ type Recipe = {
   id: string | number;
   day: string | number;
   title: string;
- image: string;
- kcal: number;
- prepTime: string | number;
- tags: string[];
+  image: string;
+  kcal: number;
+  prepTime: string | number;
+  tags: string[];
 };
 
 const recipesData = recipesDataRaw as Recipe[];
@@ -38,7 +38,9 @@ export default function MealPlanView({ preferences, onViewShoppingList }: MealPl
           </p>
           <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-emerald-100 px-4 py-2 text-sm font-semibold text-emerald-700">
             <span>🎯</span>
-            <span>{preferences.mealType.charAt(0).toUpperCase() + preferences.mealType.slice(1)}</span>
+            <span>
+              {preferences.mealType.charAt(0).toUpperCase() + preferences.mealType.slice(1)}
+            </span>
           </div>
         </div>
 
