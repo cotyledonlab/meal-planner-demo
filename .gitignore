@@ -2,6 +2,8 @@
 
 # dependencies
 /node_modules
+/apps/*/node_modules
+/packages/*/node_modules
 /.pnp
 .pnp.js
 
@@ -45,4 +47,4 @@ yarn-error.log*
 *.tsbuildinfo
 
 # idea files
-.idea
+.ideaapps/web/.next

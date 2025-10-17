@@ -2,7 +2,32 @@
 
 [![CI](https://github.com/cotyledonlab/meal-planner-demo/actions/workflows/ci.yml/badge.svg)](https://github.com/cotyledonlab/meal-planner-demo/actions/workflows/ci.yml)
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`, organized as a monorepo with integrated PostgreSQL database support.
+
+## Project Structure
+
+This project uses a monorepo structure managed by pnpm workspaces:
+
+```
+meal-planner-demo/
+├── apps/
+│   └── web/                 # Next.js web application
+│       ├── src/             # Application source code
+│       ├── prisma/          # Database schema and migrations
+│       ├── public/          # Static assets
+│       └── Dockerfile       # Web app container configuration
+├── packages/
+│   ├── types/               # Shared TypeScript types
+│   └── constants/           # Shared constants
+├── infra/
+│   ├── postgres/            # PostgreSQL configuration
+│   │   ├── migrate.sh       # Database migration script
+│   │   └── README.md        # Infrastructure documentation
+│   └── migrations/          # Migration history (reference)
+├── docker-compose.yml       # Full stack orchestration
+├── pnpm-workspace.yaml      # Workspace configuration
+└── package.json             # Root package with workspace scripts
+```
 
 ## Tech Stack
 
@@ -43,17 +68,22 @@ pnpm install
 
 ```bash
 cp .env.example .env
+cp .env apps/web/.env
 ```
 
-Edit `.env` and fill in the required values.
+Edit `.env` and `apps/web/.env` and fill in the required values.
 
-4. Start the database (using the provided script):
+4. Start the database and supporting services:
+
+```bash
+docker compose up -d postgres redis mailpit
+```
+
+Or use the provided script:
 
 ```bash
 ./start-database.sh
 ```
-
-Or manually start PostgreSQL on port 5432.
 
 5. Set up the database:
 
@@ -71,17 +101,30 @@ The app will be available at [http://localhost:3000](http://localhost:3000).
 
 ### Docker Compose Deployment
 
-Deploy the entire stack (database, redis, mailpit, and web app) with Docker Compose:
+Deploy the entire stack (PostgreSQL, Redis, Mailpit, and web app) with Docker Compose:
 
 1. Ensure Docker and Docker Compose are installed
 
-2. Build and start all services:
+2. Set up environment variables:
+
+```bash
+cp .env.example .env
+# Edit .env and set AUTH_SECRET (generate with: npx auth secret)
+```
+
+3. Build and start all services:
 
 ```bash
 docker compose up --build
 ```
 
 The application will be available at [http://localhost:3000](http://localhost:3000).
+
+**What happens on startup:**
+- PostgreSQL starts and becomes healthy
+- Web app container builds with the monorepo structure
+- Database migrations run automatically via `infra/postgres/migrate.sh`
+- Web application starts and connects to the database
 
 To run in detached mode:
 
@@ -113,6 +156,8 @@ When running with Docker Compose:
 
 ## Development Scripts
 
+All scripts are run from the root directory and delegated to the appropriate workspace:
+
 ### Development
 - `pnpm dev` - Start development server with Turbo
 - `pnpm build` - Build for production
@@ -121,7 +166,6 @@ When running with Docker Compose:
 
 ### Code Quality
 - `pnpm check` - Run linting and type checking
-- `pnpm check` - Run linting and type checking (recommended before commits)
 - `pnpm lint` - Run ESLint
 - `pnpm lint:fix` - Run ESLint and fix issues
 - `pnpm typecheck` - Run TypeScript compiler check
@@ -135,11 +179,23 @@ When running with Docker Compose:
 - `pnpm test:coverage` - Run tests with coverage report
 
 ### Database
-- `pnpm format:write` - Format code (recommended before commits)
 - `pnpm db:push` - Push database schema changes
 - `pnpm db:generate` - Generate Prisma migrations
 - `pnpm db:migrate` - Run Prisma migrations in production
 - `pnpm db:studio` - Open Prisma Studio
+
+### Working with Individual Packages
+
+To run commands in a specific workspace:
+
+```bash
+# In the web app
+pnpm --filter @meal-planner-demo/web <command>
+
+# In shared packages
+pnpm --filter @meal-planner-demo/types typecheck
+pnpm --filter @meal-planner-demo/constants typecheck
+```
 
 ## Testing
 
@@ -166,7 +222,7 @@ pnpm test:coverage
 Tests are colocated with the source files they test, using the `.test.ts` or `.test.tsx` extension:
 
 ```
-src/
+apps/web/src/
 ├── server/
 │   ├── api/
 │   │   ├── root.ts
@@ -240,19 +296,31 @@ All tests must pass before code can be merged.
 ## Project Structure
 
 ```
-├── prisma/          # Database schema and migrations
-├── public/          # Static assets
-├── src/
-│   ├── app/        # Next.js App Router pages
-│   ├── server/     # Server-side code (tRPC routers, auth)
-│   ├── styles/     # Global styles
-│   ├── test/       # Test utilities and mocks
-│   └── trpc/       # tRPC client setup
-├── coverage/        # Test coverage reports (git-ignored)
-├── docker-compose.yml  # Docker Compose configuration
-├── Dockerfile          # Application Dockerfile
-├── vitest.config.ts    # Vitest configuration
-└── package.json
+meal-planner-demo/                # Monorepo root
+├── apps/
+│   └── web/                      # Next.js web application
+│       ├── prisma/               # Database schema and migrations
+│       ├── public/               # Static assets
+│       ├── src/
+│       │   ├── app/              # Next.js App Router pages
+│       │   ├── server/           # Server-side code (tRPC routers, auth)
+│       │   ├── styles/           # Global styles
+│       │   ├── test/             # Test utilities and mocks
+│       │   └── trpc/             # tRPC client setup
+│       ├── Dockerfile            # Web app container configuration
+│       └── vitest.config.ts      # Vitest configuration
+├── packages/
+│   ├── types/                    # Shared TypeScript types
+│   └── constants/                # Shared constants
+├── infra/
+│   ├── postgres/                 # PostgreSQL infrastructure
+│   │   ├── migrate.sh            # Migration script for container startup
+│   │   └── README.md             # Infrastructure documentation
+│   └── migrations/               # Migration history (reference copy)
+├── coverage/                     # Test coverage reports (git-ignored)
+├── docker-compose.yml            # Full stack orchestration
+├── pnpm-workspace.yaml           # Workspace configuration
+└── package.json                  # Root package with workspace scripts
 ```
 
 ## Learn More
