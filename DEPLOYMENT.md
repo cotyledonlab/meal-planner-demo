@@ -5,6 +5,7 @@ This document provides instructions for deploying the Meal Planner Demo applicat
 ## Architecture Overview
 
 The application is organized as a monorepo with:
+
 - **apps/web**: Next.js web application
 - **packages/**: Shared utilities (types, constants)
 - **infra/**: Infrastructure configuration (Postgres, migrations)
@@ -22,6 +23,7 @@ All components are orchestrated via Docker Compose for consistent local and prod
 The application requires environment variables at multiple levels:
 
 ### Root Level (.env)
+
 Copy `.env.example` to `.env` and configure:
 
 ```bash
@@ -35,6 +37,7 @@ DATABASE_URL=postgresql://postgres:password@localhost:5432/meal-planner-demo
 ```
 
 ### Web App Level (apps/web/.env)
+
 Copy the root `.env` to `apps/web/.env`:
 
 ```bash
@@ -62,6 +65,7 @@ docker compose up -d --build
 ```
 
 **What happens during deployment:**
+
 1. PostgreSQL, Redis, and Mailpit services start
 2. Web application builds using the monorepo Dockerfile (`apps/web/Dockerfile`)
 3. Build process:
@@ -75,6 +79,7 @@ docker compose up -d --build
    - Application starts and connects to PostgreSQL
 
 Services will be available at:
+
 - **Application**: http://localhost:3000
 - **PostgreSQL**: localhost:5432
 - **Redis**: localhost:6379
@@ -152,18 +157,23 @@ pnpm start
 
 ## Docker Build Notes
 
+The repository includes a Dockerfile at the root level (`Dockerfile`) and in the web app directory (`apps/web/Dockerfile`). Both files are identical and designed to work from the repository root context, providing flexibility for different deployment scenarios:
+
+- **Root-level Dockerfile**: Use for simplified deployments where the platform automatically looks for `Dockerfile` in the repository root
+- **apps/web/Dockerfile**: Use when explicitly configuring the Dockerfile path in deployment platforms like Dokploy
+
 The Dockerfile uses a multi-stage build process optimized for the monorepo structure:
 
 1. **Base stage**: Sets up Node.js 20 Alpine with netcat-openbsd for health checks
-2. **Dependencies stage**: 
+2. **Dependencies stage**:
    - Copies workspace configuration (pnpm-workspace.yaml, root package.json)
    - Copies all workspace package.json files
    - Installs dependencies with pnpm frozen lockfile
-3. **Builder stage**: 
+3. **Builder stage**:
    - Copies shared packages (types, constants)
    - Generates Prisma client
    - Builds the Next.js application
-4. **Runner stage**: 
+4. **Runner stage**:
    - Creates optimized production image using Next.js standalone output
    - Includes Prisma client and migration tools
    - Copies migration script for automatic database setup
@@ -193,13 +203,14 @@ Deploy both the web app and database as a single docker-compose stack:
    - Branch: `main`
 
 2. **Configure Environment Variables** in Dokploy dashboard:
+
    ```bash
    AUTH_SECRET=<generate-with-npx-auth-secret>
    DATABASE_URL=postgresql://postgres:password@postgres:5432/meal-planner-demo
    NEXTAUTH_URL=https://your-domain.com
    NODE_ENV=production
    SKIP_ENV_VALIDATION=1
-   
+
    # Optional OAuth
    AUTH_DISCORD_ID=<your-discord-client-id>
    AUTH_DISCORD_SECRET=<your-discord-client-secret>
@@ -227,10 +238,11 @@ Deploy web app and database as separate Dokploy applications:
 2. **Create Web Application**
    - Create new Docker application in Dokploy
    - Repository: `https://github.com/cotyledonlab/meal-planner-demo`
-   - Dockerfile path: `apps/web/Dockerfile`
+   - Dockerfile path: `Dockerfile` (root level) or `apps/web/Dockerfile`
    - Build context: Repository root (`.`)
 
 3. **Configure Environment Variables**:
+
    ```bash
    AUTH_SECRET=<generate-with-npx-auth-secret>
    DATABASE_URL=<postgres-connection-url-from-dokploy>
@@ -266,6 +278,7 @@ dokploy exec <app-name> -- pnpm --filter @meal-planner-demo/web db:migrate
 ### Environment-Specific Configuration
 
 #### Development/Staging
+
 ```bash
 NODE_ENV=development
 DATABASE_URL=postgresql://user:pass@host:5432/meal-planner-dev
@@ -273,6 +286,7 @@ NEXTAUTH_URL=https://staging.your-domain.com
 ```
 
 #### Production
+
 ```bash
 NODE_ENV=production
 DATABASE_URL=postgresql://user:pass@host:5432/meal-planner-prod
@@ -296,18 +310,21 @@ NEXTAUTH_URL=https://your-domain.com
 ### Troubleshooting Dokploy Deployments
 
 **Build Failures:**
+
 - Ensure Dokploy has access to the GitHub repository
 - Check build logs for missing dependencies
-- Verify Dockerfile path is correct (`apps/web/Dockerfile`)
+- Verify Dockerfile path is correct (`Dockerfile` at root or `apps/web/Dockerfile`)
 - Ensure build context is repository root
 
 **Migration Failures:**
+
 - Check database connection string is correct
 - Verify database service is healthy before web app starts
 - Review migration logs in application startup logs
 - Manually connect to database to verify schema state
 
 **Connection Issues:**
+
 - Verify `DATABASE_URL` environment variable is set correctly
 - Ensure database and web app can communicate (network/security groups)
 - Check if database service is running and healthy
@@ -316,12 +333,14 @@ NEXTAUTH_URL=https://your-domain.com
 ### Backup and Recovery
 
 **Database Backups:**
+
 ```bash
 # On Dokploy server
 dokploy backup postgres <service-name>
 ```
 
 **Restore from Backup:**
+
 ```bash
 dokploy restore postgres <service-name> <backup-file>
 ```
@@ -361,7 +380,7 @@ When you modify the Prisma schema:
 # Generate migration and apply to dev database
 pnpm db:generate
 
-# Or from apps/web directory  
+# Or from apps/web directory
 cd apps/web && pnpm db:generate
 ```
 
@@ -374,11 +393,13 @@ cp -r apps/web/prisma/migrations/* infra/migrations/
 ## Environment-Specific Considerations
 
 ### Development
+
 - Hot reload enabled with Turbopack
 - Environment validation can be skipped with `SKIP_ENV_VALIDATION=1`
 - Discord OAuth credentials are optional
 
 ### Production
+
 - Set `NODE_ENV=production`
 - Generate a secure `AUTH_SECRET`
 - Use a managed PostgreSQL service (recommended)
