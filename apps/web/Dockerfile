@@ -91,8 +91,8 @@ COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/static ./.next/sta
 # Copy Prisma files for migrations
 COPY --from=builder /app/apps/web/prisma ./prisma
 COPY --from=builder /app/node_modules/.pnpm ./node_modules/.pnpm
-COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
-COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
+COPY --from=builder /app/apps/web/node_modules/@prisma ./node_modules/@prisma
+COPY --from=builder /app/apps/web/node_modules/prisma ./node_modules/prisma
 COPY --from=builder /app/apps/web/package.json ./package.json
 
 # Copy migration script
