@@ -24,6 +24,7 @@ meal-planner-demo/
 │   │   ├── migrate.sh       # Database migration script
 │   │   └── README.md        # Infrastructure documentation
 │   └── migrations/          # Migration history (reference)
+├── Dockerfile               # Root-level Dockerfile (same as apps/web/Dockerfile)
 ├── docker-compose.yml       # Full stack orchestration
 ├── pnpm-workspace.yaml      # Workspace configuration
 └── package.json             # Root package with workspace scripts
@@ -121,6 +122,7 @@ docker compose up --build
 The application will be available at [http://localhost:3000](http://localhost:3000).
 
 **What happens on startup:**
+
 - PostgreSQL starts and becomes healthy
 - Web app container builds with the monorepo structure
 - Database migrations run automatically via `infra/postgres/migrate.sh`
@@ -159,12 +161,14 @@ When running with Docker Compose:
 All scripts are run from the root directory and delegated to the appropriate workspace:
 
 ### Development
+
 - `pnpm dev` - Start development server with Turbo
 - `pnpm build` - Build for production
 - `pnpm start` - Start production server
 - `pnpm preview` - Build and start production server
 
 ### Code Quality
+
 - `pnpm check` - Run linting and type checking
 - `pnpm lint` - Run ESLint
 - `pnpm lint:fix` - Run ESLint and fix issues
@@ -173,12 +177,14 @@ All scripts are run from the root directory and delegated to the appropriate wor
 - `pnpm format:write` - Format code
 
 ### Testing
+
 - `pnpm test` - Run all unit tests
 - `pnpm test:watch` - Run tests in watch mode
 - `pnpm test:ui` - Open Vitest UI for interactive testing
 - `pnpm test:coverage` - Run tests with coverage report
 
 ### Database
+
 - `pnpm db:push` - Push database schema changes
 - `pnpm db:generate` - Generate Prisma migrations
 - `pnpm db:migrate` - Run Prisma migrations in production
@@ -248,6 +254,7 @@ The test suite provides comprehensive coverage for:
 - **API Context**: tRPC context creation and session handling
 
 Coverage excludes:
+
 - UI components (Next.js pages and React components)
 - Configuration files
 - Entry points and route handlers
@@ -265,21 +272,21 @@ pnpm test:coverage
 Tests use Vitest's testing utilities and mock external dependencies:
 
 ```typescript
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { postRouter } from './post';
-import { createMockContext } from '~/test/mocks';
+import { describe, it, expect, beforeEach, vi } from "vitest";
+import { postRouter } from "./post";
+import { createMockContext } from "~/test/mocks";
 
-describe('postRouter', () => {
+describe("postRouter", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it('should return a greeting', async () => {
+  it("should return a greeting", async () => {
     const ctx = createMockContext();
     const caller = postRouter.createCaller(ctx);
-    const result = await caller.hello({ text: 'World' });
-    
-    expect(result.greeting).toBe('Hello World');
+    const result = await caller.hello({ text: "World" });
+
+    expect(result.greeting).toBe("Hello World");
   });
 });
 ```
@@ -287,6 +294,7 @@ describe('postRouter', () => {
 ### Continuous Integration
 
 Tests run automatically on:
+
 - Pull requests
 - Pushes to main branch
 - Pre-deployment checks
