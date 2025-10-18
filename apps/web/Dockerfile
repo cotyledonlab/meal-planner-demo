@@ -76,16 +76,12 @@ RUN adduser --system --uid 1001 nextjs
 
 ## No package manager needed at runtime
 
-# Copy public assets
-COPY --from=builder /app/apps/web/public ./public
-
-# Set the correct permission for prerender cache
-RUN mkdir .next
-RUN chown nextjs:nodejs .next
-
 # Copy Next.js standalone output
 COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/static ./.next/static
+
+# Copy application public assets and static chunks relative to server directory
+COPY --from=builder --chown=nextjs:nodejs /app/apps/web/public ./apps/web/public
+COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/static ./apps/web/.next/static
 
 # Copy Prisma files for migrations and full node_modules for CLI availability
 COPY --from=builder /app/apps/web/prisma ./prisma
