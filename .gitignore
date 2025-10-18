@@ -19,6 +19,7 @@ db.sqlite
 
 # next.js
 /.next/
+/apps/web/.next/
 /out/
 next-env.d.ts
 
@@ -47,4 +48,7 @@ yarn-error.log*
 *.tsbuildinfo
 
 # idea files
-.ideaapps/web/.next
+.idea
+
+# sqlite dev db
+apps/web/prisma/dev.db

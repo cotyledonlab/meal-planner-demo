@@ -1,0 +1,107 @@
+[
+  {
+    "category": "protein",
+    "stores": {
+      "Aldi": {
+        "pricePerUnit": 0.008,
+        "unit": "g"
+      },
+      "Lidl": {
+        "pricePerUnit": 0.0085,
+        "unit": "g"
+      },
+      "Tesco": {
+        "pricePerUnit": 0.010,
+        "unit": "g"
+      },
+      "Dunnes": {
+        "pricePerUnit": 0.0095,
+        "unit": "g"
+      }
+    }
+  },
+  {
+    "category": "vegetables",
+    "stores": {
+      "Aldi": {
+        "pricePerUnit": 0.002,
+        "unit": "g"
+      },
+      "Lidl": {
+        "pricePerUnit": 0.0022,
+        "unit": "g"
+      },
+      "Tesco": {
+        "pricePerUnit": 0.0025,
+        "unit": "g"
+      },
+      "Dunnes": {
+        "pricePerUnit": 0.0024,
+        "unit": "g"
+      }
+    }
+  },
+  {
+    "category": "dairy",
+    "stores": {
+      "Aldi": {
+        "pricePerUnit": 0.003,
+        "unit": "g"
+      },
+      "Lidl": {
+        "pricePerUnit": 0.0032,
+        "unit": "g"
+      },
+      "Tesco": {
+        "pricePerUnit": 0.0035,
+        "unit": "g"
+      },
+      "Dunnes": {
+        "pricePerUnit": 0.0034,
+        "unit": "g"
+      }
+    }
+  },
+  {
+    "category": "grains",
+    "stores": {
+      "Aldi": {
+        "pricePerUnit": 0.0015,
+        "unit": "g"
+      },
+      "Lidl": {
+        "pricePerUnit": 0.0016,
+        "unit": "g"
+      },
+      "Tesco": {
+        "pricePerUnit": 0.0018,
+        "unit": "g"
+      },
+      "Dunnes": {
+        "pricePerUnit": 0.0017,
+        "unit": "g"
+      }
+    }
+  },
+  {
+    "category": "pantry",
+    "stores": {
+      "Aldi": {
+        "pricePerUnit": 0.005,
+        "unit": "g"
+      },
+      "Lidl": {
+        "pricePerUnit": 0.0052,
+        "unit": "g"
+      },
+      "Tesco": {
+        "pricePerUnit": 0.006,
+        "unit": "g"
+      },
+      "Dunnes": {
+        "pricePerUnit": 0.0055,
+        "unit": "g"
+      }
+    }
+  }
+]

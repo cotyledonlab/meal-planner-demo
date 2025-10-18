@@ -7,19 +7,25 @@ interface MealPlanWizardProps {
 }
 
 export interface MealPreferences {
-  people: number;
+  householdSize: number;
+  mealsPerDay: number;
   days: number;
-  mealType: string;
+  isVegetarian: boolean;
+  isDairyFree: boolean;
+  dislikes: string;
 }
 
 export default function MealPlanWizard({ onComplete }: MealPlanWizardProps) {
-  const [people, setPeople] = useState(2);
+  const [householdSize, setHouseholdSize] = useState(2);
+  const [mealsPerDay, setMealsPerDay] = useState(1);
   const [days, setDays] = useState(7);
-  const [mealType, setMealType] = useState('balanced');
+  const [isVegetarian, setIsVegetarian] = useState(false);
+  const [isDairyFree, setIsDairyFree] = useState(false);
+  const [dislikes, setDislikes] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onComplete({ people, days, mealType });
+    onComplete({ householdSize, mealsPerDay, days, isVegetarian, isDairyFree, dislikes });
   };
 
   return (
@@ -31,22 +37,39 @@ export default function MealPlanWizard({ onComplete }: MealPlanWizardProps) {
         </p>
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-6">
-          {/* How many people */}
+          {/* Household size */}
           <div>
-            <label htmlFor="people" className="block text-sm font-semibold text-gray-900">
+            <label htmlFor="householdSize" className="block text-sm font-semibold text-gray-900">
               How many people?
             </label>
             <select
-              id="people"
-              value={people}
-              onChange={(e) => setPeople(Number(e.target.value))}
+              id="householdSize"
+              value={householdSize}
+              onChange={(e) => setHouseholdSize(Number(e.target.value))}
               className="mt-2 block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm transition focus:border-emerald-600 focus:outline-none focus:ring-1 focus:ring-emerald-600"
             >
-              {[1, 2, 3, 4, 5].map((num) => (
+              {[1, 2, 3, 4, 5, 6].map((num) => (
                 <option key={num} value={num}>
                   {num} {num === 1 ? 'person' : 'people'}
                 </option>
               ))}
+            </select>
+          </div>
+
+          {/* Meals per day */}
+          <div>
+            <label htmlFor="mealsPerDay" className="block text-sm font-semibold text-gray-900">
+              How many meals per day?
+            </label>
+            <select
+              id="mealsPerDay"
+              value={mealsPerDay}
+              onChange={(e) => setMealsPerDay(Number(e.target.value))}
+              className="mt-2 block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm transition focus:border-emerald-600 focus:outline-none focus:ring-1 focus:ring-emerald-600"
+            >
+              <option value={1}>1 meal (Dinner only)</option>
+              <option value={2}>2 meals (Lunch & Dinner)</option>
+              <option value={3}>3 meals (All meals)</option>
             </select>
           </div>
 
@@ -69,22 +92,51 @@ export default function MealPlanWizard({ onComplete }: MealPlanWizardProps) {
             </select>
           </div>
 
-          {/* Meal type focus */}
-          <div>
-            <label htmlFor="mealType" className="block text-sm font-semibold text-gray-900">
-              Meal type focus
+          {/* Diet preferences */}
+          <div className="space-y-3">
+            <label className="block text-sm font-semibold text-gray-900">
+              Dietary preferences
             </label>
-            <select
-              id="mealType"
-              value={mealType}
-              onChange={(e) => setMealType(e.target.value)}
+            <div className="flex items-center gap-3">
+              <input
+                type="checkbox"
+                id="isVegetarian"
+                checked={isVegetarian}
+                onChange={(e) => setIsVegetarian(e.target.checked)}
+                className="h-4 w-4 rounded border-gray-300 text-emerald-600 transition focus:ring-2 focus:ring-emerald-600"
+              />
+              <label htmlFor="isVegetarian" className="text-sm text-gray-700">
+                Vegetarian
+              </label>
+            </div>
+            <div className="flex items-center gap-3">
+              <input
+                type="checkbox"
+                id="isDairyFree"
+                checked={isDairyFree}
+                onChange={(e) => setIsDairyFree(e.target.checked)}
+                className="h-4 w-4 rounded border-gray-300 text-emerald-600 transition focus:ring-2 focus:ring-emerald-600"
+              />
+              <label htmlFor="isDairyFree" className="text-sm text-gray-700">
+                Dairy-free
+              </label>
+            </div>
+          </div>
+
+          {/* Dislikes */}
+          <div>
+            <label htmlFor="dislikes" className="block text-sm font-semibold text-gray-900">
+              Foods to avoid (optional)
+            </label>
+            <input
+              type="text"
+              id="dislikes"
+              value={dislikes}
+              onChange={(e) => setDislikes(e.target.value)}
+              placeholder="e.g., mushrooms, olives"
               className="mt-2 block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm transition focus:border-emerald-600 focus:outline-none focus:ring-1 focus:ring-emerald-600"
-            >
-              <option value="balanced">Balanced</option>
-              <option value="high-protein">High-Protein</option>
-              <option value="vegetarian">Vegetarian</option>
-              <option value="family">Family</option>
-            </select>
+            />
+            <p className="mt-1 text-xs text-gray-500">Separate multiple items with commas</p>
           </div>
 
           {/* Submit button */}

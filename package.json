@@ -22,9 +22,21 @@
     "test:watch": "pnpm --filter @meal-planner-demo/web test:watch",
     "test:ui": "pnpm --filter @meal-planner-demo/web test:ui",
     "test:coverage": "pnpm --filter @meal-planner-demo/web test:coverage",
-    "typecheck": "pnpm --filter @meal-planner-demo/web typecheck"
+    "typecheck": "pnpm --filter @meal-planner-demo/web typecheck",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "prettier --write",
+      "eslint --fix"
+    ],
+    "*.{js,jsx,json,md,mdx,yml,yaml}": [
+      "prettier --write"
+    ]
   },
   "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.4",
     "prettier": "^3.5.3"
   }
 }

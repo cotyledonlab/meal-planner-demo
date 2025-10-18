@@ -1,0 +1,17 @@
+# Skip hooks in CI or if SKIP_HOOKS is set
+if [ "$CI" = "true" ] || [ "$SKIP_HOOKS" = "1" ]; then
+  exit 0
+fi
+
+# Run lint-staged for formatting and linting on staged files
+echo "Running lint-staged..."
+pnpm exec lint-staged || exit 1
+
+# Run TypeScript type checking
+echo "Running TypeScript type checking..."
+pnpm typecheck || exit 1
+
+# Run tests
+echo "Running tests..."
+pnpm test || exit 1
+
