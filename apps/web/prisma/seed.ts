@@ -544,8 +544,7 @@ async function main() {
       recipeIngredients.map((ing) => {
         const ingredientId = ingredientMap.get(ing.name);
         if (!ingredientId) {
-          console.warn(`Warning: Ingredient "${ing.name}" not found`);
-          return null;
+          throw new Error(`Ingredient "${ing.name}" not found in ingredientMap. Data inconsistency detected.`);
         }
         return prisma.recipeIngredient.create({
           data: {
