@@ -47,4 +47,7 @@ yarn-error.log*
 *.tsbuildinfo
 
 # idea files
-.ideaapps/web/.next
+.idea
+
+# sqlite dev db
+apps/web/prisma/dev.db
