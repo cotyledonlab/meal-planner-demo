@@ -83,11 +83,15 @@ export const shoppingListRouter = createTRPCRouter({
       // Build shopping list with ingredient details
       const shoppingListItems: ShoppingListItem[] = [];
 
-      for (const [ingredientId, aggData] of aggregated.entries()) {
-        const ingredient = await ctx.db.ingredient.findUnique({
-          where: { id: ingredientId },
-        });
+      // Batch fetch all ingredients needed for the shopping list
+      const ingredientIds = Array.from(aggregated.keys());
+      const ingredients = await ctx.db.ingredient.findMany({
+        where: { id: { in: ingredientIds } },
+      });
+      const ingredientMap = new Map(ingredients.map(ingredient => [ingredient.id, ingredient]));
 
+      for (const [ingredientId, aggData] of aggregated.entries()) {
+        const ingredient = ingredientMap.get(ingredientId);
         if (!ingredient) continue;
 
         // Subtract pantry items
