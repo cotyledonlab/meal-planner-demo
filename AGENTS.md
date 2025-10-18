@@ -76,6 +76,27 @@ pnpm db:studio        # Open Prisma Studio
 - Type checking must pass (`pnpm typecheck`)
 - Test with Vitest for units, Playwright for E2E
 - No `any` types allowed in code
+- **All checks must pass before committing changes**
+
+### Pre-Commit Checklist
+
+Before committing any changes, ensure the following checks pass:
+
+1. **Type Checking**: Run `pnpm typecheck` - must complete with zero errors
+2. **Linting**: Run `SKIP_ENV_VALIDATION=1 pnpm lint` (in apps/web) - must show no errors or warnings
+3. **Tests**: Run `pnpm test` - all tests must pass
+4. **Build**: Run `pnpm build` (optional but recommended for major changes)
+
+**Command to run all checks:**
+```bash
+cd /path/to/meal-planner-demo
+pnpm typecheck && cd apps/web && SKIP_ENV_VALIDATION=1 pnpm lint && cd ../.. && pnpm test
+```
+
+If any check fails, fix the issues before committing. Common issues:
+- **TypeScript errors**: Check for incorrect type usage, missing imports, or wrong API methods
+- **Linting errors**: Fix code style issues, unused variables, or unsafe operations
+- **Test failures**: Update tests to match code changes or fix broken functionality
 
 ### Security & Performance
 
