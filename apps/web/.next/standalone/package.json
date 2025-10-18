@@ -1,0 +1,30 @@
+{
+  "name": "meal-planner-demo",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@9.10.0",
+  "scripts": {
+    "build": "pnpm --filter @meal-planner-demo/web build",
+    "check": "pnpm --filter @meal-planner-demo/web check",
+    "db:generate": "pnpm --filter @meal-planner-demo/web db:generate",
+    "db:migrate": "pnpm --filter @meal-planner-demo/web db:migrate",
+    "db:push": "pnpm --filter @meal-planner-demo/web db:push",
+    "db:studio": "pnpm --filter @meal-planner-demo/web db:studio",
+    "dev": "pnpm --filter @meal-planner-demo/web dev",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md,mdx,yml,yaml}\" --cache --ignore-path .gitignore",
+    "format:write": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,mdx,yml,yaml}\" --cache --ignore-path .gitignore",
+    "lint": "pnpm --filter @meal-planner-demo/web lint",
+    "lint:fix": "pnpm --filter @meal-planner-demo/web lint:fix",
+    "preview": "pnpm --filter @meal-planner-demo/web preview",
+    "start": "pnpm --filter @meal-planner-demo/web start",
+    "test": "pnpm --filter @meal-planner-demo/web test",
+    "test:watch": "pnpm --filter @meal-planner-demo/web test:watch",
+    "test:ui": "pnpm --filter @meal-planner-demo/web test:ui",
+    "test:coverage": "pnpm --filter @meal-planner-demo/web test:coverage",
+    "typecheck": "pnpm --filter @meal-planner-demo/web typecheck"
+  },
+  "devDependencies": {
+    "prettier": "^3.5.3"
+  }
+}

@@ -112,9 +112,7 @@ export const shoppingListRouter = createTRPCRouter({
       // Group by category
       const grouped = shoppingListItems.reduce(
         (acc, item) => {
-          if (!acc[item.category]) {
-            acc[item.category] = [];
-          }
+          acc[item.category] ??= [];
           acc[item.category]!.push(item);
           return acc;
         },
@@ -132,13 +130,12 @@ export const shoppingListRouter = createTRPCRouter({
 
         for (const baseline of categoryBaselines) {
           // Convert to baseline unit for price calculation
-          let quantityInBaselineUnit = item.quantity;
           if (baseline.unit !== item.unit) {
             // Skip if units don't match (simplified - could add conversion)
             continue;
           }
 
-          const itemCost = quantityInBaselineUnit * baseline.pricePerUnit;
+          const itemCost = item.quantity * baseline.pricePerUnit;
           const currentTotal = pricesByStore.get(baseline.store) ?? 0;
           pricesByStore.set(baseline.store, currentTotal + itemCost);
         }

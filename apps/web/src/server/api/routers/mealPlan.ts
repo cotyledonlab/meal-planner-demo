@@ -1,13 +1,13 @@
 import { z } from 'zod';
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
-import type { Recipe } from '@prisma/client';
+import type { Recipe, PrismaClient } from '@prisma/client';
 
 /**
  * Rule-based meal plan generator
  * Filters recipes based on user preferences and creates a balanced plan
  */
 async function generateMealPlan(
-  ctx: { db: typeof import('~/server/db').db },
+  ctx: { db: PrismaClient },
   preferences: {
     householdSize: number;
     mealsPerDay: number;
@@ -56,7 +56,6 @@ async function generateMealPlan(
   }
 
   // Generate meal plan items
-  const totalMeals = preferences.days * preferences.mealsPerDay;
   const selectedRecipes: Array<{
     recipe: Recipe;
     dayIndex: number;

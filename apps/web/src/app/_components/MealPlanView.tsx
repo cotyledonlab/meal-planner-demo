@@ -33,14 +33,20 @@ export default function MealPlanView({ preferences, onViewShoppingList }: MealPl
             Your Weekly Meal Plan
           </h1>
           <p className="mt-2 text-base text-gray-600">
-            {preferences.days} delicious meals for {preferences.people}{' '}
-            {preferences.people === 1 ? 'person' : 'people'}
+            {preferences.days} days · {preferences.mealsPerDay} {preferences.mealsPerDay === 1 ? 'meal' : 'meals'}/day · {preferences.householdSize}{' '}
+            {preferences.householdSize === 1 ? 'person' : 'people'}
           </p>
-          <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-emerald-100 px-4 py-2 text-sm font-semibold text-emerald-700">
-            <span>🎯</span>
-            <span>
-              {preferences.mealType.charAt(0).toUpperCase() + preferences.mealType.slice(1)}
-            </span>
+          <div className="mt-4 inline-flex flex-wrap items-center gap-2">
+            {preferences.isVegetarian && (
+              <span className="rounded-full bg-emerald-100 px-4 py-2 text-sm font-semibold text-emerald-700">
+                🌱 Vegetarian
+              </span>
+            )}
+            {preferences.isDairyFree && (
+              <span className="rounded-full bg-blue-100 px-4 py-2 text-sm font-semibold text-blue-700">
+                🥛 Dairy-free
+              </span>
+            )}
           </div>
         </div>
 
