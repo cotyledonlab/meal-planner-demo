@@ -72,7 +72,7 @@ export function aggregateIngredients(
     if (existing) {
       if (existing.unit !== normalized.unit) {
         throw new Error(
-          `Cannot aggregate ingredients with different unit types: ${existing.unit} vs ${normalized.unit}`
+          `Cannot aggregate ingredient ${ing.ingredientId} with different unit types: ${existing.unit} vs ${normalized.unit}`
         );
       }
       existing.quantity += normalized.quantity;
