@@ -6,6 +6,7 @@ import { verify } from '@node-rs/argon2';
 import { z } from 'zod';
 
 import { db } from '~/server/db';
+import { env } from '~/env';
 
 const normalizeAuthUrls = () => {
   const raw = process.env.AUTH_URL ?? process.env.NEXTAUTH_URL;
@@ -69,6 +70,7 @@ declare module 'next-auth' {
  * @see https://next-auth.js.org/configuration/options
  */
 export const authConfig = {
+  secret: env.AUTH_SECRET,
   providers: [
     CredentialsProvider({
       name: 'Email & Password',
