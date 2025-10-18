@@ -12,7 +12,7 @@ retries=0
 
 echo "Waiting for database to be ready..."
 while [ $retries -lt $MAX_RETRIES ]; do
-  if printf 'SELECT 1;' | pnpm prisma db execute --stdin > /dev/null 2>&1; then
+  if printf 'SELECT 1' | pnpm prisma db execute --stdin > /dev/null 2>&1; then
     echo "Database is ready!"
     break
   fi
