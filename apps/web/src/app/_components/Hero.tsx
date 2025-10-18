@@ -1,6 +1,7 @@
 // Hero section with headline, subtext, CTAs, and background image
 // Image source: Unsplash – "home cooking": https://unsplash.com/photos/QJ6x9wy_Ol4
 import Image from 'next/image';
+import Link from 'next/link';
 
 export default function Hero() {
   return (
@@ -26,12 +27,12 @@ export default function Hero() {
             Your meal plan, recipes, and shopping list — in minutes, not hours.
           </p>
           <div className="mt-10 flex items-center justify-center gap-4">
-            <a
-              href="/planner"
+            <Link
+              href="/auth/signup"
               className="rounded-full bg-emerald-600 px-8 py-3 text-base font-semibold text-white shadow-sm transition hover:bg-emerald-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
             >
-              Try the Planner
-            </a>
+              Get Started
+            </Link>
             <a
               href="#pricing"
               className="rounded-full bg-white px-8 py-3 text-base font-semibold text-emerald-700 shadow-sm ring-1 ring-emerald-600 transition hover:bg-emerald-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
