@@ -84,7 +84,7 @@ describe('shoppingListRouter', () => {
           id: 'pb-2',
           ingredientCategory: 'protein',
           store: 'Tesco',
-          pricePerUnit: 0.010,
+          pricePerUnit: 0.01,
           unit: 'g',
           createdAt: new Date(),
           updatedAt: new Date(),
@@ -109,7 +109,7 @@ describe('shoppingListRouter', () => {
       expect(result.cheapestStore?.store).toBe('Aldi');
     });
 
-    it('should not allow access to another user\'s meal plan', async () => {
+    it("should not allow access to another user's meal plan", async () => {
       const { shoppingListRouter } = await import('./shoppingList');
       const { createMockContext, mockPrismaClient } = await import('~/test/mocks');
 
@@ -206,7 +206,7 @@ describe('shoppingListRouter', () => {
       expect(result.csv).toContain('protein,chicken breast');
     });
 
-    it('should not allow export of another user\'s meal plan', async () => {
+    it("should not allow export of another user's meal plan", async () => {
       const { shoppingListRouter } = await import('./shoppingList');
       const { createMockContext, mockPrismaClient } = await import('~/test/mocks');
 

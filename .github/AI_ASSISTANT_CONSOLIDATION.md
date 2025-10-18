@@ -7,6 +7,7 @@ All AI assistant configuration files have been consolidated into a single source
 ## Changes Made
 
 ### 1. Updated AGENTS.md
+
 - Brought content to full parity with `.github/copilot-instructions.md`
 - Added comprehensive project overview
 - Included complete command reference
@@ -14,9 +15,11 @@ All AI assistant configuration files have been consolidated into a single source
 - Maintained manual additions section for custom instructions
 
 ### 2. Updated Update Script
+
 File: `.specify/scripts/bash/update-agent-context.sh`
 
 Changes:
+
 - Redirected `COPILOT_FILE` to point to `AGENTS.md`
 - Redirected `CURSOR_FILE` to point to `AGENTS.md`
 - Added legacy file path variables for backward compatibility checking
@@ -25,17 +28,20 @@ Changes:
 - Modified `update_all_existing_agents()` to check for legacy files but update `AGENTS.md`
 
 ### 3. Deprecated Legacy Files
+
 - Added deprecation notice to `.github/copilot-instructions.md`
 - Legacy file remains for reference but is no longer actively maintained
 - Created `COPILOT_MIGRATION.md` to document the migration
 
 ### 4. Updated Documentation
+
 - Added "AI Assistant Guidelines" section to README.md
 - Documented the consolidated approach
 
 ## Agent Support
 
 The following AI assistants now use `AGENTS.md`:
+
 - ✅ GitHub Copilot (consolidated)
 - ✅ Cursor IDE (consolidated)
 - ✅ Codex CLI (already used AGENTS.md)
@@ -43,6 +49,7 @@ The following AI assistants now use `AGENTS.md`:
 - ✅ Amazon Q Developer CLI (already used AGENTS.md)
 
 The following agents maintain separate files:
+
 - Claude Code → `CLAUDE.md`
 - Gemini CLI → `GEMINI.md`
 - Qwen Code → `QWEN.md`
@@ -64,19 +71,26 @@ Note: Additional agents can be consolidated into `AGENTS.md` in the future if de
 ## Usage
 
 ### For Developers
+
 No action required. AI assistants will automatically use the consolidated file.
 
 ### For Script Users
+
 When running `update-agent-context.sh`:
+
 - `./update-agent-context.sh copilot` - Updates `AGENTS.md`
 - `./update-agent-context.sh cursor` - Updates `AGENTS.md`
 - `./update-agent-context.sh` - Updates all existing agent files, including `AGENTS.md` if legacy files exist
 
 ### For Manual Updates
+
 Edit `AGENTS.md` directly. The script will preserve content between:
+
 ```markdown
 <!-- MANUAL ADDITIONS START -->
+
 [your custom content]
+
 <!-- MANUAL ADDITIONS END -->
 ```
 
@@ -89,6 +103,7 @@ Edit `AGENTS.md` directly. The script will preserve content between:
 ## Testing
 
 The consolidation has been verified:
+
 - ✅ Script syntax is valid
 - ✅ AGENTS.md contains all content from copilot-instructions.md
 - ✅ Deprecation notices in place

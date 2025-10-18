@@ -10,12 +10,13 @@ const prisma = new PrismaClient();
 
 interface PriceBaselineData {
   category: string;
-  stores: {
-    [store: string]: {
+  stores: Record<
+    string,
+    {
       pricePerUnit: number;
       unit: string;
-    };
-  };
+    }
+  >;
 }
 
 async function main() {
@@ -23,7 +24,9 @@ async function main() {
 
   // Load price baselines
   const priceBaselinesPath = path.join(__dirname, 'price-baselines.json');
-  const priceBaselinesData = JSON.parse(fs.readFileSync(priceBaselinesPath, 'utf-8')) as PriceBaselineData[];
+  const priceBaselinesData = JSON.parse(
+    fs.readFileSync(priceBaselinesPath, 'utf-8')
+  ) as PriceBaselineData[];
 
   // Clear existing data in development
   if (process.env.NODE_ENV !== 'production') {
@@ -77,18 +80,14 @@ async function main() {
   ];
 
   const createdIngredients = await Promise.all(
-    ingredients.map((ing) =>
-      prisma.ingredient.create({ data: ing })
-    )
+    ingredients.map((ing) => prisma.ingredient.create({ data: ing }))
   );
 
-  const ingredientMap = new Map(
-    createdIngredients.map((ing) => [ing.name, ing.id])
-  );
+  const ingredientMap = new Map(createdIngredients.map((ing) => [ing.name, ing.id]));
 
   // Create recipes
   console.log('🍽️ Creating recipes...');
-  
+
   const recipes = [
     {
       title: 'Chicken & Vegetable Stir Fry',
@@ -534,7 +533,7 @@ async function main() {
 
   for (const recipeData of recipes) {
     const { ingredients: recipeIngredients, ...recipeInfo } = recipeData;
-    
+
     const recipe = await prisma.recipe.create({
       data: recipeInfo,
     });
@@ -544,7 +543,9 @@ async function main() {
       recipeIngredients.map((ing) => {
         const ingredientId = ingredientMap.get(ing.name);
         if (!ingredientId) {
-          throw new Error(`Ingredient "${ing.name}" not found in ingredientMap. Data inconsistency detected.`);
+          throw new Error(
+            `Ingredient "${ing.name}" not found in ingredientMap. Data inconsistency detected.`
+          );
         }
         return prisma.recipeIngredient.create({
           data: {

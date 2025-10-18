@@ -33,7 +33,8 @@ export default function MealPlanView({ preferences, onViewShoppingList }: MealPl
             Your Weekly Meal Plan
           </h1>
           <p className="mt-2 text-base text-gray-600">
-            {preferences.days} days · {preferences.mealsPerDay} {preferences.mealsPerDay === 1 ? 'meal' : 'meals'}/day · {preferences.householdSize}{' '}
+            {preferences.days} days · {preferences.mealsPerDay}{' '}
+            {preferences.mealsPerDay === 1 ? 'meal' : 'meals'}/day · {preferences.householdSize}{' '}
             {preferences.householdSize === 1 ? 'person' : 'people'}
           </p>
           <div className="mt-4 inline-flex flex-wrap items-center gap-2">

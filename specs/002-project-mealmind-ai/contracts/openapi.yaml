@@ -26,25 +26,25 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/HouseholdInput'
+              $ref: "#/components/schemas/HouseholdInput"
       responses:
-        '200':
+        "200":
           description: Household profile updated
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Household'
-        '201':
+                $ref: "#/components/schemas/Household"
+        "201":
           description: Household profile created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Household'
-        '400':
+                $ref: "#/components/schemas/Household"
+        "400":
           description: Validation failed
-        '401':
+        "401":
           description: Authentication required for invitees
-        '409':
+        "409":
           description: Conflicting preference selections
   /api/plans:
     post:
@@ -59,25 +59,25 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PlanRequest'
+              $ref: "#/components/schemas/PlanRequest"
       responses:
-        '202':
+        "202":
           description: Plan generation accepted; use status stream for progress
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PlanGenerationAccepted'
-        '200':
+                $ref: "#/components/schemas/PlanGenerationAccepted"
+        "200":
           description: Cached plan reused
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Plan'
-        '400':
+                $ref: "#/components/schemas/Plan"
+        "400":
           description: Request exceeds 21 meal limit or fails guard checks
-        '401':
+        "401":
           description: Authentication required for invitees
-        '429':
+        "429":
           description: Daily token or cost budget exceeded
   /api/plans/{planId}:
     get:
@@ -88,17 +88,17 @@ paths:
         - sessionCookie: []
         - guestToken: []
       parameters:
-        - $ref: '#/components/parameters/PlanId'
+        - $ref: "#/components/parameters/PlanId"
       responses:
-        '200':
+        "200":
           description: Plan retrieved successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Plan'
-        '401':
+                $ref: "#/components/schemas/Plan"
+        "401":
           description: Authentication required
-        '404':
+        "404":
           description: Plan not found or superseded
   /api/plans/{planId}/swap:
     post:
@@ -108,23 +108,23 @@ paths:
       security:
         - sessionCookie: []
       parameters:
-        - $ref: '#/components/parameters/PlanId'
+        - $ref: "#/components/parameters/PlanId"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/MealSwapRequest'
+              $ref: "#/components/schemas/MealSwapRequest"
       responses:
-        '200':
+        "200":
           description: Meal replaced successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Meal'
-        '400':
+                $ref: "#/components/schemas/Meal"
+        "400":
           description: Replacement violates constraints
-        '404':
+        "404":
           description: Plan or meal slot not found
   /api/plans/{planId}/regenerate-day:
     post:
@@ -134,23 +134,23 @@ paths:
       security:
         - sessionCookie: []
       parameters:
-        - $ref: '#/components/parameters/PlanId'
+        - $ref: "#/components/parameters/PlanId"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DayRegenerationRequest'
+              $ref: "#/components/schemas/DayRegenerationRequest"
       responses:
-        '200':
+        "200":
           description: Day replaced successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PlanDay'
-        '400':
+                $ref: "#/components/schemas/PlanDay"
+        "400":
           description: Replacement violates constraints
-        '404':
+        "404":
           description: Plan day not found
   /api/plans/{planId}/events:
     get:
@@ -161,15 +161,15 @@ paths:
         - sessionCookie: []
         - guestToken: []
       parameters:
-        - $ref: '#/components/parameters/PlanId'
+        - $ref: "#/components/parameters/PlanId"
       responses:
-        '200':
+        "200":
           description: Server-sent events stream
           content:
             text/event-stream:
               schema:
-                $ref: '#/components/schemas/PlanStatusEvent'
-        '404':
+                $ref: "#/components/schemas/PlanStatusEvent"
+        "404":
           description: Plan generation not found
   /api/plans/{planId}/exports/pdf:
     get:
@@ -180,16 +180,16 @@ paths:
         - sessionCookie: []
         - guestToken: []
       parameters:
-        - $ref: '#/components/parameters/PlanId'
+        - $ref: "#/components/parameters/PlanId"
       responses:
-        '200':
+        "200":
           description: PDF download
           content:
             application/pdf:
               schema:
                 type: string
                 format: binary
-        '404':
+        "404":
           description: Plan not found
   /api/plans/{planId}/exports/csv:
     get:
@@ -200,16 +200,16 @@ paths:
         - sessionCookie: []
         - guestToken: []
       parameters:
-        - $ref: '#/components/parameters/PlanId'
+        - $ref: "#/components/parameters/PlanId"
       responses:
-        '200':
+        "200":
           description: CSV download
           content:
             text/csv:
               schema:
                 type: string
                 format: binary
-        '404':
+        "404":
           description: Plan not found
 components:
   securitySchemes:
@@ -278,7 +278,16 @@ components:
           type: array
           items:
             type: string
-            enum: [oven, instantPot, airFryer, stovetop, microwave, grill, slowCooker]
+            enum:
+              [
+                oven,
+                instantPot,
+                airFryer,
+                stovetop,
+                microwave,
+                grill,
+                slowCooker,
+              ]
         dietTags:
           type: array
           items:
@@ -294,7 +303,7 @@ components:
           default: false
     Household:
       allOf:
-        - $ref: '#/components/schemas/HouseholdInput'
+        - $ref: "#/components/schemas/HouseholdInput"
         - type: object
           required: [id, createdAt, updatedAt]
           properties:
@@ -398,7 +407,7 @@ components:
           type: string
           enum: [economical, moderate, premium]
         calorieTarget:
-          $ref: '#/components/schemas/PlanRequest/properties/calorieTarget'
+          $ref: "#/components/schemas/PlanRequest/properties/calorieTarget"
         totals:
           type: object
           properties:
@@ -413,15 +422,15 @@ components:
         daysSchedule:
           type: array
           items:
-            $ref: '#/components/schemas/PlanDay'
+            $ref: "#/components/schemas/PlanDay"
         recipes:
           type: array
           items:
-            $ref: '#/components/schemas/Recipe'
+            $ref: "#/components/schemas/Recipe"
         shoppingList:
           type: array
           items:
-            $ref: '#/components/schemas/ShoppingItem'
+            $ref: "#/components/schemas/ShoppingItem"
         disclaimer:
           type: string
           example: "Nutrition information is informational only and not medical advice."
@@ -438,7 +447,7 @@ components:
         meals:
           type: array
           items:
-            $ref: '#/components/schemas/Meal'
+            $ref: "#/components/schemas/Meal"
     Meal:
       type: object
       required:
@@ -587,7 +596,16 @@ components:
       properties:
         event:
           type: string
-          enum: [queued, planning, recipes, shoppingList, validating, complete, failed]
+          enum:
+            [
+              queued,
+              planning,
+              recipes,
+              shoppingList,
+              validating,
+              complete,
+              failed,
+            ]
         detail:
           type: string
         timestamp:

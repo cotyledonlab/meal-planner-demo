@@ -41,14 +41,10 @@ async function generateMealPlan(
   // Filter out recipes with disliked ingredients
   const filteredRecipes = allRecipes.filter((recipe) => {
     if (dislikeList.length === 0) return true;
-    
-    const recipeIngredients = recipe.ingredients.map((ri) =>
-      ri.ingredient.name.toLowerCase()
-    );
-    
-    return !dislikeList.some((dislike) =>
-      recipeIngredients.some((ing) => ing.includes(dislike))
-    );
+
+    const recipeIngredients = recipe.ingredients.map((ri) => ri.ingredient.name.toLowerCase());
+
+    return !dislikeList.some((dislike) => recipeIngredients.some((ing) => ing.includes(dislike)));
   });
 
   if (filteredRecipes.length === 0) {

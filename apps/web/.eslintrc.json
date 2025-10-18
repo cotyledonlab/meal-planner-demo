@@ -13,12 +13,7 @@
     "node": true,
     "es2023": true
   },
-  "ignorePatterns": [
-    "node_modules",
-    ".next",
-    "dist",
-    "coverage"
-  ],
+  "ignorePatterns": ["node_modules", ".next", "dist", "coverage"],
   "rules": {
     "@typescript-eslint/consistent-type-imports": "warn"
   }

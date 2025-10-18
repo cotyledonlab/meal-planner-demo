@@ -22,6 +22,7 @@ The following models have been added to support meal planning:
 ### 2. Seed Data
 
 The database comes pre-populated with:
+
 - **12 recipes** covering various cuisines and dietary preferences:
   - 3 vegetarian recipes
   - 2 dairy-free recipes
@@ -31,6 +32,7 @@ The database comes pre-populated with:
 - **Price baselines** for 4 Irish stores (Aldi, Lidl, Tesco, Dunnes)
 
 Run seed command:
+
 ```bash
 pnpm db:seed
 ```
@@ -40,10 +42,12 @@ pnpm db:seed
 Three main routers have been implemented:
 
 #### Preferences Router
+
 - `get`: Retrieve user preferences (or defaults)
 - `update`: Update user preferences
 
 #### Meal Plan Router
+
 - `getCurrent`: Get the user's most recent meal plan
 - `generate`: Generate a new meal plan based on preferences
   - Rule-based algorithm filters recipes by dietary restrictions
@@ -53,6 +57,7 @@ Three main routers have been implemented:
 - `delete`: Delete a meal plan
 
 #### Shopping List Router
+
 - `getForMealPlan`: Generate aggregated shopping list for a meal plan
   - Aggregates all ingredients across recipes
   - Scales quantities by servings
@@ -65,6 +70,7 @@ Three main routers have been implemented:
 ### 4. Unit Converter
 
 Utility functions for normalizing recipe measurements:
+
 - Converts various units (tsp, tbsp, cups, oz, lb) to normalized units (g, ml, pcs)
 - Aggregates ingredients in compatible units
 - Formats quantities for display
@@ -72,7 +78,9 @@ Utility functions for normalizing recipe measurements:
 ### 5. Frontend
 
 #### Meal Plan Wizard
+
 Updated wizard with all required fields:
+
 - Household size (1-6 people)
 - Meals per day (1-3)
 - Planning duration (3-7 days)
@@ -80,14 +88,18 @@ Updated wizard with all required fields:
 - Foods to avoid (comma-separated list)
 
 #### Meal Plan View
+
 Displays generated meal plan with:
+
 - Recipe cards with images, cook time, and calories
 - Day and meal type labels
 - Dietary preference badges
 - Navigation to shopping list
 
 #### Shopping List View
+
 Shows aggregated shopping list with:
+
 - Items grouped by category
 - Quantities in normalized units
 - Price comparison across stores
@@ -128,6 +140,7 @@ The algorithm follows these rules:
 ### Price Estimation
 
 Price estimates are category-based (not SKU-based):
+
 - Each ingredient belongs to a category (protein, vegetables, dairy, grains, pantry)
 - Price baselines store average price per unit for each category at each store
 - Total cost = sum of (quantity × category price per unit) for all ingredients
@@ -138,6 +151,7 @@ Price estimates are category-based (not SKU-based):
 ### Unit Normalization
 
 All quantities are normalized to:
+
 - **Weight**: grams (g)
 - **Volume**: milliliters (ml)
 - **Count**: pieces (pcs)
@@ -147,11 +161,13 @@ Conversion rules are defined in `src/lib/unitConverter.ts`.
 ## Database Migrations
 
 The meal planning models are added via migration:
+
 ```
 20251017235932_add_meal_planning_models
 ```
 
 To apply migrations:
+
 ```bash
 pnpm db:migrate  # Production
 pnpm db:push     # Development
@@ -160,11 +176,13 @@ pnpm db:push     # Development
 ## Environment Variables
 
 Required environment variables:
+
 ```
 DATABASE_URL=postgresql://postgres:password@localhost:5432/meal-planner-demo
 ```
 
 For local development, use docker-compose:
+
 ```bash
 docker compose up -d postgres
 ```
@@ -172,11 +190,13 @@ docker compose up -d postgres
 ## Testing
 
 Current test coverage:
+
 - Unit tests for existing routers pass
 - Manual testing verified wizard flow and UI
 - Integration tests for meal plan and shopping list routers should be added
 
 To run tests:
+
 ```bash
 pnpm test
 ```
@@ -184,6 +204,7 @@ pnpm test
 ## Future Enhancements
 
 Nice-to-have features not included in v1:
+
 - Swap recipe functionality with search and filters
 - Pantry management UI
 - PDF export for shopping lists
@@ -197,6 +218,7 @@ Nice-to-have features not included in v1:
 ## API Examples
 
 ### Generate a meal plan
+
 ```typescript
 const mealPlan = await api.mealPlan.generate.mutate({
   householdSize: 2,
@@ -204,21 +226,23 @@ const mealPlan = await api.mealPlan.generate.mutate({
   days: 7,
   isVegetarian: false,
   isDairyFree: true,
-  dislikes: 'mushrooms, olives'
+  dislikes: "mushrooms, olives",
 });
 ```
 
 ### Get shopping list
+
 ```typescript
 const shoppingList = await api.shoppingList.getForMealPlan.query({
-  mealPlanId: mealPlan.id
+  mealPlanId: mealPlan.id,
 });
 ```
 
 ### Export CSV
+
 ```typescript
 const csv = await api.shoppingList.exportCSV.query({
-  mealPlanId: mealPlan.id
+  mealPlanId: mealPlan.id,
 });
 // csv.csv contains the CSV content
 ```
@@ -236,6 +260,7 @@ const csv = await api.shoppingList.exportCSV.query({
 ## Support
 
 For issues or questions, refer to:
+
 - Main README: `/README.md`
 - Contributing guidelines: `/CONTRIBUTING.md`
 - Issue tracker: GitHub Issues

@@ -8,6 +8,7 @@
 **Organization**: Tasks are grouped by user story to enable independent implementation and testing of each slice.
 
 ## Format: `[ID] [P?] [Story] Description`
+
 - **[P]**: Can run in parallel (different files, no dependencies)
 - **[Story]**: Which user story this task belongs to (e.g., US1, US2, US3)
 - Include exact file paths in descriptions
@@ -132,12 +133,14 @@
 ## Dependencies & Execution Order
 
 ### Phase Dependencies
+
 - **Setup (Phase 1)** → prerequisite for Foundational.
 - **Foundational (Phase 2)** → blocks all user stories.
 - **User Story Phases (3–5)** → proceed in priority order (P1 → P2 → P3) once Foundational complete; parallel execution allowed across stories after P1 if resources permit.
 - **Polish (Phase 6)** → final phase after desired user stories.
 
 ### User Story Dependencies
+
 - **US1**: Depends on Phase 2 completion; no other story dependencies.
 - **US2**: Depends on US1 assets (plan view, aggregation) to exist.
 - **US3**: Depends on US1 data persistence and US2 adjustments for up-to-date plan state.
@@ -147,13 +150,16 @@
 ## Parallel Execution Examples
 
 ### User Story 1
+
 - Parallelizable before orchestration wiring: T014, T015, T017 can run concurrently.
 - Test tasks T011–T013 can execute in parallel test suites.
 
 ### User Story 2
+
 - T027 (UI) and T028 (swap handler) can run concurrently; coordinate with T030 for UI wiring.
 
 ### User Story 3
+
 - T035 (PDF exporter) and T036 (CSV exporter) parallelizable prior to route integration.
 
 ---
@@ -161,16 +167,19 @@
 ## Implementation Strategy
 
 ### MVP First (US1)
+
 1. Complete Phases 1–2.
 2. Deliver US1 (Phase 3) and run T011–T024.
 3. Demonstrate onboarding-to-plan flow as MVP before proceeding.
 
 ### Incremental Delivery
+
 1. Deploy after US1 (core generation).
 2. Layer US2 features (adjustments) and redeploy.
 3. Add US3 exports and finalize.
 
 ### Validation Rhythm
+
 - Ensure each phase passes lint/typecheck/tests before moving on.
 - Maintain Playwright smoke to guard regression of critical loop.
 - Use Redis cache instrumentation to confirm cost control before launch.

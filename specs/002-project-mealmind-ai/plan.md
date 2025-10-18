@@ -71,8 +71,8 @@ tests/
 
 ## Complexity Tracking
 
-*Fill ONLY if Constitution Check has violations that must be justified*
+_Fill ONLY if Constitution Check has violations that must be justified_
 
 | Violation | Why Needed | Simpler Alternative Rejected Because |
-|-----------|------------|-------------------------------------|
-| _None_ |  |  |
+| --------- | ---------- | ------------------------------------ |
+| _None_    |            |                                      |

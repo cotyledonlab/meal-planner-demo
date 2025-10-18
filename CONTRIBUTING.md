@@ -14,7 +14,7 @@ Thank you for your interest in contributing to the Meal Planner Demo project! Th
 ## Getting Started
 
 1. **Fork the repository** and clone your fork locally
-2. **Install dependencies**: 
+2. **Install dependencies**:
    ```bash
    pnpm install
    ```
@@ -23,7 +23,7 @@ Thank you for your interest in contributing to the Meal Planner Demo project! Th
    cp .env.example .env
    ```
    Edit `.env` and fill in the required values
-4. **Start the database**: 
+4. **Start the database**:
    ```bash
    ./start-database.sh
    ```
@@ -39,6 +39,7 @@ Thank you for your interest in contributing to the Meal Planner Demo project! Th
 ## Development Workflow
 
 1. Create a new branch for your feature or bugfix:
+
    ```bash
    git checkout -b feature/your-feature-name
    ```
@@ -46,6 +47,7 @@ Thank you for your interest in contributing to the Meal Planner Demo project! Th
 2. Make your changes following our [code quality standards](#code-quality-standards)
 
 3. Run checks locally before committing:
+
    ```bash
    pnpm check        # Runs lint + typecheck
    pnpm format:write # Auto-format your code
@@ -70,51 +72,61 @@ We maintain high code quality standards through automated checks and manual revi
 All pull requests must pass the following automated checks before merging:
 
 ### 1. Linting (ESLint)
+
 Checks code style and catches potential errors.
 
 **Command**: `pnpm lint`
 
 **What it checks**:
+
 - ESLint rules compliance
 - TypeScript-specific linting rules
 - Next.js best practices
 
 ### 2. Type Checking (TypeScript)
+
 Ensures type safety across the codebase.
 
 **Command**: `pnpm typecheck`
 
 **What it checks**:
+
 - TypeScript compilation without errors
 - Type correctness and inference
 - No implicit `any` types
 
 ### 3. Formatting (Prettier)
+
 Validates consistent code formatting.
 
 **Command**: `pnpm format:check`
 
 **What it checks**:
+
 - Code formatting consistency
 - Single quotes, trailing commas, semicolons
 - Line length and indentation
 
 ### 4. Build
+
 Verifies the application builds successfully.
 
 **Command**: `pnpm build`
 
 **What it checks**:
+
 - Next.js builds without errors
 - All imports resolve correctly
 - No runtime errors during build
 
 ### 5. Security Scan
+
 Scans for dependency vulnerabilities.
 
 **Command**: `pnpm audit --audit-level=moderate`
 
 **What it checks**:
+
 - Known security vulnerabilities in dependencies
 - Moderate and higher severity issues
 
@@ -125,6 +137,7 @@ Scans for dependency vulnerabilities.
 **Problem**: ESLint reports errors or warnings
 
 **Solutions**:
+
 ```bash
 # View linting errors
 pnpm lint
@@ -136,6 +149,7 @@ pnpm lint:fix
 ```
 
 Common issues:
+
 - Missing imports or unused variables
 - Incorrect TypeScript types
 - Code style violations
@@ -145,6 +159,7 @@ Common issues:
 **Problem**: TypeScript compilation fails
 
 **Solutions**:
+
 ```bash
 # Run type checker to see errors
 pnpm typecheck
@@ -161,6 +176,7 @@ pnpm typecheck
 **Problem**: Code doesn't match Prettier formatting
 
 **Solutions**:
+
 ```bash
 # Check which files have formatting issues
 pnpm format:check
@@ -176,6 +192,7 @@ pnpm format:write
 **Problem**: Next.js build fails
 
 **Solutions**:
+
 ```bash
 # Run build locally to see errors
 pnpm build
@@ -193,6 +210,7 @@ pnpm build
 **Problem**: Dependency audit finds vulnerabilities
 
 **Solutions**:
+
 ```bash
 # View all vulnerabilities
 pnpm audit

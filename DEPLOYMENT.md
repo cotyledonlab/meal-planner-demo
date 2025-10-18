@@ -220,6 +220,12 @@ Deploy both the web app and database as a single docker-compose stack:
    - Dokploy will automatically use the `docker-compose.yml` at the repository root
    - This includes postgres, redis, mailpit, and web services
    - Migrations run automatically on web container startup
+   - Host-port bindings are configurable via environment variables to avoid conflicts on shared hosts:
+     - `WEB_PORT` (default 3000)
+     - `POSTGRES_PORT` (default 5432)
+     - `REDIS_PORT` (default 6379)
+     - `MAILPIT_WEB_PORT` (default 8025)
+     - `MAILPIT_SMTP_PORT` (default 1025)
 
 4. **Deploy**
    - Click "Deploy" in Dokploy dashboard
@@ -253,7 +259,7 @@ Deploy web app and database as separate Dokploy applications:
 
 4. **Configure Port Mapping**
    - Container port: `3000`
-   - Host port: Your choice (e.g., `3000` or let Dokploy assign)
+   - Host port: Choose a port not already in use on the Dokploy host (e.g., `3008`), or rely on Dokploy's reverse proxy with domain routing. When using the provided docker-compose, set `WEB_PORT` in environment to override the default 3000.
 
 5. **Deploy**
    - Click "Deploy"
@@ -330,6 +336,26 @@ NEXTAUTH_URL=https://your-domain.com
 - Check if database service is running and healthy
 - Verify `NEXTAUTH_URL` matches your domain configuration
 
+**Port binding error: Bind for 0.0.0.0:3000 failed: port is already allocated**
+
+This indicates the Dokploy host already has a service bound to port 3000. Fix:
+
+1. In the Dokploy app environment, set `WEB_PORT` to an unused port (for example, `3008`).
+2. Redeploy the stack so the web container binds to the new host port.
+3. Ensure `NEXTAUTH_URL` is set to your public domain (e.g., `https://app.example.com`). The reverse proxy will route traffic regardless of the host port.
+
+Tip: If your Dokploy setup does not require a host port (because ingress handles routing), you can set `WEB_PORT=0` to allow Docker to choose an ephemeral port and avoid conflicts entirely.
+
+**Warning: The "AUTH_SECRET" variable is not set. Defaulting to a blank string.**
+
+Set a strong `AUTH_SECRET` in the Dokploy environment variables. Generate one with:
+
+```bash
+npx auth secret
+```
+
+Save the value in Dokploy and redeploy. In production, `AUTH_SECRET` is required and must not be empty.
+
 ### Backup and Recovery
 
 **Database Backups:**
@@ -392,13 +418,13 @@ cp -r apps/web/prisma/migrations/* infra/migrations/
 
 ## Environment-Specific Considerations
 
-### Development
+### Development Notes
 
 - Hot reload enabled with Turbopack
 - Environment validation can be skipped with `SKIP_ENV_VALIDATION=1`
 - Discord OAuth credentials are optional
 
-### Production
+### Production Notes
 
 - Set `NODE_ENV=production`
 - Generate a secure `AUTH_SECRET`

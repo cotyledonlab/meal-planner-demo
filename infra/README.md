@@ -38,6 +38,7 @@ Migrations are managed by Prisma and automatically applied on container startup:
 ### Deployment Modes
 
 #### Local Development
+
 ```bash
 # Start database only
 docker compose up -d postgres
@@ -47,12 +48,14 @@ docker compose up -d postgres
 ```
 
 #### Full Stack (Docker Compose)
+
 ```bash
 # Start all services including database
 docker compose up --build
 ```
 
 #### Production (Dokploy)
+
 - Database provisioned as managed service
 - Migrations run automatically on web app startup
 - Connection via `DATABASE_URL` environment variable
@@ -62,11 +65,13 @@ docker compose up --build
 ### Environment Variables
 
 **Development:**
+
 ```bash
 DATABASE_URL=postgresql://postgres:password@localhost:5432/meal-planner-demo
 ```
 
 **Production/Dokploy:**
+
 ```bash
 DATABASE_URL=postgresql://user:password@host:port/database
 ```
@@ -74,6 +79,7 @@ DATABASE_URL=postgresql://user:password@host:port/database
 ### Health Checks
 
 PostgreSQL service includes health checks:
+
 ```yaml
 healthcheck:
   test: ["CMD-SHELL", "pg_isready -U postgres"]
@@ -109,9 +115,11 @@ cp -r apps/web/prisma/migrations/* infra/migrations/
 ### Applying Migrations
 
 **Automatic (Docker/Dokploy):**
+
 - Happens on container startup via `migrate.sh`
 
 **Manual (Local):**
+
 ```bash
 pnpm db:migrate
 ```
@@ -137,16 +145,19 @@ Use Dokploy's built-in backup features or database-specific tools provided by yo
 ### Connection Issues
 
 **Check database is running:**
+
 ```bash
 docker compose ps postgres
 ```
 
 **Check database logs:**
+
 ```bash
 docker compose logs postgres
 ```
 
 **Test connection:**
+
 ```bash
 docker compose exec postgres psql -U postgres -d meal-planner-demo -c "SELECT version();"
 ```
@@ -154,11 +165,13 @@ docker compose exec postgres psql -U postgres -d meal-planner-demo -c "SELECT ve
 ### Migration Issues
 
 **Check migration status:**
+
 ```bash
 cd apps/web && pnpm prisma migrate status
 ```
 
 **Reset database (development only):**
+
 ```bash
 cd apps/web && pnpm prisma migrate reset
 ```
@@ -166,6 +179,7 @@ cd apps/web && pnpm prisma migrate reset
 ### Port Conflicts
 
 If port 5432 is already in use:
+
 ```bash
 # Find process using port
 lsof -i :5432

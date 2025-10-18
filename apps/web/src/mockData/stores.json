@@ -1,26 +1,26 @@
 [
   {
     "name": "Lidl",
-    "total": 42.60,
+    "total": 42.6,
     "savings": 0,
     "isCheapest": true
   },
   {
     "name": "Tesco",
-    "total": 47.80,
-    "savings": -5.20,
+    "total": 47.8,
+    "savings": -5.2,
     "isCheapest": false
   },
   {
     "name": "Dunnes",
-    "total": 45.30,
-    "savings": -2.70,
+    "total": 45.3,
+    "savings": -2.7,
     "isCheapest": false
   },
   {
     "name": "SuperValu",
-    "total": 48.50,
-    "savings": -5.90,
+    "total": 48.5,
+    "savings": -5.9,
     "isCheapest": false
   }
 ]

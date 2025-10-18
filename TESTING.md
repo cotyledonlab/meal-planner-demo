@@ -101,6 +101,7 @@ docker compose logs -f web
 ```
 
 **Expected Output:**
+
 1. PostgreSQL starts and becomes healthy
 2. Web container builds successfully
 3. Migration script runs and applies Prisma migrations
@@ -140,6 +141,7 @@ docker compose logs web | grep -i migration
 ```
 
 Expected output should include:
+
 ```
 Running database migrations...
 Waiting for database to be ready...
@@ -211,6 +213,7 @@ docker compose exec web ping -c 3 postgres
 ## CI/CD Testing
 
 The repository includes CI workflows that:
+
 1. Run linting and type checking
 2. Execute unit tests
 3. Verify build succeeds
@@ -223,17 +226,20 @@ Check `.github/workflows/` for CI configuration.
 After deployment, manually test:
 
 ### Authentication Flow
+
 1. Visit the application
 2. Sign up with a new account
 3. Sign in with existing credentials
 4. Verify session persistence
 
 ### Database Operations
+
 1. Create a post (if using the example Post model)
 2. View created posts
 3. Verify data persists across server restarts
 
 ### Migration Testing
+
 1. Create a new migration locally
 2. Deploy to staging/production
 3. Verify migration applies successfully

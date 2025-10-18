@@ -27,11 +27,11 @@
   },
   "lint-staged": {
     "*.{ts,tsx}": [
-      "prettier --write",
-      "eslint --fix"
+      "prettier --write --ignore-unknown",
+      "pnpm exec eslint --config apps/web/eslint.config.js --fix"
     ],
     "*.{js,jsx,json,md,mdx,yml,yaml}": [
-      "prettier --write"
+      "prettier --write --ignore-unknown"
     ]
   },
   "devDependencies": {

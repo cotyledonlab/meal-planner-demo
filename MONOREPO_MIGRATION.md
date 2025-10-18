@@ -7,6 +7,7 @@ This document summarizes the conversion of the meal-planner-demo from a single N
 ### Directory Structure
 
 **Before:**
+
 ```
 meal-planner-demo/
 ├── src/              # Application code
@@ -17,6 +18,7 @@ meal-planner-demo/
 ```
 
 **After:**
+
 ```
 meal-planner-demo/
 ├── apps/
@@ -34,28 +36,33 @@ meal-planner-demo/
 ## Key Accomplishments
 
 ### 1. Monorepo Structure ✅
+
 - Created workspace-based monorepo using pnpm workspaces
 - Scoped packages: `@meal-planner-demo/web`, `@meal-planner-demo/types`, `@meal-planner-demo/constants`
 - Root package.json delegates commands to appropriate workspaces
 
 ### 2. Infrastructure Setup ✅
+
 - PostgreSQL configuration in `infra/postgres/`
 - Automatic migration script that runs on container startup
 - Migration retry logic for robust database connection
 - Reference copy of migrations in `infra/migrations/` for documentation
 
 ### 3. Docker Integration ✅
+
 - Multi-stage Dockerfile optimized for monorepo
 - Workspace-aware dependency installation
 - Automatic Prisma migration on container startup
 - Health checks for database readiness
 
 ### 4. Environment Configuration ✅
+
 - Updated `.env.example` with clear instructions for different environments
 - Environment variables work at both root and app level
 - DATABASE_URL configured for local/dev/prod consistency
 
 ### 5. Documentation ✅
+
 - **README.md**: Comprehensive setup and usage guide
 - **DEPLOYMENT.md**: Detailed Dokploy deployment instructions
 - **TESTING.md**: Testing procedures for all scenarios
@@ -67,13 +74,15 @@ meal-planner-demo/
 ### Workspace Configuration
 
 `pnpm-workspace.yaml`:
+
 ```yaml
 packages:
-  - 'apps/*'
-  - 'packages/*'
+  - "apps/*"
+  - "packages/*"
 ```
 
 ### Package Naming
+
 - Web app: `@meal-planner-demo/web`
 - Shared types: `@meal-planner-demo/types`
 - Shared constants: `@meal-planner-demo/constants`
@@ -87,6 +96,7 @@ packages:
 ### Migration Automation
 
 The `infra/postgres/migrate.sh` script:
+
 1. Waits for database to be ready (retry logic)
 2. Runs `pnpm prisma migrate deploy`
 3. Starts the application
@@ -96,12 +106,14 @@ No external dependencies (netcat) required - uses pure shell for maximum portabi
 ## Validation Results
 
 ✅ **All Tests Passing**
+
 - 17 unit tests pass
 - TypeScript compilation succeeds
 - ESLint validation passes
 - Monorepo structure verified
 
 ✅ **Commands Working**
+
 ```bash
 # From root directory
 pnpm dev         # Start development server
@@ -112,6 +124,7 @@ pnpm db:migrate  # Run database migrations
 ```
 
 ✅ **Docker Compose**
+
 - Configuration validated
 - Service dependencies correct
 - Health checks configured
@@ -120,6 +133,7 @@ pnpm db:migrate  # Run database migrations
 ## Deployment Options
 
 ### 1. Local Development
+
 ```bash
 pnpm install
 docker compose up -d postgres redis mailpit
@@ -128,9 +142,11 @@ pnpm dev
 ```
 
 ### 2. Docker Compose
+
 ```bash
 docker compose up --build
 ```
+
 - Builds monorepo structure
 - Starts all services
 - Applies migrations automatically
@@ -139,11 +155,13 @@ docker compose up --build
 ### 3. Dokploy (Production)
 
 **Option A: Single Stack**
+
 - Use root docker-compose.yml
 - Deploy all services together
 - Migrations run automatically
 
 **Option B: Separate Services**
+
 - PostgreSQL as managed service
 - Web app as Docker application
 - Migrations run on app startup
@@ -165,6 +183,7 @@ The monorepo structure now supports:
 If you were working on the old structure:
 
 ### Update Your Local Environment
+
 ```bash
 # Pull latest changes
 git pull origin main
@@ -180,19 +199,25 @@ pnpm dev
 ```
 
 ### Import Paths
+
 No changes needed! All import paths remain the same because:
-- Code lives in `apps/web/src/` 
+
+- Code lives in `apps/web/src/`
 - Relative imports work identically
 - Alias `~` still points to `src/`
 
 ### Scripts
+
 Use root-level scripts that delegate to workspaces:
+
 - `pnpm dev` → runs `@meal-planner-demo/web dev`
 - `pnpm test` → runs `@meal-planner-demo/web test`
 - etc.
 
 ### Database
+
 Same workflow:
+
 ```bash
 # Make schema changes in apps/web/prisma/schema.prisma
 pnpm db:generate   # Creates migration
@@ -205,18 +230,21 @@ cp -r apps/web/prisma/migrations/* infra/migrations/
 ## Troubleshooting
 
 ### "Cannot find package"
+
 ```bash
 # Reinstall from root
 pnpm install
 ```
 
 ### "Database connection failed"
+
 ```bash
 # Ensure database is running
 docker compose up -d postgres
 ```
 
 ### "Build fails in Docker"
+
 ```bash
 # Build with no cache
 docker compose build --no-cache web
@@ -232,6 +260,7 @@ docker compose build --no-cache web
 ## Support
 
 For issues or questions:
+
 1. Check TESTING.md for testing procedures
 2. Review DEPLOYMENT.md for deployment details
 3. Run `./verify-monorepo.sh` to validate structure
