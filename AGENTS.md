@@ -80,7 +80,16 @@ pnpm db:studio        # Open Prisma Studio
 
 ### Pre-Commit Checklist
 
-Before committing any changes, ensure the following checks pass:
+**Automated Pre-Commit Hooks** are configured using Husky and lint-staged:
+
+- **Prettier**: Auto-formats staged files (TypeScript, JavaScript, JSON, Markdown, YAML)
+- **ESLint**: Auto-fixes linting issues on staged TypeScript files
+- **TypeScript**: Type checks the entire codebase
+- **Tests**: Runs all test suites
+
+The hooks run automatically on `git commit`. If any check fails, the commit is blocked.
+
+**Manual pre-commit checks** (if hooks are bypassed with `--no-verify`):
 
 1. **Type Checking**: Run `pnpm typecheck` - must complete with zero errors
 2. **Linting**: Run `SKIP_ENV_VALIDATION=1 pnpm lint` (in apps/web) - must show no errors or warnings
@@ -88,15 +97,24 @@ Before committing any changes, ensure the following checks pass:
 4. **Build**: Run `pnpm build` (optional but recommended for major changes)
 
 **Command to run all checks:**
+
 ```bash
 cd /path/to/meal-planner-demo
 pnpm typecheck && cd apps/web && SKIP_ENV_VALIDATION=1 pnpm lint && cd ../.. && pnpm test
 ```
 
+**Setting up hooks after cloning:**
+
+```bash
+pnpm install  # This automatically runs 'pnpm prepare' which initializes husky
+```
+
 If any check fails, fix the issues before committing. Common issues:
+
 - **TypeScript errors**: Check for incorrect type usage, missing imports, or wrong API methods
 - **Linting errors**: Fix code style issues, unused variables, or unsafe operations
 - **Test failures**: Update tests to match code changes or fix broken functionality
+- **Formatting issues**: Run `pnpm format:write` to auto-format all files
 
 ### Security & Performance
 
