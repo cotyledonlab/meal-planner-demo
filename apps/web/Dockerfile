@@ -69,13 +69,12 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
+RUN apk add --no-cache openssl libc6-compat
+
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-# Install pnpm for migrations
-ENV PNPM_HOME="/pnpm"
-ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable && corepack prepare pnpm@9.10.0 --activate
+## No package manager needed at runtime
 
 # Copy public assets
 COPY --from=builder /app/apps/web/public ./public
@@ -84,20 +83,13 @@ COPY --from=builder /app/apps/web/public ./public
 RUN mkdir .next
 RUN chown nextjs:nodejs .next
 
-# Automatically leverage output traces to reduce image size
+# Copy Next.js standalone output
 COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/static ./.next/static
 
-# Copy Prisma files for migrations
+# Copy Prisma files for migrations and full node_modules for CLI availability
 COPY --from=builder /app/apps/web/prisma ./prisma
-COPY --from=builder /app/node_modules/.pnpm ./node_modules/.pnpm
-COPY --from=builder /app/apps/web/node_modules/@prisma ./node_modules/@prisma
-COPY --from=builder /app/apps/web/node_modules/prisma ./node_modules/prisma
-COPY --from=builder /app/apps/web/package.json ./package.json
-
-# Copy migration script
-COPY infra/postgres/migrate.sh ./migrate.sh
-RUN chmod +x ./migrate.sh
+# Standalone output contains runtime deps already
 
 USER nextjs
 
@@ -106,5 +98,4 @@ EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-# Use migration script as entrypoint
-CMD ["sh", "-c", "./migrate.sh node server.js"]
+CMD ["node", "apps/web/server.js"]

@@ -66,24 +66,25 @@ docker compose up -d --build
 
 **What happens during deployment:**
 
-1. PostgreSQL, Redis, and Mailpit services start
-2. Web application builds using the monorepo Dockerfile (`apps/web/Dockerfile`)
-3. Build process:
-   - Installs workspace dependencies
+1. PostgreSQL, Redis, and Mailpit services start and become healthy
+2. A dedicated `migrate` service runs `pnpm prisma migrate deploy` against Postgres
+   - Built from the dependencies stage where Prisma CLI is available
+   - Exits successfully after applying pending migrations
+3. The `web` service builds using the monorepo Dockerfile (`apps/web/Dockerfile`)
+   - Installs workspace dependencies in a separate deps stage
    - Copies shared packages (types, constants)
    - Generates Prisma client
-   - Builds Next.js application
-4. On container startup:
-   - Migration script (`infra/postgres/migrate.sh`) runs automatically
-   - Prisma migrations are applied to the database
-   - Application starts and connects to PostgreSQL
+   - Builds the Next.js application (standalone output)
+4. The `web` container starts only after Postgres is healthy and `migrate` completes
+   - Next.js serves on container port 3000; mapped to host `${WEB_PORT:-3000}`
+   - A container healthcheck verifies the app responds on `/`
 
 Services will be available at:
 
-- **Application**: http://localhost:3000
+- **Application**: `http://localhost:${WEB_PORT:-3000}`
 - **PostgreSQL**: localhost:5432
 - **Redis**: localhost:6379
-- **Mailpit Web UI**: http://localhost:8025
+- **Mailpit Web UI**: `http://localhost:8025`
 
 To stop all services:
 
@@ -105,7 +106,7 @@ docker compose down -v
 pnpm install
 ```
 
-2. **Start backing services** (PostgreSQL, Redis, Mailpit):
+1. **Start backing services** (PostgreSQL, Redis, Mailpit):
 
 ```bash
 docker compose up -d postgres redis mailpit
@@ -117,7 +118,7 @@ Or use the provided script:
 ./start-database.sh
 ```
 
-3. **Set up environment variables**:
+1. **Set up environment variables**:
 
 ```bash
 cp .env.example .env
@@ -125,19 +126,19 @@ cp .env apps/web/.env
 # Edit both .env files with your configuration
 ```
 
-4. **Set up the database**:
+1. **Set up the database**:
 
 ```bash
 pnpm db:push
 ```
 
-5. **Start the development server**:
+1. **Start the development server**:
 
 ```bash
 pnpm dev
 ```
 
-The application will be available at http://localhost:3000.
+The application will be available at `http://localhost:3000`.
 
 ### Option 3: Production Build (Local)
 
@@ -149,7 +150,7 @@ The application will be available at http://localhost:3000.
 pnpm build
 ```
 
-3. **Start the production server**:
+1. **Start the production server**:
 
 ```bash
 pnpm start
@@ -157,14 +158,14 @@ pnpm start
 
 ## Docker Build Notes
 
-The repository includes a Dockerfile at the root level (`Dockerfile`) and in the web app directory (`apps/web/Dockerfile`). Both files are identical and designed to work from the repository root context, providing flexibility for different deployment scenarios:
+The repository includes a Dockerfile at the root level (`Dockerfile`) and in the web app directory (`apps/web/Dockerfile`). Both files are functionally equivalent and designed to work from the repository root context, providing flexibility for different deployment scenarios:
 
 - **Root-level Dockerfile**: Use for simplified deployments where the platform automatically looks for `Dockerfile` in the repository root
 - **apps/web/Dockerfile**: Use when explicitly configuring the Dockerfile path in deployment platforms like Dokploy
 
 The Dockerfile uses a multi-stage build process optimized for the monorepo structure:
 
-1. **Base stage**: Sets up Node.js 20 Alpine with netcat-openbsd for health checks
+1. **Base stage**: Sets up Node.js 20 Alpine
 2. **Dependencies stage**:
    - Copies workspace configuration (pnpm-workspace.yaml, root package.json)
    - Copies all workspace package.json files
@@ -175,9 +176,8 @@ The Dockerfile uses a multi-stage build process optimized for the monorepo struc
    - Builds the Next.js application
 4. **Runner stage**:
    - Creates optimized production image using Next.js standalone output
-   - Includes Prisma client and migration tools
-   - Copies migration script for automatic database setup
-   - Runs migrations on container startup
+   - Does not include Prisma CLI (migrations run in the dedicated `migrate` service)
+   - Starts Next.js via `node apps/web/server.js`
 
 The build uses Next.js standalone output for minimal image size while maintaining the ability to run database migrations.
 
@@ -185,7 +185,7 @@ The build uses Next.js standalone output for minimal image size while maintainin
 
 [Dokploy](https://dokploy.com/) is a self-hosted Platform-as-a-Service that simplifies deployment of containerized applications.
 
-### Prerequisites
+### Dokploy prerequisites
 
 - Dokploy instance set up and running
 - PostgreSQL database provisioned (can use Dokploy's managed Postgres service)
@@ -218,8 +218,8 @@ Deploy both the web app and database as a single docker-compose stack:
 
 3. **Use the existing docker-compose.yml**
    - Dokploy will automatically use the `docker-compose.yml` at the repository root
-   - This includes postgres, redis, mailpit, and web services
-   - Migrations run automatically on web container startup
+   - This includes postgres, redis, mailpit, `migrate`, and web services
+   - Migrations run automatically in the dedicated `migrate` service before web starts
    - Host-port bindings are configurable via environment variables to avoid conflicts on shared hosts:
      - `WEB_PORT` (default 3000)
      - `POSTGRES_PORT` (default 5432)
@@ -263,16 +263,15 @@ Deploy web app and database as separate Dokploy applications:
 
 5. **Deploy**
    - Click "Deploy"
-   - Migrations will run automatically on first startup
+   - The `migrate` job will apply migrations, then `web` will start
 
 ### Database Migrations on Dokploy
 
-Migrations are handled automatically via the `infra/postgres/migrate.sh` script:
+Migrations are handled automatically by the `migrate` service in docker-compose:
 
-- Script runs on container startup (before the web app starts)
-- Waits for database to be ready using health checks
-- Executes `prisma migrate deploy` to apply pending migrations
-- Only proceeds to start the app after successful migration
+- It waits for the `postgres` service to be healthy
+- Runs `pnpm prisma migrate deploy` from the web workspace
+- Exits successfully once all migrations are applied
 
 To manually run migrations (if needed):
 
