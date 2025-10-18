@@ -46,7 +46,7 @@ export function convertToNormalizedUnit(
   const rule = conversionRules[normalizedInputUnit];
   
   if (!rule) {
-    throw new Error(`Unknown unit: ${unit}. Cannot convert to normalized unit.`);
+    throw new Error(`Unknown unit: ${unit}. Valid units are: ${Object.keys(conversionRules).join(', ')}`);
   }
   
   return {
