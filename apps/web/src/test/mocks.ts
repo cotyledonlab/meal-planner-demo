@@ -18,6 +18,32 @@ export const mockPrismaClient: any = {
     update: vi.fn(),
     delete: vi.fn(),
   },
+  userPreferences: {
+    findUnique: vi.fn(),
+    upsert: vi.fn(),
+    create: vi.fn(),
+    update: vi.fn(),
+  },
+  recipe: {
+    findMany: vi.fn(),
+    findUnique: vi.fn(),
+  },
+  ingredient: {
+    findMany: vi.fn(),
+    findUnique: vi.fn(),
+  },
+  mealPlan: {
+    findFirst: vi.fn(),
+    findUnique: vi.fn(),
+    create: vi.fn(),
+    delete: vi.fn(),
+  },
+  pantryItem: {
+    findMany: vi.fn(),
+  },
+  priceBaseline: {
+    findMany: vi.fn(),
+  },
   $disconnect: vi.fn(),
   $connect: vi.fn(),
   $executeRaw: vi.fn(),
