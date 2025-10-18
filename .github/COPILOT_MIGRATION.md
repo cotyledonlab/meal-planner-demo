@@ -11,6 +11,7 @@
 ## Why the Change?
 
 To maintain a single source of truth for all AI assistant configurations, we've consolidated:
+
 - GitHub Copilot instructions
 - Cursor IDE rules
 - Other AI assistant guidelines

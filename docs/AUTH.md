@@ -18,6 +18,7 @@ The application uses **NextAuth.js v5** (Auth.js) with email/password authentica
 ## Authentication Flow
 
 ### Sign Up
+
 1. User navigates to `/auth/signup`
 2. Fills in optional name, email, and password
 3. Password is validated:
@@ -30,6 +31,7 @@ The application uses **NextAuth.js v5** (Auth.js) with email/password authentica
 6. User is automatically signed in and redirected to dashboard
 
 ### Sign In
+
 1. User navigates to `/auth/signin`
 2. Enters email and password
 3. Server verifies credentials using argon2id
@@ -37,6 +39,7 @@ The application uses **NextAuth.js v5** (Auth.js) with email/password authentica
 5. User is redirected to requested page (or dashboard)
 
 ### Protected Routes
+
 - Server-side protection using `auth()` from NextAuth
 - Unauthenticated users are redirected to `/auth/signin?callbackUrl=<requested-page>`
 - After sign-in, users are returned to their original destination
@@ -44,6 +47,7 @@ The application uses **NextAuth.js v5** (Auth.js) with email/password authentica
 ## Database Schema
 
 ### User Model
+
 ```prisma
 model User {
   id            String    @id @default(cuid())
@@ -61,6 +65,7 @@ model User {
 ```
 
 ### Password Model
+
 ```prisma
 model Password {
   userId    String   @id
@@ -73,6 +78,7 @@ model Password {
 ## Security Features
 
 ### Password Hashing
+
 - Algorithm: **argon2id** (recommended over bcrypt)
 - Parameters:
   - Memory cost: 19456 KiB
@@ -81,6 +87,7 @@ model Password {
   - Parallelism: 1
 
 ### Session Management
+
 - Strategy: JWT (JSON Web Tokens)
 - Tokens are HTTP-only cookies
 - Automatic token refresh
@@ -89,9 +96,11 @@ model Password {
 ## API Routes
 
 ### POST `/api/auth/signup`
+
 Creates a new user account.
 
 **Request Body:**
+
 ```json
 {
   "email": "user@example.com",
@@ -101,6 +110,7 @@ Creates a new user account.
 ```
 
 **Response (Success):**
+
 ```json
 {
   "success": true,
@@ -113,6 +123,7 @@ Creates a new user account.
 ```
 
 **Response (Error):**
+
 ```json
 {
   "error": "User already exists"
@@ -120,12 +131,13 @@ Creates a new user account.
 ```
 
 ### POST `/api/auth/signin`
+
 Handled by NextAuth.js (via Credentials provider)
 
 ## Pages
 
 - `/auth/signin` - Sign in page
-- `/auth/signup` - Sign up page  
+- `/auth/signup` - Sign up page
 - `/dashboard` - Protected example page
 
 ## Environment Variables
@@ -141,6 +153,7 @@ DATABASE_URL="postgresql://user:pass@host:5432/dbname"
 ```
 
 Generate AUTH_SECRET:
+
 ```bash
 openssl rand -base64 32
 ```
@@ -148,6 +161,7 @@ openssl rand -base64 32
 ## Local Development
 
 ### Using Docker Compose (Recommended)
+
 ```bash
 # Start PostgreSQL
 docker compose up postgres -d
@@ -160,7 +174,9 @@ pnpm dev
 ```
 
 ### Using SQLite (Alternative)
+
 1. Update `prisma/schema.prisma`:
+
    ```prisma
    datasource db {
      provider = "sqlite"
@@ -169,6 +185,7 @@ pnpm dev
    ```
 
 2. Update `.env`:
+
    ```
    DATABASE_URL="file:./dev.db"
    ```
@@ -193,6 +210,7 @@ No code changes needed - the same code works with both local and external Postgr
 ## Testing
 
 ### Manual Testing
+
 1. Navigate to `http://localhost:3000/auth/signup`
 2. Create an account with:
    - Email: `test@example.com`
@@ -204,6 +222,7 @@ No code changes needed - the same code works with both local and external Postgr
 7. Verify access to dashboard
 
 ### Database Verification
+
 ```bash
 # Open Prisma Studio
 pnpm db:studio
@@ -214,6 +233,7 @@ pnpm db:studio
 ## Future Enhancements
 
 Possible additions (not currently implemented):
+
 - Email verification
 - Password reset flow
 - Magic link authentication
@@ -225,16 +245,19 @@ Possible additions (not currently implemented):
 ## Troubleshooting
 
 ### "Invalid email or password" error
+
 - Verify email is correct
 - Ensure password meets requirements
 - Check database for user existence
 
 ### Database connection errors
+
 - Verify DATABASE_URL is correct
 - Ensure PostgreSQL is running (`docker compose ps`)
 - Check migrations are applied (`pnpm db:generate`)
 
 ### Session not persisting
+
 - Clear browser cookies
 - Verify AUTH_SECRET is set
 - Check browser console for errors

@@ -94,9 +94,7 @@ export default function MealPlanWizard({ onComplete }: MealPlanWizardProps) {
 
           {/* Diet preferences */}
           <div className="space-y-3">
-            <label className="block text-sm font-semibold text-gray-900">
-              Dietary preferences
-            </label>
+            <label className="block text-sm font-semibold text-gray-900">Dietary preferences</label>
             <div className="flex items-center gap-3">
               <input
                 type="checkbox"

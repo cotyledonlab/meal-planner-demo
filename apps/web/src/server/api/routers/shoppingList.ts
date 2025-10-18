@@ -88,7 +88,7 @@ export const shoppingListRouter = createTRPCRouter({
       const ingredients = await ctx.db.ingredient.findMany({
         where: { id: { in: ingredientIds } },
       });
-      const ingredientMap = new Map(ingredients.map(ingredient => [ingredient.id, ingredient]));
+      const ingredientMap = new Map(ingredients.map((ingredient) => [ingredient.id, ingredient]));
 
       for (const [ingredientId, aggData] of aggregated.entries()) {
         const ingredient = ingredientMap.get(ingredientId);
@@ -222,7 +222,7 @@ export const shoppingListRouter = createTRPCRouter({
       const ingredients = await ctx.db.ingredient.findMany({
         where: { id: { in: ingredientIds } },
       });
-      const ingredientMap = new Map(ingredients.map(ing => [ing.id, ing]));
+      const ingredientMap = new Map(ingredients.map((ing) => [ing.id, ing]));
 
       for (const [ingredientId, aggData] of aggregated.entries()) {
         const ingredient = ingredientMap.get(ingredientId);

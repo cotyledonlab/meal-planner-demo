@@ -1,9 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import {
-  convertToNormalizedUnit,
-  aggregateIngredients,
-  formatQuantity,
-} from './unitConverter';
+import { convertToNormalizedUnit, aggregateIngredients, formatQuantity } from './unitConverter';
 
 describe('unitConverter', () => {
   describe('convertToNormalizedUnit', () => {
@@ -78,9 +74,7 @@ describe('unitConverter', () => {
     });
 
     it('should throw error for unknown units', () => {
-      expect(() => convertToNormalizedUnit(100, 'unknown')).toThrow(
-        'Unknown unit: unknown'
-      );
+      expect(() => convertToNormalizedUnit(100, 'unknown')).toThrow('Unknown unit: unknown');
     });
   });
 

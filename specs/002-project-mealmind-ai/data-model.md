@@ -1,6 +1,7 @@
 # Data Model — Weekly Plan Generator v1
 
 ## Household
+
 - **Purpose**: Represents an invited or guest household’s profile and preferences.
 - **Key Fields**:
   - `id` (UUID) — primary key.
@@ -25,6 +26,7 @@
   - Macro emphasis optional; default `balanced`.
 
 ## Plan
+
 - **Purpose**: Stores the active generated plan for a household.
 - **Key Fields**:
   - `id` (UUID) — primary key.
@@ -45,6 +47,7 @@
   - `status` transitions: default `active`; previous active plans moved to `superseded` during regeneration.
 
 ## PlanDay
+
 - **Purpose**: Captures per-day scheduling metadata.
 - **Key Fields**:
   - `id` (UUID).
@@ -55,6 +58,7 @@
   - Dates must form a contiguous range from plan `startDate`.
 
 ## Meal
+
 - **Purpose**: Represents a scheduled meal slot within a day.
 - **Key Fields**:
   - `id` (UUID).
@@ -68,6 +72,7 @@
   - Regenerated meals inherit household constraints; tracked via `source`.
 
 ## Recipe
+
 - **Purpose**: Detailed recipe output generated from AI.
 - **Key Fields**:
   - `id` (UUID).
@@ -86,6 +91,7 @@
   - `estimatedTimeMinutes` ≤ household `maxCookTimeMinutes`.
 
 ## ShoppingItem
+
 - **Purpose**: Aggregated shopping line items derived from recipe ingredients.
 - **Key Fields**:
   - `id` (UUID).
@@ -99,6 +105,7 @@
   - Quantity precision capped at two decimals after normalization.
 
 ## UserSession
+
 - **Purpose**: Tracks whether the plan belongs to an authenticated invitee or guest.
 - **Key Fields**:
   - `id` (UUID).
