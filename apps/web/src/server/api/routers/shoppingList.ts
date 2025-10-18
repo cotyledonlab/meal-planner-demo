@@ -217,13 +217,16 @@ export const shoppingListRouter = createTRPCRouter({
       // Build CSV content
       let csv = 'Category,Ingredient,Quantity,Unit\n';
 
+      // Batch fetch all needed ingredients
+      const ingredientIds = Array.from(aggregated.keys());
+      const ingredients = await ctx.db.ingredient.findMany({
+        where: { id: { in: ingredientIds } },
+      });
+      const ingredientMap = new Map(ingredients.map(ing => [ing.id, ing]));
+
       for (const [ingredientId, aggData] of aggregated.entries()) {
-        const ingredient = await ctx.db.ingredient.findUnique({
-          where: { id: ingredientId },
-        });
-
+        const ingredient = ingredientMap.get(ingredientId);
         if (!ingredient) continue;
-
         csv += `${ingredient.category},${ingredient.name},${aggData.quantity},${aggData.unit}\n`;
       }
 
