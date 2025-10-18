@@ -1,4 +1,6 @@
 // Pricing tiers comparison section
+import Link from 'next/link';
+
 export default function Pricing() {
   const tiers = [
     {
@@ -12,6 +14,7 @@ export default function Pricing() {
         'Email support',
       ],
       cta: 'Try the Free Tier',
+      href: '/auth/signup?plan=free',
       highlighted: false,
     },
     {
@@ -27,7 +30,8 @@ export default function Pricing() {
         'Priority support',
         'Export and share plans',
       ],
-      cta: 'See Premium Features',
+      cta: 'Get Premium',
+      href: '/auth/signup?plan=premium',
       highlighted: true,
     },
   ];
@@ -75,8 +79,8 @@ export default function Pricing() {
                   </li>
                 ))}
               </ul>
-              <a
-                href="#"
+              <Link
+                href={tier.href}
                 className={`mt-8 block w-full rounded-full py-3 text-center text-base font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${
                   tier.highlighted
                     ? 'bg-emerald-600 text-white hover:bg-emerald-700 focus-visible:outline-emerald-600'
@@ -84,7 +88,7 @@ export default function Pricing() {
                 }`}
               >
                 {tier.cta}
-              </a>
+              </Link>
             </div>
           ))}
         </div>

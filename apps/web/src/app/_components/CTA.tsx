@@ -1,4 +1,6 @@
 // Final call-to-action and footer section
+import Link from 'next/link';
+
 export default function CTA() {
   return (
     <section className="bg-white">
@@ -12,12 +14,12 @@ export default function CTA() {
             Join hundreds of Irish families who are already planning smarter and saving more.
           </p>
           <div className="mt-8">
-            <a
-              href="/planner"
+            <Link
+              href="/auth/signup"
               className="inline-block rounded-full bg-emerald-600 px-8 py-3 text-base font-semibold text-white shadow-sm transition hover:bg-emerald-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
             >
-              Try the Planner
-            </a>
+              Join Now
+            </Link>
           </div>
           <p className="mt-6 text-sm text-gray-600">Built for families in Ireland 🇮🇪</p>
         </div>
