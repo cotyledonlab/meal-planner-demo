@@ -1,9 +1,25 @@
 services:
+  migrate:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      target: deps
+    environment:
+      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD:-password}@postgres:5432/meal-planner-demo
+      - SKIP_ENV_VALIDATION=1
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: sh -lc "cd apps/web && pnpm prisma migrate deploy"
+    networks:
+      - app-network
+    restart: "no"
+
   postgres:
     image: postgres:15-alpine
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
       POSTGRES_DB: meal-planner-demo
     ports:
       # Use a configurable host port to avoid conflicts on shared hosts (Dokploy)
@@ -47,15 +63,29 @@ services:
       # or set to 0 to allow Docker to choose a random ephemeral port.
       - "${WEB_PORT:-3000}:3000"
     environment:
-      - DATABASE_URL=postgresql://postgres:password@postgres:5432/meal-planner-demo
+      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD:-password}@postgres:5432/meal-planner-demo
       - NODE_ENV=production
       # Default to http://localhost:3000 for local runs; override in Dokploy with your domain
-      - NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:3000}
+      - NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:${WEB_PORT:-3000}}
       - AUTH_SECRET=${AUTH_SECRET}
       - SKIP_ENV_VALIDATION=1
     depends_on:
       postgres:
         condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    healthcheck:
+      # Use Node to perform a simple HTTP GET to the root. Succeeds on 200 OK.
+      test:
+        [
+          "CMD-SHELL",
+          'node -e "require(''http'').get(''http://localhost:3000'', r => process.exit(r.statusCode===200?0:1)).on(''error'', () => process.exit(1))"',
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
     networks:
       - app-network
 
