@@ -47,12 +47,25 @@ export default function PlannerPage() {
     setShowPremiumModal(false);
   };
 
-  const handleExportCSV = () => {
+  const handleExportCSV = async () => {
     if (!mealPlanId) return;
-    
-    // Trigger CSV download
-    const url = `/api/trpc/shoppingList.exportCSV?input=${encodeURIComponent(JSON.stringify({ mealPlanId }))}`;
-    window.open(url, '_blank');
+
+    // Use tRPC client to fetch CSV data and trigger download
+    try {
+      const csvData = await api.shoppingList.exportCSV.query({ mealPlanId });
+      const blob = new Blob([csvData], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'shopping-list.csv';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      // Optionally handle error (e.g., show a toast)
+      console.error('Failed to export CSV', err);
+    }
   };
 
   return (
