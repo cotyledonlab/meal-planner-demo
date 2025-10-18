@@ -148,7 +148,14 @@ export const mealPlanRouter = createTRPCRouter({
             dislikes: input.dislikes ?? '',
           },
         });
-      } else if (Object.keys(input).length > 0) {
+      } else if (
+        input.householdSize !== undefined ||
+        input.mealsPerDay !== undefined ||
+        input.days !== undefined ||
+        input.isVegetarian !== undefined ||
+        input.isDairyFree !== undefined ||
+        input.dislikes !== undefined
+      ) {
         // Update preferences if input provided
         preferences = await ctx.db.userPreferences.update({
           where: { userId: ctx.session.user.id },
