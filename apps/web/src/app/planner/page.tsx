@@ -14,6 +14,8 @@ export default function PlannerPage() {
   const [preferences, setPreferences] = useState<MealPreferences | null>(null);
   const [showPremiumModal, setShowPremiumModal] = useState(false);
 
+  const utils = api.useUtils();
+
   const generateMealPlan = api.mealPlan.generate.useMutation({
     onSuccess: (data) => {
       setMealPlanId(data.id);
@@ -50,10 +52,10 @@ export default function PlannerPage() {
   const handleExportCSV = async () => {
     if (!mealPlanId) return;
 
-    // Use tRPC client to fetch CSV data and trigger download
+    // Use tRPC mutation to fetch CSV data and trigger download
     try {
-      const csvData = await api.shoppingList.exportCSV.query({ mealPlanId });
-      const blob = new Blob([csvData], { type: 'text/csv' });
+      const result = await utils.shoppingList.exportCSV.fetch({ mealPlanId });
+      const blob = new Blob([result.csv], { type: 'text/csv' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;

@@ -149,7 +149,7 @@ describe('unitConverter', () => {
       ];
 
       expect(() => aggregateIngredients(ingredients)).toThrow(
-        'Cannot aggregate ingredients with different unit types'
+        'Cannot aggregate ingredient ing1 with different unit types: g vs ml'
       );
     });
 
