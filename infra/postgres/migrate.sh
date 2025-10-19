@@ -41,12 +41,12 @@ fi
 run_prisma() {
   # Prefer pnpm exec if available
   if command -v pnpm >/dev/null 2>&1; then
-    pnpm exec prisma --schema "$PRISMA_SCHEMA_PATH" "$@"
+    pnpm exec prisma "$@" --schema="$PRISMA_SCHEMA_PATH"
     return $?
   fi
   # Fallback to node executing the prisma CLI directly
   if [ -f ./node_modules/prisma/build/index.js ]; then
-    node ./node_modules/prisma/build/index.js --schema "$PRISMA_SCHEMA_PATH" "$@"
+    node ./node_modules/prisma/build/index.js "$@" --schema="$PRISMA_SCHEMA_PATH"
     return $?
   fi
   echo "ERROR: Prisma CLI not found. Ensure prisma is installed in production image." >&2
@@ -59,12 +59,23 @@ RETRY_DELAY=${RETRY_DELAY:-2}
 retries=0
 
 echo "Waiting for database to be ready (DATABASE_URL=${DATABASE_URL:-unset})..."
+db_check_logged=0
+
+db_ready_check() {
+  printf 'SELECT 1;' | run_prisma db execute --stdin
+}
+
 while [ $retries -lt $MAX_RETRIES ]; do
-  if printf 'SELECT 1;' | run_prisma db execute --stdin >/dev/null 2>&1; then
+  if db_ready_check >/dev/null 2>&1; then
     echo "Database is ready!"
     break
   fi
   retries=$((retries + 1))
+  if [ $db_check_logged -eq 0 ]; then
+    echo "Database readiness check failed; Prisma output:" >&2
+    db_ready_check 2>&1 | sed 's/^/  /' >&2
+    db_check_logged=1
+  fi
   echo "Database not ready yet (attempt $retries/$MAX_RETRIES), waiting ${RETRY_DELAY}s..."
   sleep $RETRY_DELAY
 done
