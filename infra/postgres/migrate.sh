@@ -5,16 +5,48 @@ set -e
 
 echo "Running database migrations..."
 
+# Locate Prisma project directory. Default to apps/web when present.
+find_prisma_project_dir() {
+  if [ -n "${PRISMA_PROJECT_DIR:-}" ]; then
+    echo "$PRISMA_PROJECT_DIR"
+    return 0
+  fi
+
+  if [ -d "apps/web/prisma" ]; then
+    echo "apps/web"
+    return 0
+  fi
+
+  if [ -d "prisma" ]; then
+    echo "."
+    return 0
+  fi
+
+  echo "ERROR: Unable to locate Prisma project. Set PRISMA_PROJECT_DIR." >&2
+  return 1
+}
+
+PRISMA_PROJECT_PATH=$(find_prisma_project_dir) || exit 1
+cd "$PRISMA_PROJECT_PATH"
+
+PRISMA_SCHEMA_PATH=${PRISMA_SCHEMA_PATH:-prisma/schema.prisma}
+PRISMA_MIGRATIONS_DIR=${PRISMA_MIGRATIONS_DIR:-$(dirname "$PRISMA_SCHEMA_PATH")/migrations}
+
+if [ ! -f "$PRISMA_SCHEMA_PATH" ]; then
+  echo "ERROR: Prisma schema not found at $PRISMA_SCHEMA_PATH" >&2
+  exit 1
+fi
+
 # Helper: run prisma CLI regardless of local .bin symlinks
 run_prisma() {
   # Prefer pnpm exec if available
   if command -v pnpm >/dev/null 2>&1; then
-    pnpm exec prisma "$@"
+    pnpm exec prisma --schema "$PRISMA_SCHEMA_PATH" "$@"
     return $?
   fi
   # Fallback to node executing the prisma CLI directly
   if [ -f ./node_modules/prisma/build/index.js ]; then
-    node ./node_modules/prisma/build/index.js "$@"
+    node ./node_modules/prisma/build/index.js --schema "$PRISMA_SCHEMA_PATH" "$@"
     return $?
   fi
   echo "ERROR: Prisma CLI not found. Ensure prisma is installed in production image." >&2
@@ -48,7 +80,12 @@ echo "Running Prisma migrations..."
 baseline_existing_schema() {
   echo "Existing schema detected with no Prisma migration history; marking migrations as applied..."
 
-  for migration_path in prisma/migrations/*; do
+  if [ ! -d "$PRISMA_MIGRATIONS_DIR" ]; then
+    echo "No migration directory found at $PRISMA_MIGRATIONS_DIR; skipping baseline." >&2
+    return 0
+  fi
+
+  for migration_path in "$PRISMA_MIGRATIONS_DIR"/*; do
     [ -d "$migration_path" ] || continue
 
     migration_name=$(basename "$migration_path")
@@ -87,5 +124,7 @@ fi
 
 echo "Migrations completed successfully!"
 
-# Start the application
-exec "$@"
+# Start the application if a command was provided
+if [ "$#" -gt 0 ]; then
+  exec "$@"
+fi

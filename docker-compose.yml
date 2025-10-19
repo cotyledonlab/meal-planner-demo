@@ -7,10 +7,11 @@ services:
     environment:
       - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD:-password}@postgres:5432/meal-planner-demo
       - SKIP_ENV_VALIDATION=1
+      - PRISMA_PROJECT_DIR=apps/web
     depends_on:
       postgres:
         condition: service_healthy
-    command: sh -lc "cd apps/web && pnpm prisma migrate deploy"
+    command: ["/app/infra/postgres/migrate.sh"]
     networks:
       - app-network
     restart: "no"

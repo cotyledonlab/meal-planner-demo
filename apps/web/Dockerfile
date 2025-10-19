@@ -26,6 +26,10 @@ COPY packages/constants/package.json ./packages/constants/
 # Copy prisma schema (needed for postinstall prisma generate)
 COPY apps/web/prisma ./apps/web/prisma
 
+# Copy migration helper script for runtime containers
+COPY infra/postgres/migrate.sh ./infra/postgres/migrate.sh
+RUN chmod +x ./infra/postgres/migrate.sh
+
 # Install dependencies
 RUN pnpm install --frozen-lockfile
 
