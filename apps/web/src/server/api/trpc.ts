@@ -128,3 +128,29 @@ export const protectedProcedure = t.procedure.use(timingMiddleware).use(({ ctx, 
     },
   });
 });
+
+/**
+ * Premium (authenticated + premium role) procedure
+ *
+ * If you want a query or mutation to ONLY be accessible to premium users, use this. It verifies
+ * the session is valid and the user has premium access.
+ *
+ * @see https://trpc.io/docs/procedures
+ */
+export const premiumProcedure = t.procedure.use(timingMiddleware).use(({ ctx, next }) => {
+  if (!ctx.session?.user) {
+    throw new TRPCError({ code: 'UNAUTHORIZED' });
+  }
+  if (ctx.session.user.role !== 'premium') {
+    throw new TRPCError({
+      code: 'FORBIDDEN',
+      message: 'This feature requires a premium subscription',
+    });
+  }
+  return next({
+    ctx: {
+      // infers the `session` as non-nullable with premium user
+      session: { ...ctx.session, user: ctx.session.user },
+    },
+  });
+});

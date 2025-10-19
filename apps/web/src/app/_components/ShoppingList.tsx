@@ -1,6 +1,8 @@
 'use client';
 
+import { useSession } from 'next-auth/react';
 import { useState } from 'react';
+import { isPremiumUser } from '~/lib/auth';
 
 interface ShoppingListItem {
   name: string;
@@ -17,6 +19,9 @@ interface ShoppingListProps {
 
 export default function ShoppingList({ items, onComparePrices }: ShoppingListProps) {
   const [checkedItems, setCheckedItems] = useState<Set<string>>(new Set());
+  const { data: session, status } = useSession();
+  const isPremium = isPremiumUser(session?.user);
+  const isLoading = status === 'loading';
 
   if (!items || items.length === 0) {
     return (
@@ -90,12 +95,15 @@ export default function ShoppingList({ items, onComparePrices }: ShoppingListPro
         <div className="text-center">
           <button
             onClick={onComparePrices}
-            className="rounded-full bg-emerald-600 px-8 py-3 text-base font-semibold text-white shadow-sm transition hover:bg-emerald-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
+            disabled={isLoading}
+            className="rounded-full bg-emerald-600 px-8 py-3 text-base font-semibold text-white shadow-sm transition hover:bg-emerald-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 disabled:cursor-not-allowed disabled:bg-emerald-300"
           >
-            Compare Prices (Premium Preview)
+            {isPremium ? 'Compare Prices' : 'Compare Prices (Premium Preview)'}
           </button>
           <p className="mt-3 text-sm text-gray-500">
-            See how much you could save at different stores
+            {isPremium
+              ? 'See real-time price comparisons across stores'
+              : 'See how much you could save at different stores'}
           </p>
         </div>
       )}

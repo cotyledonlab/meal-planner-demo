@@ -10,25 +10,28 @@ The application uses **NextAuth.js v5** (Auth.js) with email/password authentica
 
 - ✅ Email + password sign-up and login
 - ✅ Secure password hashing with argon2id
-- ✅ JWT session management
+- ✅ JWT session management with role-based access control
 - ✅ Form validation (client and server-side)
 - ✅ Protected routes with automatic redirect
 - ✅ Session persistence
+- ✅ Premium tier support with role-based authorization
 
 ## Authentication Flow
 
 ### Sign Up
 
 1. User navigates to `/auth/signup`
-2. Fills in optional name, email, and password
+2. Fills in **required name**, email, and password
 3. Password is validated:
    - Minimum 8 characters
    - Maximum 128 characters
    - At least one uppercase letter
    - At least one number
-4. Server hashes password with argon2id
-5. User account is created in database
-6. User is automatically signed in and redirected to dashboard
+4. Name is validated:
+   - Required (non-empty after trimming)
+5. Server hashes password with argon2id
+6. User account is created in database with role "basic" (default)
+7. User is automatically signed in and redirected to dashboard
 
 ### Sign In
 
@@ -44,6 +47,76 @@ The application uses **NextAuth.js v5** (Auth.js) with email/password authentica
 - Unauthenticated users are redirected to `/auth/signin?callbackUrl=<requested-page>`
 - After sign-in, users are returned to their original destination
 
+### Premium Access Control
+
+The application supports two user roles:
+
+- **basic** (default): Access to core meal planning features
+- **premium**: Access to advanced features like price comparisons
+
+#### Checking Premium Status
+
+**In Client Components:**
+
+```tsx
+import { useSession } from "next-auth/react";
+import { isPremiumUser } from "~/lib/auth";
+
+function MyComponent() {
+  const { data: session } = useSession();
+  const isPremium = isPremiumUser(session?.user);
+
+  return isPremium ? <PremiumFeature /> : <UpgradePrompt />;
+}
+```
+
+**In Server Components:**
+
+```tsx
+import { auth } from "~/server/auth";
+import { isPremiumUser } from "~/lib/auth";
+
+async function MyPage() {
+  const session = await auth();
+  const isPremium = isPremiumUser(session?.user);
+
+  return isPremium ? <PremiumFeature /> : <UpgradePrompt />;
+}
+```
+
+**In tRPC Procedures:**
+
+```typescript
+import { premiumProcedure } from "~/server/api/trpc";
+
+// This procedure automatically enforces premium access
+export const myRouter = createTRPCRouter({
+  premiumFeature: premiumProcedure
+    .input(
+      z.object({
+        /* ... */
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      // Only premium users can reach this code
+      // ctx.session.user.role is guaranteed to be 'premium'
+    }),
+});
+```
+
+#### Upgrading Users to Premium
+
+To upgrade a user to premium, update their role in the database:
+
+```typescript
+await db.user.update({
+  where: { id: userId },
+  data: { role: "premium" },
+});
+```
+
+The user will need to sign out and sign in again for the session to reflect the new role.
+
 ## Database Schema
 
 ### User Model
@@ -55,6 +128,7 @@ model User {
   email         String?   @unique
   emailVerified DateTime?
   image         String?
+  role          String    @default("basic") // "basic" | "premium"
   accounts      Account[]
   sessions      Session[]
   posts         Post[]
@@ -105,9 +179,11 @@ Creates a new user account.
 {
   "email": "user@example.com",
   "password": "SecurePass123",
-  "name": "Optional Name"
+  "name": "John Doe"
 }
 ```
+
+**Note:** The `name` field is **required** and must be non-empty after trimming whitespace.
 
 **Response (Success):**
 

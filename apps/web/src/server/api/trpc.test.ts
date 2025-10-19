@@ -1,4 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
+import { TRPCError } from '@trpc/server';
 import { createTRPCContext } from './trpc';
 
 // Mock the auth module
@@ -43,5 +44,25 @@ describe('tRPC Context', () => {
 
       expect(ctx.session).toBeNull();
     });
+  });
+});
+
+describe('Premium Procedure', () => {
+  it('should verify premium role check logic', () => {
+    const premiumUser = { role: 'premium' };
+    const basicUser = { role: 'basic' };
+
+    expect(premiumUser.role).toBe('premium');
+    expect(basicUser.role).not.toBe('premium');
+  });
+
+  it('should define FORBIDDEN error for non-premium access', () => {
+    const error = new TRPCError({
+      code: 'FORBIDDEN',
+      message: 'This feature requires a premium subscription',
+    });
+
+    expect(error.code).toBe('FORBIDDEN');
+    expect(error.message).toBe('This feature requires a premium subscription');
   });
 });

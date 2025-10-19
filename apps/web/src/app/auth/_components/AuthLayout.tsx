@@ -11,7 +11,7 @@ interface AuthLayoutProps {
 
 export default function AuthLayout({ title, subtitle, children, footerSlot }: AuthLayoutProps) {
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-full">
       {/* Left Panel - Brand and Value Props (hidden on mobile) */}
       <div className="relative hidden w-0 flex-1 bg-gradient-to-br from-emerald-50 via-white to-emerald-50/30 md:block">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,_rgba(16,185,129,0.08)_0%,_transparent_50%)]" />
@@ -55,7 +55,7 @@ export default function AuthLayout({ title, subtitle, children, footerSlot }: Au
       </div>
 
       {/* Right Panel - Form */}
-      <div className="flex w-full flex-1 flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
+      <div className="flex w-full flex-1 flex-col justify-center overflow-y-auto px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
         <div className="mx-auto w-full max-w-sm lg:w-96">
           {/* Mobile logo */}
           <div className="mb-8 flex items-center justify-center gap-2 md:hidden">

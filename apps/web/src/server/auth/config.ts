@@ -80,15 +80,9 @@ declare module 'next-auth' {
   interface Session extends DefaultSession {
     user: {
       id: string;
-      // ...other properties
-      // role: UserRole;
+      role?: string;
     } & DefaultSession['user'];
   }
-
-  // interface User {
-  //   // ...other properties
-  //   // role: UserRole;
-  // }
 }
 
 /**
@@ -161,9 +155,21 @@ export const authConfig = {
     signIn: '/auth/signin',
   },
   callbacks: {
-    jwt: ({ token, user }) => {
-      if (user) {
+    jwt: async ({ token, user }) => {
+      // On first sign-in, ensure we attach the user id
+      if (user?.id) {
         token.id = user.id;
+      }
+      // Populate role if missing or on initial sign in
+      if (!('role' in token) || !token.role) {
+        // Only query when we have a string id
+        if (typeof token.id === 'string') {
+          const dbUser = await db.user.findUnique({
+            where: { id: token.id },
+            select: { role: true },
+          });
+          token.role = dbUser?.role ?? 'basic';
+        }
       }
       return token;
     },
@@ -171,7 +177,8 @@ export const authConfig = {
       ...session,
       user: {
         ...session.user,
-        id: token.id as string,
+        id: typeof token.id === 'string' ? token.id : session.user.id,
+        role: typeof token.role === 'string' ? token.role : undefined,
       },
     }),
   },
