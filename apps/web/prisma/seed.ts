@@ -2,6 +2,7 @@ import { PrismaClient } from '@prisma/client';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import bcrypt from 'bcryptjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -32,13 +33,54 @@ async function main() {
   if (process.env.NODE_ENV !== 'production') {
     console.log('🧹 Cleaning existing data...');
     await prisma.priceBaseline.deleteMany();
+    await prisma.shoppingListItem.deleteMany();
+    await prisma.shoppingList.deleteMany();
     await prisma.mealPlanItem.deleteMany();
     await prisma.mealPlan.deleteMany();
     await prisma.pantryItem.deleteMany();
     await prisma.recipeIngredient.deleteMany();
     await prisma.recipe.deleteMany();
     await prisma.ingredient.deleteMany();
+    await prisma.password.deleteMany();
+    await prisma.post.deleteMany();
+    await prisma.session.deleteMany();
+    await prisma.account.deleteMany();
+    await prisma.user.deleteMany();
   }
+
+  // Create test users
+  console.log('👥 Creating test users...');
+  const passwordHash = await bcrypt.hash('P@ssw0rd!', 10);
+
+  const premiumUser = await prisma.user.create({
+    data: {
+      email: 'premium@example.com',
+      name: 'Premium User',
+      role: 'premium',
+      password: {
+        create: {
+          hash: passwordHash,
+        },
+      },
+    },
+  });
+
+  const basicUser = await prisma.user.create({
+    data: {
+      email: 'basic@example.com',
+      name: 'Basic User',
+      role: 'basic',
+      password: {
+        create: {
+          hash: passwordHash,
+        },
+      },
+    },
+  });
+
+  console.log(`✅ Created premium user: ${premiumUser.email}`);
+  console.log(`✅ Created basic user: ${basicUser.email}`);
+  console.log(`🔑 Password for both: P@ssw0rd!`);
 
   // Create ingredients
   console.log('🥕 Creating ingredients...');

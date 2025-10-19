@@ -1,0 +1,162 @@
+import { type PrismaClient } from '@prisma/client';
+import { convertToNormalizedUnit } from '../../lib/unitConverter';
+
+interface ShoppingListItemData {
+  name: string;
+  quantity: number;
+  unit: string;
+  ingredientId?: string;
+}
+
+interface ShoppingListOutput {
+  id: string;
+  planId: string;
+  items: ShoppingListItemData[];
+  createdAt: Date;
+}
+
+export class ShoppingListService {
+  constructor(private prisma: PrismaClient) {}
+
+  async buildAndStoreForPlan(planId: string): Promise<string> {
+    // Check if shopping list already exists for this plan
+    const existing = await this.prisma.shoppingList.findUnique({
+      where: { planId },
+    });
+
+    if (existing) {
+      return existing.id;
+    }
+
+    // Fetch the plan with all items and their recipes
+    const plan = await this.prisma.mealPlan.findUnique({
+      where: { id: planId },
+      include: {
+        items: {
+          include: {
+            recipe: {
+              include: {
+                ingredients: {
+                  include: {
+                    ingredient: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!plan) {
+      throw new Error('Meal plan not found');
+    }
+
+    // Aggregate ingredients
+    const ingredientMap = new Map<
+      string,
+      { name: string; quantity: number; unit: string; ingredientId: string }
+    >();
+
+    for (const item of plan.items) {
+      const { recipe, servings } = item;
+      const servingsMultiplier = servings / recipe.servingsDefault;
+
+      for (const recipeIngredient of recipe.ingredients) {
+        const { ingredient, quantity, unit } = recipeIngredient;
+        const adjustedQuantity = quantity * servingsMultiplier;
+
+        const key = `${ingredient.id}-${unit}`;
+        const existing = ingredientMap.get(key);
+
+        if (existing) {
+          // Same ingredient and unit, just add quantities
+          existing.quantity += adjustedQuantity;
+        } else {
+          // Try to normalize and combine with other units if possible
+          let combined = false;
+          for (const [, existingItem] of ingredientMap.entries()) {
+            if (existingItem.ingredientId === ingredient.id) {
+              // Same ingredient, different unit - try to normalize both and combine
+              try {
+                const normalizedNew = convertToNormalizedUnit(adjustedQuantity, unit);
+                const normalizedExisting = convertToNormalizedUnit(
+                  existingItem.quantity,
+                  existingItem.unit
+                );
+
+                // Check if they normalize to the same unit
+                if (normalizedNew.unit === normalizedExisting.unit) {
+                  // Update existing item with combined normalized quantity
+                  existingItem.quantity = normalizedExisting.quantity + normalizedNew.quantity;
+                  existingItem.unit = normalizedNew.unit;
+                  // Update the key in the map
+                  const oldKey = `${ingredient.id}-${existingItem.unit}`;
+                  ingredientMap.delete(oldKey);
+                  const newKey = `${ingredient.id}-${normalizedNew.unit}`;
+                  ingredientMap.set(newKey, existingItem);
+                  combined = true;
+                  break;
+                }
+              } catch {
+                // Conversion not possible, will create separate entry
+                continue;
+              }
+            }
+          }
+
+          if (!combined) {
+            ingredientMap.set(key, {
+              name: ingredient.name,
+              quantity: adjustedQuantity,
+              unit,
+              ingredientId: ingredient.id,
+            });
+          }
+        }
+      }
+    }
+
+    // Create shopping list in database
+    const shoppingList = await this.prisma.shoppingList.create({
+      data: {
+        planId,
+        items: {
+          create: Array.from(ingredientMap.values()).map((item) => ({
+            ingredientId: item.ingredientId,
+            name: item.name,
+            quantity: Math.round(item.quantity * 10) / 10, // Round to 1 decimal
+            unit: item.unit,
+          })),
+        },
+      },
+    });
+
+    return shoppingList.id;
+  }
+
+  async getForPlan(planId: string): Promise<ShoppingListOutput> {
+    const shoppingList = await this.prisma.shoppingList.findUnique({
+      where: { planId },
+      include: {
+        items: true,
+      },
+    });
+
+    if (!shoppingList) {
+      throw new Error('Shopping list not found');
+    }
+
+    return {
+      id: shoppingList.id,
+      planId: shoppingList.planId,
+      items: shoppingList.items.map((item) => ({
+        name: item.name,
+        quantity: item.quantity,
+        unit: item.unit,
+        ingredientId: item.ingredientId ?? undefined,
+      })),
+      createdAt: shoppingList.createdAt,
+    };
+  }
+}

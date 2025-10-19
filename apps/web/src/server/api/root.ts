@@ -1,6 +1,7 @@
 import { postRouter } from '~/server/api/routers/post';
 import { preferencesRouter } from '~/server/api/routers/preferences';
 import { mealPlanRouter } from '~/server/api/routers/mealPlan';
+import { planRouter } from '~/server/api/routers/plan';
 import { shoppingListRouter } from '~/server/api/routers/shoppingList';
 import { createCallerFactory, createTRPCRouter } from '~/server/api/trpc';
 
@@ -13,6 +14,7 @@ export const appRouter = createTRPCRouter({
   post: postRouter,
   preferences: preferencesRouter,
   mealPlan: mealPlanRouter,
+  plan: planRouter,
   shoppingList: shoppingListRouter,
 });
 

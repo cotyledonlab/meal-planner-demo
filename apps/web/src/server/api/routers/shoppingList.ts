@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
 import { aggregateIngredients, formatQuantity } from '~/lib/unitConverter';
 import type { NormalizedUnit } from '~/lib/unitConverter';
+import { ShoppingListService } from '../../services/shoppingList';
 
 interface ShoppingListItem {
   ingredientId: string;
@@ -18,6 +19,29 @@ interface StorePrice {
 }
 
 export const shoppingListRouter = createTRPCRouter({
+  // Get stored shopping list for a meal plan
+  getForPlan: protectedProcedure
+    .input(z.object({ planId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      // Verify the plan belongs to the user
+      const plan = await ctx.db.mealPlan.findUnique({
+        where: { id: input.planId },
+      });
+
+      if (!plan) {
+        throw new Error('Meal plan not found');
+      }
+
+      if (plan.userId !== ctx.session.user.id) {
+        throw new Error('Unauthorized');
+      }
+
+      const service = new ShoppingListService(ctx.db);
+      const shoppingList = await service.getForPlan(input.planId);
+
+      return shoppingList;
+    }),
+
   // Generate shopping list for a meal plan
   getForMealPlan: protectedProcedure
     .input(z.object({ mealPlanId: z.string() }))

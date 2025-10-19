@@ -61,6 +61,7 @@ model User {
     email         String?   @unique
     emailVerified DateTime?
     image         String?
+    role          String    @default("basic") // "basic" | "premium"
     accounts      Account[]
     sessions      Session[]
     posts         Post[]
@@ -150,14 +151,15 @@ model RecipeIngredient {
 }
 
 model MealPlan {
-    id        String         @id @default(cuid())
-    userId    String
-    user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-    startDate DateTime
-    days      Int
-    items     MealPlanItem[]
-    createdAt DateTime       @default(now())
-    updatedAt DateTime       @updatedAt
+    id           String         @id @default(cuid())
+    userId       String
+    user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+    startDate    DateTime
+    days         Int
+    items        MealPlanItem[]
+    shoppingList ShoppingList?
+    createdAt    DateTime       @default(now())
+    updatedAt    DateTime       @updatedAt
 
     @@index([userId, startDate])
 }
@@ -190,6 +192,32 @@ model PantryItem {
 
     @@unique([userId, ingredientId])
     @@index([userId])
+}
+
+model ShoppingList {
+    id        String              @id @default(cuid())
+    planId    String              @unique
+    plan      MealPlan            @relation(fields: [planId], references: [id], onDelete: Cascade)
+    items     ShoppingListItem[]
+    createdAt DateTime            @default(now())
+    updatedAt DateTime            @updatedAt
+
+    @@index([planId])
+}
+
+model ShoppingListItem {
+    id             String       @id @default(cuid())
+    shoppingListId String
+    shoppingList   ShoppingList @relation(fields: [shoppingListId], references: [id], onDelete: Cascade)
+    ingredientId   String?
+    name           String       // Ingredient name for display
+    quantity       Float
+    unit           String
+    notes          String?
+    createdAt      DateTime     @default(now())
+    updatedAt      DateTime     @updatedAt
+
+    @@index([shoppingListId])
 }
 
 model PriceBaseline {

@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import storesData from '~/mockData/stores.json';
 
 interface PremiumPreviewModalProps {
@@ -9,13 +10,36 @@ interface PremiumPreviewModalProps {
 export default function PremiumPreviewModal({ onClose }: PremiumPreviewModalProps) {
   const cheapestStore = storesData.find((store) => store.isCheapest);
 
+  // Handle ESC key
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [onClose]);
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/50 p-4">
-      <div className="w-full max-w-2xl rounded-2xl bg-white p-8 shadow-xl">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/50 p-4"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-title"
+    >
+      <div
+        className="w-full max-w-2xl rounded-2xl bg-white p-8 shadow-xl"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header */}
         <div className="flex items-start justify-between">
           <div>
-            <h2 className="text-2xl font-semibold text-gray-900">Price Comparison</h2>
+            <h2 id="modal-title" className="text-2xl font-semibold text-gray-900">
+              Price Comparison
+            </h2>
             <p className="mt-1 text-sm text-gray-600">
               See which supermarket offers the best value for your shopping list
             </p>

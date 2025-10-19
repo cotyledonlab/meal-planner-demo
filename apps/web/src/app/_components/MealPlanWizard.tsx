@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface MealPlanWizardProps {
   onComplete: (preferences: MealPreferences) => void;
+  onClose?: () => void;
 }
 
 export interface MealPreferences {
@@ -15,7 +16,7 @@ export interface MealPreferences {
   dislikes: string;
 }
 
-export default function MealPlanWizard({ onComplete }: MealPlanWizardProps) {
+export default function MealPlanWizard({ onComplete, onClose }: MealPlanWizardProps) {
   const [householdSize, setHouseholdSize] = useState(2);
   const [mealsPerDay, setMealsPerDay] = useState(1);
   const [days, setDays] = useState(7);
@@ -23,18 +24,62 @@ export default function MealPlanWizard({ onComplete }: MealPlanWizardProps) {
   const [isDairyFree, setIsDairyFree] = useState(false);
   const [dislikes, setDislikes] = useState('');
 
+  // Handle ESC key
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && onClose) {
+        onClose();
+      }
+    };
+
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [onClose]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onComplete({ householdSize, mealsPerDay, days, isVegetarian, isDairyFree, dislikes });
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/50 p-4">
-      <div className="w-full max-w-lg rounded-2xl bg-white p-8 shadow-xl">
-        <h2 className="text-2xl font-semibold text-gray-900">Let&apos;s plan your week!</h2>
-        <p className="mt-2 text-sm text-gray-600">
-          Answer a few quick questions to get your personalised meal plan.
-        </p>
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/50 p-4"
+      onClick={() => onClose?.()}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="wizard-title"
+    >
+      <div
+        className="w-full max-w-lg rounded-2xl bg-white p-8 shadow-xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-start justify-between">
+          <div className="flex-1">
+            <h2 id="wizard-title" className="text-2xl font-semibold text-gray-900">
+              Let&apos;s plan your week!
+            </h2>
+            <p className="mt-2 text-sm text-gray-600">
+              Answer a few quick questions to get your personalised meal plan.
+            </p>
+          </div>
+          {onClose && (
+            <button
+              onClick={onClose}
+              type="button"
+              className="ml-4 rounded-lg p-2 text-gray-400 transition hover:bg-gray-100 hover:text-gray-600"
+              aria-label="Close wizard"
+            >
+              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          )}
+        </div>
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-6">
           {/* Household size */}

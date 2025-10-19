@@ -92,7 +92,19 @@ Or use the provided script:
 pnpm db:push
 ```
 
-6. Start the development server:
+6. Seed the database with test data and users:
+
+```bash
+cd apps/web && pnpm prisma db seed
+```
+
+This will create:
+
+- **Premium user**: `premium@example.com` / `P@ssw0rd!`
+- **Basic user**: `basic@example.com` / `P@ssw0rd!`
+- 12 sample recipes with ingredients
+
+7. Start the development server:
 
 ```bash
 pnpm dev
