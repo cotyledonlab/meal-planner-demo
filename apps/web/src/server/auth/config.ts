@@ -38,6 +38,36 @@ normalizeAuthUrls();
 
 process.env.AUTH_TRUST_HOST ??= 'true';
 
+const normalizeAuthUrls = () => {
+  const raw = process.env.AUTH_URL ?? process.env.NEXTAUTH_URL;
+  if (!raw) {
+    return;
+  }
+
+  const hasScheme = /^[a-z][a-z\d+\-.]*:\/\//i.test(raw);
+  if (hasScheme) {
+    process.env.AUTH_URL ??= raw;
+    process.env.NEXTAUTH_URL ??= raw;
+    return;
+  }
+
+  const prefersHttp = /^(localhost|127\.|0\.0\.0\.0)/.test(raw);
+  const normalized = `${prefersHttp ? 'http' : 'https'}://${raw}`;
+
+  try {
+    // Validate the normalized value so NextAuth receives a proper absolute URL.
+    new URL(normalized);
+    process.env.AUTH_URL = normalized;
+    process.env.NEXTAUTH_URL = normalized;
+  } catch (error) {
+    console.warn('Unable to normalize AUTH_URL/NEXTAUTH_URL', { raw, error });
+  }
+};
+
+normalizeAuthUrls();
+
+process.env.AUTH_TRUST_HOST ??= 'true';
+
 const signInSchema = z.object({
   email: z.string().email(),
   password: z.string().min(1),
