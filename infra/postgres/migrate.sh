@@ -44,8 +44,46 @@ fi
 
 echo "Running Prisma migrations..."
 
-# Run Prisma migrations
-run_prisma migrate deploy
+# Handle environments where the database already contains the expected schema but lacks Prisma history.
+baseline_existing_schema() {
+  echo "Existing schema detected with no Prisma migration history; marking migrations as applied..."
+
+  for migration_path in prisma/migrations/*; do
+    [ -d "$migration_path" ] || continue
+
+    migration_name=$(basename "$migration_path")
+    echo "Marking $migration_name as applied"
+    run_prisma migrate resolve --applied "$migration_name"
+  done
+}
+
+# Run migrations and fall back to baselining if Prisma reports a non-empty schema with no history.
+run_migrate_deploy() {
+  set +e
+  deploy_output=$(run_prisma migrate deploy 2>&1)
+  deploy_status=$?
+  set -e
+
+  printf '%s\n' "$deploy_output"
+
+  if [ $deploy_status -eq 0 ]; then
+    return 0
+  fi
+
+  if printf '%s' "$deploy_output" | grep -q "P3005"; then
+    baseline_existing_schema
+    echo "Retrying Prisma migrations after baselining..."
+    run_prisma migrate deploy
+    return $?
+  fi
+
+  return $deploy_status
+}
+
+if ! run_migrate_deploy; then
+  echo "ERROR: Prisma migrations failed"
+  exit 1
+fi
 
 echo "Migrations completed successfully!"
 
