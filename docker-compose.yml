@@ -16,6 +16,24 @@ services:
       - app-network
     restart: "no"
 
+  seed:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    environment:
+      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD:-password}@postgres:5432/meal-planner-demo
+      - SKIP_ENV_VALIDATION=1
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    working_dir: /app/apps/web
+    command: ["pnpm", "db:seed"]
+    networks:
+      - app-network
+    restart: "no"
+    profiles:
+      - seed
+
   postgres:
     image: postgres:15-alpine
     environment:
