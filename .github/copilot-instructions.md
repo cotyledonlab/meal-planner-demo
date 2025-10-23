@@ -1,6 +1,6 @@
 # GitHub Copilot Instructions for meal-planner-demo
 
-> **📌 Note**: This file is maintained for GitHub Copilot compatibility. For the complete and authoritative 
+> **📌 Note**: This file is maintained for GitHub Copilot compatibility. For the complete and authoritative
 > development guidelines used by all AI assistants, see [`/AGENTS.md`](../AGENTS.md) at the repository root.
 
 Last updated: 2025-10-23
@@ -183,6 +183,7 @@ pnpm build           # Verify build (optional)
 ```
 
 All checks must pass before merging. The project uses:
+
 - **Husky** for git hooks
 - **lint-staged** for automatic formatting and linting
 - Hooks are automatically set up when you run `pnpm install`

@@ -186,6 +186,7 @@ docker compose down -v
 ```
 
 Services when running with Docker Compose:
+
 - **Web App**: http://localhost:3000
 - **PostgreSQL**: localhost:5432
 - **Redis**: localhost:6379
