@@ -10,6 +10,7 @@
     "db:generate": "pnpm --filter @meal-planner-demo/web db:generate",
     "db:migrate": "pnpm --filter @meal-planner-demo/web db:migrate",
     "db:push": "pnpm --filter @meal-planner-demo/web db:push",
+    "db:seed": "pnpm --filter @meal-planner-demo/web db:seed",
     "db:studio": "pnpm --filter @meal-planner-demo/web db:studio",
     "dev": "pnpm --filter @meal-planner-demo/web dev",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md,mdx,yml,yaml}\" --cache --ignore-path .gitignore",

@@ -95,6 +95,12 @@ pnpm db:push
 6. Seed the database with test data and users:
 
 ```bash
+pnpm db:seed
+```
+
+Alternatively, from the web app directory:
+
+```bash
 cd apps/web && pnpm prisma db seed
 ```
 
@@ -102,7 +108,8 @@ This will create:
 
 - **Premium user**: `premium@example.com` / `P@ssw0rd!`
 - **Basic user**: `basic@example.com` / `P@ssw0rd!`
-- 12 sample recipes with ingredients
+- 22 diverse sample recipes with ingredients (quick meals, batch-prep options, and one-pot dinners)
+- Price baselines for Irish supermarkets (Aldi, Lidl, Tesco, Dunnes)
 
 7. Start the development server:
 
@@ -200,6 +207,7 @@ All scripts are run from the root directory and delegated to the appropriate wor
 - `pnpm db:push` - Push database schema changes
 - `pnpm db:generate` - Generate Prisma migrations
 - `pnpm db:migrate` - Run Prisma migrations in production
+- `pnpm db:seed` - Seed database with sample data (users, recipes, ingredients)
 - `pnpm db:studio` - Open Prisma Studio
 
 ### Working with Individual Packages

@@ -92,6 +92,13 @@ async function main() {
     { name: 'eggs', category: 'protein' },
     { name: 'tofu', category: 'protein' },
     { name: 'chickpeas', category: 'protein' },
+    { name: 'bacon', category: 'protein' },
+    { name: 'sausages', category: 'protein' },
+    { name: 'chicken thighs', category: 'protein' },
+    { name: 'pork chops', category: 'protein' },
+    { name: 'lentils', category: 'protein' },
+    { name: 'kidney beans', category: 'protein' },
+    { name: 'tuna', category: 'protein' },
     // Vegetables
     { name: 'bell peppers', category: 'vegetables' },
     { name: 'broccoli', category: 'vegetables' },
@@ -102,16 +109,28 @@ async function main() {
     { name: 'spinach', category: 'vegetables' },
     { name: 'potatoes', category: 'vegetables' },
     { name: 'mushrooms', category: 'vegetables' },
+    { name: 'courgette', category: 'vegetables' },
+    { name: 'leek', category: 'vegetables' },
+    { name: 'cabbage', category: 'vegetables' },
+    { name: 'peas', category: 'vegetables' },
+    { name: 'sweetcorn', category: 'vegetables' },
+    { name: 'celery', category: 'vegetables' },
+    { name: 'parsnips', category: 'vegetables' },
     // Dairy
     { name: 'milk', category: 'dairy' },
     { name: 'cheese', category: 'dairy' },
     { name: 'butter', category: 'dairy' },
     { name: 'yogurt', category: 'dairy' },
+    { name: 'cream', category: 'dairy' },
+    { name: 'cheddar cheese', category: 'dairy' },
     // Grains
     { name: 'rice', category: 'grains' },
     { name: 'pasta', category: 'grains' },
     { name: 'bread', category: 'grains' },
     { name: 'flour', category: 'grains' },
+    { name: 'oats', category: 'grains' },
+    { name: 'tortillas', category: 'grains' },
+    { name: 'noodles', category: 'grains' },
     // Pantry
     { name: 'olive oil', category: 'pantry' },
     { name: 'soy sauce', category: 'pantry' },
@@ -119,6 +138,15 @@ async function main() {
     { name: 'curry paste', category: 'pantry' },
     { name: 'tomato paste', category: 'pantry' },
     { name: 'stock cube', category: 'pantry' },
+    { name: 'tinned tomatoes', category: 'pantry' },
+    { name: 'worcestershire sauce', category: 'pantry' },
+    { name: 'chilli powder', category: 'pantry' },
+    { name: 'cumin', category: 'pantry' },
+    { name: 'paprika', category: 'pantry' },
+    { name: 'mixed herbs', category: 'pantry' },
+    { name: 'honey', category: 'pantry' },
+    { name: 'balsamic vinegar', category: 'pantry' },
+    { name: 'vegetable oil', category: 'pantry' },
   ];
 
   const createdIngredients = await Promise.all(
@@ -434,7 +462,7 @@ async function main() {
       isVegetarian: true,
       isDairyFree: false,
       servingsDefault: 4,
-      imageUrl: 'https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=600&q=80',
+      imageUrl: 'https://images.unsplash.com/photo-1598866594230-a7c12756260f?w=600&q=80',
       instructionsMd: `
 # Pasta with Tomato Sauce
 
@@ -569,6 +597,373 @@ async function main() {
         { name: 'garlic', qty: 15, unit: 'g' },
         { name: 'olive oil', qty: 50, unit: 'ml' },
         { name: 'rice', qty: 300, unit: 'g' },
+      ],
+    },
+    {
+      title: 'Quick Bacon & Egg Fried Rice',
+      minutes: 15,
+      calories: 420,
+      isVegetarian: false,
+      isDairyFree: true,
+      servingsDefault: 4,
+      imageUrl: 'https://images.unsplash.com/photo-1617093727343-374698b1b08d?w=600&q=80',
+      instructionsMd: `
+# Quick Bacon & Egg Fried Rice
+
+## Instructions
+1. Cook rice and let cool (or use leftover rice)
+2. Chop bacon and fry until crispy
+3. Beat eggs and scramble in the same pan
+4. Add rice and break up clumps
+5. Add peas, sweetcorn, and soy sauce
+6. Stir-fry for 3-4 minutes on high heat
+7. Serve hot
+
+## Tips
+- Perfect for using up leftover rice
+- Great weeknight meal under 15 minutes
+- Add any vegetables you have on hand
+      `.trim(),
+      ingredients: [
+        { name: 'rice', qty: 400, unit: 'g' },
+        { name: 'bacon', qty: 150, unit: 'g' },
+        { name: 'eggs', qty: 3, unit: 'pcs' },
+        { name: 'peas', qty: 100, unit: 'g' },
+        { name: 'sweetcorn', qty: 100, unit: 'g' },
+        { name: 'soy sauce', qty: 40, unit: 'ml' },
+        { name: 'vegetable oil', qty: 20, unit: 'ml' },
+        { name: 'garlic', qty: 10, unit: 'g' },
+      ],
+    },
+    {
+      title: 'One-Pot Sausage & Bean Stew',
+      minutes: 30,
+      calories: 480,
+      isVegetarian: false,
+      isDairyFree: true,
+      servingsDefault: 6,
+      imageUrl: 'https://images.unsplash.com/photo-1604908815817-f8d79f06fe5d?w=600&q=80',
+      instructionsMd: `
+# One-Pot Sausage & Bean Stew
+
+## Instructions
+1. Slice sausages and brown in a large pot
+2. Add onions and garlic, cook until soft
+3. Add carrots and celery, cook for 5 minutes
+4. Add tinned tomatoes, kidney beans, and stock
+5. Simmer for 15-20 minutes
+6. Season and serve with bread
+
+## Tips
+- Use quality Irish sausages from Aldi/Lidl
+- Great for batch cooking and freezing
+- Serve with crusty bread for dipping
+      `.trim(),
+      ingredients: [
+        { name: 'sausages', qty: 600, unit: 'g' },
+        { name: 'kidney beans', qty: 400, unit: 'g' },
+        { name: 'tinned tomatoes', qty: 800, unit: 'g' },
+        { name: 'onions', qty: 150, unit: 'g' },
+        { name: 'garlic', qty: 15, unit: 'g' },
+        { name: 'carrots', qty: 200, unit: 'g' },
+        { name: 'celery', qty: 100, unit: 'g' },
+        { name: 'stock cube', qty: 2, unit: 'pcs' },
+        { name: 'bread', qty: 200, unit: 'g' },
+      ],
+    },
+    {
+      title: 'Irish Beef & Guinness Stew',
+      minutes: 120,
+      calories: 550,
+      isVegetarian: false,
+      isDairyFree: true,
+      servingsDefault: 6,
+      imageUrl: 'https://images.unsplash.com/photo-1607894842937-e6c29b2e2f4c?w=600&q=80',
+      instructionsMd: `
+# Irish Beef & Guinness Stew
+
+## Instructions
+1. Brown beef chunks in batches
+2. Sauté onions, carrots, and celery
+3. Return beef to pot, add flour
+4. Add stock, tomato paste, and seasonings
+5. Simmer covered for 90 minutes
+6. Add potatoes and parsnips
+7. Cook for 30 more minutes until tender
+8. Serve with mashed potatoes or bread
+
+## Tips
+- Perfect Sunday batch meal
+- Freezes beautifully
+- Even better the next day
+      `.trim(),
+      ingredients: [
+        { name: 'ground beef', qty: 1000, unit: 'g' },
+        { name: 'potatoes', qty: 600, unit: 'g' },
+        { name: 'carrots', qty: 300, unit: 'g' },
+        { name: 'onions', qty: 200, unit: 'g' },
+        { name: 'celery', qty: 150, unit: 'g' },
+        { name: 'parsnips', qty: 200, unit: 'g' },
+        { name: 'tomato paste', qty: 50, unit: 'g' },
+        { name: 'flour', qty: 50, unit: 'g' },
+        { name: 'stock cube', qty: 2, unit: 'pcs' },
+      ],
+    },
+    {
+      title: 'Tuna Pasta Bake',
+      minutes: 35,
+      calories: 460,
+      isVegetarian: false,
+      isDairyFree: false,
+      servingsDefault: 4,
+      imageUrl: 'https://images.unsplash.com/photo-1615870216519-2f9fa575fa5c?w=600&q=80',
+      instructionsMd: `
+# Tuna Pasta Bake
+
+## Instructions
+1. Preheat oven to 180°C
+2. Cook pasta according to package directions
+3. Mix tuna, peas, sweetcorn, and pasta
+4. Make white sauce with butter, flour, and milk
+5. Combine everything and pour into baking dish
+6. Top with grated cheese
+7. Bake for 20-25 minutes until golden
+
+## Tips
+- Use tinned tuna from Aldi for budget-friendly option
+- Add any leftover vegetables
+- Great for meal prep lunches
+      `.trim(),
+      ingredients: [
+        { name: 'pasta', qty: 400, unit: 'g' },
+        { name: 'tuna', qty: 300, unit: 'g' },
+        { name: 'peas', qty: 150, unit: 'g' },
+        { name: 'sweetcorn', qty: 150, unit: 'g' },
+        { name: 'milk', qty: 500, unit: 'ml' },
+        { name: 'flour', qty: 50, unit: 'g' },
+        { name: 'butter', qty: 50, unit: 'g' },
+        { name: 'cheddar cheese', qty: 200, unit: 'g' },
+      ],
+    },
+    {
+      title: 'Chicken Fajitas',
+      minutes: 20,
+      calories: 420,
+      isVegetarian: false,
+      isDairyFree: false,
+      servingsDefault: 4,
+      imageUrl: 'https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=600&q=80',
+      instructionsMd: `
+# Chicken Fajitas
+
+## Instructions
+1. Slice chicken breast into strips
+2. Slice bell peppers and onions
+3. Heat oil in a large pan
+4. Cook chicken until golden
+5. Add peppers and onions, cook for 5 minutes
+6. Season with paprika, cumin, and chilli powder
+7. Warm tortillas and serve with toppings
+
+## Tips
+- Quick 20-minute weeknight dinner
+- Let everyone build their own fajita
+- Top with cheese, yogurt, and salsa
+      `.trim(),
+      ingredients: [
+        { name: 'chicken breast', qty: 600, unit: 'g' },
+        { name: 'bell peppers', qty: 300, unit: 'g' },
+        { name: 'onions', qty: 150, unit: 'g' },
+        { name: 'tortillas', qty: 8, unit: 'pcs' },
+        { name: 'olive oil', qty: 30, unit: 'ml' },
+        { name: 'paprika', qty: 10, unit: 'g' },
+        { name: 'cumin', qty: 5, unit: 'g' },
+        { name: 'chilli powder', qty: 5, unit: 'g' },
+        { name: 'cheese', qty: 100, unit: 'g' },
+        { name: 'yogurt', qty: 150, unit: 'g' },
+      ],
+    },
+    {
+      title: 'Lentil & Vegetable Soup',
+      minutes: 35,
+      calories: 280,
+      isVegetarian: true,
+      isDairyFree: true,
+      servingsDefault: 6,
+      imageUrl: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&q=80',
+      instructionsMd: `
+# Lentil & Vegetable Soup
+
+## Instructions
+1. Sauté onions, carrots, and celery
+2. Add garlic and cook for 1 minute
+3. Add lentils, tinned tomatoes, and stock
+4. Add mixed herbs and season
+5. Simmer for 25-30 minutes
+6. Add spinach and cook until wilted
+7. Serve with crusty bread
+
+## Tips
+- Budget-friendly and filling
+- Perfect for batch cooking
+- Freezes well in portions
+      `.trim(),
+      ingredients: [
+        { name: 'lentils', qty: 300, unit: 'g' },
+        { name: 'tinned tomatoes', qty: 400, unit: 'g' },
+        { name: 'carrots', qty: 200, unit: 'g' },
+        { name: 'onions', qty: 150, unit: 'g' },
+        { name: 'celery', qty: 100, unit: 'g' },
+        { name: 'garlic', qty: 15, unit: 'g' },
+        { name: 'spinach', qty: 200, unit: 'g' },
+        { name: 'stock cube', qty: 2, unit: 'pcs' },
+        { name: 'mixed herbs', qty: 5, unit: 'g' },
+        { name: 'bread', qty: 200, unit: 'g' },
+      ],
+    },
+    {
+      title: 'Quick Pork Chops with Roast Veg',
+      minutes: 30,
+      calories: 480,
+      isVegetarian: false,
+      isDairyFree: true,
+      servingsDefault: 4,
+      imageUrl: 'https://images.unsplash.com/photo-1558030006-450675393462?w=600&q=80',
+      instructionsMd: `
+# Quick Pork Chops with Roast Veg
+
+## Instructions
+1. Preheat oven to 200°C
+2. Chop potatoes, carrots, and parsnips
+3. Toss vegetables with oil and herbs
+4. Roast for 15 minutes
+5. Season pork chops and add to tray
+6. Roast for 15 more minutes
+7. Let rest and serve
+
+## Tips
+- Affordable Irish pork from Aldi/Lidl
+- One-tray meal for easy cleanup
+- Add honey for caramelized vegetables
+      `.trim(),
+      ingredients: [
+        { name: 'pork chops', qty: 600, unit: 'g' },
+        { name: 'potatoes', qty: 600, unit: 'g' },
+        { name: 'carrots', qty: 300, unit: 'g' },
+        { name: 'parsnips', qty: 200, unit: 'g' },
+        { name: 'olive oil', qty: 40, unit: 'ml' },
+        { name: 'mixed herbs', qty: 5, unit: 'g' },
+        { name: 'honey', qty: 20, unit: 'g' },
+      ],
+    },
+    {
+      title: 'Creamy Chicken & Mushroom Pasta',
+      minutes: 25,
+      calories: 520,
+      isVegetarian: false,
+      isDairyFree: false,
+      servingsDefault: 4,
+      imageUrl: 'https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=600&q=80',
+      instructionsMd: `
+# Creamy Chicken & Mushroom Pasta
+
+## Instructions
+1. Cook pasta according to package directions
+2. Cut chicken into bite-sized pieces
+3. Fry chicken until golden, set aside
+4. Sauté mushrooms and garlic in butter
+5. Add cream and cheese, stir until melted
+6. Add chicken back to pan
+7. Toss with drained pasta and serve
+
+## Tips
+- Quick weeknight comfort food
+- Use cream from Aldi for best value
+- Add spinach for extra nutrition
+      `.trim(),
+      ingredients: [
+        { name: 'pasta', qty: 400, unit: 'g' },
+        { name: 'chicken breast', qty: 500, unit: 'g' },
+        { name: 'mushrooms', qty: 300, unit: 'g' },
+        { name: 'cream', qty: 250, unit: 'ml' },
+        { name: 'cheese', qty: 100, unit: 'g' },
+        { name: 'garlic', qty: 10, unit: 'g' },
+        { name: 'butter', qty: 30, unit: 'g' },
+        { name: 'spinach', qty: 100, unit: 'g' },
+      ],
+    },
+    {
+      title: 'Veggie Chilli with Rice',
+      minutes: 35,
+      calories: 380,
+      isVegetarian: true,
+      isDairyFree: true,
+      servingsDefault: 6,
+      imageUrl: 'https://images.unsplash.com/photo-1596797882870-8c33deeac224?w=600&q=80',
+      instructionsMd: `
+# Veggie Chilli with Rice
+
+## Instructions
+1. Cook rice according to package directions
+2. Sauté onions, peppers, and garlic
+3. Add tinned tomatoes and kidney beans
+4. Add chilli powder, cumin, and paprika
+5. Simmer for 20 minutes
+6. Season and serve over rice
+
+## Tips
+- Batch cook for easy lunches
+- Freezer-friendly portions
+- Top with yogurt and cheese
+      `.trim(),
+      ingredients: [
+        { name: 'kidney beans', qty: 800, unit: 'g' },
+        { name: 'tinned tomatoes', qty: 800, unit: 'g' },
+        { name: 'bell peppers', qty: 300, unit: 'g' },
+        { name: 'onions', qty: 200, unit: 'g' },
+        { name: 'garlic', qty: 15, unit: 'g' },
+        { name: 'rice', qty: 400, unit: 'g' },
+        { name: 'chilli powder', qty: 10, unit: 'g' },
+        { name: 'cumin', qty: 10, unit: 'g' },
+        { name: 'paprika', qty: 10, unit: 'g' },
+        { name: 'olive oil', qty: 30, unit: 'ml' },
+      ],
+    },
+    {
+      title: 'Chicken Noodle Stir-Fry',
+      minutes: 18,
+      calories: 410,
+      isVegetarian: false,
+      isDairyFree: true,
+      servingsDefault: 4,
+      imageUrl: 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=600&q=80',
+      instructionsMd: `
+# Chicken Noodle Stir-Fry
+
+## Instructions
+1. Cook noodles according to package directions
+2. Slice chicken into thin strips
+3. Heat oil in wok over high heat
+4. Cook chicken until golden
+5. Add vegetables and stir-fry for 3 minutes
+6. Add noodles and soy sauce
+7. Toss everything together and serve
+
+## Tips
+- Ready in under 20 minutes
+- Use whatever vegetables you have
+- Great for weeknight dinners
+      `.trim(),
+      ingredients: [
+        { name: 'noodles', qty: 400, unit: 'g' },
+        { name: 'chicken breast', qty: 500, unit: 'g' },
+        { name: 'bell peppers', qty: 200, unit: 'g' },
+        { name: 'broccoli', qty: 200, unit: 'g' },
+        { name: 'carrots', qty: 150, unit: 'g' },
+        { name: 'onions', qty: 100, unit: 'g' },
+        { name: 'garlic', qty: 10, unit: 'g' },
+        { name: 'soy sauce', qty: 50, unit: 'ml' },
+        { name: 'vegetable oil', qty: 30, unit: 'ml' },
       ],
     },
   ];
