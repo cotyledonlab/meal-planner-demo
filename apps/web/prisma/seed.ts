@@ -462,7 +462,7 @@ async function main() {
       isVegetarian: true,
       isDairyFree: false,
       servingsDefault: 4,
-      imageUrl: 'https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=600&q=80',
+      imageUrl: 'https://images.unsplash.com/photo-1598866594230-a7c12756260f?w=600&q=80',
       instructionsMd: `
 # Pasta with Tomato Sauce
 
@@ -606,7 +606,7 @@ async function main() {
       isVegetarian: false,
       isDairyFree: true,
       servingsDefault: 4,
-      imageUrl: 'https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=600&q=80',
+      imageUrl: 'https://images.unsplash.com/photo-1617093727343-374698b1b08d?w=600&q=80',
       instructionsMd: `
 # Quick Bacon & Egg Fried Rice
 
@@ -642,7 +642,7 @@ async function main() {
       isVegetarian: false,
       isDairyFree: true,
       servingsDefault: 6,
-      imageUrl: 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=600&q=80',
+      imageUrl: 'https://images.unsplash.com/photo-1604908815817-f8d79f06fe5d?w=600&q=80',
       instructionsMd: `
 # One-Pot Sausage & Bean Stew
 
@@ -678,7 +678,7 @@ async function main() {
       isVegetarian: false,
       isDairyFree: true,
       servingsDefault: 6,
-      imageUrl: 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=600&q=80',
+      imageUrl: 'https://images.unsplash.com/photo-1607894842937-e6c29b2e2f4c?w=600&q=80',
       instructionsMd: `
 # Irish Beef & Guinness Stew
 
@@ -716,7 +716,7 @@ async function main() {
       isVegetarian: false,
       isDairyFree: false,
       servingsDefault: 4,
-      imageUrl: 'https://images.unsplash.com/photo-1574894709920-11b28e7367e3?w=600&q=80',
+      imageUrl: 'https://images.unsplash.com/photo-1615870216519-2f9fa575fa5c?w=600&q=80',
       instructionsMd: `
 # Tuna Pasta Bake
 
@@ -790,7 +790,7 @@ async function main() {
       isVegetarian: true,
       isDairyFree: true,
       servingsDefault: 6,
-      imageUrl: 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=600&q=80',
+      imageUrl: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&q=80',
       instructionsMd: `
 # Lentil & Vegetable Soup
 
@@ -863,7 +863,7 @@ async function main() {
       isVegetarian: false,
       isDairyFree: false,
       servingsDefault: 4,
-      imageUrl: 'https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=600&q=80',
+      imageUrl: 'https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=600&q=80',
       instructionsMd: `
 # Creamy Chicken & Mushroom Pasta
 
@@ -899,7 +899,7 @@ async function main() {
       isVegetarian: true,
       isDairyFree: true,
       servingsDefault: 6,
-      imageUrl: 'https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?w=600&q=80',
+      imageUrl: 'https://images.unsplash.com/photo-1596797882870-8c33deeac224?w=600&q=80',
       instructionsMd: `
 # Veggie Chilli with Rice
 
