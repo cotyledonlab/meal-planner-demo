@@ -1,6 +1,6 @@
 # meal-planner-demo Development Guidelines
 
-Auto-generated from all feature plans. Last updated: 2025-10-15
+Auto-generated from all feature plans. Last updated: 2025-10-23
 
 ## Project Overview
 
@@ -11,26 +11,45 @@ MealMind AI is an AI-powered meal planning demo for friends/family. The core flo
 
 ## Active Technologies
 
-- TypeScript (Node.js 20+) + Next.js App Router, React Server Components, tRPC, Zod, Prisma, NextAuth, OpenAI GPT-5 Codex SDK, pino, Sentry (gated), Redis client (002-project-mealmind-ai)
+- TypeScript (Node.js 20+) + Next.js App Router, React Server Components, tRPC, Zod, Prisma, NextAuth, OpenAI GPT-5 Codex SDK, pino, Sentry (gated), Redis client
+- Monorepo structure with pnpm workspaces
+- PostgreSQL database with Prisma ORM
+- Docker and Docker Compose for containerized deployment
 
 ## Project Structure
 
+This project uses a **monorepo structure** managed by pnpm workspaces:
+
 ```
-src/
-  app/              # Next.js App Router pages and layouts
-  server/           # tRPC API routes and server-side logic
-  components/       # React components
-  lib/              # Utility functions and shared code
-prisma/             # Database schema and migrations
-specs/              # Feature specifications and plans
-public/             # Static assets
+meal-planner-demo/          # Monorepo root
+├── apps/
+│   └── web/                # Next.js web application
+│       ├── src/
+│       │   ├── app/        # Next.js App Router pages and layouts
+│       │   ├── server/     # tRPC API routes and server-side logic
+│       │   ├── components/ # React components (coming soon)
+│       │   └── lib/        # Utility functions and shared code (coming soon)
+│       ├── prisma/         # Database schema and migrations
+│       ├── public/         # Static assets
+│       └── package.json    # Web app dependencies
+├── packages/
+│   ├── types/              # Shared TypeScript types
+│   └── constants/          # Shared constants
+├── infra/
+│   ├── postgres/           # PostgreSQL configuration
+│   └── migrations/         # Migration history (reference)
+├── specs/                  # Feature specifications and plans
+├── package.json            # Root package with workspace scripts
+└── pnpm-workspace.yaml     # Workspace configuration
 ```
 
 ## Commands
 
+All commands are run from the **monorepo root** and automatically delegate to the appropriate workspace:
+
 ```bash
 # Development
-pnpm dev              # Start Next.js dev server with Turbo
+pnpm dev              # Start Next.js dev server with Turbo (delegates to apps/web)
 pnpm build            # Build production bundle
 pnpm start            # Start production server
 pnpm preview          # Build and start production server
@@ -40,14 +59,23 @@ pnpm check            # Run linting and type checking
 pnpm lint             # Run ESLint
 pnpm lint:fix         # Fix ESLint issues automatically
 pnpm typecheck        # Run TypeScript type checking
-pnpm format:check     # Check code formatting
-pnpm format:write     # Format code with Prettier
+pnpm format:check     # Check code formatting (across all workspaces)
+pnpm format:write     # Format code with Prettier (across all workspaces)
+pnpm test             # Run all unit tests with Vitest
+pnpm test:watch       # Run tests in watch mode
+pnpm test:ui          # Open Vitest UI for interactive testing
+pnpm test:coverage    # Run tests with coverage report
 
 # Database
 pnpm db:generate      # Generate Prisma client and run migrations
 pnpm db:migrate       # Run Prisma migrations in production
 pnpm db:push          # Push schema changes to database
+pnpm db:seed          # Seed database with sample data
 pnpm db:studio        # Open Prisma Studio
+
+# Working with specific workspaces
+pnpm --filter @meal-planner-demo/web <command>    # Run command in web app
+pnpm --filter @meal-planner-demo/types <command>  # Run command in types package
 ```
 
 ## Code Style & Guidelines
@@ -66,17 +94,20 @@ pnpm db:studio        # Open Prisma Studio
 
 ### Database
 
-- PostgreSQL via Prisma ORM
+- PostgreSQL via Prisma ORM (schema located in `apps/web/prisma/`)
 - All schema changes via Prisma migrations
 - Include rollback scripts for migrations
+- Database can be started with Docker Compose or the `./start-database.sh` script
 
 ### Quality Requirements
 
 - ESLint and Prettier are enforced in CI
 - Type checking must pass (`pnpm typecheck`)
-- Test with Vitest for units, Playwright for E2E
+- Test with Vitest for unit tests (colocated with source files using `.test.ts` or `.test.tsx`)
+- Playwright for E2E tests (coming soon)
 - No `any` types allowed in code
 - **All checks must pass before committing changes**
+- Tests are located alongside source files for better maintainability
 
 ### Pre-Commit Checklist
 
@@ -91,16 +122,16 @@ The hooks run automatically on `git commit`. If any check fails, the commit is b
 
 **Manual pre-commit checks** (if hooks are bypassed with `--no-verify`):
 
-1. **Type Checking**: Run `pnpm typecheck` - must complete with zero errors
-2. **Linting**: Run `SKIP_ENV_VALIDATION=1 pnpm lint` (in apps/web) - must show no errors or warnings
-3. **Tests**: Run `pnpm test` - all tests must pass
-4. **Build**: Run `pnpm build` (optional but recommended for major changes)
+1. **Format Check**: Run `pnpm format:write` - auto-formats all code
+2. **Type Checking**: Run `pnpm typecheck` - must complete with zero errors
+3. **Linting**: Run `pnpm lint` - must show no errors or warnings
+4. **Tests**: Run `pnpm test` - all tests must pass
+5. **Build**: Run `pnpm build` (optional but recommended for major changes)
 
-**Command to run all checks:**
+**Quick command to run all checks:**
 
 ```bash
-cd /path/to/meal-planner-demo
-pnpm typecheck && cd apps/web && SKIP_ENV_VALIDATION=1 pnpm lint && cd ../.. && pnpm test
+pnpm check && pnpm format:check && pnpm build
 ```
 
 **Setting up hooks after cloning:**
@@ -124,8 +155,49 @@ If any check fails, fix the issues before committing. Common issues:
 - Stream long AI responses
 - Enforce rate limiting on AI endpoints
 
+## Environment Setup
+
+1. **Prerequisites**: Node.js 20+, pnpm 9+, Docker and Docker Compose
+2. **Install dependencies**: `pnpm install`
+3. **Set up environment**: Copy `.env.example` to `.env` and `apps/web/.env`
+4. **Start database**: `docker compose up -d postgres redis mailpit` or `./start-database.sh`
+5. **Initialize database**: `pnpm db:push`
+6. **Seed data**: `pnpm db:seed` (creates test users and sample recipes)
+7. **Start dev server**: `pnpm dev`
+
+The app will be available at [http://localhost:3000](http://localhost:3000).
+
+## Docker Deployment
+
+The project includes Docker Compose configuration for full stack deployment:
+
+```bash
+# Build and start all services (PostgreSQL, Redis, Mailpit, web app)
+docker compose up --build
+
+# Run in detached mode
+docker compose up -d --build
+
+# Stop all services
+docker compose down
+
+# Stop and remove volumes (including database data)
+docker compose down -v
+```
+
+Services when running with Docker Compose:
+
+- **Web App**: http://localhost:3000
+- **PostgreSQL**: localhost:5432
+- **Redis**: localhost:6379
+- **Mailpit UI**: http://localhost:8025 (for viewing emails)
+
 ## Recent Changes
 
+- Migrated to monorepo structure with pnpm workspaces
+- Added comprehensive test suite with Vitest
+- Configured pre-commit hooks with Husky and lint-staged
+- Added Docker Compose for full stack deployment
 - 002-project-mealmind-ai: Added TypeScript (Node.js 20+) + Next.js App Router, React Server Components, tRPC, Zod, Prisma, NextAuth, OpenAI GPT-5 Codex SDK, pino, Sentry (gated), Redis client
 
 <!-- MANUAL ADDITIONS START -->
