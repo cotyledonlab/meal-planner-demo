@@ -28,7 +28,7 @@ if (env.NODE_ENV !== 'production') globalForPrisma.prisma = db;
 if (env.NODE_ENV === 'production') {
   // Handle graceful shutdown on process termination
   const gracefulShutdown = () => {
-    void db.$disconnect();
+    db.$disconnect().catch((err) => console.error('Failed to disconnect:', err));
   };
 
   process.on('SIGINT', gracefulShutdown);
