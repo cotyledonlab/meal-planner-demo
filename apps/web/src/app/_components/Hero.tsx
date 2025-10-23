@@ -40,6 +40,15 @@ export default function Hero() {
               See Premium
             </a>
           </div>
+          <p className="mt-6 text-sm text-gray-600">
+            Already have an account?{' '}
+            <Link
+              href="/auth/signin"
+              className="font-medium text-emerald-600 transition hover:text-emerald-700"
+            >
+              Log in
+            </Link>
+          </p>
         </div>
       </div>
     </section>
