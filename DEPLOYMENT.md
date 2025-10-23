@@ -441,6 +441,43 @@ If you encounter database connection errors:
 1. Ensure PostgreSQL is running
 2. Check the `DATABASE_URL` in your `.env` file
 3. Verify network connectivity between services
+4. **Connection Pool Configuration**: Add connection pool parameters to DATABASE_URL:
+   ```
+   DATABASE_URL="postgresql://user:pass@host:5432/db?connection_limit=10&pool_timeout=30&connect_timeout=30"
+   ```
+5. **PostgreSQL Timeouts**: Set appropriate timeout values in PostgreSQL configuration:
+   - `statement_timeout = 30000` (30 seconds)
+   - `idle_in_transaction_session_timeout = 60000` (1 minute)
+6. **Connection Retry**: The application automatically handles graceful shutdowns and connection cleanup
+
+### Database Security Best Practices
+
+**CRITICAL**: Always secure your database in production:
+
+1. **Never expose PostgreSQL port publicly**:
+   - The docker-compose.yml now has PostgreSQL ports commented out by default
+   - Only expose ports for local development when necessary
+   - In production (Dokploy), services communicate via Docker internal network
+
+2. **Firewall Configuration**:
+   - Ensure PostgreSQL port (5432) is NOT accessible from the public internet
+   - Configure firewall rules to only allow connections from application containers
+   - Use Dokploy's internal network for service-to-service communication
+
+3. **Authentication**:
+   - Use strong passwords for PostgreSQL users
+   - Never use default passwords in production
+   - Store credentials securely using environment secrets
+
+4. **Connection Encryption**:
+   - Enable SSL/TLS for database connections in production
+   - Add `?sslmode=require` to DATABASE_URL for encrypted connections
+   - Example: `postgresql://user:pass@host:5432/db?sslmode=require&connection_limit=10`
+
+5. **Monitor for Attacks**:
+   - Review PostgreSQL logs regularly for suspicious activity
+   - Set up alerts for failed authentication attempts
+   - Monitor for SQL injection attempts in application logs
 
 ### Build Failures
 

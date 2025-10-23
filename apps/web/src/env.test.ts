@@ -47,7 +47,9 @@ describe('Environment validation', () => {
       expect(() =>
         databaseUrlSchema.parse('postgresql://postgres:vNcsJu$%^&*@localhost:5432/database')
       ).not.toThrow();
-      expect(() => databaseUrlSchema.parse('postgresql://postgres:p#ss@localhost:5432/database')).not.toThrow();
+      expect(() =>
+        databaseUrlSchema.parse('postgresql://postgres:p#ss@localhost:5432/database')
+      ).not.toThrow();
     });
 
     it('should reject non-PostgreSQL connection strings', () => {
