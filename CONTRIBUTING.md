@@ -20,10 +20,10 @@ Thank you for your interest in contributing to the Meal Planner Demo project! Th
    pnpm install
    ```
 
-   This command installs all dependencies and automatically sets up git hooks (via the `prepare` script) that will:
-   - Automatically format and lint your code before each commit
-   - Run type checking and tests to catch issues early
-   - Help maintain consistent code quality across the project
+   This command installs all dependencies and automatically sets up git hooks (via the `prepare` script):
+   - **Pre-commit hook**: Formats and lints staged files, runs type checking and tests
+   - **Pre-push hook**: Checks formatting, linting, and type checking before push
+   - These hooks help maintain consistent code quality across the project
 
 3. **Set up environment variables**:
    ```bash

@@ -4,7 +4,7 @@ if [ "$CI" = "true" ] || [ "$SKIP_HOOKS" = "1" ]; then
   exit 0
 fi
 
-# Load nvm if available to set correct Node.js version
+# Load nvm if available to ensure correct Node.js version is used
 if [ -f "$HOME/.nvm/nvm.sh" ]; then
   export NVM_DIR="$HOME/.nvm"
   [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
