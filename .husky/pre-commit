@@ -4,14 +4,14 @@ if [ "$CI" = "true" ] || [ "$SKIP_HOOKS" = "1" ]; then
   exit 0
 fi
 
-# Explicitly set PATH to include pnpm and node
-export PATH="/home/john/.local/share/pnpm:/home/john/.nvm/versions/node/v22.19.0/bin:$PATH"
-
-# Load nvm if available (this will override with correct version)
+# Load nvm if available to ensure correct Node.js version is used
 if [ -f "$HOME/.nvm/nvm.sh" ]; then
   export NVM_DIR="$HOME/.nvm"
   [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 fi
+
+# Add common pnpm installation paths to PATH
+export PATH="$HOME/.local/share/pnpm:$PATH"
 
 # Check if pnpm is available
 if ! command -v pnpm >/dev/null 2>&1; then

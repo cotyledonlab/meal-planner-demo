@@ -17,6 +17,7 @@
     "format:write": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,mdx,yml,yaml}\" --cache --ignore-path .gitignore",
     "lint": "pnpm --filter @meal-planner-demo/web lint",
     "lint:fix": "pnpm --filter @meal-planner-demo/web lint:fix",
+    "precommit": "pnpm format:write && pnpm lint:fix && pnpm typecheck",
     "preview": "pnpm --filter @meal-planner-demo/web preview",
     "start": "pnpm --filter @meal-planner-demo/web start",
     "test": "pnpm --filter @meal-planner-demo/web test",
