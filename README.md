@@ -92,24 +92,27 @@ Or use the provided script:
 pnpm db:push
 ```
 
-6. Seed the database with test data and users:
+6. **Seed the database with initial data:**
 
 ```bash
 pnpm db:seed
 ```
 
-Alternatively, from the web app directory:
+This creates essential data for the application:
+- **22 sample recipes** covering various cuisines and dietary preferences
+- **57 ingredients** across all major food categories
+- **2 test users** for development:
+  - **Premium user**: `premium@example.com` / `P@ssw0rd!` (7-day meal plans)
+  - **Basic user**: `basic@example.com` / `P@ssw0rd!` (3-day meal plans)
+- **Price baselines** for Irish supermarkets (Aldi, Lidl, Tesco, Dunnes)
+
+Alternatively, you can seed from the web app directory:
 
 ```bash
 cd apps/web && pnpm prisma db seed
 ```
 
-This will create:
-
-- **Premium user**: `premium@example.com` / `P@ssw0rd!`
-- **Basic user**: `basic@example.com` / `P@ssw0rd!`
-- 22 diverse sample recipes with ingredients (quick meals, batch-prep options, and one-pot dinners)
-- Price baselines for Irish supermarkets (Aldi, Lidl, Tesco, Dunnes)
+> 📝 **Important**: Without seeding, the app will show "No recipes available" errors. See [SEEDING_DEPLOYMENT.md](./SEEDING_DEPLOYMENT.md) for production seeding instructions.
 
 7. Start the development server:
 
@@ -146,6 +149,29 @@ The application will be available at [http://localhost:3000](http://localhost:30
 - Web app container builds with the monorepo structure
 - Database migrations run automatically via `infra/postgres/migrate.sh`
 - Web application starts and connects to the database
+
+> ⚠️ **Note**: Database seeding does NOT happen automatically. You must manually seed the database after the first deployment. See the next section for instructions.
+
+### Seeding the Database in Docker
+
+After starting the services for the first time, you need to seed the database with initial data:
+
+```bash
+# Run the seed service (uses profile to prevent auto-start)
+docker compose --profile seed run --rm seed
+```
+
+This command:
+- Runs a one-time container to seed the database
+- Creates 22 sample recipes, 57 ingredients, 2 test users, and price baselines
+- Exits automatically after completion (--rm flag removes the container)
+
+**When to seed:**
+- After first deployment to a new environment
+- After resetting or wiping the database
+- In testing/staging environments to populate test data
+
+For more detailed seeding instructions, troubleshooting, and production considerations, see [SEEDING_DEPLOYMENT.md](./SEEDING_DEPLOYMENT.md).
 
 To run in detached mode:
 

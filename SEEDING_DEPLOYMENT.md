@@ -10,6 +10,18 @@ When deploying to a new environment, the database migrations run automatically v
 No recipes available. Please seed the database first.
 ```
 
+## When Seeding Is Needed
+
+You need to seed the database in the following scenarios:
+
+1. **Initial Deployment** - When deploying to a new environment for the first time
+2. **After Database Reset** - If you've dropped and recreated the database
+3. **After Data Wipe** - If you've manually deleted all recipes/ingredients
+4. **Testing/Staging Environments** - To populate test data for development and QA
+5. **Demo Environments** - To showcase the application with realistic sample data
+
+**Note:** In production environments (`NODE_ENV=production`), the seed script will NOT clear existing data, making it safe to run multiple times without losing user-generated content.
+
 ## Solution Options
 
 ### Option 1: Run Seed via Docker Exec (Quick Fix)
@@ -80,12 +92,12 @@ pnpm db:seed
 
 The seed script populates:
 
-- **12 recipes** (various cuisines, dietary preferences)
-- **29 ingredients** (categorized: protein, vegetables, dairy, grains, pantry)
+- **22 recipes** (various cuisines, dietary preferences including quick meals, batch-prep options, and one-pot dinners)
+- **57 ingredients** (categorized: protein, vegetables, dairy, grains, pantry staples)
 - **2 test users:**
   - `premium@example.com` / `P@ssw0rd!` (7-day meal plans)
   - `basic@example.com` / `P@ssw0rd!` (3-day meal plans)
-- **Price baselines** for shopping list cost estimation
+- **Price baselines** for Irish supermarkets (Aldi, Lidl, Tesco, Dunnes) for shopping list cost estimation
 
 ## Idempotency
 
@@ -130,6 +142,24 @@ Ensure the container has write access to run pnpm scripts:
 
 ```bash
 docker compose exec web ls -la apps/web/prisma
+```
+
+### "No recipes available" Error After Deployment
+
+This error indicates the database has not been seeded. To fix:
+
+1. Check if migrations ran successfully: `docker compose logs migrate`
+2. Run the seed service: `docker compose --profile seed run --rm seed`
+3. Verify recipes exist (see "Verifying the Seed" section above)
+
+### Seed Script Fails on Missing Dependencies
+
+If you see errors about missing packages or dependencies:
+
+```bash
+# Rebuild the seed container with fresh dependencies
+docker compose build seed
+docker compose --profile seed run --rm seed
 ```
 
 ## Production Best Practices
