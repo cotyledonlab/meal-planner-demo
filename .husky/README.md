@@ -16,12 +16,25 @@ The pre-commit hook automatically runs before each commit to ensure code quality
 
 If any check fails, the commit will be blocked. Fix the issues and try again.
 
+## Pre-push Hook
+
+The pre-push hook runs before pushing to remote to catch issues before they reach CI:
+
+1. **Format checking**: Ensures all files follow Prettier formatting rules
+2. **Linting**: Validates code style and catches potential errors with ESLint
+3. **Type checking**: Ensures TypeScript compilation succeeds without errors
+
+This hook prevents formatting and linting issues from reaching CI, saving time and resources.
+
 ## Bypassing Hooks (Not Recommended)
 
 In rare cases, you can bypass the hooks with:
 
 ```bash
-git commit --no-verify
+git commit --no-verify  # Skip pre-commit hook
+git push --no-verify    # Skip pre-push hook
+SKIP_HOOKS=1 git commit # Alternative: set environment variable
+SKIP_HOOKS=1 git push   # Alternative: set environment variable
 ```
 
 **Warning**: Only use this if you're absolutely sure the code is correct and plan to fix issues in a follow-up commit.

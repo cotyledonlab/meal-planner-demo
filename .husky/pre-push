@@ -1,0 +1,47 @@
+#!/bin/sh
+# Skip hooks in CI or if SKIP_HOOKS is set
+if [ "$CI" = "true" ] || [ "$SKIP_HOOKS" = "1" ]; then
+  exit 0
+fi
+
+# Explicitly set PATH to include pnpm and node
+export PATH="/home/john/.local/share/pnpm:/home/john/.nvm/versions/node/v22.19.0/bin:$PATH"
+
+# Load nvm if available (this will override with correct version)
+if [ -f "$HOME/.nvm/nvm.sh" ]; then
+  export NVM_DIR="$HOME/.nvm"
+  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+fi
+
+# Check if pnpm is available
+if ! command -v pnpm >/dev/null 2>&1; then
+  echo "⚠️  Warning: pnpm not found in PATH"
+  echo "Current PATH: $PATH"
+  echo "Tip: Run 'SKIP_HOOKS=1 git push' to bypass hooks"
+  exit 1
+fi
+
+echo "Running pre-push checks to catch issues before CI..."
+
+# Run format check
+echo "1/3 Checking code formatting..."
+pnpm format:check || {
+  echo "❌ Formatting check failed. Run 'pnpm format:write' to fix."
+  exit 1
+}
+
+# Run linting
+echo "2/3 Running linter..."
+pnpm lint || {
+  echo "❌ Linting failed. Run 'pnpm lint:fix' to auto-fix issues."
+  exit 1
+}
+
+# Run type checking
+echo "3/3 Running type checker..."
+pnpm typecheck || {
+  echo "❌ Type checking failed. Fix type errors and try again."
+  exit 1
+}
+
+echo "✅ All pre-push checks passed!"

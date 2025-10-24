@@ -15,9 +15,16 @@ Thank you for your interest in contributing to the Meal Planner Demo project! Th
 
 1. **Fork the repository** and clone your fork locally
 2. **Install dependencies**:
+
    ```bash
    pnpm install
    ```
+
+   This command installs all dependencies and automatically sets up git hooks (via the `prepare` script) that will:
+   - Automatically format and lint your code before each commit
+   - Run type checking and tests to catch issues early
+   - Help maintain consistent code quality across the project
+
 3. **Set up environment variables**:
    ```bash
    cp .env.example .env
@@ -53,9 +60,25 @@ Thank you for your interest in contributing to the Meal Planner Demo project! Th
    pnpm format:write # Auto-format your code
    ```
 
+   **Note**: The pre-commit hook will automatically run formatting, linting, type checking, and tests when you commit. If the hook isn't working, you can run these commands manually or use the convenience script:
+
+   ```bash
+   pnpm precommit    # Run all pre-commit checks manually
+   ```
+
 4. Commit your changes with clear, descriptive messages
 
+   The pre-commit hook will automatically verify your code. If you need to bypass the hook (not recommended), use:
+
+   ```bash
+   git commit --no-verify  # Or set SKIP_HOOKS=1
+   ```
+
+   **Warning**: Only bypass hooks if you're certain the code is correct and plan to fix issues in a follow-up commit.
+
 5. Push to your fork and create a pull request
+
+   Before pushing, the pre-push hook will run format checking, linting, and type checking to catch issues before they reach CI.
 
 ## Code Quality Standards
 
