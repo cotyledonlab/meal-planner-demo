@@ -59,7 +59,9 @@ RUN corepack enable && corepack prepare pnpm@9.10.0 --activate
 # Set environment variables for build
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV SKIP_ENV_VALIDATION=1
-# Dummy DATABASE_URL for build time (real URL provided at runtime)
+# Dummy DATABASE_URL required for Prisma client generation at build time.
+# Prisma requires a valid DATABASE_URL format during client generation, even when not connecting to a database.
+# The real URL is provided at runtime.
 ENV DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"
 
 # Generate Prisma Client
