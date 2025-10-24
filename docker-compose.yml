@@ -5,7 +5,7 @@ services:
       dockerfile: apps/web/Dockerfile
       target: deps
     environment:
-      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD:-password}@postgres:5432/meal-planner-demo
+      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD:-password}@postgres:5432/meal-planner-demo?connection_limit=10&pool_timeout=30&connect_timeout=30
       - SKIP_ENV_VALIDATION=1
       - PRISMA_PROJECT_DIR=apps/web
     depends_on:
@@ -21,7 +21,7 @@ services:
       context: .
       dockerfile: apps/web/Dockerfile
     environment:
-      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD:-password}@postgres:5432/meal-planner-demo
+      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD:-password}@postgres:5432/meal-planner-demo?connection_limit=10&pool_timeout=30&connect_timeout=30
       - SKIP_ENV_VALIDATION=1
     depends_on:
       migrate:
@@ -40,9 +40,10 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
       POSTGRES_DB: meal-planner-demo
-    ports:
-      # Use a configurable host port to avoid conflicts on shared hosts (Dokploy)
-      - "${POSTGRES_PORT:-5432}:5432"
+    # SECURITY: Do NOT expose PostgreSQL port to host in production
+    # Only expose for local development if absolutely needed
+    # ports:
+    #   - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
     healthcheck:
@@ -82,7 +83,7 @@ services:
       # or set to 0 to allow Docker to choose a random ephemeral port.
       - "${WEB_PORT:-3000}:3000"
     environment:
-      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD:-password}@postgres:5432/meal-planner-demo
+      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD:-password}@postgres:5432/meal-planner-demo?connection_limit=10&pool_timeout=30&connect_timeout=30
       - NODE_ENV=production
       # Default to http://localhost:3000 for local runs; override in Dokploy with your domain
       - NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:${WEB_PORT:-3000}}
