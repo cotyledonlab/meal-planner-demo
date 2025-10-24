@@ -99,6 +99,7 @@ pnpm db:seed
 ```
 
 This creates essential data for the application:
+
 - **22 sample recipes** covering various cuisines and dietary preferences
 - **57 ingredients** across all major food categories
 - **2 test users** for development:
@@ -162,11 +163,13 @@ docker compose --profile seed run --rm seed
 ```
 
 This command:
+
 - Runs a one-time container to seed the database
 - Creates 22 sample recipes, 57 ingredients, 2 test users, and price baselines
 - Exits automatically after completion (--rm flag removes the container)
 
 **When to seed:**
+
 - After first deployment to a new environment
 - After resetting or wiping the database
 - In testing/staging environments to populate test data
