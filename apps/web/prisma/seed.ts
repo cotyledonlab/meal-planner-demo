@@ -2,7 +2,7 @@ import { PrismaClient } from '@prisma/client';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import bcrypt from 'bcryptjs';
+import { hash } from '@node-rs/argon2';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -50,7 +50,12 @@ async function main() {
 
   // Create test users
   console.log('👥 Creating test users...');
-  const passwordHash = await bcrypt.hash('P@ssw0rd!', 10);
+  const passwordHash = await hash('P@ssw0rd!', {
+    memoryCost: 19456,
+    timeCost: 2,
+    outputLen: 32,
+    parallelism: 1,
+  });
 
   const premiumUser = await prisma.user.create({
     data: {
