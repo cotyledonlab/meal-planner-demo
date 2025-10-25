@@ -31,8 +31,6 @@ services:
     networks:
       - app-network
     restart: "no"
-    profiles:
-      - seed
 
   postgres:
     image: postgres:15-alpine
