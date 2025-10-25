@@ -20,6 +20,7 @@ services:
     build:
       context: .
       dockerfile: apps/web/Dockerfile
+      target: deps
     environment:
       - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD:-password}@postgres:5432/meal-planner-demo?connection_limit=10&pool_timeout=30&connect_timeout=30
       - SKIP_ENV_VALIDATION=1
