@@ -10,6 +10,7 @@ interface DashboardClientProps {
   user: {
     name?: string | null;
     email?: string | null;
+    role?: string | null;
   };
   signOutAction: () => Promise<void>;
 }
@@ -17,8 +18,7 @@ interface DashboardClientProps {
 export default function DashboardClient({ user, signOutAction }: DashboardClientProps) {
   const [showPremiumModal, setShowPremiumModal] = useState(false);
 
-  // TODO: Get this from session when isPremium is added to User model
-  const isPremiumUser = false;
+  const isPremiumUser = user.role === 'premium';
 
   const displayName = user.name ?? user.email?.split('@')[0] ?? 'there';
 

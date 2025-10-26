@@ -20,6 +20,7 @@ export default async function DashboardPage() {
       user={{
         name: session.user.name,
         email: session.user.email,
+        role: session.user.role,
       }}
       signOutAction={handleSignOut}
     />
