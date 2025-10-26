@@ -21,7 +21,7 @@ type MealPlanItem = {
 
 type MealPlan = {
   id: string;
-  startDate: Date;
+  startDate: Date | string;
   days: number;
   items: MealPlanItem[];
 };
@@ -30,6 +30,15 @@ interface MealPlanViewProps {
   plan?: MealPlan;
   preferences?: MealPreferences;
   onViewShoppingList?: () => void;
+}
+
+/**
+ * Ensures a date value is converted to a Date object
+ * Handles both Date objects and ISO string dates
+ */
+function ensureDate(date: Date | string): Date {
+  if (date instanceof Date) return date;
+  return new Date(date);
 }
 
 export default function MealPlanView({ plan, preferences, onViewShoppingList }: MealPlanViewProps) {
@@ -46,7 +55,7 @@ export default function MealPlanView({ plan, preferences, onViewShoppingList }: 
   const dayGroups = plan
     ? Array.from({ length: plan.days }, (_, i) => ({
         dayIndex: i,
-        date: new Date(new Date(plan.startDate).getTime() + i * 24 * 60 * 60 * 1000),
+        date: new Date(ensureDate(plan.startDate).getTime() + i * 24 * 60 * 60 * 1000),
         items: plan.items
           .filter((item) => item.dayIndex === i)
           .sort((a, b) => {
