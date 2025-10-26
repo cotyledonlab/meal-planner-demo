@@ -12,7 +12,14 @@ export default function PlannerPage() {
   const generatePlan = api.plan.generate.useMutation({
     onSuccess: (data) => {
       // Redirect to the plan page
-      router.push(`/plan/${data.id}`);
+      if (data?.id) {
+        router.push(`/plan/${data.id}`);
+      } else {
+        console.error('Invalid plan data returned from mutation:', data);
+      }
+    },
+    onError: (error) => {
+      console.error('Plan generation failed:', error);
     },
   });
 
@@ -70,7 +77,9 @@ export default function PlannerPage() {
             <h2 className="mt-4 text-lg font-semibold text-gray-900">
               Failed to generate meal plan
             </h2>
-            <p className="mt-2 text-sm text-gray-600">{generatePlan.error.message}</p>
+            <p className="mt-2 text-sm text-gray-600">
+              {generatePlan.error?.message || 'An unexpected error occurred. Please try again.'}
+            </p>
             <div className="mt-6 flex justify-center gap-3">
               <button
                 onClick={() => router.push('/dashboard')}
