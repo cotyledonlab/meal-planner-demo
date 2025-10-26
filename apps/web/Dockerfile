@@ -83,6 +83,9 @@ COPY --from=builder /app/pnpm-workspace.yaml ./
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/pnpm-lock.yaml ./
 
+# Copy packages directory (required by pnpm workspace)
+COPY --from=builder /app/packages ./packages
+
 # Copy optimized node_modules from builder stage (production dependencies only)
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/apps/web/node_modules ./apps/web/node_modules
