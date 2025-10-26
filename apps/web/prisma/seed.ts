@@ -50,12 +50,22 @@ async function main() {
 
   // Create test users
   console.log('👥 Creating test users...');
-  const passwordHash = await hash('P@ssw0rd!', {
-    memoryCost: 19456,
-    timeCost: 2,
-    outputLen: 32,
-    parallelism: 1,
-  });
+  // Use OWASP-recommended Argon2 parameters in production; lower for dev/demo to improve seed performance.
+  const argon2Params =
+    process.env.NODE_ENV === 'production'
+      ? {
+          memoryCost: 47104, // 46 MiB per OWASP
+          timeCost: 3,
+          outputLen: 32,
+          parallelism: 1,
+        }
+      : {
+          memoryCost: 19456, // Lower for faster seeding in dev/demo
+          timeCost: 2,
+          outputLen: 32,
+          parallelism: 1,
+        };
+  const passwordHash = await hash('P@ssw0rd!', argon2Params);
 
   const premiumUser = await prisma.user.create({
     data: {

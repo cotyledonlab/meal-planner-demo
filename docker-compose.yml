@@ -3,7 +3,6 @@ services:
     build:
       context: .
       dockerfile: apps/web/Dockerfile
-      target: deps
     environment:
       - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD:-password}@postgres:5432/meal-planner-demo?connection_limit=10&pool_timeout=30&connect_timeout=30
       - SKIP_ENV_VALIDATION=1
@@ -20,7 +19,6 @@ services:
     build:
       context: .
       dockerfile: apps/web/Dockerfile
-      target: deps
     environment:
       - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD:-password}@postgres:5432/meal-planner-demo?connection_limit=10&pool_timeout=30&connect_timeout=30
       - SKIP_ENV_VALIDATION=1
@@ -92,6 +90,8 @@ services:
       postgres:
         condition: service_healthy
       migrate:
+        condition: service_completed_successfully
+      seed:
         condition: service_completed_successfully
     healthcheck:
       # Use Node to perform a simple HTTP GET to the root. Succeeds on 200 OK.
