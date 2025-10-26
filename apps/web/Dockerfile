@@ -1,5 +1,8 @@
 # syntax=docker/dockerfile:1
 
+# Define pnpm version for consistency across all stages
+ARG PNPM_VERSION=9.10.0
+
 # Base stage with Node.js
 FROM node:20-alpine AS base
 
@@ -12,7 +15,7 @@ WORKDIR /app
 # Install pnpm
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable && corepack prepare pnpm@9.10.0 --activate
+RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
 
 # Copy workspace configuration
 COPY pnpm-workspace.yaml ./
@@ -54,7 +57,7 @@ COPY apps/web ./apps/web
 # Install pnpm
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable && corepack prepare pnpm@9.10.0 --activate
+RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
 
 # Set environment variables for build
 ENV NEXT_TELEMETRY_DISABLED=1
@@ -68,20 +71,22 @@ RUN cd apps/web && pnpm prisma generate
 # Build the application
 RUN cd apps/web && pnpm build
 
-# Database migration stage - includes pnpm and all dependencies
+# Database migration stage - optimized for running migrations and seeding
 FROM base AS migration
 WORKDIR /app
 
-# Copy everything we need for migrations
-COPY --from=deps /app/node_modules ./node_modules
-COPY --from=deps /app/apps/web/node_modules ./apps/web/node_modules
+# Copy optimized node_modules from builder stage (production dependencies only)
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/apps/web/node_modules ./apps/web/node_modules
+
+# Copy Prisma schema and infrastructure scripts needed for migrations
 COPY --from=builder /app/apps/web/prisma ./apps/web/prisma
 COPY --from=builder /app/infra ./infra
 
-# Install pnpm
+# Install pnpm for running migration scripts
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable && corepack prepare pnpm@9.10.0 --activate
+RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
 
 # No specific entrypoint - will use command from docker-compose
 # The migrate.sh script expects DATABASE_URL to be set at runtime
