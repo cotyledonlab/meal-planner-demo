@@ -1,8 +1,6 @@
 const puppeteer = require("puppeteer");
 
-const URL =
-  process.env.TEST_URL ||
-  "https://meal-plan-demo-monostack-i9woau-78f535-65-108-56-181.traefik.me/";
+const URL = process.env.TEST_URL || "https://meal-plan-demo-monostack-i9woau-78f535-65-108-56-181.traefik.me/";
 const EMAIL = process.env.TEST_EMAIL || "premium@example.com";
 const PASSWORD = process.env.TEST_PASSWORD || "P@ssw0rd!";
 
