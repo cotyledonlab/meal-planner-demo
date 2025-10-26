@@ -27,11 +27,10 @@ export default async function PlanPage({ params }: PageProps) {
   let shoppingList = null;
   try {
     shoppingList = await api.shoppingList.getForPlan({ planId: id });
-  } catch (error) {
+  } catch {
     // Shopping list not ready yet - this can happen if it's still being created
     // We'll render the meal plan and show an empty shopping list
-    console.error('Error fetching shopping list:', error);
-    shoppingList = { id: '', planId: id, items: [], createdAt: new Date() };
+    // Keep shoppingList as null and handle in the component
   }
 
   // Ensure startDate is properly converted to Date if it's a string
@@ -61,7 +60,7 @@ export default async function PlanPage({ params }: PageProps) {
 
           {/* Shopping List */}
           <div className="lg:col-span-1">
-            <ShoppingList items={shoppingList.items} planId={id} />
+            <ShoppingList items={shoppingList?.items} planId={id} />
           </div>
         </div>
       </div>
