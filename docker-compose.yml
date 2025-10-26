@@ -93,6 +93,8 @@ services:
         condition: service_healthy
       migrate:
         condition: service_completed_successfully
+      seed:
+        condition: service_completed_successfully
     healthcheck:
       # Use Node to perform a simple HTTP GET to the root. Succeeds on 200 OK.
       test:

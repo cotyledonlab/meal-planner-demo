@@ -23,8 +23,16 @@ export default async function PlanPage({ params }: PageProps) {
     notFound();
   }
 
-  // Fetch the shopping list
-  const shoppingList = await api.shoppingList.getForPlan({ planId: id });
+  // Fetch the shopping list (may fail if not ready yet, provide fallback)
+  let shoppingList = null;
+  try {
+    shoppingList = await api.shoppingList.getForPlan({ planId: id });
+  } catch (error) {
+    // Shopping list not ready yet - this can happen if it's still being created
+    // We'll render the meal plan and show an empty shopping list
+    console.error('Error fetching shopping list:', error);
+    shoppingList = { id: '', planId: id, items: [], createdAt: new Date() };
+  }
 
   // Ensure startDate is properly converted to Date if it's a string
   const startDate = plan.startDate instanceof Date ? plan.startDate : new Date(plan.startDate);
