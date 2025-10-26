@@ -11,6 +11,7 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    working_dir: /app
     command: ["/app/infra/postgres/migrate.sh"]
     networks:
       - app-network
