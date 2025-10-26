@@ -54,6 +54,9 @@ COPY packages ./packages
 # Copy web app
 COPY apps/web ./apps/web
 
+# Copy infra directory for migration stage
+COPY infra ./infra
+
 # Install pnpm
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
