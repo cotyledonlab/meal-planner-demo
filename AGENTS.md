@@ -1,6 +1,29 @@
 # meal-planner-demo Development Guidelines
 
-Auto-generated from all feature plans. Last updated: 2025-10-23
+Last updated: 2025-10-26
+
+## Current State
+
+**Active PR**: PR #79 - "Fix: Add migration stage to Dockerfile for proper deployment"
+
+- **Status**: OPEN, awaiting merge
+- **Purpose**: Fixes deployment failures by creating dedicated `migration` Docker stage for database operations
+- **All tests passing**: 102 tests, TypeScript, ESLint, Prettier, pre-push checks
+
+**Recent Fixes**:
+
+1. Created dedicated `migration` Docker stage for database migrations/seeding
+2. Fixed `target: builder` → `target: migration` in docker-compose.yml (both migrate and seed services)
+3. Added pnpm version consistency with ARG PNPM_VERSION across all Dockerfile stages
+4. Fixed shopping list error handling (null instead of mock object)
+5. Addressed all Copilot code review comments
+
+**Deployment Context**:
+
+- Application deployed via Dokploy on a VPS
+- Typical workflow: Push to main → Dokploy triggers auto-deployment
+- Direct access to `/etc/dokploy/` for deployment logs and configuration
+- Recent deployment issue: `service "migrate" didn't complete successfully: exit 1` - **NOW FIXED**
 
 ## Project Overview
 
@@ -155,6 +178,47 @@ If any check fails, fix the issues before committing. Common issues:
 - Stream long AI responses
 - Enforce rate limiting on AI endpoints
 
+## Agent Context & Available Tools
+
+When working in this environment, Claude Code is typically launched from the VPS and has access to:
+
+### Direct File Access
+
+- Full access to `/etc/dokploy/` directory for deployment logs and configuration
+- Access to project files via standard file operations
+- Working directory: `/home/john/meal-planner-demo/`
+
+### MCP (Model Context Protocol) Tools Available
+
+1. **Dokploy MCP**: Direct control over deployments, logs, and application state
+   - View deployment logs in real-time
+   - Access application configuration
+   - Trigger redeployments if needed
+
+2. **Chrome Headless with DevTools MCP**: Browser automation and testing
+   - Run Puppeteer tests with headless browser
+   - Screenshot and visual inspection of deployed application
+   - Automated E2E testing against live deployment
+
+### Standard Access
+
+- Git operations (clone, push, pull, rebase, merge, cherry-pick)
+- Docker Compose operations on the VPS
+- Access to Dokploy logs at `/etc/dokploy/logs/meal-plan-demo-monostack-i9woau/`
+- GitHub API via `gh` command
+- Direct database access via `psql` with proper credentials
+
+### Typical Workflow
+
+1. Make code changes locally
+2. Push to branch → Create/update PR
+3. Review and merge to main
+4. Dokploy automatically deploys changes
+5. Check deployment via:
+   - MCP Dokploy tool for real-time logs
+   - Chrome headless for visual verification
+   - Check `/etc/dokploy/logs/` for deployment logs
+
 ## Environment Setup
 
 1. **Prerequisites**: Node.js 20+, pnpm 9+, Docker and Docker Compose
@@ -192,8 +256,55 @@ Services when running with Docker Compose:
 - **Redis**: localhost:6379
 - **Mailpit UI**: http://localhost:8025 (for viewing emails)
 
+## Troubleshooting
+
+### Deployment Failures
+
+- **Issue**: `service "migrate" didn't complete successfully: exit 1`
+  - **Solution**: Ensure docker-compose.yml uses `target: migration` for migrate and seed services
+  - **Root cause**: Using `target: builder` or default stage for services that need persistent execution
+  - **Fix**: Use dedicated `migration` stage in Dockerfile
+
+- **Issue**: Recipes/ingredients not visible after deployment
+  - **Solution**: Check that seed service is configured to run after migrations
+  - **Verify**: Seed service should have `depends_on: { migrate: { condition: service_completed_successfully } }`
+
+### Local Development Issues
+
+- **TypeScript errors**: Run `pnpm typecheck` to identify issues
+- **Test failures**: Run `pnpm test` and check test output
+- **Docker issues**: Check `/etc/dokploy/logs/` for deployment-specific errors
+- **Database not seeding**: Ensure `pnpm db:seed` runs and check for database connection errors
+
+### Common Commands for Debugging
+
+```bash
+# Check docker compose status
+docker compose ps
+
+# View logs for a specific service
+docker compose logs migrate
+docker compose logs seed
+docker compose logs postgres
+
+# View Dokploy deployment logs
+tail -f /etc/dokploy/logs/meal-plan-demo-monostack-i9woau/meal-plan-demo-monostack-i9woau-2025-10-*.log
+
+# Run migrations manually
+pnpm db:migrate
+
+# Test database connection
+psql postgresql://postgres:password@localhost:5432/meal-planner-demo -c "SELECT 1"
+
+# Check Prisma schema for issues
+pnpm db:push --dry-run
+```
+
 ## Recent Changes
 
+- **2025-10-26**: Fixed deployment failures by creating dedicated `migration` Docker stage
+- **2025-10-26**: Added pnpm version consistency across all Dockerfile stages (PNPM_VERSION ARG)
+- **2025-10-26**: Addressed all Copilot code review comments on deployment PR
 - Migrated to monorepo structure with pnpm workspaces
 - Added comprehensive test suite with Vitest
 - Configured pre-commit hooks with Husky and lint-staged
@@ -201,4 +312,21 @@ Services when running with Docker Compose:
 - 002-project-mealmind-ai: Added TypeScript (Node.js 20+) + Next.js App Router, React Server Components, tRPC, Zod, Prisma, NextAuth, OpenAI GPT-5 Codex SDK, pino, Sentry (gated), Redis client
 
 <!-- MANUAL ADDITIONS START -->
+
+## Critical Deployment Notes
+
+**Docker Stages**:
+
+- `base`: Alpine Node.js with libc6-compat and openssl
+- `deps`: Installs pnpm and dependencies (node_modules)
+- `builder`: Builds the application (pnpm build output)
+- **`migration`**: For database operations (pnpm scripts like migrations/seeding) - DO NOT use runner or builder
+- `runner`: Production-only image (Next.js standalone app)
+
+**Why the migration stage matters**:
+
+- Builders/runners are temporary or production-optimized - they exit after their job
+- Migration stage is designed to stay running and execute commands from docker-compose
+- Copying from builder gives optimized node_modules vs raw deps
+
 <!-- MANUAL ADDITIONS END -->
