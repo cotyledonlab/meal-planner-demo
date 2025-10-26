@@ -49,18 +49,15 @@ export class PlanGenerator {
     // Shuffle recipes for variety (using a simple Fisher-Yates shuffle)
     const shuffledRecipes = this.shuffleArray([...recipes]);
 
-    // Create the meal plan
-    const plan = await this.prisma.mealPlan.create({
-      data: {
-        userId,
-        startDate,
-        days,
-      },
-    });
-
-    // Create meal plan items
+    // Prepare meal plan items data
     const mealTypes = ['breakfast', 'lunch', 'dinner'];
     let recipeIndex = 0;
+    const mealPlanItemsData: Array<{
+      dayIndex: number;
+      mealType: string;
+      recipeId: string;
+      servings: number;
+    }> = [];
 
     for (let dayIndex = 0; dayIndex < days; dayIndex++) {
       for (const mealType of mealTypes) {
@@ -68,27 +65,46 @@ export class PlanGenerator {
         const recipe = shuffledRecipes[recipeIndex % shuffledRecipes.length];
         if (!recipe) continue;
 
-        await this.prisma.mealPlanItem.create({
-          data: {
-            planId: plan.id,
-            dayIndex,
-            mealType,
-            recipeId: recipe.id,
-            servings: recipe.servingsDefault,
-          },
+        mealPlanItemsData.push({
+          dayIndex,
+          mealType,
+          recipeId: recipe.id,
+          servings: recipe.servingsDefault,
         });
 
         recipeIndex++;
       }
     }
 
-    return {
-      id: plan.id,
-      userId: plan.userId,
-      startDate: plan.startDate,
-      days: plan.days,
-      createdAt: plan.createdAt,
-    };
+    // Create the meal plan and all items in a single transaction
+    const plan = await this.prisma.$transaction(async (tx) => {
+      // Create the meal plan
+      const createdPlan = await tx.mealPlan.create({
+        data: {
+          userId,
+          startDate,
+          days,
+        },
+      });
+
+      // Create all meal plan items
+      await tx.mealPlanItem.createMany({
+        data: mealPlanItemsData.map((item) => ({
+          ...item,
+          planId: createdPlan.id,
+        })),
+      });
+
+      return {
+        id: createdPlan.id,
+        userId: createdPlan.userId,
+        startDate: createdPlan.startDate,
+        days: createdPlan.days,
+        createdAt: createdPlan.createdAt,
+      } as MealPlanOutput;
+    });
+
+    return plan;
   }
 
   /**

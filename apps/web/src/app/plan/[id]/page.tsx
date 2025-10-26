@@ -16,26 +16,11 @@ export default async function PlanPage({ params }: PageProps) {
     redirect('/auth/signin');
   }
 
-  // Fetch the meal plan with retry logic for transient failures
-  let plan = null;
-  let attempts = 0;
-  const maxAttempts = 3;
-
-  while (!plan && attempts < maxAttempts) {
-    try {
-      plan = await api.plan.getById({ planId: id });
-      if (plan) break;
-    } catch (error) {
-      attempts++;
-      if (attempts < maxAttempts) {
-        // Wait before retrying
-        await new Promise((resolve) => setTimeout(resolve, 100 * attempts));
-      } else {
-        // After max attempts, if still not found, check if it's a real 404 or a transient error
-        console.error('Failed to fetch meal plan after retries:', error);
-      }
-    }
-  }
+  // Fetch the meal plan
+  const plan = await api.plan.getById({ planId: id }).catch((error) => {
+    console.error('Failed to fetch meal plan:', error);
+    return null;
+  });
 
   if (!plan) {
     notFound();

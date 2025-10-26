@@ -3,6 +3,7 @@ import '~/styles/globals.css';
 import { type Metadata } from 'next';
 
 import { TRPCReactProvider } from '~/trpc/react';
+import { SessionProvider } from '~/app/_components/SessionProvider';
 
 export const metadata: Metadata = {
   title: 'MealMind AI - Simplify Your Weekly Meals',
@@ -15,7 +16,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en" className="h-full">
       <body className="h-full">
-        <TRPCReactProvider>{children}</TRPCReactProvider>
+        <SessionProvider>
+          <TRPCReactProvider>{children}</TRPCReactProvider>
+        </SessionProvider>
       </body>
     </html>
   );
