@@ -29,24 +29,44 @@ export class ShoppingListService {
     }
 
     // Fetch the plan with all items and their recipes
-    const plan = await this.prisma.mealPlan.findUnique({
-      where: { id: planId },
-      include: {
-        items: {
+    // Retry a few times in case of transient issues (e.g., database replication lag)
+    let plan = null;
+    let attempts = 0;
+    const maxAttempts = 3;
+
+    while (!plan && attempts < maxAttempts) {
+      try {
+        plan = await this.prisma.mealPlan.findUnique({
+          where: { id: planId },
           include: {
-            recipe: {
+            items: {
               include: {
-                ingredients: {
+                recipe: {
                   include: {
-                    ingredient: true,
+                    ingredients: {
+                      include: {
+                        ingredient: true,
+                      },
+                    },
                   },
                 },
               },
             },
           },
-        },
-      },
-    });
+        });
+
+        if (plan) break;
+      } catch (error) {
+        // Log but continue retrying
+        console.error(`Attempt ${attempts + 1} to fetch plan failed:`, error);
+      }
+
+      attempts++;
+      if (!plan && attempts < maxAttempts) {
+        // Wait a bit before retrying
+        await new Promise((resolve) => setTimeout(resolve, 100 * attempts));
+      }
+    }
 
     if (!plan) {
       throw new Error('Meal plan not found');

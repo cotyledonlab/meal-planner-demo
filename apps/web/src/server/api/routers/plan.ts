@@ -19,7 +19,12 @@ export const planRouter = createTRPCRouter({
 
       // Automatically create shopping list for the plan
       const shoppingListService = new ShoppingListService(ctx.db);
-      await shoppingListService.buildAndStoreForPlan(plan.id);
+      try {
+        await shoppingListService.buildAndStoreForPlan(plan.id);
+      } catch (error) {
+        // Log the error but don't fail the mutation - shopping list can be generated later
+        console.error('Failed to create shopping list for plan:', error);
+      }
 
       return plan;
     }),
