@@ -68,6 +68,24 @@ RUN cd apps/web && pnpm prisma generate
 # Build the application
 RUN cd apps/web && pnpm build
 
+# Database migration stage - includes pnpm and all dependencies
+FROM base AS migration
+WORKDIR /app
+
+# Copy everything we need for migrations
+COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /app/apps/web/node_modules ./apps/web/node_modules
+COPY --from=builder /app/apps/web/prisma ./apps/web/prisma
+COPY --from=builder /app/infra ./infra
+
+# Install pnpm
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable && corepack prepare pnpm@9.10.0 --activate
+
+# No specific entrypoint - will use command from docker-compose
+# The migrate.sh script expects DATABASE_URL to be set at runtime
+
 # Production image, copy all the files and run next
 FROM base AS runner
 WORKDIR /app
