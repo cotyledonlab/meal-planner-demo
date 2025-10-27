@@ -372,29 +372,43 @@ dokploy restore postgres <service-name> <backup-file>
 
 Recommended: Set up automated daily backups in Dokploy configuration.
 
-## Custom Domain with HTTPS (Traefik)
+## Custom Domain with HTTPS and Subdirectory Path
 
-This section covers deploying the application with a custom domain and proper HTTPS certificates using Traefik as a reverse proxy.
+This section covers deploying the application with a custom domain and serving it from a subdirectory path (e.g., `https://cotyledonlab.com/demos/meal-planner`) using Dokploy's built-in Traefik reverse proxy.
 
 ### Prerequisites
 
 - A domain name (e.g., `cotyledonlab.com`)
 - Access to your domain's DNS settings
 - Dokploy server with a public IP address
-- Ports 80 and 443 open on your server
+- Ports 80 and 443 open on your server (Dokploy's Traefik uses these)
 
-### DNS Configuration
+### Architecture
+
+Dokploy includes a built-in Traefik instance that handles:
+
+- HTTP to HTTPS redirects
+- Automatic Let's Encrypt SSL certificates
+- Reverse proxy routing to your applications
+
+```
+Internet → Dokploy's Traefik (ports 80/443) → Path-based routing → Your App (port 3000)
+          ↓
+       Let's Encrypt (automatic SSL)
+```
+
+### Step 1: Configure DNS
 
 1. **Add A Record for your domain:**
    - Log in to your domain registrar's DNS management panel
    - Add an A record:
-     - **Name**: `@` (for root domain) or subdomain name
+     - **Host/Name**: `@` (or leave blank for root domain)
      - **Type**: `A`
      - **Value**: Your Dokploy server's public IP address
-     - **TTL**: 3600 (or your preferred value)
+     - **TTL**: 3600 (or auto)
 
 2. **Optional: Add WWW subdomain:**
-   - **Name**: `www`
+   - **Host/Name**: `www`
    - **Type**: `CNAME` or `A`
    - **Value**: `cotyledonlab.com` (or your server IP)
    - **TTL**: 3600
@@ -404,181 +418,188 @@ This section covers deploying the application with a custom domain and proper HT
    - Test with: `dig cotyledonlab.com` or `nslookup cotyledonlab.com`
    - Verify the IP address matches your Dokploy server
 
-### Traefik Configuration
-
-This repository includes a complete Traefik setup with automatic HTTPS certificate management.
-
-#### Architecture
-
-```
-Internet → Traefik (ports 80/443) → Path-based routing → Application (port 3000)
-          ↓
-       Let's Encrypt (automatic SSL certificates)
-```
-
-#### Environment Variables
-
-Configure these in your Dokploy environment or `.env` file:
+**Finding your Dokploy server IP:**
 
 ```bash
-# Your email for Let's Encrypt certificate expiry notifications
-TRAEFIK_ACME_EMAIL=your-email@example.com
+# SSH into your Dokploy server
+curl ifconfig.me
+```
 
-# Your custom domain
-DOMAIN=cotyledonlab.com
+### Step 2: Configure Environment Variables
 
+Set these in your Dokploy application environment settings:
+
+```bash
 # Base path for subdirectory deployment
 BASE_PATH=/demos/meal-planner
 
 # NextAuth URL must include the full path with basePath
 NEXTAUTH_URL=https://cotyledonlab.com/demos/meal-planner
 
-# Other required variables
+# Your custom domain (optional, for reference)
+DOMAIN=cotyledonlab.com
+
+# Required authentication and database variables
 AUTH_SECRET=<generate-with-npx-auth-secret>
 POSTGRES_PASSWORD=<secure-password>
+NODE_ENV=production
 ```
 
-#### Deployment with Traefik
+**Important:** The `NEXTAUTH_URL` must include the full path including the subdirectory.
 
-1. **Update your `.env` file** with the variables above
+### Step 3: Configure Dokploy Domain and Path
 
-2. **Deploy the stack:**
+In the Dokploy dashboard for your application:
 
-   ```bash
-   docker compose up -d --build
-   ```
+1. **Navigate to your Compose application** (`meal-planner-demo`)
 
-3. **Verify Traefik is running:**
+2. **Go to the "Domains" section**
 
-   ```bash
-   docker compose ps traefik
-   ```
+3. **Add a domain:**
+   - **Domain**: `cotyledonlab.com`
+   - **Path**: `/demos/meal-planner`
+   - **Service Name**: `web` (the service name from docker-compose.yml)
+   - **Container Port**: `3000`
+   - **HTTPS**: Enable
+   - **Generate SSL Certificate**: Enable (Let's Encrypt)
 
-4. **Monitor certificate acquisition:**
+4. **Save the configuration**
 
-   ```bash
-   # Watch Traefik logs for Let's Encrypt certificate requests
-   docker compose logs -f traefik
-   ```
+Dokploy's Traefik will automatically:
 
-   You should see messages like:
+- Route traffic from `https://cotyledonlab.com/demos/meal-planner` to your web container
+- Request and manage SSL certificates via Let's Encrypt
+- Redirect HTTP to HTTPS
 
-   ```
-   time="..." level=info msg="Certificate obtained for domains [cotyledonlab.com]"
-   ```
+### Step 4: Deploy
 
-5. **Access your application:**
-   - HTTP requests to `http://cotyledonlab.com/demos/meal-planner` will redirect to HTTPS
-   - HTTPS: `https://cotyledonlab.com/demos/meal-planner`
+1. **Deploy or redeploy your application** in Dokploy
+2. **Monitor deployment logs** for any errors
+3. **Wait 1-2 minutes** for SSL certificate generation
 
-#### Subdirectory Path Configuration
+### Step 5: Verify
 
-The application is configured to be served from `/demos/meal-planner` by default. This is controlled by:
+1. **Check SSL certificate:**
+   - Visit `https://cotyledonlab.com/demos/meal-planner`
+   - Verify no browser security warnings
+   - Check certificate is issued by Let's Encrypt
+
+2. **Test HTTP redirect:**
+   - Visit `http://cotyledonlab.com/demos/meal-planner`
+   - Should automatically redirect to HTTPS
+
+3. **Test authentication:**
+   - Sign in and verify the authentication flow works correctly
+
+### Subdirectory Path Configuration
+
+The application is configured to be served from a subdirectory path. This requires coordination between:
 
 1. **Next.js basePath** (`apps/web/next.config.js`):
    - Automatically prefixes all routes, assets, and API endpoints
    - Set via `BASE_PATH` environment variable
    - Default: `/demos/meal-planner`
 
-2. **Traefik routing** (`docker-compose.yml` labels):
-   - Routes traffic matching the domain and path prefix
-   - Rule: `Host(cotyledonlab.com) && PathPrefix(/demos/meal-planner)`
+2. **Dokploy domain configuration**:
+   - Path field: `/demos/meal-planner`
+   - Dokploy's Traefik routes requests with this path prefix to your container
 
 3. **NextAuth configuration**:
    - `NEXTAUTH_URL` must include the full path: `https://cotyledonlab.com/demos/meal-planner`
+   - This ensures OAuth callbacks and redirects work correctly
 
-**To deploy at root path instead:**
+**All three must match for the application to work correctly.**
 
-```bash
-# Set these environment variables
-BASE_PATH=""
-NEXTAUTH_URL=https://cotyledonlab.com
+### Deploying at Root Path
 
-# Update the Traefik rule in docker-compose.yml:
-# Change PathPrefix(`/demos/meal-planner`) to PathPrefix(`/`)
-```
+If you prefer to deploy at the root path instead of a subdirectory:
 
-#### SSL Certificate Management
+1. **Update environment variables:**
 
-Traefik automatically:
-
-- Requests SSL certificates from Let's Encrypt on first deployment
-- Stores certificates in `traefik/letsencrypt/acme.json`
-- Renews certificates before expiration
-- Redirects all HTTP traffic to HTTPS
-
-**Certificate storage:**
-
-- Location: `traefik/letsencrypt/acme.json`
-- Excluded from git (in `.gitignore`)
-- Automatically created with proper permissions (600)
-- Persists across container restarts via volume mount
-
-**Troubleshooting SSL:**
-
-1. **Certificate not obtained:**
-   - Verify DNS is pointing to your server: `dig cotyledonlab.com`
-   - Ensure ports 80 and 443 are open in firewall
-   - Check Traefik logs: `docker compose logs traefik`
-   - Verify `TRAEFIK_ACME_EMAIL` is set
-
-2. **Browser shows "Certificate Invalid":**
-   - Wait a few minutes for certificate acquisition
-   - Check Traefik logs for errors
-   - Verify domain in browser matches domain in config
-
-3. **HTTP instead of HTTPS:**
-   - Verify the Traefik redirect is working
-   - Check browser isn't forcing HTTP
-   - Clear browser cache and try again
-
-#### Multiple Applications on Same Domain
-
-If you're hosting multiple applications on the same domain (e.g., `cotyledonlab.com`), you can route them by path:
-
-```yaml
-# Application 1: cotyledonlab.com/demos/meal-planner
-- "traefik.http.routers.meal-planner.rule=Host(`cotyledonlab.com`) && PathPrefix(`/demos/meal-planner`)"
-
-# Application 2: cotyledonlab.com/demos/other-app
-- "traefik.http.routers.other-app.rule=Host(`cotyledonlab.com`) && PathPrefix(`/demos/other-app`)"
-
-# Root application: cotyledonlab.com/
-- "traefik.http.routers.main-site.rule=Host(`cotyledonlab.com`)"
-- "traefik.http.routers.main-site.priority=1" # Lower priority than specific paths
-```
-
-**Note:** Traefik evaluates rules by priority. More specific paths are matched first.
-
-#### Traefik Dashboard (Optional)
-
-To enable the Traefik dashboard for debugging:
-
-1. **Update `traefik.yml`:**
-
-   ```yaml
-   api:
-     dashboard: true
-     insecure: false # Never use insecure in production
+   ```bash
+   BASE_PATH=""
+   NEXTAUTH_URL=https://cotyledonlab.com
    ```
 
-2. **Add authentication middleware** (recommended)
-3. **Access via:** `https://cotyledonlab.com/api/rawdata` (after configuring router)
+2. **Update Dokploy domain configuration:**
+   - Domain: `cotyledonlab.com`
+   - Path: `/` (or leave empty)
+   - Service: `web`
+   - Port: `3000`
 
-**Security Warning:** Never expose the Traefik dashboard publicly without authentication.
+### Multiple Applications on Same Domain
 
-#### Production Checklist
+Dokploy's Traefik supports hosting multiple applications on the same domain using different paths:
 
-- [ ] DNS A record points to server IP
-- [ ] `TRAEFIK_ACME_EMAIL` is set to valid email
-- [ ] `DOMAIN` matches your actual domain
-- [ ] `NEXTAUTH_URL` includes full path with basePath
+**Example configuration in Dokploy:**
+
+- **App 1** (meal-planner): `cotyledonlab.com/demos/meal-planner` → web service
+- **App 2** (other app): `cotyledonlab.com/demos/other-app` → other-web service
+- **Main site**: `cotyledonlab.com/` → main-site service
+
+Traefik automatically prioritizes more specific paths over less specific ones.
+
+### Troubleshooting
+
+#### SSL Certificate Issues
+
+**Certificate not obtained:**
+
+- Verify DNS points to your Dokploy server: `dig cotyledonlab.com`
+- Ensure ports 80 and 443 are open in firewall
+- Check Dokploy application logs for certificate errors
+- Verify domain is correctly configured in Dokploy
+
+**Browser shows "Not Secure":**
+
+- Wait a few minutes for Let's Encrypt certificate generation
+- Check Dokploy's Traefik logs: `docker logs traefik` (if accessible)
+- Verify domain in browser matches domain configured in Dokploy
+
+#### Application Not Loading
+
+**404 Not Found:**
+
+- Verify the path configuration matches in all three places (BASE_PATH, NEXTAUTH_URL, Dokploy path)
+- Check that the web service is running: view application logs in Dokploy
+- Ensure container port is set to `3000` in Dokploy domain config
+
+**Authentication Redirect Loop:**
+
+- Verify `NEXTAUTH_URL` exactly matches the full URL including path
+- Check that `BASE_PATH` is set correctly
+- Review NextAuth logs in application logs
+
+**Routes Return 404 or Assets Don't Load:**
+
+- Verify `BASE_PATH` environment variable is set and matches Dokploy path
+- Check Next.js build logs for basePath configuration
+- Ensure the application rebuilt after changing `BASE_PATH`
+
+#### Port Conflicts
+
+If you see "port already allocated" errors:
+
+- Don't try to expose ports 80 or 443 in docker-compose.yml
+- Dokploy's Traefik already uses these ports
+- Only expose application-specific ports (like 3000 for the web service)
+- Set `WEB_PORT` to a unique value if needed, or don't expose it at all (let Dokploy's Traefik handle routing)
+
+### Production Checklist
+
+- [ ] DNS A record points to Dokploy server IP
+- [ ] DNS has propagated (verify with dig/nslookup)
+- [ ] `BASE_PATH=/demos/meal-planner` set in environment
+- [ ] `NEXTAUTH_URL=https://cotyledonlab.com/demos/meal-planner` set in environment
+- [ ] `DOMAIN=cotyledonlab.com` set in environment (optional)
 - [ ] `AUTH_SECRET` is securely generated
-- [ ] Ports 80 and 443 are open in firewall
-- [ ] SSL certificate successfully obtained (check logs)
-- [ ] Application accessible via HTTPS
+- [ ] Domain configured in Dokploy with correct path
+- [ ] SSL certificate enabled in Dokploy domain settings
+- [ ] Application deployed successfully
+- [ ] HTTPS works without browser warnings
 - [ ] HTTP redirects to HTTPS
-- [ ] No browser security warnings
+- [ ] Authentication flow works correctly
+- [ ] All routes and assets load correctly
 
 ## Database Migrations
 

@@ -1,28 +1,4 @@
 services:
-  traefik:
-    image: traefik:v3.2
-    container_name: traefik
-    restart: unless-stopped
-    ports:
-      - "80:80" # HTTP
-      - "443:443" # HTTPS
-    environment:
-      - TRAEFIK_ACME_EMAIL=${TRAEFIK_ACME_EMAIL}
-    volumes:
-      # Mount Traefik static configuration
-      - ./traefik.yml:/traefik.yml:ro
-      # Mount Docker socket so Traefik can discover containers
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      # Mount directory for Let's Encrypt certificates
-      - ./traefik/letsencrypt:/letsencrypt
-      # Mount directory for access logs
-      - ./traefik/logs:/var/log/traefik
-    networks:
-      - app-network
-    labels:
-      # Enable Traefik for this container (even though we're not exposing dashboard)
-      - "traefik.enable=true"
-
   migrate:
     build:
       context: .
@@ -137,21 +113,15 @@ services:
     networks:
       - app-network
     labels:
+      # Note: When deploying via Dokploy, configure domain and path routing
+      # through the Dokploy UI instead of these labels.
+      # These labels are provided as reference for manual Traefik configuration.
+
       # Enable Traefik for this container
       - "traefik.enable=true"
 
-      # Define the router for HTTPS traffic
-      - "traefik.http.routers.meal-planner.rule=Host(`${DOMAIN:-cotyledonlab.com}`) && PathPrefix(`/demos/meal-planner`)"
-      - "traefik.http.routers.meal-planner.entrypoints=websecure"
-      - "traefik.http.routers.meal-planner.tls=true"
-      - "traefik.http.routers.meal-planner.tls.certresolver=letsencrypt"
-
-      # Define the service (tells Traefik which port to forward to)
+      # Tell Traefik which port the container listens on
       - "traefik.http.services.meal-planner.loadbalancer.server.port=3000"
-
-      # Health check configuration (optional but recommended)
-      - "traefik.http.services.meal-planner.loadbalancer.healthcheck.path=/"
-      - "traefik.http.services.meal-planner.loadbalancer.healthcheck.interval=30s"
 
 volumes:
   postgres-data:
