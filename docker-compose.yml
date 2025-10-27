@@ -1,4 +1,28 @@
 services:
+  traefik:
+    image: traefik:v3.2
+    container_name: traefik
+    restart: unless-stopped
+    ports:
+      - "80:80" # HTTP
+      - "443:443" # HTTPS
+    environment:
+      - TRAEFIK_ACME_EMAIL=${TRAEFIK_ACME_EMAIL}
+    volumes:
+      # Mount Traefik static configuration
+      - ./traefik.yml:/traefik.yml:ro
+      # Mount Docker socket so Traefik can discover containers
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      # Mount directory for Let's Encrypt certificates
+      - ./traefik/letsencrypt:/letsencrypt
+      # Mount directory for access logs
+      - ./traefik/logs:/var/log/traefik
+    networks:
+      - app-network
+    labels:
+      # Enable Traefik for this container (even though we're not exposing dashboard)
+      - "traefik.enable=true"
+
   migrate:
     build:
       context: .
@@ -85,6 +109,8 @@ services:
     environment:
       - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD:-password}@postgres:5432/meal-planner-demo?connection_limit=10&pool_timeout=30&connect_timeout=30
       - NODE_ENV=production
+      # Base path for subdirectory deployment (set to empty string for root deployment)
+      - BASE_PATH=${BASE_PATH:-/demos/meal-planner}
       # Default to http://localhost:3000 for local runs; override in Dokploy with your domain
       - NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:${WEB_PORT:-3000}}
       - AUTH_SECRET=${AUTH_SECRET}
@@ -110,6 +136,22 @@ services:
     restart: unless-stopped
     networks:
       - app-network
+    labels:
+      # Enable Traefik for this container
+      - "traefik.enable=true"
+
+      # Define the router for HTTPS traffic
+      - "traefik.http.routers.meal-planner.rule=Host(`${DOMAIN:-cotyledonlab.com}`) && PathPrefix(`/demos/meal-planner`)"
+      - "traefik.http.routers.meal-planner.entrypoints=websecure"
+      - "traefik.http.routers.meal-planner.tls=true"
+      - "traefik.http.routers.meal-planner.tls.certresolver=letsencrypt"
+
+      # Define the service (tells Traefik which port to forward to)
+      - "traefik.http.services.meal-planner.loadbalancer.server.port=3000"
+
+      # Health check configuration (optional but recommended)
+      - "traefik.http.services.meal-planner.loadbalancer.healthcheck.path=/"
+      - "traefik.http.services.meal-planner.loadbalancer.healthcheck.interval=30s"
 
 volumes:
   postgres-data:

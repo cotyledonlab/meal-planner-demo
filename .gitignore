@@ -52,3 +52,7 @@ yarn-error.log*
 
 # sqlite dev db
 apps/web/prisma/dev.db
+
+# traefik
+traefik/letsencrypt/acme.json
+traefik/logs/*.log

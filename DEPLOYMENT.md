@@ -372,6 +372,214 @@ dokploy restore postgres <service-name> <backup-file>
 
 Recommended: Set up automated daily backups in Dokploy configuration.
 
+## Custom Domain with HTTPS (Traefik)
+
+This section covers deploying the application with a custom domain and proper HTTPS certificates using Traefik as a reverse proxy.
+
+### Prerequisites
+
+- A domain name (e.g., `cotyledonlab.com`)
+- Access to your domain's DNS settings
+- Dokploy server with a public IP address
+- Ports 80 and 443 open on your server
+
+### DNS Configuration
+
+1. **Add A Record for your domain:**
+   - Log in to your domain registrar's DNS management panel
+   - Add an A record:
+     - **Name**: `@` (for root domain) or subdomain name
+     - **Type**: `A`
+     - **Value**: Your Dokploy server's public IP address
+     - **TTL**: 3600 (or your preferred value)
+
+2. **Optional: Add WWW subdomain:**
+   - **Name**: `www`
+   - **Type**: `CNAME` or `A`
+   - **Value**: `cotyledonlab.com` (or your server IP)
+   - **TTL**: 3600
+
+3. **Wait for DNS propagation:**
+   - DNS changes can take 15-60 minutes to propagate
+   - Test with: `dig cotyledonlab.com` or `nslookup cotyledonlab.com`
+   - Verify the IP address matches your Dokploy server
+
+### Traefik Configuration
+
+This repository includes a complete Traefik setup with automatic HTTPS certificate management.
+
+#### Architecture
+
+```
+Internet → Traefik (ports 80/443) → Path-based routing → Application (port 3000)
+          ↓
+       Let's Encrypt (automatic SSL certificates)
+```
+
+#### Environment Variables
+
+Configure these in your Dokploy environment or `.env` file:
+
+```bash
+# Your email for Let's Encrypt certificate expiry notifications
+TRAEFIK_ACME_EMAIL=your-email@example.com
+
+# Your custom domain
+DOMAIN=cotyledonlab.com
+
+# Base path for subdirectory deployment
+BASE_PATH=/demos/meal-planner
+
+# NextAuth URL must include the full path with basePath
+NEXTAUTH_URL=https://cotyledonlab.com/demos/meal-planner
+
+# Other required variables
+AUTH_SECRET=<generate-with-npx-auth-secret>
+POSTGRES_PASSWORD=<secure-password>
+```
+
+#### Deployment with Traefik
+
+1. **Update your `.env` file** with the variables above
+
+2. **Deploy the stack:**
+
+   ```bash
+   docker compose up -d --build
+   ```
+
+3. **Verify Traefik is running:**
+
+   ```bash
+   docker compose ps traefik
+   ```
+
+4. **Monitor certificate acquisition:**
+
+   ```bash
+   # Watch Traefik logs for Let's Encrypt certificate requests
+   docker compose logs -f traefik
+   ```
+
+   You should see messages like:
+
+   ```
+   time="..." level=info msg="Certificate obtained for domains [cotyledonlab.com]"
+   ```
+
+5. **Access your application:**
+   - HTTP requests to `http://cotyledonlab.com/demos/meal-planner` will redirect to HTTPS
+   - HTTPS: `https://cotyledonlab.com/demos/meal-planner`
+
+#### Subdirectory Path Configuration
+
+The application is configured to be served from `/demos/meal-planner` by default. This is controlled by:
+
+1. **Next.js basePath** (`apps/web/next.config.js`):
+   - Automatically prefixes all routes, assets, and API endpoints
+   - Set via `BASE_PATH` environment variable
+   - Default: `/demos/meal-planner`
+
+2. **Traefik routing** (`docker-compose.yml` labels):
+   - Routes traffic matching the domain and path prefix
+   - Rule: `Host(cotyledonlab.com) && PathPrefix(/demos/meal-planner)`
+
+3. **NextAuth configuration**:
+   - `NEXTAUTH_URL` must include the full path: `https://cotyledonlab.com/demos/meal-planner`
+
+**To deploy at root path instead:**
+
+```bash
+# Set these environment variables
+BASE_PATH=""
+NEXTAUTH_URL=https://cotyledonlab.com
+
+# Update the Traefik rule in docker-compose.yml:
+# Change PathPrefix(`/demos/meal-planner`) to PathPrefix(`/`)
+```
+
+#### SSL Certificate Management
+
+Traefik automatically:
+
+- Requests SSL certificates from Let's Encrypt on first deployment
+- Stores certificates in `traefik/letsencrypt/acme.json`
+- Renews certificates before expiration
+- Redirects all HTTP traffic to HTTPS
+
+**Certificate storage:**
+
+- Location: `traefik/letsencrypt/acme.json`
+- Excluded from git (in `.gitignore`)
+- Automatically created with proper permissions (600)
+- Persists across container restarts via volume mount
+
+**Troubleshooting SSL:**
+
+1. **Certificate not obtained:**
+   - Verify DNS is pointing to your server: `dig cotyledonlab.com`
+   - Ensure ports 80 and 443 are open in firewall
+   - Check Traefik logs: `docker compose logs traefik`
+   - Verify `TRAEFIK_ACME_EMAIL` is set
+
+2. **Browser shows "Certificate Invalid":**
+   - Wait a few minutes for certificate acquisition
+   - Check Traefik logs for errors
+   - Verify domain in browser matches domain in config
+
+3. **HTTP instead of HTTPS:**
+   - Verify the Traefik redirect is working
+   - Check browser isn't forcing HTTP
+   - Clear browser cache and try again
+
+#### Multiple Applications on Same Domain
+
+If you're hosting multiple applications on the same domain (e.g., `cotyledonlab.com`), you can route them by path:
+
+```yaml
+# Application 1: cotyledonlab.com/demos/meal-planner
+- "traefik.http.routers.meal-planner.rule=Host(`cotyledonlab.com`) && PathPrefix(`/demos/meal-planner`)"
+
+# Application 2: cotyledonlab.com/demos/other-app
+- "traefik.http.routers.other-app.rule=Host(`cotyledonlab.com`) && PathPrefix(`/demos/other-app`)"
+
+# Root application: cotyledonlab.com/
+- "traefik.http.routers.main-site.rule=Host(`cotyledonlab.com`)"
+- "traefik.http.routers.main-site.priority=1" # Lower priority than specific paths
+```
+
+**Note:** Traefik evaluates rules by priority. More specific paths are matched first.
+
+#### Traefik Dashboard (Optional)
+
+To enable the Traefik dashboard for debugging:
+
+1. **Update `traefik.yml`:**
+
+   ```yaml
+   api:
+     dashboard: true
+     insecure: false # Never use insecure in production
+   ```
+
+2. **Add authentication middleware** (recommended)
+3. **Access via:** `https://cotyledonlab.com/api/rawdata` (after configuring router)
+
+**Security Warning:** Never expose the Traefik dashboard publicly without authentication.
+
+#### Production Checklist
+
+- [ ] DNS A record points to server IP
+- [ ] `TRAEFIK_ACME_EMAIL` is set to valid email
+- [ ] `DOMAIN` matches your actual domain
+- [ ] `NEXTAUTH_URL` includes full path with basePath
+- [ ] `AUTH_SECRET` is securely generated
+- [ ] Ports 80 and 443 are open in firewall
+- [ ] SSL certificate successfully obtained (check logs)
+- [ ] Application accessible via HTTPS
+- [ ] HTTP redirects to HTTPS
+- [ ] No browser security warnings
+
 ## Database Migrations
 
 Migrations are managed using Prisma and stored in `apps/web/prisma/migrations/`. Reference copies are maintained in `infra/migrations/` for documentation.
