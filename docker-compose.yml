@@ -112,6 +112,7 @@ services:
     restart: unless-stopped
     networks:
       - app-network
+      - dokploy-network
     labels:
       # Note: When deploying via Dokploy, configure domain and path routing
       # through the Dokploy UI instead of these labels.
@@ -129,3 +130,5 @@ volumes:
 networks:
   app-network:
     driver: bridge
+  dokploy-network:
+    external: true
