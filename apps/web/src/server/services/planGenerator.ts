@@ -67,6 +67,22 @@ export class PlanGenerator {
       throw new Error('No recipes available. Please seed the database first.');
     }
 
+    // Cache recipes by meal type to avoid repeated filtering in nested loops
+    const recipesByMealType = new Map<string, typeof recipes>();
+    for (const mealType of mealTypes) {
+      const appropriateRecipes = recipes.filter((recipe) => {
+        return Array.isArray(recipe.mealTypes) && recipe.mealTypes.includes(mealType);
+      });
+      
+      if (appropriateRecipes.length === 0) {
+        throw new Error(
+          `No recipes available for ${mealType}. Please add more recipes to the database.`
+        );
+      }
+      
+      recipesByMealType.set(mealType, appropriateRecipes);
+    }
+
     // Prepare meal plan items data
     const mealPlanItemsData: Array<{
       dayIndex: number;
@@ -77,15 +93,10 @@ export class PlanGenerator {
 
     for (let dayIndex = 0; dayIndex < days; dayIndex++) {
       for (const mealType of mealTypes) {
-        // Filter recipes that are appropriate for this meal type
-        const appropriateRecipes = recipes.filter((recipe) => {
-          return Array.isArray(recipe.mealTypes) && recipe.mealTypes.includes(mealType);
-        });
-
-        if (appropriateRecipes.length === 0) {
-          throw new Error(
-            `No recipes available for ${mealType}. Please add more recipes to the database.`
-          );
+        // Use pre-filtered recipes from the cache
+        const appropriateRecipes = recipesByMealType.get(mealType);
+        if (!appropriateRecipes || appropriateRecipes.length === 0) {
+          continue; // This should never happen due to validation above, but handle gracefully
         }
 
         // Pick a random recipe for variety (efficient)
