@@ -23,12 +23,15 @@ export default function PlannerPage() {
     },
   });
 
-  const handleWizardComplete = (_preferences: MealPreferences) => {
-    // For now, we ignore most preferences since the generator uses role-based gating
-    // In the future, we can pass preferences to filter recipes
+  const handleWizardComplete = (preferences: MealPreferences) => {
     setShowWizard(false);
     generatePlan.mutate({
       startDate: new Date(),
+      days: preferences.days,
+      mealsPerDay: preferences.mealsPerDay,
+      householdSize: preferences.householdSize,
+      isVegetarian: preferences.isVegetarian,
+      isDairyFree: preferences.isDairyFree,
     });
   };
 

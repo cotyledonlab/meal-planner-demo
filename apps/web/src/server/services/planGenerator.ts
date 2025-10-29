@@ -3,6 +3,11 @@ import { type PrismaClient } from '@prisma/client';
 interface GeneratePlanInput {
   userId: string;
   startDate?: Date;
+  days?: number;
+  mealsPerDay?: number;
+  householdSize?: number;
+  isVegetarian?: boolean;
+  isDairyFree?: boolean;
 }
 
 interface MealPlanOutput {
@@ -17,7 +22,15 @@ export class PlanGenerator {
   constructor(private prisma: PrismaClient) {}
 
   async generatePlan(input: GeneratePlanInput): Promise<MealPlanOutput> {
-    const { userId, startDate = this.getNextMonday() } = input;
+    const {
+      userId,
+      startDate = this.getNextMonday(),
+      days: requestedDays = 7,
+      mealsPerDay = 1,
+      householdSize = 2,
+      isVegetarian = false,
+      isDairyFree = false,
+    } = input;
 
     // Get user to check their role/plan limits
     const user = await this.prisma.user.findUnique({
@@ -28,11 +41,19 @@ export class PlanGenerator {
       throw new Error('User not found');
     }
 
-    // Determine plan length based on user role
-    const days = user.role === 'premium' ? 7 : 3;
+    // Hybrid role-based gating: respect user input but cap by role
+    const maxDays = user.role === 'premium' ? 7 : 3;
+    const days = Math.min(requestedDays, maxDays);
 
-    // Get available recipes
+    // Determine which meal types to include based on mealsPerDay
+    const mealTypes = this.getMealTypesForCount(mealsPerDay);
+
+    // Get available recipes with dietary filters
     const recipes = await this.prisma.recipe.findMany({
+      where: {
+        ...(isVegetarian && { isVegetarian: true }),
+        ...(isDairyFree && { isDairyFree: true }),
+      },
       include: {
         ingredients: {
           include: {
@@ -46,12 +67,7 @@ export class PlanGenerator {
       throw new Error('No recipes available. Please seed the database first.');
     }
 
-    // Shuffle recipes for variety (using a simple Fisher-Yates shuffle)
-    const shuffledRecipes = this.shuffleArray([...recipes]);
-
     // Prepare meal plan items data
-    const mealTypes = ['breakfast', 'lunch', 'dinner'];
-    let recipeIndex = 0;
     const mealPlanItemsData: Array<{
       dayIndex: number;
       mealType: string;
@@ -61,18 +77,29 @@ export class PlanGenerator {
 
     for (let dayIndex = 0; dayIndex < days; dayIndex++) {
       for (const mealType of mealTypes) {
-        // Cycle through recipes, wrapping around if needed
-        const recipe = shuffledRecipes[recipeIndex % shuffledRecipes.length];
+        // Filter recipes that are appropriate for this meal type
+        const appropriateRecipes = recipes.filter((recipe) => {
+          const mealTypesArray = recipe.mealTypes as unknown;
+          return Array.isArray(mealTypesArray) && (mealTypesArray as string[]).includes(mealType);
+        });
+
+        if (appropriateRecipes.length === 0) {
+          throw new Error(
+            `No recipes available for ${mealType}. Please add more recipes to the database.`
+          );
+        }
+
+        // Shuffle and pick a random recipe for variety
+        const shuffled = this.shuffleArray(appropriateRecipes);
+        const recipe = shuffled[0];
         if (!recipe) continue;
 
         mealPlanItemsData.push({
           dayIndex,
           mealType,
           recipeId: recipe.id,
-          servings: recipe.servingsDefault,
+          servings: householdSize,
         });
-
-        recipeIndex++;
       }
     }
 
@@ -130,5 +157,21 @@ export class PlanGenerator {
       [result[i], result[j]] = [result[j]!, result[i]!];
     }
     return result;
+  }
+
+  /**
+   * Determine which meal types to generate based on meals per day
+   * 1 meal/day → dinner only
+   * 2 meals/day → lunch + dinner
+   * 3 meals/day → breakfast + lunch + dinner
+   */
+  private getMealTypesForCount(mealsPerDay: number): string[] {
+    if (mealsPerDay === 1) {
+      return ['dinner'];
+    } else if (mealsPerDay === 2) {
+      return ['lunch', 'dinner'];
+    } else {
+      return ['breakfast', 'lunch', 'dinner'];
+    }
   }
 }

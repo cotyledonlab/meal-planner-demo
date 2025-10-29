@@ -180,6 +180,7 @@ async function main() {
       calories: 420,
       isVegetarian: false,
       isDairyFree: true,
+      mealTypes: ['lunch', 'dinner'],
       servingsDefault: 4,
       imageUrl: 'https://images.unsplash.com/photo-1512058564366-18510be2db19?w=600&q=80',
       instructionsMd: `
@@ -216,6 +217,7 @@ async function main() {
       calories: 380,
       isVegetarian: true,
       isDairyFree: false,
+      mealTypes: ['lunch', 'dinner'],
       servingsDefault: 4,
       imageUrl: 'https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=600&q=80',
       instructionsMd: `
@@ -251,6 +253,7 @@ async function main() {
       calories: 520,
       isVegetarian: false,
       isDairyFree: false,
+      mealTypes: ['dinner'],
       servingsDefault: 6,
       imageUrl: 'https://images.unsplash.com/photo-1516684732162-798a0062be99?w=600&q=80',
       instructionsMd: `
@@ -290,6 +293,7 @@ async function main() {
       calories: 450,
       isVegetarian: false,
       isDairyFree: true,
+      mealTypes: ['lunch', 'dinner'],
       servingsDefault: 4,
       imageUrl: 'https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?w=600&q=80',
       instructionsMd: `
@@ -327,6 +331,7 @@ async function main() {
       calories: 490,
       isVegetarian: false,
       isDairyFree: true,
+      mealTypes: ['dinner'],
       servingsDefault: 4,
       imageUrl: 'https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=600&q=80',
       instructionsMd: `
@@ -363,6 +368,7 @@ async function main() {
       calories: 480,
       isVegetarian: true,
       isDairyFree: false,
+      mealTypes: ['dinner'],
       servingsDefault: 6,
       imageUrl: 'https://images.unsplash.com/photo-1574894709920-11b28e7367e3?w=600&q=80',
       instructionsMd: `
@@ -401,6 +407,7 @@ async function main() {
       calories: 350,
       isVegetarian: true,
       isDairyFree: true,
+      mealTypes: ['breakfast', 'lunch', 'dinner'],
       servingsDefault: 4,
       imageUrl: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&q=80',
       instructionsMd: `
@@ -439,6 +446,7 @@ async function main() {
       calories: 380,
       isVegetarian: true,
       isDairyFree: true,
+      mealTypes: ['lunch', 'dinner'],
       servingsDefault: 4,
       imageUrl: 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=600&q=80',
       instructionsMd: `
@@ -476,6 +484,7 @@ async function main() {
       calories: 420,
       isVegetarian: true,
       isDairyFree: false,
+      mealTypes: ['lunch', 'dinner'],
       servingsDefault: 4,
       imageUrl: 'https://images.unsplash.com/photo-1598866594230-a7c12756260f?w=600&q=80',
       instructionsMd: `
@@ -512,6 +521,7 @@ async function main() {
       calories: 360,
       isVegetarian: true,
       isDairyFree: true,
+      mealTypes: ['breakfast', 'lunch', 'dinner'],
       servingsDefault: 4,
       imageUrl: 'https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=600&q=80',
       instructionsMd: `
@@ -548,6 +558,7 @@ async function main() {
       calories: 450,
       isVegetarian: true,
       isDairyFree: false,
+      mealTypes: ['dinner'],
       servingsDefault: 4,
       imageUrl: 'https://images.unsplash.com/photo-1476124369491-c4adde3469f7?w=600&q=80',
       instructionsMd: `
@@ -584,6 +595,7 @@ async function main() {
       calories: 320,
       isVegetarian: true,
       isDairyFree: true,
+      mealTypes: ['breakfast', 'lunch', 'dinner'],
       servingsDefault: 4,
       imageUrl: 'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=600&q=80',
       instructionsMd: `
@@ -620,6 +632,7 @@ async function main() {
       calories: 420,
       isVegetarian: false,
       isDairyFree: true,
+      mealTypes: ['breakfast', 'lunch', 'dinner'],
       servingsDefault: 4,
       imageUrl: 'https://images.unsplash.com/photo-1617093727343-374698b1b08d?w=600&q=80',
       instructionsMd: `
@@ -656,6 +669,7 @@ async function main() {
       calories: 480,
       isVegetarian: false,
       isDairyFree: true,
+      mealTypes: ['dinner'],
       servingsDefault: 6,
       imageUrl: 'https://images.unsplash.com/photo-1604908815817-f8d79f06fe5d?w=600&q=80',
       instructionsMd: `
@@ -692,6 +706,7 @@ async function main() {
       calories: 550,
       isVegetarian: false,
       isDairyFree: true,
+      mealTypes: ['dinner'],
       servingsDefault: 6,
       imageUrl: 'https://images.unsplash.com/photo-1607894842937-e6c29b2e2f4c?w=600&q=80',
       instructionsMd: `
@@ -730,6 +745,7 @@ async function main() {
       calories: 460,
       isVegetarian: false,
       isDairyFree: false,
+      mealTypes: ['lunch', 'dinner'],
       servingsDefault: 4,
       imageUrl: 'https://images.unsplash.com/photo-1615870216519-2f9fa575fa5c?w=600&q=80',
       instructionsMd: `
@@ -766,6 +782,7 @@ async function main() {
       calories: 420,
       isVegetarian: false,
       isDairyFree: false,
+      mealTypes: ['lunch', 'dinner'],
       servingsDefault: 4,
       imageUrl: 'https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=600&q=80',
       instructionsMd: `
@@ -804,6 +821,7 @@ async function main() {
       calories: 280,
       isVegetarian: true,
       isDairyFree: true,
+      mealTypes: ['breakfast', 'lunch', 'dinner'],
       servingsDefault: 6,
       imageUrl: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&q=80',
       instructionsMd: `
@@ -842,6 +860,7 @@ async function main() {
       calories: 480,
       isVegetarian: false,
       isDairyFree: true,
+      mealTypes: ['dinner'],
       servingsDefault: 4,
       imageUrl: 'https://images.unsplash.com/photo-1558030006-450675393462?w=600&q=80',
       instructionsMd: `
@@ -877,6 +896,7 @@ async function main() {
       calories: 520,
       isVegetarian: false,
       isDairyFree: false,
+      mealTypes: ['lunch', 'dinner'],
       servingsDefault: 4,
       imageUrl: 'https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=600&q=80',
       instructionsMd: `
@@ -913,6 +933,7 @@ async function main() {
       calories: 380,
       isVegetarian: true,
       isDairyFree: true,
+      mealTypes: ['lunch', 'dinner'],
       servingsDefault: 6,
       imageUrl: 'https://images.unsplash.com/photo-1596797882870-8c33deeac224?w=600&q=80',
       instructionsMd: `
@@ -950,6 +971,7 @@ async function main() {
       calories: 410,
       isVegetarian: false,
       isDairyFree: true,
+      mealTypes: ['breakfast', 'lunch', 'dinner'],
       servingsDefault: 4,
       imageUrl: 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=600&q=80',
       instructionsMd: `
