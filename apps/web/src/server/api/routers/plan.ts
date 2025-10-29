@@ -11,6 +11,11 @@ export const planRouter = createTRPCRouter({
     .input(
       z.object({
         startDate: z.date().optional(),
+        days: z.number().min(1).max(7).optional(),
+        mealsPerDay: z.number().min(1).max(3).optional(),
+        householdSize: z.number().min(1).optional(),
+        isVegetarian: z.boolean().optional(),
+        isDairyFree: z.boolean().optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -19,6 +24,11 @@ export const planRouter = createTRPCRouter({
         const plan = await generator.generatePlan({
           userId: ctx.session.user.id,
           startDate: input.startDate,
+          days: input.days,
+          mealsPerDay: input.mealsPerDay,
+          householdSize: input.householdSize,
+          isVegetarian: input.isVegetarian,
+          isDairyFree: input.isDairyFree,
         });
 
         // Validate plan object before returning

@@ -111,6 +111,7 @@ model Recipe {
     calories         Int
     isVegetarian     Boolean             @default(false)
     isDairyFree      Boolean             @default(false)
+    mealTypes        String[]            // e.g., ["breakfast", "lunch", "dinner"]
     servingsDefault  Int                 @default(4)
     instructionsMd   String              @db.Text
     imageUrl         String?
