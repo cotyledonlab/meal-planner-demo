@@ -17,7 +17,7 @@ const createContext = async (req: NextRequest) => {
 
 const handler = (req: NextRequest) =>
   fetchRequestHandler({
-    endpoint: `${process.env.BASE_PATH ?? ''}/api/trpc`,
+    endpoint: '/api/trpc',
     req,
     router: appRouter,
     createContext: () => createContext(req),
