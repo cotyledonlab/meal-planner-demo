@@ -88,9 +88,9 @@ export class PlanGenerator {
           );
         }
 
-        // Shuffle and pick a random recipe for variety
-        const shuffled = this.shuffleArray(appropriateRecipes);
-        const recipe = shuffled[0];
+        // Pick a random recipe for variety (efficient)
+        const randomIndex = Math.floor(Math.random() * appropriateRecipes.length);
+        const recipe = appropriateRecipes[randomIndex];
         if (!recipe) continue;
 
         mealPlanItemsData.push({
