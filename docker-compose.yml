@@ -80,6 +80,7 @@ services:
       dockerfile: apps/web/Dockerfile
       args:
         - BASE_PATH=${BASE_PATH:-/demos/meal-planner}
+        - NEXT_PUBLIC_BASE_PATH=${BASE_PATH:-/demos/meal-planner}
     ports:
       # Set WEB_PORT to a unique value on the host to avoid conflicts (e.g., 3008),
       # or set to 0 to allow Docker to choose a random ephemeral port.
