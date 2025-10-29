@@ -79,7 +79,10 @@ export class PlanGenerator {
       for (const mealType of mealTypes) {
         // Filter recipes that are appropriate for this meal type
         const appropriateRecipes = recipes.filter((recipe) => {
-          return Array.isArray(recipe.mealTypes) && recipe.mealTypes.includes(mealType);
+          const mealTypesArray = Array.isArray(recipe.mealTypes)
+            ? (recipe.mealTypes as string[])
+            : [];
+          return mealTypesArray.includes(mealType);
         });
 
         if (appropriateRecipes.length === 0) {
@@ -88,9 +91,9 @@ export class PlanGenerator {
           );
         }
 
-        // Pick a random recipe for variety (efficient)
-        const randomIndex = Math.floor(Math.random() * appropriateRecipes.length);
-        const recipe = appropriateRecipes[randomIndex];
+        // Shuffle and pick a random recipe for variety
+        const shuffled = this.shuffleArray(appropriateRecipes);
+        const recipe = shuffled[0];
         if (!recipe) continue;
 
         mealPlanItemsData.push({
@@ -167,12 +170,14 @@ export class PlanGenerator {
   private getMealTypesForCount(mealsPerDay: number): string[] {
     if (mealsPerDay === 1) {
       return ['dinner'];
-    } else if (mealsPerDay === 2) {
-      return ['lunch', 'dinner'];
-    } else if (mealsPerDay === 3) {
-      return ['breakfast', 'lunch', 'dinner'];
-    } else {
-      throw new Error(`Invalid mealsPerDay value: ${mealsPerDay}. Must be 1, 2, or 3.`);
     }
+    if (mealsPerDay === 2) {
+      return ['lunch', 'dinner'];
+    }
+    if (mealsPerDay === 3) {
+      return ['breakfast', 'lunch', 'dinner'];
+    }
+
+    return ['breakfast', 'lunch', 'dinner'];
   }
 }
