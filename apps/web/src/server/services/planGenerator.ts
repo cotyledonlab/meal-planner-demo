@@ -79,8 +79,7 @@ export class PlanGenerator {
       for (const mealType of mealTypes) {
         // Filter recipes that are appropriate for this meal type
         const appropriateRecipes = recipes.filter((recipe) => {
-          const mealTypesArray = recipe.mealTypes as unknown;
-          return Array.isArray(mealTypesArray) && (mealTypesArray as string[]).includes(mealType);
+          return Array.isArray(recipe.mealTypes) && recipe.mealTypes.includes(mealType);
         });
 
         if (appropriateRecipes.length === 0) {
