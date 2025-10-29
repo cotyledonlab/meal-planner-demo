@@ -169,8 +169,10 @@ export class PlanGenerator {
       return ['dinner'];
     } else if (mealsPerDay === 2) {
       return ['lunch', 'dinner'];
-    } else {
+    } else if (mealsPerDay === 3) {
       return ['breakfast', 'lunch', 'dinner'];
+    } else {
+      throw new Error(`Invalid mealsPerDay value: ${mealsPerDay}. Must be 1, 2, or 3.`);
     }
   }
 }
