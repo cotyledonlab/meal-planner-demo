@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import { useState } from 'react';
+import { calculateDifficulty, getDifficultyColor, RECIPE_PLACEHOLDER_IMAGE } from '~/lib/recipeUtils';
 
 type RecipeIngredient = {
   id: string;
@@ -40,33 +41,6 @@ interface RecipeCardProps {
 }
 
 /**
- * Calculate difficulty level based on recipe time and number of ingredients
- */
-function calculateDifficulty(minutes: number, ingredientCount: number): 'Easy' | 'Medium' | 'Hard' {
-  const score = minutes + ingredientCount * 2;
-  
-  if (score < 40) return 'Easy';
-  if (score < 70) return 'Medium';
-  return 'Hard';
-}
-
-/**
- * Get difficulty badge color classes
- */
-function getDifficultyColor(difficulty: string): string {
-  switch (difficulty) {
-    case 'Easy':
-      return 'bg-green-100 text-green-800';
-    case 'Medium':
-      return 'bg-yellow-100 text-yellow-800';
-    case 'Hard':
-      return 'bg-red-100 text-red-800';
-    default:
-      return 'bg-gray-100 text-gray-800';
-  }
-}
-
-/**
  * Get top 3 ingredients for preview
  */
 function getIngredientPreview(ingredients: RecipeIngredient[]): string {
@@ -96,7 +70,7 @@ export default function RecipeCard({ item, onOpenDetail }: RecipeCardProps) {
         {/* Recipe image - larger and more prominent */}
         <div className="relative h-40 w-40 flex-shrink-0 overflow-hidden rounded-lg bg-gray-200">
           <Image
-            src={recipe.imageUrl ?? '/placeholder-recipe.jpg'}
+            src={recipe.imageUrl ?? RECIPE_PLACEHOLDER_IMAGE}
             alt={recipe.title}
             fill
             className="object-cover transition-transform duration-300 group-hover:scale-110"
