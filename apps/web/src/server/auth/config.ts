@@ -151,6 +151,20 @@ export const authConfig = {
     strategy: 'jwt',
   },
   trustHost: true,
+  cookies: {
+    sessionToken: {
+      name:
+        process.env.NODE_ENV === 'production'
+          ? '__Secure-next-auth.session-token'
+          : 'next-auth.session-token',
+      options: {
+        httpOnly: true,
+        sameSite: 'lax',
+        path: process.env.BASE_PATH ?? '/',
+        secure: process.env.NODE_ENV === 'production',
+      },
+    },
+  },
   pages: {
     signIn: '/auth/signin',
   },
