@@ -11,8 +11,11 @@ import { initTRPC, TRPCError } from '@trpc/server';
 import superjson from 'superjson';
 import { ZodError } from 'zod';
 
+import { createLogger } from '~/lib/logger';
 import { auth } from '~/server/auth';
 import { db } from '~/server/db';
+
+const log = createLogger('trpc');
 
 /**
  * 1. CONTEXT
@@ -95,7 +98,12 @@ const timingMiddleware = t.middleware(async ({ next, path }) => {
   const result = await next();
 
   const end = Date.now();
-  console.log(`[TRPC] ${path} took ${end - start}ms to execute`);
+  const duration = end - start;
+
+  // Only log in development to avoid corrupting HTTP responses in production
+  if (t._config.isDev) {
+    log.info({ path, duration }, 'tRPC procedure completed');
+  }
 
   return result;
 });
