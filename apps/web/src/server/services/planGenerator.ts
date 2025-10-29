@@ -80,7 +80,7 @@ export class PlanGenerator {
         // Filter recipes that are appropriate for this meal type
         const appropriateRecipes = recipes.filter((recipe) => {
           const mealTypesArray = Array.isArray(recipe.mealTypes)
-            ? (recipe.mealTypes as string[])
+            ? recipe.mealTypes.filter((type): type is string => typeof type === 'string')
             : [];
           return mealTypesArray.includes(mealType);
         });
