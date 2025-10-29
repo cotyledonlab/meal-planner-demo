@@ -12,7 +12,8 @@ export default async function DashboardPage() {
 
   async function handleSignOut() {
     'use server';
-    await signOut({ redirectTo: '/' });
+    const basePath = process.env.BASE_PATH ?? '/demos/meal-planner';
+    await signOut({ redirectTo: basePath });
   }
 
   return (

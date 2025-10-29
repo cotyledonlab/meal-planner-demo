@@ -2,6 +2,9 @@ import { z } from 'zod';
 import { createTRPCRouter, protectedProcedure } from '../trpc';
 import { PlanGenerator } from '../../services/planGenerator';
 import { ShoppingListService } from '../../services/shoppingList';
+import { createLogger } from '~/lib/logger';
+
+const log = createLogger('plan-router');
 
 export const planRouter = createTRPCRouter({
   generate: protectedProcedure
@@ -11,22 +14,33 @@ export const planRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const generator = new PlanGenerator(ctx.db);
-      const plan = await generator.generatePlan({
-        userId: ctx.session.user.id,
-        startDate: input.startDate,
-      });
-
-      // Automatically create shopping list for the plan
-      const shoppingListService = new ShoppingListService(ctx.db);
       try {
-        await shoppingListService.buildAndStoreForPlan(plan.id);
-      } catch (error) {
-        // Log the error but don't fail the mutation - shopping list can be generated later
-        console.error('Failed to create shopping list for plan:', error);
-      }
+        const generator = new PlanGenerator(ctx.db);
+        const plan = await generator.generatePlan({
+          userId: ctx.session.user.id,
+          startDate: input.startDate,
+        });
 
-      return plan;
+        // Validate plan object before returning
+        if (!plan?.id || !plan.userId) {
+          log.error({ plan }, 'Invalid plan generated');
+          throw new Error('Failed to generate valid meal plan');
+        }
+
+        // Automatically create shopping list for the plan
+        const shoppingListService = new ShoppingListService(ctx.db);
+        try {
+          await shoppingListService.buildAndStoreForPlan(plan.id);
+        } catch (error) {
+          // Log the error but don't fail the mutation - shopping list can be generated later
+          log.error({ error, planId: plan.id }, 'Failed to create shopping list for plan');
+        }
+
+        return plan;
+      } catch (error) {
+        log.error({ error, userId: ctx.session.user.id }, 'Failed to generate meal plan');
+        throw error;
+      }
     }),
 
   getById: protectedProcedure
