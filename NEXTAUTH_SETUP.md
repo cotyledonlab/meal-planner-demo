@@ -9,10 +9,10 @@ When deploying with a subdirectory path (`/demos/meal-planner`), NextAuth requir
 Set these environment variables in your Dokploy application settings:
 
 ```bash
-# The base domain WITHOUT the path
-NEXTAUTH_URL=https://cotyledonlab.com
+# The full URL INCLUDING the base path
+NEXTAUTH_URL=https://cotyledonlab.com/demos/meal-planner
 
-# The subdirectory path (must match next.config.js basePath)
+# The subdirectory path (must match next.config.js basePath and NEXTAUTH_URL)
 BASE_PATH=/demos/meal-planner
 
 # Generate a secure secret: openssl rand -base64 32
@@ -28,11 +28,11 @@ AUTH_DISCORD_SECRET=your-discord-client-secret
 
 ## Important Notes
 
-1. **NEXTAUTH_URL should NOT include the BASE_PATH**
-   - ✅ Correct: `NEXTAUTH_URL=https://cotyledonlab.com`
-   - ❌ Wrong: `NEXTAUTH_URL=https://cotyledonlab.com/demos/meal-planner`
+1. **NEXTAUTH_URL MUST include the BASE_PATH**
+   - ✅ Correct: `NEXTAUTH_URL=https://cotyledonlab.com/demos/meal-planner`
+   - ❌ Wrong: `NEXTAUTH_URL=https://cotyledonlab.com`
 
-   Next.js automatically prepends the basePath to all routes, including auth routes.
+   NextAuth uses this URL for redirects and callbacks, so it needs the full path.
 
 2. **Cookie Configuration**
    - Cookies are now explicitly configured with the correct path
