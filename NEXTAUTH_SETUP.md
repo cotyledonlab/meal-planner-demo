@@ -53,6 +53,18 @@ If you still see errors after deployment:
 3. **Verify variables**: Ensure all environment variables are set correctly in Dokploy
 4. **Test locally**: Run with `docker compose up` to test the configuration locally first
 
+## How It Works
+
+The fix involves three parts:
+
+1. **Server-side cookie configuration** (`apps/web/src/server/auth/config.ts`): Sets the cookie path to match BASE_PATH
+2. **Client-side API path configuration** (`apps/web/src/app/_components/SessionProvider.tsx`): Tells NextAuth client where to find the API routes
+3. **Build-time environment variable** (`apps/web/Dockerfile` + `docker-compose.yml`): Passes BASE_PATH as a build argument so Next.js can inline it
+
 ## Files Modified
 
 - `apps/web/src/server/auth/config.ts` - Added cookie configuration with basePath support
+- `apps/web/src/app/_components/SessionProvider.tsx` - Added basePath prop to SessionProvider
+- `apps/web/src/env.js` - Exposed BASE_PATH as NEXT_PUBLIC_BASE_PATH for client-side access
+- `apps/web/Dockerfile` - Added BASE_PATH build argument
+- `docker-compose.yml` - Pass BASE_PATH to Docker build

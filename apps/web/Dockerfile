@@ -40,6 +40,9 @@ RUN pnpm install --frozen-lockfile
 FROM base AS builder
 WORKDIR /app
 
+# Accept BASE_PATH as a build argument for Next.js to inline NEXT_PUBLIC_ vars
+ARG BASE_PATH=/demos/meal-planner
+
 # Copy dependencies from deps stage
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/apps/web/node_modules ./apps/web/node_modules
@@ -67,6 +70,8 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV SKIP_ENV_VALIDATION=1
 # Dummy DATABASE_URL for build time (real URL provided at runtime)
 ENV DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"
+# Pass BASE_PATH to the build so Next.js can inline it in NEXT_PUBLIC_BASE_PATH
+ENV BASE_PATH=${BASE_PATH}
 
 # Generate Prisma Client
 RUN cd apps/web && pnpm prisma generate
