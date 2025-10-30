@@ -1,8 +1,12 @@
 'use client';
 
-import Image from 'next/image';
 import { useState } from 'react';
-import { calculateDifficulty, getDifficultyColor, RECIPE_PLACEHOLDER_IMAGE } from '~/lib/recipeUtils';
+import Image from 'next/image';
+import {
+  calculateDifficulty,
+  getDifficultyColor,
+  RECIPE_PLACEHOLDER_IMAGE,
+} from '~/lib/recipeUtils';
 
 type RecipeIngredient = {
   id: string;
@@ -46,25 +50,29 @@ interface RecipeCardProps {
 function getIngredientPreview(ingredients: RecipeIngredient[]): string {
   const topIngredients = ingredients
     .slice(0, 3)
-    .map(ri => ri.ingredient.name)
+    .map((ri) => ri.ingredient.name)
     .join(', ');
-  
+
   return ingredients.length > 3 ? `${topIngredients}...` : topIngredients;
 }
 
 export default function RecipeCard({ item, onOpenDetail }: RecipeCardProps) {
-  const [isHovered, setIsHovered] = useState(false);
+  const [isActive, setIsActive] = useState(false);
   const { recipe, mealType, servings } = item;
-  
+
   const difficulty = calculateDifficulty(recipe.minutes, recipe.ingredients.length);
   const ingredientPreview = getIngredientPreview(recipe.ingredients);
 
   return (
-    <div
-      className="group relative cursor-pointer overflow-hidden rounded-xl bg-white shadow-md ring-1 ring-gray-200 transition-all duration-300 hover:shadow-xl hover:ring-2 hover:ring-emerald-400"
+    <button
+      type="button"
+      className="group relative w-full cursor-pointer overflow-hidden rounded-xl bg-white text-left shadow-md ring-1 ring-gray-200 transition-all duration-300 hover:shadow-xl hover:ring-2 hover:ring-emerald-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500"
       onClick={() => onOpenDetail(item)}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      onMouseEnter={() => setIsActive(true)}
+      onMouseLeave={() => setIsActive(false)}
+      onFocus={() => setIsActive(true)}
+      onBlur={() => setIsActive(false)}
+      aria-label={`View details for ${recipe.title}`}
     >
       <div className="flex gap-4 p-4">
         {/* Recipe image - larger and more prominent */}
@@ -75,10 +83,12 @@ export default function RecipeCard({ item, onOpenDetail }: RecipeCardProps) {
             fill
             className="object-cover transition-transform duration-300 group-hover:scale-110"
           />
-          
+
           {/* Difficulty badge on image */}
           <div className="absolute right-2 top-2">
-            <span className={`rounded-full px-2 py-1 text-xs font-semibold ${getDifficultyColor(difficulty)}`}>
+            <span
+              className={`rounded-full px-2 py-1 text-xs font-semibold ${getDifficultyColor(difficulty)}`}
+            >
               {difficulty}
             </span>
           </div>
@@ -92,7 +102,7 @@ export default function RecipeCard({ item, onOpenDetail }: RecipeCardProps) {
               <span className="inline-flex items-center rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-emerald-700">
                 {mealType}
               </span>
-              
+
               {/* Dietary tags */}
               <div className="mt-2 flex flex-wrap gap-1">
                 {recipe.isVegetarian && (
@@ -142,13 +152,15 @@ export default function RecipeCard({ item, onOpenDetail }: RecipeCardProps) {
           </div>
 
           {/* Hover preview hint */}
-          {isHovered && (
-            <div className="mt-2 text-sm text-emerald-600">
-              Click to view full recipe details →
-            </div>
-          )}
+          <div
+            className={`mt-2 text-sm text-emerald-600 transition-opacity duration-200 ${
+              isActive ? 'opacity-100' : 'opacity-0'
+            }`}
+          >
+            View full recipe details →
+          </div>
         </div>
       </div>
-    </div>
+    </button>
   );
 }

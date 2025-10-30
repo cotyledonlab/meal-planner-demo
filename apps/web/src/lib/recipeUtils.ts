@@ -14,14 +14,17 @@ export const RECIPE_PLACEHOLDER_IMAGE = '/placeholder-recipe.jpg';
 
 /**
  * Calculate difficulty level based on recipe time and number of ingredients
- * 
+ *
  * @param minutes - Total cooking time in minutes
  * @param ingredientCount - Number of ingredients in the recipe
  * @returns Difficulty level (Easy/Medium/Hard)
  */
-export function calculateDifficulty(minutes: number, ingredientCount: number): 'Easy' | 'Medium' | 'Hard' {
+export function calculateDifficulty(
+  minutes: number,
+  ingredientCount: number
+): 'Easy' | 'Medium' | 'Hard' {
   const score = minutes + ingredientCount * INGREDIENT_WEIGHT_FACTOR;
-  
+
   if (score < DIFFICULTY_EASY_THRESHOLD) return 'Easy';
   if (score < DIFFICULTY_MEDIUM_THRESHOLD) return 'Medium';
   return 'Hard';
@@ -29,7 +32,7 @@ export function calculateDifficulty(minutes: number, ingredientCount: number): '
 
 /**
  * Get Tailwind CSS classes for difficulty badge styling
- * 
+ *
  * @param difficulty - Difficulty level
  * @returns CSS classes string for the badge
  */

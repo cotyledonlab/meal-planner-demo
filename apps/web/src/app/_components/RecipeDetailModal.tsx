@@ -2,7 +2,11 @@
 
 import Image from 'next/image';
 import { useEffect } from 'react';
-import { calculateDifficulty, getDifficultyColor, RECIPE_PLACEHOLDER_IMAGE } from '~/lib/recipeUtils';
+import {
+  calculateDifficulty,
+  getDifficultyColor,
+  RECIPE_PLACEHOLDER_IMAGE,
+} from '~/lib/recipeUtils';
 
 type RecipeIngredient = {
   id: string;
@@ -56,15 +60,35 @@ function estimateTimeSplit(totalMinutes: number): { prep: number; cook: number }
  */
 function parseInstructions(markdown: string): string[] {
   if (!markdown) return ['No instructions available.'];
-  
-  // Split by numbered lists, bullet points, or newlines
+
   const lines = markdown
-    .split(/\n+/)
-    .map(line => line.trim())
-    .filter(line => line.length > 0)
-    .map(line => line.replace(/^[\d]+\.\s*/, '').replace(/^[-*]\s*/, ''));
-  
-  return lines.length > 0 ? lines : ['No instructions available.'];
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0);
+
+  const steps: string[] = [];
+  let skipRemaining = false;
+
+  for (const line of lines) {
+    if (/^#+\s+/i.test(line)) {
+      if (/^#+\s+tips/i.test(line)) {
+        skipRemaining = true;
+      }
+      continue;
+    }
+
+    if (skipRemaining) continue;
+
+    const normalized = line
+      .replace(/^[\d]+[.)]\s*/, '')
+      .replace(/^[-*]\s*/, '')
+      .trim();
+
+    if (normalized.length === 0) continue;
+    steps.push(normalized);
+  }
+
+  return steps.length > 0 ? steps : ['No instructions available.'];
 }
 
 /**
@@ -106,9 +130,14 @@ async function copyLink() {
   }
 }
 
-export default function RecipeDetailModal({ item, isOpen, onClose, onSwapRecipe }: RecipeDetailModalProps) {
+export default function RecipeDetailModal({
+  item,
+  isOpen,
+  onClose,
+  onSwapRecipe,
+}: RecipeDetailModalProps) {
   const { recipe, mealType, servings } = item;
-  
+
   const difficulty = calculateDifficulty(recipe.minutes, recipe.ingredients.length);
   const timeSplit = estimateTimeSplit(recipe.minutes);
   const instructions = parseInstructions(recipe.instructionsMd);
@@ -135,10 +164,7 @@ export default function RecipeDetailModal({ item, isOpen, onClose, onSwapRecipe 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
       {/* Backdrop */}
-      <div 
-        className="fixed inset-0 bg-black bg-opacity-50 transition-opacity"
-        onClick={onClose}
-      />
+      <div className="fixed inset-0 bg-black bg-opacity-50 transition-opacity" onClick={onClose} />
 
       {/* Modal */}
       <div className="flex min-h-screen items-center justify-center p-4">
@@ -150,7 +176,12 @@ export default function RecipeDetailModal({ item, isOpen, onClose, onSwapRecipe 
             aria-label="Close"
           >
             <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
           </button>
 
@@ -162,10 +193,12 @@ export default function RecipeDetailModal({ item, isOpen, onClose, onSwapRecipe 
               fill
               className="object-cover"
             />
-            
+
             {/* Overlay badges */}
             <div className="absolute bottom-4 left-4 flex gap-2">
-              <span className={`rounded-full px-3 py-1 text-sm font-semibold ${getDifficultyColor(difficulty)}`}>
+              <span
+                className={`rounded-full px-3 py-1 text-sm font-semibold ${getDifficultyColor(difficulty)}`}
+              >
                 {difficulty}
               </span>
               <span className="rounded-full bg-emerald-600 px-3 py-1 text-sm font-semibold uppercase text-white">
@@ -179,7 +212,7 @@ export default function RecipeDetailModal({ item, isOpen, onClose, onSwapRecipe 
             {/* Header */}
             <div className="mb-6">
               <h2 className="text-3xl font-bold text-gray-900">{recipe.title}</h2>
-              
+
               {/* Dietary tags */}
               <div className="mt-3 flex flex-wrap gap-2">
                 {recipe.isVegetarian && (
@@ -203,8 +236,10 @@ export default function RecipeDetailModal({ item, isOpen, onClose, onSwapRecipe 
                 </div>
                 <div className="rounded-lg bg-gray-50 p-3 text-center">
                   <div className="text-2xl">🔥</div>
-                  <div className="mt-1 text-sm font-medium text-gray-900">{recipe.calories} kcal</div>
-                  <div className="text-xs text-gray-600">Calories</div>
+                  <div className="mt-1 text-sm font-medium text-gray-900">
+                    {recipe.calories} kcal
+                  </div>
+                  <div className="text-xs text-gray-600">Calories (per serving)</div>
                 </div>
                 <div className="rounded-lg bg-gray-50 p-3 text-center">
                   <div className="text-2xl">👥</div>
@@ -213,7 +248,9 @@ export default function RecipeDetailModal({ item, isOpen, onClose, onSwapRecipe 
                 </div>
                 <div className="rounded-lg bg-gray-50 p-3 text-center">
                   <div className="text-2xl">🥘</div>
-                  <div className="mt-1 text-sm font-medium text-gray-900">{recipe.ingredients.length}</div>
+                  <div className="mt-1 text-sm font-medium text-gray-900">
+                    {recipe.ingredients.length}
+                  </div>
                   <div className="text-xs text-gray-600">Ingredients</div>
                 </div>
               </div>
@@ -238,7 +275,12 @@ export default function RecipeDetailModal({ item, isOpen, onClose, onSwapRecipe 
                 className="flex items-center gap-2 rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200"
               >
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
+                  />
                 </svg>
                 Print Recipe
               </button>
@@ -247,7 +289,12 @@ export default function RecipeDetailModal({ item, isOpen, onClose, onSwapRecipe 
                 className="flex items-center gap-2 rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200"
               >
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"
+                  />
                 </svg>
                 Share Recipe
               </button>
@@ -257,7 +304,12 @@ export default function RecipeDetailModal({ item, isOpen, onClose, onSwapRecipe 
                   className="flex items-center gap-2 rounded-lg bg-emerald-100 px-4 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-200"
                 >
                   <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                    />
                   </svg>
                   Swap Recipe
                 </button>
@@ -306,16 +358,20 @@ export default function RecipeDetailModal({ item, isOpen, onClose, onSwapRecipe 
             <div className="mb-8 rounded-lg bg-blue-50 p-4">
               <h3 className="mb-3 text-lg font-semibold text-gray-900">Nutritional Information</h3>
               <div className="text-sm text-gray-700">
-                <p>Per serving: {Math.round(recipe.calories / servings)} kcal</p>
+                <p>Per serving: {recipe.calories} kcal</p>
+                <p>Total for this meal: {recipe.calories * servings} kcal</p>
                 <p className="mt-1 text-xs text-gray-600">
-                  Note: Nutritional values are approximate and may vary based on specific ingredients used.
+                  Note: Nutritional values are approximate and may vary based on specific
+                  ingredients used.
                 </p>
               </div>
             </div>
 
             {/* Additional info */}
             <div className="border-t border-gray-200 pt-6 text-sm text-gray-600">
-              <p className="mb-2"><strong>Tips:</strong></p>
+              <p className="mb-2">
+                <strong>Tips:</strong>
+              </p>
               <ul className="list-inside list-disc space-y-1">
                 <li>Read through all instructions before starting</li>
                 <li>Prep all ingredients before cooking</li>

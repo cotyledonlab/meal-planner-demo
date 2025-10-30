@@ -122,11 +122,7 @@ export default function MealPlanView({ plan, preferences, onViewShoppingList }: 
                 </h3>
                 <div className="space-y-4">
                   {day.items.map((item) => (
-                    <RecipeCard 
-                      key={item.id} 
-                      item={item} 
-                      onOpenDetail={handleOpenDetail}
-                    />
+                    <RecipeCard key={item.id} item={item} onOpenDetail={handleOpenDetail} />
                   ))}
                 </div>
               </div>
