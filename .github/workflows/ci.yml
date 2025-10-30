@@ -28,13 +28,17 @@ jobs:
           node-version: "20"
           cache: "pnpm"
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
       - name: Setup environment
         run: |
           echo "AUTH_SECRET=ci-test-secret-$(openssl rand -hex 32)" >> $GITHUB_ENV
           echo "DATABASE_URL=postgresql://postgres:password@localhost:5432/meal-planner-demo" >> $GITHUB_ENV
+          echo "PRISMA_SKIP_POSTINSTALL_GENERATE=1" >> $GITHUB_ENV
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma Client
+        run: pnpm --filter @meal-planner-demo/web exec prisma generate
 
       - name: Run ESLint
         run: pnpm lint
@@ -57,13 +61,17 @@ jobs:
           node-version: "20"
           cache: "pnpm"
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
       - name: Setup environment
         run: |
           echo "AUTH_SECRET=ci-test-secret-$(openssl rand -hex 32)" >> $GITHUB_ENV
           echo "DATABASE_URL=postgresql://postgres:password@localhost:5432/meal-planner-demo" >> $GITHUB_ENV
+          echo "PRISMA_SKIP_POSTINSTALL_GENERATE=1" >> $GITHUB_ENV
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma Client
+        run: pnpm --filter @meal-planner-demo/web exec prisma generate
 
       - name: Run TypeScript compiler check
         run: pnpm typecheck
@@ -110,13 +118,17 @@ jobs:
           node-version: "20"
           cache: "pnpm"
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
       - name: Setup environment
         run: |
           echo "AUTH_SECRET=ci-test-secret-$(openssl rand -hex 32)" >> $GITHUB_ENV
           echo "DATABASE_URL=postgresql://postgres:password@localhost:5432/meal-planner-demo" >> $GITHUB_ENV
+          echo "PRISMA_SKIP_POSTINSTALL_GENERATE=1" >> $GITHUB_ENV
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma Client
+        run: pnpm --filter @meal-planner-demo/web exec prisma generate
 
       - name: Build application
         run: pnpm build
