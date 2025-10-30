@@ -5,24 +5,26 @@ import Link from 'next/link';
 
 export default function Hero() {
   return (
-    <section className="relative isolate overflow-hidden bg-white">
-      {/* Background image */}
+    <section className="relative isolate overflow-hidden bg-gradient-to-br from-emerald-950 via-emerald-900 to-slate-950 text-white">
+      {/* Background image with overlay so text stays readable */}
       <div className="absolute inset-0 -z-10">
         <Image
-          src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=1920&q=80"
+          src="/images/hero-kitchen.jpg"
           alt="Fresh ingredients for home cooking in an Irish kitchen"
           fill
-          className="object-cover opacity-20"
+          sizes="100vw"
+          className="object-cover opacity-50"
           priority
         />
+        <div className="absolute inset-0 bg-emerald-950/60" aria-hidden="true" />
       </div>
 
       <div className="mx-auto max-w-7xl px-6 py-16 sm:py-20 lg:py-24">
         <div className="mx-auto max-w-2xl text-center">
-          <h1 className="text-4xl font-semibold tracking-tight text-gray-900 sm:text-5xl">
+          <h1 className="text-4xl font-semibold tracking-tight text-white sm:text-5xl">
             Simplify Your Weekly Meals — Without Breaking the Bank
           </h1>
-          <p className="mt-6 text-base text-gray-600 sm:text-lg">
+          <p className="mt-6 text-base text-emerald-100 sm:text-lg">
             Plan, prep, and shop smarter with weekly recipes and cost-saving supermarket insights.
             Your meal plan, recipes, and shopping list — in minutes, not hours.
           </p>
@@ -40,11 +42,11 @@ export default function Hero() {
               See Premium
             </a>
           </div>
-          <p className="mt-6 text-sm text-gray-600">
+          <p className="mt-6 text-sm text-emerald-100">
             Already have an account?{' '}
             <Link
               href="/auth/signin"
-              className="font-medium text-emerald-600 transition hover:text-emerald-700"
+              className="font-medium text-emerald-200 transition hover:text-emerald-100"
             >
               Log in
             </Link>
