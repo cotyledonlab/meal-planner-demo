@@ -5,6 +5,7 @@ import path from 'path';
 export default defineConfig({
   plugins: [react()],
   test: {
+    pool: 'threads',
     environment: 'happy-dom',
     globals: true,
     setupFiles: ['./src/test/setup.ts'],
