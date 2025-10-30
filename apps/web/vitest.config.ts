@@ -5,10 +5,11 @@ import path from 'path';
 export default defineConfig({
   plugins: [react()],
   test: {
-    pool: 'threads',
     environment: 'happy-dom',
     globals: true,
     setupFiles: ['./src/test/setup.ts'],
+    pool: 'threads',
+    maxWorkers: 1,
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html', 'lcov'],
