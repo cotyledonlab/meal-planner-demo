@@ -8,6 +8,7 @@ interface GeneratePlanInput {
   householdSize?: number;
   isVegetarian?: boolean;
   isDairyFree?: boolean;
+  dislikes?: string | null;
 }
 
 interface MealPlanOutput {
@@ -30,6 +31,7 @@ export class PlanGenerator {
       householdSize = 2,
       isVegetarian = false,
       isDairyFree = false,
+      dislikes = null,
     } = input;
 
     // Get user to check their role/plan limits
@@ -47,9 +49,10 @@ export class PlanGenerator {
 
     // Determine which meal types to include based on mealsPerDay
     const mealTypes = this.getMealTypesForCount(mealsPerDay);
+    const dislikeTerms = this.parseDislikes(dislikes);
 
     // Get available recipes with dietary filters
-    const recipes = await this.prisma.recipe.findMany({
+    const recipesMatchingDiet = await this.prisma.recipe.findMany({
       where: {
         ...(isVegetarian && { isVegetarian: true }),
         ...(isDairyFree && { isDairyFree: true }),
@@ -63,8 +66,19 @@ export class PlanGenerator {
       },
     });
 
-    if (recipes.length === 0) {
+    if (recipesMatchingDiet.length === 0) {
       throw new Error('No recipes available. Please seed the database first.');
+    }
+
+    const eligibleRecipes =
+      dislikeTerms.length === 0
+        ? recipesMatchingDiet
+        : recipesMatchingDiet.filter((recipe) =>
+            this.recipePassesDislikes(recipe.ingredients, dislikeTerms)
+          );
+
+    if (eligibleRecipes.length === 0) {
+      throw new Error('No recipes match your preferences. Please adjust and try again.');
     }
 
     // Prepare meal plan items data
@@ -78,12 +92,16 @@ export class PlanGenerator {
     for (let dayIndex = 0; dayIndex < days; dayIndex++) {
       for (const mealType of mealTypes) {
         // Filter recipes that are appropriate for this meal type
-        const appropriateRecipes = recipes.filter((recipe) => {
+        const appropriateRecipes = eligibleRecipes.filter((recipe) => {
           const mealTypesArray = Array.isArray(recipe.mealTypes)
             ? recipe.mealTypes.filter((type): type is string => typeof type === 'string')
             : [];
           return mealTypesArray.includes(mealType);
         });
+
+        console.log(
+          `[PlanGenerator] Day ${dayIndex + 1} ${mealType}: ${appropriateRecipes.length} eligible recipes`
+        );
 
         if (appropriateRecipes.length === 0) {
           throw new Error(
@@ -95,6 +113,12 @@ export class PlanGenerator {
         const shuffled = this.shuffleArray(appropriateRecipes);
         const recipe = shuffled[0];
         if (!recipe) continue;
+
+        console.log(
+          `[PlanGenerator] Day ${dayIndex + 1} ${mealType}: Assigned "${recipe.title}" (mealTypes: [${
+            Array.isArray(recipe.mealTypes) ? recipe.mealTypes.join(', ') : ''
+          }])`
+        );
 
         mealPlanItemsData.push({
           dayIndex,
@@ -179,5 +203,28 @@ export class PlanGenerator {
     }
 
     return ['breakfast', 'lunch', 'dinner'];
+  }
+
+  private parseDislikes(dislikes: string | null | undefined): string[] {
+    if (!dislikes) return [];
+    return dislikes
+      .split(',')
+      .map((entry) => entry.trim().toLowerCase())
+      .filter((entry) => entry.length > 0);
+  }
+
+  private recipePassesDislikes(
+    ingredients: Array<{ ingredient: { name: string | null } }>,
+    dislikeTerms: string[]
+  ): boolean {
+    if (dislikeTerms.length === 0) return true;
+
+    const ingredientNames = ingredients
+      .map((ri) => ri.ingredient?.name?.toLowerCase() ?? null)
+      .filter((name): name is string => Boolean(name));
+
+    if (ingredientNames.length === 0) return true;
+
+    return !dislikeTerms.some((term) => ingredientNames.some((name) => name.includes(term)));
   }
 }
