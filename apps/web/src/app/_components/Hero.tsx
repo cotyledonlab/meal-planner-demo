@@ -17,6 +17,24 @@ export default function Hero() {
           priority
         />
         <div className="absolute inset-0 bg-emerald-950/60" aria-hidden="true" />
+        {/* Unsplash attribution */}
+        <div className="absolute bottom-2 right-2 flex items-center gap-1 rounded bg-black/30 px-2 py-1 text-xs text-white backdrop-blur-sm">
+          <Image
+            src="/images/logos/unsplash-logo-white.svg"
+            alt="Unsplash"
+            width={16}
+            height={16}
+            className="opacity-80"
+          />
+          <a
+            href="https://unsplash.com/photos/QJ6x9wy_Ol4"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="opacity-80 hover:opacity-100"
+          >
+            Photo on Unsplash
+          </a>
+        </div>
       </div>
 
       <div className="mx-auto max-w-7xl px-6 py-16 sm:py-20 lg:py-24">
