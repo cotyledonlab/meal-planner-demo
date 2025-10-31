@@ -16,6 +16,7 @@ export const planRouter = createTRPCRouter({
         householdSize: z.number().min(1).optional(),
         isVegetarian: z.boolean().optional(),
         isDairyFree: z.boolean().optional(),
+        dislikes: z.string().optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -29,6 +30,7 @@ export const planRouter = createTRPCRouter({
           householdSize: input.householdSize,
           isVegetarian: input.isVegetarian,
           isDairyFree: input.isDairyFree,
+          dislikes: input.dislikes,
         });
 
         // Validate plan object before returning

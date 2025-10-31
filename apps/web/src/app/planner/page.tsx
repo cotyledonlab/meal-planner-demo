@@ -32,6 +32,7 @@ export default function PlannerPage() {
       householdSize: preferences.householdSize,
       isVegetarian: preferences.isVegetarian,
       isDairyFree: preferences.isDairyFree,
+      dislikes: preferences.dislikes,
     });
   };
 
