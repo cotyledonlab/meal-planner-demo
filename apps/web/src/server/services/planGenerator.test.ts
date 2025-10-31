@@ -2,6 +2,19 @@ import { describe, expect, it, vi, beforeEach } from 'vitest';
 import type { PrismaClient } from '@prisma/client';
 import { PlanGenerator } from './planGenerator';
 
+// Test types for type safety
+type TestMealPlanItem = {
+  dayIndex: number;
+  mealType: string;
+  recipeId: string;
+  servings: number;
+};
+
+type MockPrismaTransaction = {
+  mealPlan: { create: ReturnType<typeof vi.fn> };
+  mealPlanItem: { createMany: ReturnType<typeof vi.fn> };
+};
+
 describe('PlanGenerator', () => {
   const startDate = new Date('2025-01-06T00:00:00.000Z');
 
@@ -42,12 +55,14 @@ describe('PlanGenerator', () => {
           },
         ]),
       },
-      $transaction: vi.fn().mockImplementation(async (cb: (tx: any) => Promise<unknown>) =>
-        cb({
-          mealPlan: { create: mockCreatePlan },
-          mealPlanItem: { createMany: mockCreateItems },
-        })
-      ),
+      $transaction: vi
+        .fn()
+        .mockImplementation(async (cb: (tx: MockPrismaTransaction) => Promise<unknown>) =>
+          cb({
+            mealPlan: { create: mockCreatePlan },
+            mealPlanItem: { createMany: mockCreateItems },
+          })
+        ),
     };
   });
 
@@ -107,11 +122,13 @@ describe('PlanGenerator', () => {
       });
 
       const itemsArg = mockCreateItems.mock.calls[0]?.[0];
-      const breakfastItems = itemsArg.data.filter((item: any) => item.mealType === 'breakfast');
+      const breakfastItems = itemsArg.data.filter(
+        (item: TestMealPlanItem) => item.mealType === 'breakfast'
+      );
 
       // All breakfast slots should have breakfast recipe
       expect(breakfastItems).toHaveLength(2); // 2 days
-      breakfastItems.forEach((item: any) => {
+      breakfastItems.forEach((item: TestMealPlanItem) => {
         expect(item.recipeId).toBe('breakfast-recipe');
       });
     });
@@ -148,10 +165,12 @@ describe('PlanGenerator', () => {
       });
 
       const itemsArg = mockCreateItems.mock.calls[0]?.[0];
-      const breakfastItems = itemsArg.data.filter((item: any) => item.mealType === 'breakfast');
+      const breakfastItems = itemsArg.data.filter(
+        (item: TestMealPlanItem) => item.mealType === 'breakfast'
+      );
 
       // NONE of the breakfast items should be Thai Curry or Irish Stew
-      breakfastItems.forEach((item: any) => {
+      breakfastItems.forEach((item: TestMealPlanItem) => {
         expect(item.recipeId).not.toBe('thai-curry');
         expect(item.recipeId).not.toBe('irish-stew');
         expect(item.recipeId).toBe('breakfast-only');
@@ -190,9 +209,11 @@ describe('PlanGenerator', () => {
       });
 
       const itemsArg = mockCreateItems.mock.calls[0]?.[0];
-      const lunchItems = itemsArg.data.filter((item: any) => item.mealType === 'lunch');
+      const lunchItems = itemsArg.data.filter(
+        (item: TestMealPlanItem) => item.mealType === 'lunch'
+      );
 
-      lunchItems.forEach((item: any) => {
+      lunchItems.forEach((item: TestMealPlanItem) => {
         expect(item.recipeId).toBe('lunch-recipe');
       });
     });
@@ -229,9 +250,11 @@ describe('PlanGenerator', () => {
       });
 
       const itemsArg = mockCreateItems.mock.calls[0]?.[0];
-      const dinnerItems = itemsArg.data.filter((item: any) => item.mealType === 'dinner');
+      const dinnerItems = itemsArg.data.filter(
+        (item: TestMealPlanItem) => item.mealType === 'dinner'
+      );
 
-      dinnerItems.forEach((item: any) => {
+      dinnerItems.forEach((item: TestMealPlanItem) => {
         expect(item.recipeId).toBe('dinner-recipe');
       });
     });
@@ -261,7 +284,7 @@ describe('PlanGenerator', () => {
       expect(itemsArg.data).toHaveLength(6);
 
       // All should use the versatile recipe
-      itemsArg.data.forEach((item: any) => {
+      itemsArg.data.forEach((item: TestMealPlanItem) => {
         expect(item.recipeId).toBe('versatile-recipe');
       });
     });

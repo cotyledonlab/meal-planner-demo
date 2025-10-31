@@ -1,4 +1,5 @@
 import { type PrismaClient } from '@prisma/client';
+import { createLogger } from '~/lib/logger';
 
 interface GeneratePlanInput {
   userId: string;
@@ -20,6 +21,8 @@ interface MealPlanOutput {
 }
 
 export class PlanGenerator {
+  private log = createLogger('PlanGenerator');
+
   constructor(private prisma: PrismaClient) {}
 
   async generatePlan(input: GeneratePlanInput): Promise<MealPlanOutput> {
@@ -99,8 +102,13 @@ export class PlanGenerator {
           return mealTypesArray.includes(mealType);
         });
 
-        console.log(
-          `[PlanGenerator] Day ${dayIndex + 1} ${mealType}: ${appropriateRecipes.length} eligible recipes`
+        this.log.debug(
+          {
+            dayIndex: dayIndex + 1,
+            mealType,
+            count: appropriateRecipes.length,
+          },
+          'Eligible recipes filtered'
         );
 
         if (appropriateRecipes.length === 0) {
@@ -114,10 +122,15 @@ export class PlanGenerator {
         const recipe = shuffled[0];
         if (!recipe) continue;
 
-        console.log(
-          `[PlanGenerator] Day ${dayIndex + 1} ${mealType}: Assigned "${recipe.title}" (mealTypes: [${
-            Array.isArray(recipe.mealTypes) ? recipe.mealTypes.join(', ') : ''
-          }])`
+        this.log.debug(
+          {
+            dayIndex: dayIndex + 1,
+            mealType,
+            recipeId: recipe.id,
+            recipeTitle: recipe.title,
+            recipeMealTypes: recipe.mealTypes,
+          },
+          'Recipe assigned to meal slot'
         );
 
         mealPlanItemsData.push({
