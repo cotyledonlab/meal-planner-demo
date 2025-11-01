@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 interface MealPlanWizardProps {
   onComplete: (preferences: MealPreferences) => void;
   onClose?: () => void;
+  isPremium?: boolean;
 }
 
 export interface MealPreferences {
@@ -16,10 +17,14 @@ export interface MealPreferences {
   dislikes: string;
 }
 
-export default function MealPlanWizard({ onComplete, onClose }: MealPlanWizardProps) {
+export default function MealPlanWizard({
+  onComplete,
+  onClose,
+  isPremium = false,
+}: MealPlanWizardProps) {
   const [householdSize, setHouseholdSize] = useState(2);
   const [mealsPerDay, setMealsPerDay] = useState(1);
-  const [days, setDays] = useState(7);
+  const [days, setDays] = useState(isPremium ? 7 : 3);
   const [isVegetarian, setIsVegetarian] = useState(false);
   const [isDairyFree, setIsDairyFree] = useState(false);
   const [dislikes, setDislikes] = useState('');
@@ -129,12 +134,20 @@ export default function MealPlanWizard({ onComplete, onClose }: MealPlanWizardPr
               onChange={(e) => setDays(Number(e.target.value))}
               className="mt-2 block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm transition focus:border-emerald-600 focus:outline-none focus:ring-1 focus:ring-emerald-600"
             >
-              {[3, 4, 5, 6, 7].map((num) => (
-                <option key={num} value={num}>
-                  {num} days
-                </option>
-              ))}
+              {[3, 4, 5, 6, 7].map((num) => {
+                const isPremiumOption = !isPremium && num > 3;
+                return (
+                  <option key={num} value={num}>
+                    {num} days{isPremiumOption ? ' (Premium)' : ''}
+                  </option>
+                );
+              })}
             </select>
+            {!isPremium && (
+              <p className="mt-1 text-xs text-amber-600">
+                Basic users are limited to 3 days. Upgrade to premium for 4-7 day plans.
+              </p>
+            )}
           </div>
 
           {/* Diet preferences */}

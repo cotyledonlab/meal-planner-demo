@@ -46,9 +46,14 @@ export class PlanGenerator {
       throw new Error('User not found');
     }
 
-    // Hybrid role-based gating: respect user input but cap by role
+    // Role-based day limit validation
     const maxDays = user.role === 'premium' ? 7 : 3;
-    const days = Math.min(requestedDays, maxDays);
+    if (requestedDays > maxDays) {
+      throw new Error(
+        `Your plan is limited to ${maxDays} days. Upgrade to premium for longer plans.`
+      );
+    }
+    const days = requestedDays;
 
     // Determine which meal types to include based on mealsPerDay
     const mealTypes = this.getMealTypesForCount(mealsPerDay);
