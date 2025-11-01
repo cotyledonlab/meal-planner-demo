@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
+import { env } from '~/env';
 import AuthLayout from '../_components/AuthLayout';
 
 export default function SignUpPage() {
@@ -25,9 +26,7 @@ export default function SignUpPage() {
     setLoading(true);
 
     try {
-      // Use NEXT_PUBLIC_BASE_PATH if defined, otherwise empty string for root deployment
-      const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
-      const response = await fetch(`${basePath}/api/auth/signup`, {
+      const response = await fetch(`${env.NEXT_PUBLIC_BASE_PATH ?? ''}/api/auth/signup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
