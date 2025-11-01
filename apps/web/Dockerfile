@@ -38,6 +38,7 @@ RUN pnpm install --frozen-lockfile
 
 # Rebuild the source code only when needed
 FROM base AS builder
+RUN apk add --no-cache git
 WORKDIR /app
 
 # Accept BASE_PATH as a build argument for Next.js to inline NEXT_PUBLIC_ vars
@@ -51,6 +52,14 @@ COPY --from=deps /app/apps/web/node_modules ./apps/web/node_modules
 # Copy workspace configuration
 COPY pnpm-workspace.yaml ./
 COPY package.json pnpm-lock.yaml ./
+
+# Cache invalidation: Extract git branch name to invalidate cache on branch switch
+# This runs after dependency installation (preserving dep cache) but before source copy
+COPY .git ./.git
+ARG GIT_BRANCH
+RUN git rev-parse --abbrev-ref HEAD > /tmp/branch && \
+    echo "Building branch: $(cat /tmp/branch)" && \
+    rm -rf .git
 
 # Copy shared packages
 COPY packages ./packages

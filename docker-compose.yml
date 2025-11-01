@@ -75,6 +75,10 @@ services:
       - app-network
 
   web:
+    # Build cache invalidates when:
+    # 1. Dependencies change (package.json/pnpm-lock.yaml)
+    # 2. Git branch changes (detected via .git/HEAD)
+    # 3. Source code changes
     build:
       context: .
       dockerfile: apps/web/Dockerfile
