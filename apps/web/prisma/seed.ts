@@ -131,6 +131,11 @@ async function main() {
     { name: 'sweetcorn', category: 'vegetables' },
     { name: 'celery', category: 'vegetables' },
     { name: 'parsnips', category: 'vegetables' },
+    // Fruits
+    { name: 'berries', category: 'fruits' },
+    { name: 'banana', category: 'fruits' },
+    { name: 'avocado', category: 'fruits' },
+    { name: 'lemon juice', category: 'fruits' },
     // Dairy
     { name: 'milk', category: 'dairy' },
     { name: 'cheese', category: 'dairy' },
@@ -138,6 +143,9 @@ async function main() {
     { name: 'yogurt', category: 'dairy' },
     { name: 'cream', category: 'dairy' },
     { name: 'cheddar cheese', category: 'dairy' },
+    { name: 'buttermilk', category: 'dairy' },
+    { name: 'greek yogurt', category: 'dairy' },
+    { name: 'almond milk', category: 'dairy' },
     // Grains
     { name: 'rice', category: 'grains' },
     { name: 'pasta', category: 'grains' },
@@ -162,6 +170,16 @@ async function main() {
     { name: 'honey', category: 'pantry' },
     { name: 'balsamic vinegar', category: 'pantry' },
     { name: 'vegetable oil', category: 'pantry' },
+    { name: 'baked beans', category: 'pantry' },
+    { name: 'sugar', category: 'pantry' },
+    { name: 'baking powder', category: 'pantry' },
+    { name: 'maple syrup', category: 'pantry' },
+    { name: 'chia seeds', category: 'pantry' },
+    { name: 'chili flakes', category: 'pantry' },
+    { name: 'cinnamon', category: 'pantry' },
+    { name: 'granola', category: 'pantry' },
+    { name: 'nuts', category: 'pantry' },
+    { name: 'vanilla extract', category: 'pantry' },
   ];
 
   const createdIngredients = await Promise.all(
