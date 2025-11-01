@@ -1003,6 +1003,282 @@ async function main() {
         { name: 'vegetable oil', qty: 30, unit: 'ml' },
       ],
     },
+    {
+      title: 'Classic Irish Porridge',
+      minutes: 10,
+      calories: 280,
+      isVegetarian: true,
+      isDairyFree: false,
+      mealTypes: ['breakfast'],
+      servingsDefault: 2,
+      imageUrl: 'https://images.unsplash.com/photo-1588137378633-dea1336ce1e2?w=600&q=80',
+      instructionsMd: `
+# Classic Irish Porridge
+
+## Instructions
+1. Bring milk and water to a gentle simmer
+2. Stir in oats and reduce heat to low
+3. Cook for 5-7 minutes, stirring occasionally
+4. Add a pinch of salt
+5. Serve topped with honey, berries, and cream
+
+## Tips
+- Use traditional Irish oats for authentic flavor
+- Adjust milk-to-water ratio for desired thickness
+- Can top with banana, nuts, or dried fruit
+      `.trim(),
+      ingredients: [
+        { name: 'oats', qty: 100, unit: 'g' },
+        { name: 'milk', qty: 300, unit: 'ml' },
+        { name: 'honey', qty: 20, unit: 'g' },
+        { name: 'berries', qty: 100, unit: 'g' },
+        { name: 'cream', qty: 50, unit: 'ml' },
+      ],
+    },
+    {
+      title: 'Scrambled Eggs on Toast',
+      minutes: 8,
+      calories: 320,
+      isVegetarian: true,
+      isDairyFree: false,
+      mealTypes: ['breakfast'],
+      servingsDefault: 2,
+      imageUrl: 'https://images.unsplash.com/photo-1525351484163-7529414344d8?w=600&q=80',
+      instructionsMd: `
+# Scrambled Eggs on Toast
+
+## Instructions
+1. Toast bread until golden brown
+2. Beat eggs with milk, salt, and pepper
+3. Melt butter in a non-stick pan over medium heat
+4. Pour in eggs and stir gently
+5. Cook until just set but still creamy
+6. Serve immediately on buttered toast
+
+## Tips
+- Don't overcook - remove from heat while still slightly runny
+- Add herbs like chives or parsley for extra flavor
+- Use quality bread for best results
+      `.trim(),
+      ingredients: [
+        { name: 'eggs', qty: 4, unit: 'pcs' },
+        { name: 'bread', qty: 4, unit: 'pcs' },
+        { name: 'butter', qty: 30, unit: 'g' },
+        { name: 'milk', qty: 50, unit: 'ml' },
+      ],
+    },
+    {
+      title: 'Full Irish Breakfast',
+      minutes: 25,
+      calories: 650,
+      isVegetarian: false,
+      isDairyFree: false,
+      mealTypes: ['breakfast'],
+      servingsDefault: 2,
+      imageUrl: 'https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?w=600&q=80',
+      instructionsMd: `
+# Full Irish Breakfast
+
+## Instructions
+1. Grill or fry sausages until cooked through
+2. Fry bacon until crispy
+3. Fry eggs to your liking
+4. Grill or fry tomatoes cut in half
+5. Warm beans in a small pot
+6. Toast bread and butter generously
+7. Serve everything together while hot
+
+## Tips
+- Traditional Irish breakfast staple
+- Can add black and white pudding if available
+- Perfect weekend breakfast
+      `.trim(),
+      ingredients: [
+        { name: 'sausages', qty: 4, unit: 'pcs' },
+        { name: 'bacon', qty: 200, unit: 'g' },
+        { name: 'eggs', qty: 4, unit: 'pcs' },
+        { name: 'tomatoes', qty: 2, unit: 'pcs' },
+        { name: 'baked beans', qty: 200, unit: 'g' },
+        { name: 'bread', qty: 4, unit: 'pcs' },
+        { name: 'butter', qty: 30, unit: 'g' },
+      ],
+    },
+    {
+      title: 'Buttermilk Pancakes with Maple Syrup',
+      minutes: 15,
+      calories: 380,
+      isVegetarian: true,
+      isDairyFree: false,
+      mealTypes: ['breakfast'],
+      servingsDefault: 4,
+      imageUrl: 'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=600&q=80',
+      instructionsMd: `
+# Buttermilk Pancakes with Maple Syrup
+
+## Instructions
+1. Mix flour, sugar, baking powder, and salt in a bowl
+2. In another bowl, whisk buttermilk, eggs, and melted butter
+3. Combine wet and dry ingredients until just mixed
+4. Heat a non-stick pan over medium heat
+5. Pour 1/4 cup batter per pancake
+6. Cook until bubbles form, then flip
+7. Cook until golden brown
+8. Serve with maple syrup and butter
+
+## Tips
+- Don't overmix the batter - lumps are okay
+- Let batter rest 5 minutes for fluffier pancakes
+- Keep warm in low oven while cooking batches
+      `.trim(),
+      ingredients: [
+        { name: 'flour', qty: 250, unit: 'g' },
+        { name: 'buttermilk', qty: 300, unit: 'ml' },
+        { name: 'eggs', qty: 2, unit: 'pcs' },
+        { name: 'butter', qty: 50, unit: 'g' },
+        { name: 'sugar', qty: 30, unit: 'g' },
+        { name: 'baking powder', qty: 10, unit: 'g' },
+        { name: 'maple syrup', qty: 100, unit: 'ml' },
+      ],
+    },
+    {
+      title: 'Avocado Toast with Poached Egg',
+      minutes: 10,
+      calories: 340,
+      isVegetarian: true,
+      isDairyFree: true,
+      mealTypes: ['breakfast'],
+      servingsDefault: 2,
+      imageUrl: 'https://images.unsplash.com/photo-1541519227354-08fa5d50c44d?w=600&q=80',
+      instructionsMd: `
+# Avocado Toast with Poached Egg
+
+## Instructions
+1. Toast bread until golden and crispy
+2. Bring water to gentle simmer for poaching
+3. Crack eggs into simmering water
+4. Poach for 3-4 minutes until whites set
+5. Mash avocado with lemon juice, salt, and pepper
+6. Spread avocado on toast
+7. Top with poached egg
+8. Season with chili flakes if desired
+
+## Tips
+- Use ripe but firm avocados
+- Add a splash of vinegar to poaching water
+- Can add cherry tomatoes or feta
+      `.trim(),
+      ingredients: [
+        { name: 'bread', qty: 4, unit: 'pcs' },
+        { name: 'avocado', qty: 2, unit: 'pcs' },
+        { name: 'eggs', qty: 4, unit: 'pcs' },
+        { name: 'lemon juice', qty: 10, unit: 'ml' },
+        { name: 'chili flakes', qty: 2, unit: 'g' },
+      ],
+    },
+    {
+      title: 'Greek Yogurt Parfait with Granola',
+      minutes: 5,
+      calories: 310,
+      isVegetarian: true,
+      isDairyFree: false,
+      mealTypes: ['breakfast'],
+      servingsDefault: 2,
+      imageUrl: 'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=600&q=80',
+      instructionsMd: `
+# Greek Yogurt Parfait with Granola
+
+## Instructions
+1. Layer Greek yogurt in glass or bowl
+2. Add layer of mixed berries
+3. Sprinkle granola on top
+4. Drizzle with honey
+5. Add another layer if desired
+6. Top with fresh berries
+
+## Tips
+- Use full-fat Greek yogurt for richness
+- Make granola ahead for quick assembly
+- Can prep in jars the night before
+      `.trim(),
+      ingredients: [
+        { name: 'greek yogurt', qty: 400, unit: 'g' },
+        { name: 'granola', qty: 100, unit: 'g' },
+        { name: 'berries', qty: 200, unit: 'g' },
+        { name: 'honey', qty: 30, unit: 'g' },
+        { name: 'nuts', qty: 50, unit: 'g' },
+      ],
+    },
+    {
+      title: 'French Toast with Berries',
+      minutes: 12,
+      calories: 390,
+      isVegetarian: true,
+      isDairyFree: false,
+      mealTypes: ['breakfast'],
+      servingsDefault: 2,
+      imageUrl: 'https://images.unsplash.com/photo-1484723091739-30a097e8f929?w=600&q=80',
+      instructionsMd: `
+# French Toast with Berries
+
+## Instructions
+1. Beat eggs with milk, vanilla, and cinnamon
+2. Dip bread slices in egg mixture
+3. Heat butter in a pan over medium heat
+4. Cook bread until golden on both sides
+5. Dust with icing sugar
+6. Top with fresh berries
+7. Drizzle with maple syrup
+
+## Tips
+- Use day-old bread for best texture
+- Don't oversoak the bread
+- Serve immediately while hot
+      `.trim(),
+      ingredients: [
+        { name: 'bread', qty: 6, unit: 'pcs' },
+        { name: 'eggs', qty: 3, unit: 'pcs' },
+        { name: 'milk', qty: 150, unit: 'ml' },
+        { name: 'butter', qty: 40, unit: 'g' },
+        { name: 'berries', qty: 150, unit: 'g' },
+        { name: 'cinnamon', qty: 3, unit: 'g' },
+        { name: 'vanilla extract', qty: 5, unit: 'ml' },
+        { name: 'maple syrup', qty: 60, unit: 'ml' },
+      ],
+    },
+    {
+      title: 'Breakfast Smoothie Bowl',
+      minutes: 7,
+      calories: 290,
+      isVegetarian: true,
+      isDairyFree: true,
+      mealTypes: ['breakfast'],
+      servingsDefault: 2,
+      imageUrl: 'https://images.unsplash.com/photo-1590301157890-4810ed352733?w=600&q=80',
+      instructionsMd: `
+# Breakfast Smoothie Bowl
+
+## Instructions
+1. Blend frozen banana with berries and milk
+2. Add protein powder if desired
+3. Blend until thick and smooth
+4. Pour into bowl
+5. Top with granola, fresh fruit, and seeds
+6. Drizzle with honey or nut butter
+
+## Tips
+- Use frozen fruit for thick consistency
+- Adjust liquid for desired thickness
+- Customize toppings to your preference
+      `.trim(),
+      ingredients: [
+        { name: 'banana', qty: 2, unit: 'pcs' },
+        { name: 'berries', qty: 200, unit: 'g' },
+        { name: 'almond milk', qty: 200, unit: 'ml' },
+        { name: 'granola', qty: 80, unit: 'g' },
+        { name: 'chia seeds', qty: 20, unit: 'g' },
+        { name: 'honey', qty: 20, unit: 'g' },
+      ],
+    },
   ];
 
   for (const recipeData of recipes) {
