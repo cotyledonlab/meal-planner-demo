@@ -57,8 +57,9 @@ COPY package.json pnpm-lock.yaml ./
 # This runs after dependency installation (preserving dep cache) but before source copy
 COPY .git ./.git
 ARG GIT_BRANCH
-RUN git rev-parse --abbrev-ref HEAD > /tmp/branch && \
-    echo "Building branch: $(cat /tmp/branch)" && \
+RUN echo "Building branch: ${GIT_BRANCH}" > /tmp/branch
+RUN git rev-parse --abbrev-ref HEAD > /tmp/git_branch && \
+    echo "Detected branch: $(cat /tmp/git_branch)" && \
     rm -rf .git
 
 # Copy shared packages
