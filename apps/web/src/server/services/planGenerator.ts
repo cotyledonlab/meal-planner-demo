@@ -177,7 +177,137 @@ export class PlanGenerator {
       } as MealPlanOutput;
     });
 
+    // Runtime validation of generated plan
+    await this.validateGeneratedPlan(plan.id, days, mealTypes);
+
     return plan;
+  }
+
+  /**
+   * Validate generated meal plan before returning
+   */
+  private async validateGeneratedPlan(
+    planId: string,
+    expectedDays: number,
+    expectedMealTypes: string[]
+  ): Promise<void> {
+    // Fetch created plan items with recipes
+    const items = await this.prisma.mealPlanItem.findMany({
+      where: { planId },
+      include: {
+        recipe: true,
+      },
+    });
+
+    // Validate: plan has exactly expected number of items
+    const expectedItemCount = expectedDays * expectedMealTypes.length;
+    if (items.length !== expectedItemCount) {
+      this.log.error(
+        {
+          planId,
+          expectedItems: expectedItemCount,
+          actualItems: items.length,
+          expectedDays,
+          expectedMealTypes,
+        },
+        'Generated plan has incorrect item count'
+      );
+      throw new Error(
+        `Plan validation failed: expected ${expectedItemCount} items but got ${items.length}`
+      );
+    }
+
+    // Validate: each day has all expected meal types
+    const itemsByDay = new Map<number, Set<string>>();
+    for (const item of items) {
+      if (!itemsByDay.has(item.dayIndex)) {
+        itemsByDay.set(item.dayIndex, new Set());
+      }
+      itemsByDay.get(item.dayIndex)!.add(item.mealType);
+    }
+
+    for (let dayIndex = 0; dayIndex < expectedDays; dayIndex++) {
+      const dayMealTypes = itemsByDay.get(dayIndex);
+      if (!dayMealTypes || dayMealTypes.size !== expectedMealTypes.length) {
+        this.log.error(
+          {
+            planId,
+            dayIndex,
+            expectedMealTypes,
+            actualMealTypes: dayMealTypes ? Array.from(dayMealTypes) : [],
+          },
+          'Day missing expected meal types'
+        );
+        throw new Error(`Plan validation failed: day ${dayIndex} has incorrect meal types`);
+      }
+
+      for (const expectedType of expectedMealTypes) {
+        if (!dayMealTypes.has(expectedType)) {
+          this.log.error(
+            {
+              planId,
+              dayIndex,
+              missingMealType: expectedType,
+            },
+            'Day missing expected meal type'
+          );
+          throw new Error(`Plan validation failed: day ${dayIndex} missing ${expectedType}`);
+        }
+      }
+    }
+
+    // Validate: each mealPlanItem has correct mealType assignment
+    for (const item of items) {
+      const recipe = item.recipe;
+      const mealTypesArray = Array.isArray(recipe.mealTypes)
+        ? recipe.mealTypes.filter((type): type is string => typeof type === 'string')
+        : [];
+
+      if (!mealTypesArray.includes(item.mealType)) {
+        this.log.error(
+          {
+            planId,
+            itemId: item.id,
+            recipeId: recipe.id,
+            recipeTitle: recipe.title,
+            assignedMealType: item.mealType,
+            recipeMealTypes: mealTypesArray,
+          },
+          'Recipe assigned to inappropriate meal type'
+        );
+        throw new Error(
+          `Plan validation failed: recipe "${recipe.title}" assigned to ${item.mealType} but only supports [${mealTypesArray.join(', ')}]`
+        );
+      }
+
+      // Log warning for breakfast assignments of typically non-breakfast recipes
+      if (item.mealType === 'breakfast') {
+        const title = recipe.title.toLowerCase();
+        const suspiciousPatterns = ['curry', 'stew', 'roast', 'pasta', 'bolognese', 'chili'];
+        const isSuspicious = suspiciousPatterns.some((pattern) => title.includes(pattern));
+
+        if (isSuspicious) {
+          this.log.warn(
+            {
+              planId,
+              recipeTitle: recipe.title,
+              mealType: item.mealType,
+              recipeMealTypes: mealTypesArray,
+            },
+            'Suspicious breakfast assignment detected'
+          );
+        }
+      }
+    }
+
+    this.log.info(
+      {
+        planId,
+        itemCount: items.length,
+        days: expectedDays,
+      },
+      'Plan validation passed'
+    );
   }
 
   /**
