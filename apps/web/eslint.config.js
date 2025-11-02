@@ -9,6 +9,13 @@ export default tseslint.config(
   {
     ignores: ['.next', 'coverage'],
   },
+  {
+    settings: {
+      next: {
+        rootDir: ['apps/web'],
+      },
+    },
+  },
   ...compat.extends('next/core-web-vitals'),
   {
     files: ['**/*.ts', '**/*.tsx'],

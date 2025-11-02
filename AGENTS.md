@@ -186,6 +186,12 @@ If any check fails, fix the issues before committing. Common issues:
 
 When working in this environment, Claude Code is typically launched from the VPS and has access to:
 
+### Live Deployment URL
+
+- **Production URL**: https://cotyledonlab.com/demos/meal-planner
+- **IMPORTANT**: Never use localhost for live environment testing - always use the production URL above
+- Base path is configured as `/demos/meal-planner` in Dokploy environment variables
+
 ### Direct File Access
 
 - Full access to `/etc/dokploy/` directory for deployment logs and configuration
