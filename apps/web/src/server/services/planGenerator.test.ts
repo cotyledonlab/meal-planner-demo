@@ -311,4 +311,115 @@ describe('PlanGenerator', () => {
       ).rejects.toThrow('No recipes available for breakfast');
     });
   });
+
+  describe('Role-based Day Limits (#104)', () => {
+    it('throws error when basic user requests more than 3 days', async () => {
+      mockPrisma.user.findUnique.mockResolvedValue({ id: 'user-1', role: 'basic' });
+      mockPrisma.recipe.findMany.mockResolvedValue([
+        {
+          id: 'recipe-1',
+          mealTypes: ['dinner'],
+          ingredients: [{ ingredient: { name: 'chicken' } }],
+        },
+      ]);
+
+      const generator = new PlanGenerator(mockPrisma as unknown as PrismaClient);
+
+      await expect(
+        generator.generatePlan({
+          userId: 'user-1',
+          startDate,
+          days: 7,
+          mealsPerDay: 1,
+        })
+      ).rejects.toThrow('Your plan is limited to 3 days. Upgrade to premium for longer plans.');
+    });
+
+    it('allows basic user to request 3 days', async () => {
+      mockPrisma.user.findUnique.mockResolvedValue({ id: 'user-1', role: 'basic' });
+      mockPrisma.recipe.findMany.mockResolvedValue([
+        {
+          id: 'recipe-1',
+          mealTypes: ['dinner'],
+          ingredients: [{ ingredient: { name: 'chicken' } }],
+        },
+      ]);
+
+      const generator = new PlanGenerator(mockPrisma as unknown as PrismaClient);
+
+      const plan = await generator.generatePlan({
+        userId: 'user-1',
+        startDate,
+        days: 3,
+        mealsPerDay: 1,
+      });
+
+      expect(plan).toBeDefined();
+      expect(mockCreatePlan).toHaveBeenCalledWith({
+        data: {
+          userId: 'user-1',
+          startDate,
+          days: 3,
+        },
+      });
+    });
+
+    it('allows premium user to request 7 days', async () => {
+      mockPrisma.user.findUnique.mockResolvedValue({ id: 'user-1', role: 'premium' });
+      mockPrisma.recipe.findMany.mockResolvedValue([
+        {
+          id: 'recipe-1',
+          mealTypes: ['dinner'],
+          ingredients: [{ ingredient: { name: 'chicken' } }],
+        },
+      ]);
+      mockCreatePlan.mockResolvedValue({
+        id: 'plan-1',
+        userId: 'user-1',
+        startDate,
+        days: 7,
+        createdAt: startDate,
+      });
+
+      const generator = new PlanGenerator(mockPrisma as unknown as PrismaClient);
+
+      const plan = await generator.generatePlan({
+        userId: 'user-1',
+        startDate,
+        days: 7,
+        mealsPerDay: 1,
+      });
+
+      expect(plan).toBeDefined();
+      expect(mockCreatePlan).toHaveBeenCalledWith({
+        data: {
+          userId: 'user-1',
+          startDate,
+          days: 7,
+        },
+      });
+    });
+
+    it('throws error when premium user requests more than 7 days', async () => {
+      mockPrisma.user.findUnique.mockResolvedValue({ id: 'user-1', role: 'premium' });
+      mockPrisma.recipe.findMany.mockResolvedValue([
+        {
+          id: 'recipe-1',
+          mealTypes: ['dinner'],
+          ingredients: [{ ingredient: { name: 'chicken' } }],
+        },
+      ]);
+
+      const generator = new PlanGenerator(mockPrisma as unknown as PrismaClient);
+
+      await expect(
+        generator.generatePlan({
+          userId: 'user-1',
+          startDate,
+          days: 14,
+          mealsPerDay: 1,
+        })
+      ).rejects.toThrow('Your plan is limited to 7 days. Upgrade to premium for longer plans.');
+    });
+  });
 });

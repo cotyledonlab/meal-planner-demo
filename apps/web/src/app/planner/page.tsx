@@ -2,12 +2,16 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import { api } from '~/trpc/react';
 import MealPlanWizard, { type MealPreferences } from '~/app/_components/MealPlanWizard';
+import { isPremiumUser } from '~/lib/auth';
 
 export default function PlannerPage() {
   const [showWizard, setShowWizard] = useState(true);
   const router = useRouter();
+  const { data: session } = useSession();
+  const isPremium = isPremiumUser(session?.user);
 
   const generatePlan = api.plan.generate.useMutation({
     onSuccess: (data) => {
@@ -45,7 +49,11 @@ export default function PlannerPage() {
     <main className="min-h-screen">
       {/* Wizard */}
       {showWizard && (
-        <MealPlanWizard onComplete={handleWizardComplete} onClose={handleWizardClose} />
+        <MealPlanWizard
+          onComplete={handleWizardComplete}
+          onClose={handleWizardClose}
+          isPremium={isPremium}
+        />
       )}
 
       {/* Loading State */}

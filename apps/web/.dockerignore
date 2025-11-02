@@ -33,7 +33,7 @@ build
 .vercel
 
 # Git
-.git
+# .git removed to enable branch-based cache invalidation
 .gitignore
 
 # IDE
