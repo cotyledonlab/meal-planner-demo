@@ -10,6 +10,13 @@ type TestMealPlanItem = {
   servings: number;
 };
 
+type TestRecipe = {
+  id: string;
+  title: string;
+  mealTypes: string[];
+  ingredients: Array<{ ingredient: { name: string } }>;
+};
+
 type MockPrismaTransaction = {
   mealPlan: { create: ReturnType<typeof vi.fn> };
   mealPlanItem: { createMany: ReturnType<typeof vi.fn> };
@@ -21,12 +28,30 @@ describe('PlanGenerator', () => {
   let mockPrisma: {
     user: { findUnique: ReturnType<typeof vi.fn> };
     recipe: { findMany: ReturnType<typeof vi.fn> };
+    mealPlanItem: { findMany: ReturnType<typeof vi.fn> };
     $transaction: ReturnType<typeof vi.fn>;
   };
   let mockCreatePlan: ReturnType<typeof vi.fn>;
   let mockCreateItems: ReturnType<typeof vi.fn>;
+  let mockFindPlanItems: ReturnType<typeof vi.fn>;
+  let currentRecipes: TestRecipe[];
 
   beforeEach(() => {
+    currentRecipes = [
+      {
+        id: 'recipe-keep',
+        title: 'Chicken Dinner',
+        mealTypes: ['dinner'],
+        ingredients: [{ ingredient: { name: 'chicken breast' } }],
+      },
+      {
+        id: 'recipe-skip',
+        title: 'Mushroom Dish',
+        mealTypes: ['dinner'],
+        ingredients: [{ ingredient: { name: 'Mushrooms' } }],
+      },
+    ];
+
     mockCreatePlan = vi.fn().mockResolvedValue({
       id: 'plan-1',
       userId: 'user-1',
@@ -35,25 +60,39 @@ describe('PlanGenerator', () => {
       createdAt: startDate,
     });
 
-    mockCreateItems = vi.fn().mockResolvedValue(undefined);
+    mockCreateItems = vi.fn().mockImplementation(() => {
+      // Store created items for validation mock
+      return Promise.resolve(undefined);
+    });
+
+    // Mock for validation - returns items matching what was created
+    mockFindPlanItems = vi.fn().mockImplementation(() => {
+      const lastCreateCall = mockCreateItems.mock.calls[mockCreateItems.mock.calls.length - 1];
+      if (!lastCreateCall) return Promise.resolve([]);
+
+      const itemsData = lastCreateCall[0]?.data ?? [];
+      return Promise.resolve(
+        itemsData.map((item: TestMealPlanItem) => {
+          const recipe = currentRecipes.find((r) => r.id === item.recipeId);
+          return {
+            ...item,
+            id: `item-${item.dayIndex}-${item.mealType}`,
+            planId: 'plan-1',
+            recipe: recipe ?? currentRecipes[0],
+          };
+        })
+      );
+    });
 
     mockPrisma = {
       user: {
         findUnique: vi.fn().mockResolvedValue({ id: 'user-1', role: 'basic' }),
       },
       recipe: {
-        findMany: vi.fn().mockResolvedValue([
-          {
-            id: 'recipe-keep',
-            mealTypes: ['dinner'],
-            ingredients: [{ ingredient: { name: 'chicken breast' } }],
-          },
-          {
-            id: 'recipe-skip',
-            mealTypes: ['dinner'],
-            ingredients: [{ ingredient: { name: 'Mushrooms' } }],
-          },
-        ]),
+        findMany: vi.fn().mockImplementation(() => Promise.resolve(currentRecipes)),
+      },
+      mealPlanItem: {
+        findMany: mockFindPlanItems,
       },
       $transaction: vi
         .fn()
@@ -97,7 +136,7 @@ describe('PlanGenerator', () => {
 
   describe('Meal Type Filtering (#105)', () => {
     it('assigns only breakfast recipes to breakfast slots', async () => {
-      mockPrisma.recipe.findMany.mockResolvedValue([
+      currentRecipes = [
         {
           id: 'breakfast-recipe',
           title: 'Eggs & Toast',
@@ -110,7 +149,7 @@ describe('PlanGenerator', () => {
           mealTypes: ['lunch', 'dinner'],
           ingredients: [{ ingredient: { name: 'chicken' } }],
         },
-      ]);
+      ];
 
       const generator = new PlanGenerator(mockPrisma as unknown as PrismaClient);
 
@@ -134,7 +173,7 @@ describe('PlanGenerator', () => {
     });
 
     it('never assigns lunch/dinner-only recipes to breakfast', async () => {
-      mockPrisma.recipe.findMany.mockResolvedValue([
+      currentRecipes = [
         {
           id: 'breakfast-only',
           title: 'Egg Fried Rice',
@@ -153,7 +192,7 @@ describe('PlanGenerator', () => {
           mealTypes: ['dinner'],
           ingredients: [{ ingredient: { name: 'beef' } }],
         },
-      ]);
+      ];
 
       const generator = new PlanGenerator(mockPrisma as unknown as PrismaClient);
 
@@ -178,7 +217,7 @@ describe('PlanGenerator', () => {
     });
 
     it('assigns only lunch recipes to lunch slots', async () => {
-      mockPrisma.recipe.findMany.mockResolvedValue([
+      currentRecipes = [
         {
           id: 'breakfast-only',
           title: 'Eggs',
@@ -197,7 +236,7 @@ describe('PlanGenerator', () => {
           mealTypes: ['dinner'],
           ingredients: [{ ingredient: { name: 'beef' } }],
         },
-      ]);
+      ];
 
       const generator = new PlanGenerator(mockPrisma as unknown as PrismaClient);
 
@@ -219,7 +258,7 @@ describe('PlanGenerator', () => {
     });
 
     it('assigns only dinner recipes to dinner slots', async () => {
-      mockPrisma.recipe.findMany.mockResolvedValue([
+      currentRecipes = [
         {
           id: 'breakfast-only',
           title: 'Eggs',
@@ -238,7 +277,7 @@ describe('PlanGenerator', () => {
           mealTypes: ['dinner'],
           ingredients: [{ ingredient: { name: 'beef' } }],
         },
-      ]);
+      ];
 
       const generator = new PlanGenerator(mockPrisma as unknown as PrismaClient);
 
@@ -260,14 +299,14 @@ describe('PlanGenerator', () => {
     });
 
     it('allows recipes with multiple meal types to be assigned to any matching slot', async () => {
-      mockPrisma.recipe.findMany.mockResolvedValue([
+      currentRecipes = [
         {
           id: 'versatile-recipe',
           title: 'Vegetarian Stir-Fry',
           mealTypes: ['breakfast', 'lunch', 'dinner'],
           ingredients: [{ ingredient: { name: 'vegetables' } }],
         },
-      ]);
+      ];
 
       const generator = new PlanGenerator(mockPrisma as unknown as PrismaClient);
 
@@ -290,14 +329,14 @@ describe('PlanGenerator', () => {
     });
 
     it('throws error when no recipes match the meal type', async () => {
-      mockPrisma.recipe.findMany.mockResolvedValue([
+      currentRecipes = [
         {
           id: 'dinner-only',
           title: 'Heavy Stew',
           mealTypes: ['dinner'],
           ingredients: [{ ingredient: { name: 'beef' } }],
         },
-      ]);
+      ];
 
       const generator = new PlanGenerator(mockPrisma as unknown as PrismaClient);
 
@@ -315,13 +354,14 @@ describe('PlanGenerator', () => {
   describe('Role-based Day Limits (#104)', () => {
     it('throws error when basic user requests more than 3 days', async () => {
       mockPrisma.user.findUnique.mockResolvedValue({ id: 'user-1', role: 'basic' });
-      mockPrisma.recipe.findMany.mockResolvedValue([
+      currentRecipes = [
         {
           id: 'recipe-1',
+          title: 'Chicken Dinner',
           mealTypes: ['dinner'],
           ingredients: [{ ingredient: { name: 'chicken' } }],
         },
-      ]);
+      ];
 
       const generator = new PlanGenerator(mockPrisma as unknown as PrismaClient);
 
@@ -337,13 +377,14 @@ describe('PlanGenerator', () => {
 
     it('allows basic user to request 3 days', async () => {
       mockPrisma.user.findUnique.mockResolvedValue({ id: 'user-1', role: 'basic' });
-      mockPrisma.recipe.findMany.mockResolvedValue([
+      currentRecipes = [
         {
           id: 'recipe-1',
+          title: 'Chicken Dinner',
           mealTypes: ['dinner'],
           ingredients: [{ ingredient: { name: 'chicken' } }],
         },
-      ]);
+      ];
 
       const generator = new PlanGenerator(mockPrisma as unknown as PrismaClient);
 
@@ -366,13 +407,14 @@ describe('PlanGenerator', () => {
 
     it('allows premium user to request 7 days', async () => {
       mockPrisma.user.findUnique.mockResolvedValue({ id: 'user-1', role: 'premium' });
-      mockPrisma.recipe.findMany.mockResolvedValue([
+      currentRecipes = [
         {
           id: 'recipe-1',
+          title: 'Chicken Dinner',
           mealTypes: ['dinner'],
           ingredients: [{ ingredient: { name: 'chicken' } }],
         },
-      ]);
+      ];
       mockCreatePlan.mockResolvedValue({
         id: 'plan-1',
         userId: 'user-1',
@@ -402,13 +444,14 @@ describe('PlanGenerator', () => {
 
     it('throws error when premium user requests more than 7 days', async () => {
       mockPrisma.user.findUnique.mockResolvedValue({ id: 'user-1', role: 'premium' });
-      mockPrisma.recipe.findMany.mockResolvedValue([
+      currentRecipes = [
         {
           id: 'recipe-1',
+          title: 'Chicken Dinner',
           mealTypes: ['dinner'],
           ingredients: [{ ingredient: { name: 'chicken' } }],
         },
-      ]);
+      ];
 
       const generator = new PlanGenerator(mockPrisma as unknown as PrismaClient);
 
@@ -419,7 +462,7 @@ describe('PlanGenerator', () => {
           days: 14,
           mealsPerDay: 1,
         })
-      ).rejects.toThrow('Your plan is limited to 7 days. Upgrade to premium for longer plans.');
+      ).rejects.toThrow('Your plan is limited to 7 days.');
     });
   });
 });
