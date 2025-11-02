@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { VALID_MEAL_TYPES } from '@meal-planner-demo/constants';
+import { SUSPICIOUS_BREAKFAST_KEYWORDS, VALID_MEAL_TYPES } from '@meal-planner-demo/constants';
 
 const prisma = new PrismaClient();
 const scriptFilename = fileURLToPath(import.meta.url);
@@ -57,6 +57,16 @@ export function evaluateMealTypes(recipes: RecipeSummary[]): {
         if (!isValidMealType(type)) {
           invalidLabels.push(type);
         }
+      }
+      const normalizedTitle = recipe.title.toLowerCase();
+      const suspiciousBreakfastKeywords = SUSPICIOUS_BREAKFAST_KEYWORDS.filter((keyword) =>
+        normalizedTitle.includes(keyword)
+      );
+
+      if (mealTypes.includes('breakfast') && suspiciousBreakfastKeywords.length > 0) {
+        issues.push(
+          `Unexpected breakfast classification (keywords: ${suspiciousBreakfastKeywords.join(', ')})`
+        );
       }
     }
 
@@ -118,9 +128,16 @@ export async function fixCorruptedMealTypes(
   for (const recipe of corrupted) {
     // Filter out invalid meal types, keeping only valid ones
     const validTypes = recipe.mealTypes.filter((type) => isValidMealType(type));
+    const normalizedTitle = recipe.title.toLowerCase();
+    const sanitizedTypes = validTypes.filter((type) => {
+      if (type !== 'breakfast') {
+        return true;
+      }
+      return !SUSPICIOUS_BREAKFAST_KEYWORDS.some((keyword) => normalizedTitle.includes(keyword));
+    });
 
     // If no valid types remain, default to ['lunch', 'dinner']
-    const fixedTypes = validTypes.length > 0 ? validTypes : [...FALLBACK_MEAL_TYPES];
+    const fixedTypes = sanitizedTypes.length > 0 ? sanitizedTypes : [...FALLBACK_MEAL_TYPES];
 
     await recipeModel.update({
       where: { id: recipe.recipeId },

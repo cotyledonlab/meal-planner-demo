@@ -1,4 +1,5 @@
 import { type PrismaClient } from '@prisma/client';
+import { SUSPICIOUS_BREAKFAST_KEYWORDS } from '@meal-planner-demo/constants';
 import { createLogger } from '~/lib/logger';
 
 interface GeneratePlanInput {
@@ -283,8 +284,9 @@ export class PlanGenerator {
       // Log warning for breakfast assignments of typically non-breakfast recipes
       if (item.mealType === 'breakfast') {
         const title = recipe.title.toLowerCase();
-        const suspiciousPatterns = ['curry', 'stew', 'roast', 'pasta', 'bolognese', 'chili'];
-        const isSuspicious = suspiciousPatterns.some((pattern) => title.includes(pattern));
+        const isSuspicious = SUSPICIOUS_BREAKFAST_KEYWORDS.some((pattern) =>
+          title.includes(pattern)
+        );
 
         if (isSuspicious) {
           this.log.warn(
