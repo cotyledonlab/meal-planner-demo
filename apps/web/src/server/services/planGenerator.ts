@@ -50,7 +50,9 @@ export class PlanGenerator {
     const maxDays = user.role === 'premium' ? 7 : 3;
     if (requestedDays > maxDays) {
       throw new Error(
-        `Your plan is limited to ${maxDays} days. Upgrade to premium for longer plans.`
+        user.role === 'premium'
+          ? `Your plan is limited to ${maxDays} days.`
+          : `Your plan is limited to ${maxDays} days. Upgrade to premium for longer plans.`
       );
     }
     const days = requestedDays;
