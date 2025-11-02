@@ -1,23 +1,26 @@
 # meal-planner-demo Development Guidelines
 
-Last updated: 2025-10-26
+Last updated: 2025-11-02
 
 ## Current State
 
-**Latest Changes**: PR #79 merged to main
+**Latest Changes**: PR #113 merged to main
 
-- **Commit**: 1ba5663 - "Fix: Add migration stage to Dockerfile for proper deployment"
+- **Commit**: 19418d6 - "Fix: Use process.env.NEXT_PUBLIC_BASE_PATH for signup API"
 - **Status**: MERGED ✅
-- **Purpose**: Fixed deployment failures by creating dedicated `migration` Docker stage for database operations
+- **Branch**: fix/day-count-validation (current)
 - **All tests passing**: 102 tests, TypeScript, ESLint, Prettier, pre-push checks
 
-**Recent Fixes**:
+**Recent Fixes** (since 2025-10-26):
 
-1. Created dedicated `migration` Docker stage for database migrations/seeding
-2. Fixed `target: builder` → `target: migration` in docker-compose.yml (both migrate and seed services)
-3. Added pnpm version consistency with ARG PNPM_VERSION across all Dockerfile stages
-4. Fixed shopping list error handling (null instead of mock object)
-5. Addressed all Copilot code review comments
+1. PR #113: Disabled premium day options for basic users in meal plan wizard
+2. PR #112/104: Replaced silent day count capping with validation & clear error messages
+3. PR #111/110: Removed breakfast from inappropriate recipes in seed data
+4. PR #109/105: Fixed meal type filtering - prevent inappropriate meal assignments
+5. PR #98: Fixed meal plan generation bugs (day count, meal types)
+6. PR #97: Enhanced recipe cards with larger images, difficulty indicators, expandable modals
+7. PR #96: Optimized meal plan generation with caching
+8. PR #93: Security fix - bound PostgreSQL, Redis, Mailpit to localhost only
 
 **Deployment Context**:
 
@@ -303,14 +306,16 @@ pnpm db:push --dry-run
 
 ## Recent Changes
 
-- **2025-10-26**: Fixed deployment failures by creating dedicated `migration` Docker stage
-- **2025-10-26**: Added pnpm version consistency across all Dockerfile stages (PNPM_VERSION ARG)
-- **2025-10-26**: Addressed all Copilot code review comments on deployment PR
+- **2025-11-02**: Fixed day count validation and premium user controls (PRs #113, #112, #104)
+- **2025-11-01**: Fixed inappropriate breakfast assignments in seed data (PRs #111, #110)
+- **2025-10-31**: Fixed meal type filtering to prevent inappropriate assignments (PRs #109, #105)
+- **2025-10-30**: Fixed meal plan generation bugs and enhanced recipe cards (PRs #98, #97, #96)
+- **2025-10-29**: Security fix - bound database services to localhost (PR #93)
+- **2025-10-26**: Fixed deployment failures by creating dedicated `migration` Docker stage (PR #79)
 - Migrated to monorepo structure with pnpm workspaces
-- Added comprehensive test suite with Vitest
+- Added comprehensive test suite with Vitest (102 tests)
 - Configured pre-commit hooks with Husky and lint-staged
 - Added Docker Compose for full stack deployment
-- 002-project-mealmind-ai: Added TypeScript (Node.js 20+) + Next.js App Router, React Server Components, tRPC, Zod, Prisma, NextAuth, OpenAI GPT-5 Codex SDK, pino, Sentry (gated), Redis client
 
 <!-- MANUAL ADDITIONS START -->
 
