@@ -1,53 +1,73 @@
 import { PrismaClient } from '@prisma/client';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { VALID_MEAL_TYPES } from '@meal-planner-demo/constants';
 
 const prisma = new PrismaClient();
+const scriptFilename = fileURLToPath(import.meta.url);
 
-const VALID_MEAL_TYPES = ['breakfast', 'lunch', 'dinner'] as const;
+type MealType = (typeof VALID_MEAL_TYPES)[number];
 
-interface ValidationResult {
+export interface ValidationResult {
   recipeId: string;
   title: string;
   mealTypes: string[];
   issues: string[];
 }
 
-async function validateMealTypes(): Promise<{
+interface RecipeSummary {
+  id: string;
+  title: string;
+  mealTypes: unknown;
+}
+
+type RecipeDelegate = Pick<typeof prisma.recipe, 'findMany'>;
+
+function isValidMealType(type: string): type is MealType {
+  return VALID_MEAL_TYPES.includes(type as MealType);
+}
+
+export function evaluateMealTypes(recipes: RecipeSummary[]): {
   valid: ValidationResult[];
   invalid: ValidationResult[];
-}> {
-  console.log('🔍 Starting mealTypes validation...\n');
-
-  const recipes = await prisma.recipe.findMany({
-    select: {
-      id: true,
-      title: true,
-      mealTypes: true,
-    },
-  });
-
+} {
   const valid: ValidationResult[] = [];
   const invalid: ValidationResult[] = [];
 
   for (const recipe of recipes) {
     const issues: string[] = [];
+    const mealTypes: string[] = [];
+    const invalidLabels: string[] = [];
 
-    // Check if mealTypes is empty
-    if (recipe.mealTypes?.length === 0) {
-      issues.push('Empty mealTypes array');
+    if (!Array.isArray(recipe.mealTypes)) {
+      issues.push('Missing mealTypes array');
+    } else {
+      if (recipe.mealTypes.length === 0) {
+        issues.push('Empty mealTypes array');
+      }
+
+      for (const type of recipe.mealTypes) {
+        if (typeof type !== 'string') {
+          invalidLabels.push(String(type));
+          continue;
+        }
+
+        mealTypes.push(type);
+
+        if (!isValidMealType(type)) {
+          invalidLabels.push(type);
+        }
+      }
     }
 
-    // Check for invalid values
-    const invalidTypes = recipe.mealTypes.filter(
-      (type) => !VALID_MEAL_TYPES.includes(type as (typeof VALID_MEAL_TYPES)[number])
-    );
-    if (invalidTypes.length > 0) {
-      issues.push(`Invalid meal types: ${invalidTypes.join(', ')}`);
+    if (invalidLabels.length > 0) {
+      issues.push(`Invalid meal types: ${invalidLabels.join(', ')}`);
     }
 
     const result: ValidationResult = {
       recipeId: recipe.id,
       title: recipe.title,
-      mealTypes: recipe.mealTypes,
+      mealTypes,
       issues,
     };
 
@@ -61,19 +81,48 @@ async function validateMealTypes(): Promise<{
   return { valid, invalid };
 }
 
-async function fixCorruptedMealTypes(corrupted: ValidationResult[]): Promise<void> {
+export async function validateMealTypes(recipeDelegate: RecipeDelegate = prisma.recipe): Promise<{
+  valid: ValidationResult[];
+  invalid: ValidationResult[];
+}> {
+  console.log('🔍 Starting mealTypes validation...\n');
+
+  const recipes = await recipeDelegate.findMany({
+    select: {
+      id: true,
+      title: true,
+      mealTypes: true,
+    },
+  });
+
+  return evaluateMealTypes(recipes);
+}
+
+const FALLBACK_MEAL_TYPES: MealType[] = ['lunch', 'dinner'];
+
+type RecipeUpdateArgs = {
+  where: { id: string };
+  data: { mealTypes: MealType[] };
+};
+
+type RecipeModel = {
+  update: (args: RecipeUpdateArgs) => Promise<unknown>;
+};
+
+export async function fixCorruptedMealTypes(
+  corrupted: ValidationResult[],
+  recipeModel: RecipeModel = prisma.recipe
+): Promise<void> {
   console.log('🔧 Fixing corrupted mealTypes...\n');
 
   for (const recipe of corrupted) {
     // Filter out invalid meal types, keeping only valid ones
-    const validTypes = recipe.mealTypes.filter((type) =>
-      VALID_MEAL_TYPES.includes(type as (typeof VALID_MEAL_TYPES)[number])
-    );
+    const validTypes = recipe.mealTypes.filter((type) => isValidMealType(type));
 
     // If no valid types remain, default to ['lunch', 'dinner']
-    const fixedTypes = validTypes.length > 0 ? validTypes : ['lunch', 'dinner'];
+    const fixedTypes = validTypes.length > 0 ? validTypes : [...FALLBACK_MEAL_TYPES];
 
-    await prisma.recipe.update({
+    await recipeModel.update({
       where: { id: recipe.recipeId },
       data: { mealTypes: fixedTypes },
     });
@@ -129,4 +178,8 @@ async function main() {
   }
 }
 
-void main();
+const invokedPath = process.argv[1] ? path.resolve(process.argv[1]) : undefined;
+
+if (invokedPath === scriptFilename) {
+  void main();
+}

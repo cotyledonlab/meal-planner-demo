@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { hash } from '@node-rs/argon2';
+import { VALID_MEAL_TYPES } from '@meal-planner-demo/constants';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -20,24 +21,27 @@ interface PriceBaselineData {
   >;
 }
 
-const VALID_MEAL_TYPES = ['breakfast', 'lunch', 'dinner'] as const;
+type MealType = (typeof VALID_MEAL_TYPES)[number];
 
-function validateMealTypes(mealTypes: string[], recipeTitle: string): void {
-  if (mealTypes?.length === 0) {
+export function validateMealTypes(mealTypes: unknown, recipeTitle: string): MealType[] {
+  if (!Array.isArray(mealTypes) || mealTypes.length === 0) {
     throw new Error(
-      `Recipe "${recipeTitle}" has empty mealTypes array. Must contain at least one of: ${VALID_MEAL_TYPES.join(', ')}`
+      `Recipe "${recipeTitle}" has missing or empty mealTypes array. Must contain at least one of: ${VALID_MEAL_TYPES.join(', ')}`
     );
   }
 
   const invalidTypes = mealTypes.filter(
-    (type) => !VALID_MEAL_TYPES.includes(type as (typeof VALID_MEAL_TYPES)[number])
+    (type) => typeof type !== 'string' || !VALID_MEAL_TYPES.includes(type as MealType)
   );
 
   if (invalidTypes.length > 0) {
+    const invalidLabels = invalidTypes.map((type) => String(type));
     throw new Error(
-      `Recipe "${recipeTitle}" has invalid meal types: [${invalidTypes.join(', ')}]. Valid types are: ${VALID_MEAL_TYPES.join(', ')}`
+      `Recipe "${recipeTitle}" has invalid meal types: [${invalidLabels.join(', ')}]. Valid types are: ${VALID_MEAL_TYPES.join(', ')}`
     );
   }
+
+  return mealTypes as MealType[];
 }
 
 async function main() {
@@ -1323,10 +1327,13 @@ async function main() {
     const { ingredients: recipeIngredients, ...recipeInfo } = recipeData;
 
     // Validate mealTypes before creating recipe
-    validateMealTypes(recipeInfo.mealTypes, recipeInfo.title);
+    const validatedMealTypes = validateMealTypes(recipeInfo.mealTypes, recipeInfo.title);
 
     const recipe = await prisma.recipe.create({
-      data: recipeInfo,
+      data: {
+        ...recipeInfo,
+        mealTypes: validatedMealTypes,
+      },
     });
 
     // Create recipe ingredients
@@ -1368,11 +1375,13 @@ async function main() {
   console.log('✅ Seed completed successfully!');
 }
 
-main()
-  .catch((e) => {
-    console.error('❌ Seed failed:', e);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+if (process.argv[1] === __filename) {
+  main()
+    .catch((e) => {
+      console.error('❌ Seed failed:', e);
+      process.exit(1);
+    })
+    .finally(async () => {
+      await prisma.$disconnect();
+    });
+}

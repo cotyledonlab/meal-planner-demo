@@ -9,3 +9,5 @@ export const DB_CONNECTION_TIMEOUT = 5000;
 
 // Placeholder export
 export const CONSTANTS_VERSION = "0.1.0";
+
+export const VALID_MEAL_TYPES = ["breakfast", "lunch", "dinner"] as const;
