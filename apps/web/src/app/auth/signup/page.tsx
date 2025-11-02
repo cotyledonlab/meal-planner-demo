@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-import { env } from '~/env';
 import AuthLayout from '../_components/AuthLayout';
 
 export default function SignUpPage() {
@@ -26,7 +25,8 @@ export default function SignUpPage() {
     setLoading(true);
 
     try {
-      const response = await fetch(`${env.NEXT_PUBLIC_BASE_PATH ?? ''}/api/auth/signup`, {
+      // Next.js automatically prepends basePath to relative URLs in client-side fetches
+      const response = await fetch('/api/auth/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
