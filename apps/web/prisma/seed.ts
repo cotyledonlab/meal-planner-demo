@@ -20,6 +20,26 @@ interface PriceBaselineData {
   >;
 }
 
+const VALID_MEAL_TYPES = ['breakfast', 'lunch', 'dinner'] as const;
+
+function validateMealTypes(mealTypes: string[], recipeTitle: string): void {
+  if (mealTypes?.length === 0) {
+    throw new Error(
+      `Recipe "${recipeTitle}" has empty mealTypes array. Must contain at least one of: ${VALID_MEAL_TYPES.join(', ')}`
+    );
+  }
+
+  const invalidTypes = mealTypes.filter(
+    (type) => !VALID_MEAL_TYPES.includes(type as (typeof VALID_MEAL_TYPES)[number])
+  );
+
+  if (invalidTypes.length > 0) {
+    throw new Error(
+      `Recipe "${recipeTitle}" has invalid meal types: [${invalidTypes.join(', ')}]. Valid types are: ${VALID_MEAL_TYPES.join(', ')}`
+    );
+  }
+}
+
 async function main() {
   console.log('🌱 Starting seed...');
 
@@ -1301,6 +1321,9 @@ async function main() {
 
   for (const recipeData of recipes) {
     const { ingredients: recipeIngredients, ...recipeInfo } = recipeData;
+
+    // Validate mealTypes before creating recipe
+    validateMealTypes(recipeInfo.mealTypes, recipeInfo.title);
 
     const recipe = await prisma.recipe.create({
       data: recipeInfo,
