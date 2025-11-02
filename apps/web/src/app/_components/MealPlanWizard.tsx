@@ -137,7 +137,7 @@ export default function MealPlanWizard({
               {[3, 4, 5, 6, 7].map((num) => {
                 const isPremiumOption = !isPremium && num > 3;
                 return (
-                  <option key={num} value={num}>
+                  <option key={num} value={num} disabled={isPremiumOption}>
                     {num} days{isPremiumOption ? ' (Premium)' : ''}
                   </option>
                 );
