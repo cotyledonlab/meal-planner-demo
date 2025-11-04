@@ -9,7 +9,8 @@ export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleSignOut = async () => {
-    await signOut({ callbackUrl: '/' });
+    const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
+    await signOut({ callbackUrl: `${basePath}/` });
   };
 
   return (
