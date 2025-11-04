@@ -56,21 +56,22 @@ model Session {
 }
 
 model User {
-    id            String    @id @default(cuid())
-    name          String?
-    email         String?   @unique
-    emailVerified DateTime?
-    image         String?
-    role          String    @default("basic") // "basic" | "premium"
-    accounts      Account[]
-    sessions      Session[]
-    posts         Post[]
-    password      Password?
-    preferences   UserPreferences?
-    mealPlans     MealPlan[]
-    pantryItems   PantryItem[]
-    createdAt     DateTime  @default(now())
-    updatedAt     DateTime  @updatedAt
+    id                  String                @id @default(cuid())
+    name                String?
+    email               String?               @unique
+    emailVerified       DateTime?
+    image               String?
+    role                String                @default("basic") // "basic" | "premium"
+    accounts            Account[]
+    sessions            Session[]
+    posts               Post[]
+    password            Password?
+    passwordResetTokens PasswordResetToken[]
+    preferences         UserPreferences?
+    mealPlans           MealPlan[]
+    pantryItems         PantryItem[]
+    createdAt           DateTime              @default(now())
+    updatedAt           DateTime              @updatedAt
 }
 
 model Password {
@@ -78,6 +79,20 @@ model Password {
     hash      String
     createdAt DateTime @default(now())
     user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model PasswordResetToken {
+    id        String   @id @default(cuid())
+    token     String   @unique
+    userId    String
+    user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    expiresAt DateTime
+    createdAt DateTime @default(now())
+    used      Boolean  @default(false)
+    usedAt    DateTime?
+
+    @@index([token])
+    @@index([userId])
 }
 
 model VerificationToken {
