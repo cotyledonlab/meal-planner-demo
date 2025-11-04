@@ -1,7 +1,7 @@
 'use client';
 
 import { useSession } from 'next-auth/react';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { isPremiumUser } from '~/lib/auth';
 import { CATEGORY_ORDER, CATEGORY_EMOJI, CATEGORY_LABELS } from '~/lib/categoryConfig';
 import { api } from '~/trpc/react';
@@ -19,97 +19,99 @@ interface ShoppingListItem {
 }
 
 interface ShoppingListProps {
-  items?: ShoppingListItem[];
-  shoppingListId?: string;
-  planId?: string;
+  planId: string;
   onComparePrices?: () => void;
 }
 
-export default function ShoppingList({
-  items,
-  shoppingListId,
-  planId,
-  onComparePrices,
-}: ShoppingListProps) {
+export default function ShoppingList({ planId, onComparePrices }: ShoppingListProps) {
   const { data: session, status } = useSession();
   const isPremium = isPremiumUser(session?.user);
   const isLoading = status === 'loading';
   const utils = api.useUtils();
 
-  const [localItems, setLocalItems] = useState<ShoppingListItem[]>(items ?? []);
-  const itemsRef = useRef(localItems);
+  // Fetch shopping list data using tRPC query
+  const { data: shoppingList } = api.shoppingList.getForPlan.useQuery(
+    { planId },
+    { enabled: !!planId }
+  );
+
+  const items = useMemo(() => shoppingList?.items ?? [], [shoppingList?.items]);
+  const shoppingListId = shoppingList?.id;
+  const itemsRef = useRef(items);
 
   useEffect(() => {
-    itemsRef.current = localItems;
-  }, [localItems]);
-
-  useEffect(() => {
-    if (items) {
-      setLocalItems(items);
-    } else {
-      setLocalItems([]);
-    }
+    itemsRef.current = items;
   }, [items]);
 
   const toggleItemMutation = api.shoppingList.toggleItemChecked.useMutation({
     async onMutate(variables) {
       if (!variables?.itemId) return { previousItems: itemsRef.current };
-      if (planId) {
-        await utils.shoppingList.getForPlan.cancel({ planId }).catch(() => undefined);
-      }
+      await utils.shoppingList.getForPlan.cancel({ planId }).catch(() => undefined);
+
       const previousItems = itemsRef.current;
-      setLocalItems((current) =>
-        current.map((item) =>
-          item.id === variables.itemId ? { ...item, checked: !item.checked } : item
-        )
-      );
-      return { previousItems };
+      const previousData = utils.shoppingList.getForPlan.getData({ planId });
+
+      // Optimistically update the query data
+      utils.shoppingList.getForPlan.setData({ planId }, (old) => {
+        if (!old) return old;
+        return {
+          ...old,
+          items: old.items.map((item) =>
+            item.id === variables.itemId ? { ...item, checked: !item.checked } : item
+          ),
+        };
+      });
+
+      return { previousItems, previousData };
     },
     onError: (_error, _variables, context) => {
-      if (context?.previousItems) {
-        setLocalItems(context.previousItems);
+      if (context?.previousData) {
+        utils.shoppingList.getForPlan.setData({ planId }, context.previousData);
       }
     },
     onSuccess: () => {
-      if (planId) {
-        void utils.shoppingList.getForPlan.invalidate({ planId });
-      }
+      void utils.shoppingList.getForPlan.invalidate({ planId });
     },
   });
 
   const updateCategoryMutation = api.shoppingList.updateCategoryChecked.useMutation({
     async onMutate(variables) {
       if (!variables?.category) return { previousItems: itemsRef.current };
-      if (planId) {
-        await utils.shoppingList.getForPlan.cancel({ planId }).catch(() => undefined);
-      }
+      await utils.shoppingList.getForPlan.cancel({ planId }).catch(() => undefined);
+
       const previousItems = itemsRef.current;
-      setLocalItems((current) =>
-        current.map((item) =>
-          item.category === variables.category ? { ...item, checked: variables.checked } : item
-        )
-      );
-      return { previousItems };
+      const previousData = utils.shoppingList.getForPlan.getData({ planId });
+
+      // Optimistically update the query data
+      utils.shoppingList.getForPlan.setData({ planId }, (old) => {
+        if (!old) return old;
+        return {
+          ...old,
+          items: old.items.map((item) =>
+            item.category === variables.category ? { ...item, checked: variables.checked } : item
+          ),
+        };
+      });
+
+      return { previousItems, previousData };
     },
     onError: (_error, _variables, context) => {
-      if (context?.previousItems) {
-        setLocalItems(context.previousItems);
+      if (context?.previousData) {
+        utils.shoppingList.getForPlan.setData({ planId }, context.previousData);
       }
     },
     onSuccess: () => {
-      if (planId) {
-        void utils.shoppingList.getForPlan.invalidate({ planId });
-      }
+      void utils.shoppingList.getForPlan.invalidate({ planId });
     },
   });
 
   // Group items by category
   const groupedItems = useMemo(() => {
-    if (!localItems.length) return new Map();
+    if (!items.length) return new Map();
 
     const groups = new Map<string, ShoppingListItem[]>();
 
-    for (const item of localItems) {
+    for (const item of items) {
       const category = item.category || 'other';
       if (!groups.has(category)) {
         groups.set(category, []);
@@ -126,17 +128,17 @@ export default function ShoppingList({
     }
 
     // Add any remaining categories not in order
-    for (const [cat, items] of groups.entries()) {
+    for (const [cat, itemsList] of groups.entries()) {
       if (!sorted.has(cat)) {
-        sorted.set(cat, items);
+        sorted.set(cat, itemsList);
       }
     }
 
     return sorted;
-  }, [localItems]);
+  }, [items]);
 
-  const totalItems = localItems.length;
-  const checkedCount = localItems.filter((item) => item.checked).length;
+  const totalItems = items.length;
+  const checkedCount = items.filter((item) => item.checked).length;
 
   const toggleItem = (itemId: string) => {
     toggleItemMutation.mutateAsync({ itemId }).catch(() => undefined);
@@ -153,7 +155,7 @@ export default function ShoppingList({
       .catch(() => undefined);
   };
 
-  if (localItems.length === 0) {
+  if (items.length === 0) {
     return (
       <div className="rounded-xl bg-white p-8 text-center shadow-sm ring-1 ring-gray-200">
         <p className="text-gray-600">No shopping list available</p>

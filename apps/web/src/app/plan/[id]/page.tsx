@@ -1,7 +1,7 @@
 import { notFound, redirect } from 'next/navigation';
 import Link from 'next/link';
 import { auth } from '~/server/auth';
-import { api } from '~/trpc/server';
+import { api, HydrateClient } from '~/trpc/server';
 import MealPlanView from '~/app/_components/MealPlanView';
 import ShoppingList from '~/app/_components/ShoppingList';
 
@@ -27,14 +27,12 @@ export default async function PlanPage({ params }: PageProps) {
     notFound();
   }
 
-  // Fetch the shopping list (may fail if not ready yet, provide fallback)
-  let shoppingList = null;
+  // Prefetch the shopping list to hydrate tRPC cache
   try {
-    shoppingList = await api.shoppingList.getForPlan({ planId: id });
+    await api.shoppingList.getForPlan.prefetch({ planId: id });
   } catch {
     // Shopping list not ready yet - this can happen if it's still being created
-    // We'll render the meal plan and show an empty shopping list
-    // Keep shoppingList as null and handle in the component
+    // Component will handle the empty state
   }
 
   // Ensure startDate is properly converted to Date if it's a string
@@ -83,11 +81,9 @@ export default async function PlanPage({ params }: PageProps) {
 
           {/* Shopping List */}
           <div className="lg:col-span-1">
-            <ShoppingList
-              items={shoppingList?.items}
-              shoppingListId={shoppingList?.id}
-              planId={id}
-            />
+            <HydrateClient>
+              <ShoppingList planId={id} />
+            </HydrateClient>
           </div>
         </div>
       </div>
