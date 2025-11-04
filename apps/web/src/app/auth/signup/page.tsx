@@ -2,13 +2,17 @@
 
 import { signIn } from 'next-auth/react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 
 import AuthLayout from '../_components/AuthLayout';
 
 export default function SignUpPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const tier = searchParams.get('tier');
+  const isPremium = tier === 'premium';
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -94,7 +98,7 @@ export default function SignUpPage() {
 
   return (
     <AuthLayout
-      title="Create your account"
+      title={isPremium ? 'Get Premium Access' : 'Create your account'}
       subtitle={
         <>
           Already have an account?{' '}
@@ -105,6 +109,15 @@ export default function SignUpPage() {
       }
     >
       <form className="space-y-6" onSubmit={handleSubmit}>
+        {isPremium && (
+          <div className="rounded-md bg-emerald-50 p-4 border border-emerald-200">
+            <p className="text-sm text-emerald-800 font-medium">
+              Premium Tier: €4.99/month — Best value supermarket finder, advanced customisation, and
+              more!
+            </p>
+          </div>
+        )}
+
         {error && (
           <div className="rounded-md bg-red-50 p-4" role="alert" aria-live="polite">
             <p className="text-sm text-red-800">{error}</p>
