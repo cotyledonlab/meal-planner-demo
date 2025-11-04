@@ -235,6 +235,63 @@ When working in this environment, Claude Code is typically launched from the VPS
    - Chrome headless for visual verification
    - Check `/etc/dokploy/logs/` for deployment logs
 
+### Issue Resolution Workflow (Claude Code Agents)
+
+When resolving GitHub issues as an autonomous agent:
+
+1. **Pick Issue**: Query open issues with `gh issue list`, prioritize by labels/age
+2. **Create Branch**: `git checkout -b fix/descriptive-name-{issue-number}`
+3. **Implement Fix**:
+   - Review existing code with Read/Grep tools
+   - Make changes addressing all acceptance criteria
+   - Run `pnpm typecheck && pnpm lint` continuously
+4. **Test Locally**: All checks must pass before commit
+5. **Commit & Push**:
+
+   ```bash
+   git add .
+   git commit -m "feat: description (#issue-number)
+
+   - Bullet points of changes
+   - Reference acceptance criteria
+
+   🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+   Co-Authored-By: Claude <noreply@anthropic.com>"
+   git push -u origin branch-name
+   ```
+
+6. **Create PR**: `gh pr create --title "..." --body "..."`
+   - Summary of changes
+   - "Closes #issue-number"
+   - Test plan checklist
+7. **Deploy to Feature Branch**: User deploys feature branch for testing
+8. **E2E Testing with DevTools MCP**:
+   - Navigate to deployed URL: `https://cotyledonlab.com/demos/meal-planner`
+   - Test all acceptance criteria
+   - Take screenshots of key functionality
+   - Verify mobile and desktop experiences
+   - Document any additional issues found
+9. **Log Additional Issues**: If bugs/enhancements discovered:
+   - Create new GitHub issues with `gh issue create`
+   - Include repro steps, screenshots, priority
+   - Link to related PR/issue
+10. **Update PR**: Comment with E2E test results
+    - List what's working
+    - Link to any new issues created
+    - Recommend merge or fixes needed
+11. **Document**: Update AGENTS.md with workflow learnings
+
+**Example**: Issue #89 - Enhance meal planner wizard
+
+- Created branch `fix/enhance-meal-planner-wizard-89`
+- Implemented: gradients, icons, animations, loading states
+- Tested locally: 129 tests passed
+- Created PR #128
+- Deployed and tested via DevTools MCP
+- Found minor issue: success animation too fast (#130)
+- Recommended merge with follow-up issue
+
 ## Environment Setup
 
 1. **Prerequisites**: Node.js 20+, pnpm 9+, Docker and Docker Compose
