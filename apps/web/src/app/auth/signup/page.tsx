@@ -100,7 +100,7 @@ function SignUpForm() {
     <>
       <Link
         href="/"
-        className="absolute left-4 top-4 inline-flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900"
+        className="absolute left-4 top-4 inline-flex min-h-[44px] items-center gap-2 rounded-full px-3 py-2 text-sm text-gray-600 transition hover:bg-gray-100 hover:text-gray-900"
       >
         <svg
           className="h-4 w-4"
@@ -156,7 +156,7 @@ function SignUpForm() {
                 type="text"
                 autoComplete="name"
                 required
-                className="mt-1 block w-full rounded-md border-0 px-3 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-emerald-600 sm:text-sm sm:leading-6"
+                className="mt-1 block w-full rounded-lg border border-gray-200 px-4 py-3 text-base text-gray-900 shadow-sm transition placeholder:text-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600"
                 placeholder="Your name"
                 value={formData.name}
                 onChange={handleChange}
@@ -178,7 +178,7 @@ function SignUpForm() {
                 type="email"
                 autoComplete="email"
                 required
-                className="mt-1 block w-full rounded-md border-0 px-3 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-emerald-600 sm:text-sm sm:leading-6"
+                className="mt-1 block w-full rounded-lg border border-gray-200 px-4 py-3 text-base text-gray-900 shadow-sm transition placeholder:text-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600"
                 placeholder="you@example.com"
                 value={formData.email}
                 onChange={handleChange}
@@ -200,7 +200,7 @@ function SignUpForm() {
                 type="password"
                 autoComplete="new-password"
                 required
-                className="mt-1 block w-full rounded-md border-0 px-3 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-emerald-600 sm:text-sm sm:leading-6"
+                className="mt-1 block w-full rounded-lg border border-gray-200 px-4 py-3 text-base text-gray-900 shadow-sm transition placeholder:text-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600"
                 placeholder="At least 8 characters"
                 value={formData.password}
                 onChange={handleChange}
@@ -220,7 +220,7 @@ function SignUpForm() {
             <button
               type="submit"
               disabled={loading}
-              className="flex w-full justify-center rounded-md bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 disabled:cursor-not-allowed disabled:bg-emerald-300"
+              className="flex w-full min-h-[48px] items-center justify-center rounded-lg bg-emerald-600 px-4 py-3 text-base font-semibold text-white shadow-sm transition hover:bg-emerald-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 disabled:cursor-not-allowed disabled:bg-emerald-300"
             >
               {loading ? 'Creating account...' : 'Create account'}
             </button>

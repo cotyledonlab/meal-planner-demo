@@ -166,7 +166,7 @@ export default function ShoppingList({ planId, onComparePrices }: ShoppingListPr
   return (
     <div className="space-y-6">
       {/* Sticky Header */}
-      <div className="sticky top-0 z-10 rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200">
+      <div className="sticky top-0 z-10 rounded-xl bg-white p-4 shadow-sm ring-1 ring-gray-200 sm:p-6">
         <h2 className="text-xl font-semibold text-gray-900">Shopping List</h2>
         <p className="mt-1 text-sm text-gray-600">
           {checkedCount} of {totalItems} items checked
@@ -187,7 +187,7 @@ export default function ShoppingList({ planId, onComparePrices }: ShoppingListPr
               <Disclosure key={category} defaultOpen={false}>
                 {({ open }: { open: boolean }) => (
                   <div className="rounded-xl bg-white shadow-sm ring-1 ring-gray-200">
-                    <Disclosure.Button className="flex w-full items-center justify-between p-4 text-left transition hover:bg-gray-50">
+                    <Disclosure.Button className="flex w-full items-center justify-between gap-3 rounded-xl px-4 py-3 text-left transition hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 sm:rounded-lg sm:px-5 sm:py-4 min-h-[56px]">
                       <div className="flex items-center gap-3">
                         <span className="text-2xl">{CATEGORY_EMOJI[category] ?? '📦'}</span>
                         <div>
@@ -208,41 +208,48 @@ export default function ShoppingList({ planId, onComparePrices }: ShoppingListPr
 
                     <Disclosure.Panel className="border-t border-gray-200 p-4">
                       {/* Category actions */}
-                      <div className="mb-4 flex gap-2">
+                      <div className="mb-4 flex flex-wrap gap-2 sm:gap-3">
                         <button
                           onClick={() => toggleCategory(category, true)}
                           disabled={allChecked}
-                          className="rounded-lg bg-emerald-50 px-3 py-1.5 text-sm font-medium text-emerald-700 transition hover:bg-emerald-100 disabled:opacity-50"
+                          className="flex-1 min-h-[44px] rounded-lg bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-700 shadow-sm transition hover:bg-emerald-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 disabled:opacity-50 sm:flex-initial sm:px-5"
                         >
                           Check All
                         </button>
                         <button
                           onClick={() => toggleCategory(category, false)}
                           disabled={categoryCheckedCount === 0}
-                          className="rounded-lg bg-gray-50 px-3 py-1.5 text-sm font-medium text-gray-700 transition hover:bg-gray-100 disabled:opacity-50"
+                          className="flex-1 min-h-[44px] rounded-lg bg-gray-50 px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-500 disabled:opacity-50 sm:flex-initial sm:px-5"
                         >
                           Uncheck All
                         </button>
                       </div>
 
                       {/* Items list */}
-                      <ul className="space-y-2">
+                      <ul className="space-y-3 sm:space-y-2">
                         {categoryItems.map((item: ShoppingListItem) => {
                           const isChecked = item.checked;
                           return (
-                            <li key={item.id} className="flex items-center gap-3">
+                            <li key={item.id}>
                               <button
+                                type="button"
                                 onClick={() => toggleItem(item.id)}
-                                className={`flex h-11 w-11 min-w-[44px] items-center justify-center rounded-lg border-2 transition ${
-                                  isChecked
-                                    ? 'border-emerald-600 bg-emerald-50'
-                                    : 'border-gray-300 bg-white hover:border-emerald-600'
+                                className={`flex w-full items-center gap-3 rounded-2xl border border-gray-200 bg-gray-50 px-3 py-3 text-left transition hover:border-emerald-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 sm:rounded-xl sm:px-4 ${
+                                  isChecked ? 'border-emerald-500 bg-emerald-50' : ''
                                 }`}
                                 aria-label={`Toggle ${item.name}`}
+                                aria-pressed={isChecked}
                               >
-                                {isChecked && (
+                                <span
+                                  className={`flex h-12 w-12 min-h-[48px] min-w-[48px] items-center justify-center rounded-xl border-2 transition sm:h-11 sm:w-11 sm:min-h-[44px] sm:min-w-[44px] ${
+                                    isChecked
+                                      ? 'border-emerald-600 bg-emerald-100 text-emerald-600'
+                                      : 'border-gray-300 bg-white text-transparent'
+                                  }`}
+                                  aria-hidden="true"
+                                >
                                   <svg
-                                    className="h-6 w-6 text-emerald-600"
+                                    className="h-6 w-6"
                                     fill="none"
                                     stroke="currentColor"
                                     viewBox="0 0 24 24"
@@ -254,20 +261,20 @@ export default function ShoppingList({ planId, onComparePrices }: ShoppingListPr
                                       d="M5 13l4 4L19 7"
                                     />
                                   </svg>
-                                )}
+                                </span>
+                                <span
+                                  className={`flex-1 text-base leading-6 ${
+                                    isChecked ? 'text-gray-400 line-through' : 'text-gray-700'
+                                  }`}
+                                >
+                                  {item.quantity > 0 && (
+                                    <span className="font-semibold">
+                                      {item.quantity} {item.unit}{' '}
+                                    </span>
+                                  )}
+                                  {item.name}
+                                </span>
                               </button>
-                              <label
-                                className={`flex-1 cursor-pointer text-base transition ${
-                                  isChecked ? 'text-gray-400 line-through' : 'text-gray-700'
-                                }`}
-                              >
-                                {item.quantity > 0 && (
-                                  <span className="font-semibold">
-                                    {item.quantity} {item.unit}{' '}
-                                  </span>
-                                )}
-                                {item.name}
-                              </label>
                             </li>
                           );
                         })}
@@ -287,7 +294,7 @@ export default function ShoppingList({ planId, onComparePrices }: ShoppingListPr
           <button
             onClick={onComparePrices}
             disabled={isLoading}
-            className="rounded-full bg-emerald-600 px-8 py-3 text-base font-semibold text-white shadow-sm transition hover:bg-emerald-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 disabled:cursor-not-allowed disabled:bg-emerald-300"
+            className="w-full min-h-[48px] rounded-full bg-emerald-600 px-6 py-3 text-base font-semibold text-white shadow-sm transition hover:bg-emerald-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 disabled:cursor-not-allowed disabled:bg-emerald-300 sm:w-auto sm:px-8"
           >
             {isPremium ? 'Compare Prices' : 'Compare Prices (Premium Preview)'}
           </button>

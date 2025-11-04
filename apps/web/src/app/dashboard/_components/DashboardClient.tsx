@@ -50,17 +50,17 @@ export default function DashboardClient({ user }: DashboardClientProps) {
         <div className="mb-12">
           <h1 className="text-4xl font-bold text-gray-900">Welcome back, {displayName}!</h1>
           <p className="mt-2 text-lg text-gray-600">Ready to plan your meals for the week?</p>
-          <div className="mt-6 flex flex-wrap gap-3">
+          <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
             <Link
               href="/planner"
-              className="inline-flex items-center gap-2 rounded-md bg-emerald-600 px-6 py-3 text-base font-semibold text-white shadow-sm hover:bg-emerald-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
+              className="inline-flex w-full min-h-[48px] items-center justify-center gap-2 rounded-lg bg-emerald-600 px-6 py-3 text-base font-semibold text-white shadow-sm transition hover:bg-emerald-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 sm:w-auto"
             >
               <span>🗓️</span>
               Plan meals
             </Link>
             <Link
               href="/planner"
-              className="inline-flex items-center gap-2 rounded-md border border-gray-300 bg-white px-6 py-3 text-base font-semibold text-gray-700 shadow-sm hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-500"
+              className="inline-flex w-full min-h-[48px] items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-6 py-3 text-base font-semibold text-gray-700 shadow-sm transition hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-500 sm:w-auto"
             >
               View last plan
             </Link>
@@ -70,10 +70,10 @@ export default function DashboardClient({ user }: DashboardClientProps) {
         {/* Quick Actions */}
         <div className="mb-12">
           <h2 className="mb-4 text-2xl font-bold text-gray-900">Quick Actions</h2>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             <Link
               href="/planner"
-              className="group rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition hover:shadow-md"
+              className="group rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
             >
               <div className="flex items-start gap-4">
                 <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-emerald-100 text-2xl transition group-hover:scale-110">
@@ -90,7 +90,7 @@ export default function DashboardClient({ user }: DashboardClientProps) {
 
             <Link
               href="/planner"
-              className="group rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition hover:shadow-md"
+              className="group rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
             >
               <div className="flex items-start gap-4">
                 <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-blue-100 text-2xl transition group-hover:scale-110">
