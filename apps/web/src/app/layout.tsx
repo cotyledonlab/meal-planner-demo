@@ -4,6 +4,7 @@ import { type Metadata } from 'next';
 
 import { TRPCReactProvider } from '~/trpc/react';
 import { SessionProvider } from '~/app/_components/SessionProvider';
+import { ConditionalHeader } from '~/app/_components/ConditionalHeader';
 
 export const metadata: Metadata = {
   title: 'MealMind AI - Simplify Your Weekly Meals',
@@ -17,6 +18,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="en" className="h-full">
       <body className="h-full">
         <SessionProvider>
+          <ConditionalHeader />
           <TRPCReactProvider>{children}</TRPCReactProvider>
         </SessionProvider>
       </body>

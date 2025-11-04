@@ -72,7 +72,7 @@ export default function MealPlanWizard({
               onClick={onClose}
               type="button"
               className="ml-4 rounded-lg p-2 text-gray-400 transition hover:bg-gray-100 hover:text-gray-600"
-              aria-label="Close wizard"
+              aria-label="Close and return to dashboard"
             >
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path
