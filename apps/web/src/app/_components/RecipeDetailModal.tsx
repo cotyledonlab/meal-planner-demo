@@ -167,12 +167,12 @@ export default function RecipeDetailModal({
       <div className="fixed inset-0 bg-black bg-opacity-50 transition-opacity" onClick={onClose} />
 
       {/* Modal */}
-      <div className="flex min-h-screen items-center justify-center p-4">
-        <div className="relative w-full max-w-4xl rounded-2xl bg-white shadow-2xl">
+      <div className="flex min-h-screen items-center justify-center p-0 sm:p-4">
+        <div className="relative flex h-full w-full flex-col overflow-hidden rounded-none bg-white shadow-2xl sm:h-auto sm:max-h-[90vh] sm:max-w-4xl sm:rounded-2xl">
           {/* Close button */}
           <button
             onClick={onClose}
-            className="absolute right-4 top-4 z-10 rounded-full bg-white p-2 text-gray-600 shadow-lg hover:bg-gray-100 hover:text-gray-900"
+            className="absolute right-4 top-4 z-10 flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full bg-white p-2.5 text-gray-600 shadow-lg transition hover:bg-gray-100 hover:text-gray-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
             aria-label="Close"
           >
             <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -186,7 +186,7 @@ export default function RecipeDetailModal({
           </button>
 
           {/* Hero Image */}
-          <div className="relative h-64 w-full overflow-hidden rounded-t-2xl bg-gray-200">
+          <div className="relative h-56 w-full overflow-hidden bg-gray-200 sm:h-64 sm:rounded-t-2xl">
             <Image
               src={recipe.imageUrl ?? RECIPE_PLACEHOLDER_IMAGE}
               alt={recipe.title}
@@ -208,7 +208,7 @@ export default function RecipeDetailModal({
           </div>
 
           {/* Content */}
-          <div className="max-h-[calc(100vh-20rem)] overflow-y-auto p-8">
+          <div className="flex-1 overflow-y-auto p-6 sm:max-h-[calc(100vh-20rem)] sm:p-8">
             {/* Header */}
             <div className="mb-6">
               <h2 className="text-3xl font-bold text-gray-900">{recipe.title}</h2>
@@ -272,7 +272,7 @@ export default function RecipeDetailModal({
             <div className="mb-6 flex flex-wrap gap-2">
               <button
                 onClick={handlePrint}
-                className="flex items-center gap-2 rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200"
+                className="flex min-h-[44px] items-center gap-2 rounded-lg bg-gray-100 px-5 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-200"
               >
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path
@@ -286,7 +286,7 @@ export default function RecipeDetailModal({
               </button>
               <button
                 onClick={() => handleShare(recipe)}
-                className="flex items-center gap-2 rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200"
+                className="flex min-h-[44px] items-center gap-2 rounded-lg bg-gray-100 px-5 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-200"
               >
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path
@@ -301,7 +301,7 @@ export default function RecipeDetailModal({
               {onSwapRecipe && (
                 <button
                   onClick={onSwapRecipe}
-                  className="flex items-center gap-2 rounded-lg bg-emerald-100 px-4 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-200"
+                  className="flex min-h-[44px] items-center gap-2 rounded-lg bg-emerald-100 px-5 py-2.5 text-sm font-medium text-emerald-700 transition hover:bg-emerald-200"
                 >
                   <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path
