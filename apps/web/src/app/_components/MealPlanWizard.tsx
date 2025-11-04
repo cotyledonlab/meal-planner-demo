@@ -97,7 +97,7 @@ export default function MealPlanWizard({
                 id="householdSize"
                 value={householdSize}
                 onChange={(e) => setHouseholdSize(Number(e.target.value))}
-                className="mt-2 block w-full rounded-xl border border-gray-200 bg-white px-4 py-3.5 text-base text-gray-900 shadow-sm transition focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                className="mt-2 block w-full rounded-2xl border border-gray-200 bg-white px-4 py-3.5 text-base text-gray-900 shadow-sm transition focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600 sm:rounded-xl min-h-[56px]"
               >
                 {[1, 2, 3, 4, 5, 6].map((num) => (
                   <option key={num} value={num}>
@@ -116,7 +116,7 @@ export default function MealPlanWizard({
                 id="mealsPerDay"
                 value={mealsPerDay}
                 onChange={(e) => setMealsPerDay(Number(e.target.value))}
-                className="mt-2 block w-full rounded-xl border border-gray-200 bg-white px-4 py-3.5 text-base text-gray-900 shadow-sm transition focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                className="mt-2 block w-full rounded-2xl border border-gray-200 bg-white px-4 py-3.5 text-base text-gray-900 shadow-sm transition focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600 sm:rounded-xl min-h-[56px]"
               >
                 <option value={1}>1 meal (Dinner only)</option>
                 <option value={2}>2 meals (Lunch & Dinner)</option>
@@ -133,7 +133,7 @@ export default function MealPlanWizard({
                 id="days"
                 value={days}
                 onChange={(e) => setDays(Number(e.target.value))}
-                className="mt-2 block w-full rounded-xl border border-gray-200 bg-white px-4 py-3.5 text-base text-gray-900 shadow-sm transition focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                className="mt-2 block w-full rounded-2xl border border-gray-200 bg-white px-4 py-3.5 text-base text-gray-900 shadow-sm transition focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600 sm:rounded-xl min-h-[56px]"
               >
                 {[3, 4, 5, 6, 7].map((num) => {
                   const isPremiumOption = !isPremium && num > 3;
@@ -156,27 +156,27 @@ export default function MealPlanWizard({
               <span className="block text-sm font-semibold text-gray-900">Dietary preferences</span>
               <label
                 htmlFor="isVegetarian"
-                className="flex items-center gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3 text-base text-gray-700 shadow-sm transition hover:border-emerald-400 focus-within:border-emerald-500"
+                className="flex min-h-[60px] items-center gap-3 rounded-2xl border border-gray-200 bg-white px-4 py-3 text-base text-gray-700 shadow-sm transition hover:border-emerald-400 focus-within:border-emerald-500 sm:rounded-xl"
               >
                 <input
                   type="checkbox"
                   id="isVegetarian"
                   checked={isVegetarian}
                   onChange={(e) => setIsVegetarian(e.target.checked)}
-                  className="h-5 w-5 shrink-0 rounded-md border-2 border-gray-300 text-emerald-600 focus:ring-2 focus:ring-emerald-600 sm:h-4 sm:w-4"
+                  className="h-6 w-6 shrink-0 rounded-md border-2 border-gray-300 text-emerald-600 focus:ring-2 focus:ring-emerald-600"
                 />
                 <span>Vegetarian</span>
               </label>
               <label
                 htmlFor="isDairyFree"
-                className="flex items-center gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3 text-base text-gray-700 shadow-sm transition hover:border-emerald-400 focus-within:border-emerald-500"
+                className="flex min-h-[60px] items-center gap-3 rounded-2xl border border-gray-200 bg-white px-4 py-3 text-base text-gray-700 shadow-sm transition hover:border-emerald-400 focus-within:border-emerald-500 sm:rounded-xl"
               >
                 <input
                   type="checkbox"
                   id="isDairyFree"
                   checked={isDairyFree}
                   onChange={(e) => setIsDairyFree(e.target.checked)}
-                  className="h-5 w-5 shrink-0 rounded-md border-2 border-gray-300 text-emerald-600 focus:ring-2 focus:ring-emerald-600 sm:h-4 sm:w-4"
+                  className="h-6 w-6 shrink-0 rounded-md border-2 border-gray-300 text-emerald-600 focus:ring-2 focus:ring-emerald-600"
                 />
                 <span>Dairy-free</span>
               </label>
@@ -193,7 +193,7 @@ export default function MealPlanWizard({
                 value={dislikes}
                 onChange={(e) => setDislikes(e.target.value)}
                 placeholder="e.g., mushrooms, olives"
-                className="mt-2 block w-full rounded-xl border border-gray-200 bg-white px-4 py-3.5 text-base text-gray-900 shadow-sm transition focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                className="mt-2 block w-full rounded-2xl border border-gray-200 bg-white px-4 py-3.5 text-base text-gray-900 shadow-sm transition focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600 sm:rounded-xl min-h-[56px]"
               />
               <p className="mt-1 text-xs text-gray-500">Separate multiple items with commas</p>
             </div>

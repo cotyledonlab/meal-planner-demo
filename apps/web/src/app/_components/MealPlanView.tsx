@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import type { MealPreferences } from './MealPlanWizard';
 import RecipeCard from './RecipeCard';
 import RecipeDetailModal from './RecipeDetailModal';
@@ -47,6 +47,7 @@ interface MealPlanViewProps {
   plan?: MealPlan;
   preferences?: MealPreferences;
   onViewShoppingList?: () => void;
+  shoppingListAnchorId?: string;
 }
 
 /**
@@ -58,8 +59,27 @@ function ensureDate(date: Date | string): Date {
   return new Date(date);
 }
 
-export default function MealPlanView({ plan, preferences, onViewShoppingList }: MealPlanViewProps) {
+export default function MealPlanView({
+  plan,
+  preferences,
+  onViewShoppingList,
+  shoppingListAnchorId,
+}: MealPlanViewProps) {
   const [selectedItem, setSelectedItem] = useState<MealPlanItem | null>(null);
+  const [isNavigatorOpen, setIsNavigatorOpen] = useState(false);
+
+  const scrollToAnchor = useCallback((anchor?: string) => {
+    if (!anchor) return;
+    const el = document.getElementById(anchor);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, []);
+
+  const handleNavigatorSelect = (anchor: string) => {
+    scrollToAnchor(anchor);
+    setIsNavigatorOpen(false);
+  };
 
   // Use real plan data if available, otherwise fall back to preferences-based view
   if (!plan && !preferences) {
@@ -103,14 +123,15 @@ export default function MealPlanView({ plan, preferences, onViewShoppingList }: 
 
   return (
     <>
-      <div className="space-y-6">
+      <div className="space-y-6 pb-28 lg:pb-0">
         {plan ? (
           // Real plan view with enhanced recipe cards
           <>
             {dayGroups.map((day) => (
               <div
                 key={day.dayIndex}
-                className="rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200"
+                id={`plan-day-${day.dayIndex}`}
+                className="scroll-mt-28 rounded-2xl bg-white p-5 shadow-sm ring-1 ring-gray-200 sm:rounded-xl sm:p-6"
               >
                 <h3 className="mb-4 text-lg font-semibold text-gray-900">
                   Day {day.dayIndex + 1} -{' '}
@@ -154,6 +175,95 @@ export default function MealPlanView({ plan, preferences, onViewShoppingList }: 
           </div>
         ) : null}
       </div>
+
+      {plan && plan.days > 0 && (
+        <div className="lg:hidden">
+          {isNavigatorOpen && (
+            <div
+              role="presentation"
+              className="fixed inset-0 z-30 bg-gray-900/10"
+              onClick={() => setIsNavigatorOpen(false)}
+            />
+          )}
+          <button
+            type="button"
+            onClick={() => setIsNavigatorOpen((prev) => !prev)}
+            className="fixed bottom-20 right-4 z-40 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-600 text-white shadow-lg transition hover:bg-emerald-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
+            aria-expanded={isNavigatorOpen}
+            aria-controls="plan-mobile-navigator"
+          >
+            <span className="sr-only">Open plan navigation</span>
+            <svg className="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.8}
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+            </svg>
+          </button>
+
+          {isNavigatorOpen && (
+            <div
+              id="plan-mobile-navigator"
+              className="fixed bottom-40 right-4 z-40 w-72 max-w-[calc(100vw-2rem)] rounded-3xl bg-white p-4 shadow-2xl ring-1 ring-gray-200"
+            >
+              <div className="mb-3 flex items-center justify-between">
+                <p className="text-sm font-semibold text-gray-900">Jump to</p>
+                <button
+                  type="button"
+                  onClick={() => setIsNavigatorOpen(false)}
+                  className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 text-gray-500 transition hover:bg-gray-200 hover:text-gray-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
+                  aria-label="Close plan navigation"
+                >
+                  <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+              </div>
+
+              <div className="max-h-64 space-y-2 overflow-y-auto pr-1">
+                {dayGroups.map((day) => (
+                  <button
+                    key={day.dayIndex}
+                    type="button"
+                    onClick={() => handleNavigatorSelect(`plan-day-${day.dayIndex}`)}
+                    className="flex w-full items-center justify-between rounded-2xl border border-gray-200 px-4 py-3 text-left text-sm font-medium text-gray-700 transition hover:border-emerald-400 hover:text-emerald-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 min-h-[52px]"
+                  >
+                    <span>
+                      Day {day.dayIndex + 1}
+                      <span className="block text-xs font-normal text-gray-500">
+                        {day.date.toLocaleDateString('en-US', {
+                          weekday: 'long',
+                          month: 'short',
+                          day: 'numeric',
+                        })}
+                      </span>
+                    </span>
+                    <span aria-hidden="true">↘</span>
+                  </button>
+                ))}
+
+                {shoppingListAnchorId && (
+                  <button
+                    type="button"
+                    onClick={() => handleNavigatorSelect(shoppingListAnchorId)}
+                    className="flex w-full items-center justify-between rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-left text-sm font-semibold text-emerald-700 transition hover:border-emerald-400 hover:bg-emerald-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 min-h-[52px]"
+                  >
+                    Shopping List
+                    <span aria-hidden="true">🛒</span>
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Recipe Detail Modal */}
       {selectedItem && (

@@ -66,7 +66,7 @@ export default function RecipeCard({ item, onOpenDetail }: RecipeCardProps) {
   return (
     <button
       type="button"
-      className="group relative w-full cursor-pointer overflow-hidden rounded-xl bg-white text-left shadow-md ring-1 ring-gray-200 transition-all duration-300 hover:shadow-xl hover:ring-2 hover:ring-emerald-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500"
+      className="group relative w-full cursor-pointer overflow-hidden rounded-2xl bg-white text-left shadow-md ring-1 ring-gray-200 transition-all duration-300 hover:shadow-xl hover:ring-2 hover:ring-emerald-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500 sm:rounded-xl"
       onClick={() => onOpenDetail(item)}
       onMouseEnter={() => setIsActive(true)}
       onMouseLeave={() => setIsActive(false)}
@@ -74,9 +74,9 @@ export default function RecipeCard({ item, onOpenDetail }: RecipeCardProps) {
       onBlur={() => setIsActive(false)}
       aria-label={`View details for ${recipe.title}`}
     >
-      <div className="flex gap-4 p-4">
+      <div className="flex flex-col gap-4 p-4 sm:flex-row sm:items-stretch">
         {/* Recipe image - larger and more prominent */}
-        <div className="relative h-40 w-40 flex-shrink-0 overflow-hidden rounded-lg bg-gray-200">
+        <div className="relative h-48 w-full overflow-hidden rounded-2xl bg-gray-200 sm:h-40 sm:w-40 sm:flex-shrink-0 sm:rounded-lg">
           <Image
             src={recipe.imageUrl ?? RECIPE_PLACEHOLDER_IMAGE}
             alt={recipe.title}
@@ -99,7 +99,7 @@ export default function RecipeCard({ item, onOpenDetail }: RecipeCardProps) {
           <div className="flex items-start justify-between">
             <div className="flex-1">
               {/* Meal type badge with improved styling */}
-              <span className="inline-flex items-center rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-emerald-700">
+              <span className="inline-flex min-h-[32px] items-center rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-emerald-700">
                 {mealType}
               </span>
 
@@ -132,7 +132,7 @@ export default function RecipeCard({ item, onOpenDetail }: RecipeCardProps) {
           )}
 
           {/* Stats row */}
-          <div className="mt-3 flex items-center gap-4 text-sm text-gray-600">
+          <div className="mt-4 grid grid-cols-2 gap-3 text-sm text-gray-600 sm:flex sm:flex-wrap sm:items-center sm:gap-4">
             <span className="flex items-center gap-1">
               <span>⏱️</span>
               <span>{recipe.minutes} min</span>
@@ -153,7 +153,7 @@ export default function RecipeCard({ item, onOpenDetail }: RecipeCardProps) {
 
           {/* Hover preview hint */}
           <div
-            className={`mt-2 text-sm text-emerald-600 transition-opacity duration-200 ${
+            className={`mt-3 text-sm text-emerald-600 transition-opacity duration-200 ${
               isActive ? 'opacity-100' : 'opacity-0'
             }`}
           >

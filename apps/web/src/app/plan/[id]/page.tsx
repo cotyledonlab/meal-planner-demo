@@ -38,13 +38,15 @@ export default async function PlanPage({ params }: PageProps) {
   // Ensure startDate is properly converted to Date if it's a string
   const startDate = plan.startDate instanceof Date ? plan.startDate : new Date(plan.startDate);
 
+  const shoppingListAnchorId = 'plan-shopping-list-section';
+
   return (
     <main className="flex min-h-screen flex-col bg-gradient-to-b from-emerald-50 to-white">
-      <div className="container mx-auto px-4 py-8 sm:px-6 lg:px-8">
+      <div className="container mx-auto px-4 pb-28 pt-6 sm:px-6 sm:pb-16 sm:pt-8 lg:px-8">
         {/* Back Button */}
         <Link
           href="/dashboard"
-          className="mb-6 inline-flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900"
+          className="mb-6 inline-flex w-full min-h-[48px] items-center justify-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-gray-200 transition hover:bg-gray-50 hover:text-gray-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 sm:w-auto sm:justify-start sm:bg-transparent sm:px-0 sm:py-0 sm:text-gray-600 sm:shadow-none sm:ring-0"
         >
           <svg
             className="h-4 w-4"
@@ -76,11 +78,11 @@ export default async function PlanPage({ params }: PageProps) {
         <div className="grid gap-8 lg:grid-cols-3">
           {/* Meal Plan */}
           <div className="lg:col-span-2">
-            <MealPlanView plan={plan} />
+            <MealPlanView plan={plan} shoppingListAnchorId={shoppingListAnchorId} />
           </div>
 
           {/* Shopping List */}
-          <div className="lg:col-span-1">
+          <div id={shoppingListAnchorId} className="scroll-mt-28 rounded-2xl lg:col-span-1">
             <HydrateClient>
               <ShoppingList planId={id} />
             </HydrateClient>
