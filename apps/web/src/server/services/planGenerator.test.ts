@@ -351,6 +351,188 @@ describe('PlanGenerator', () => {
     });
   });
 
+  describe('Day Count Validation', () => {
+    it('generates exact number of days requested', async () => {
+      currentRecipes = [
+        {
+          id: 'dinner-recipe',
+          title: 'Pasta',
+          mealTypes: ['dinner'],
+          ingredients: [{ ingredient: { name: 'pasta' } }],
+        },
+      ];
+
+      const generator = new PlanGenerator(mockPrisma as unknown as PrismaClient);
+
+      await generator.generatePlan({
+        userId: 'user-1',
+        startDate,
+        days: 3,
+        mealsPerDay: 1,
+      });
+
+      const itemsArg = mockCreateItems.mock.calls[0]?.[0];
+
+      // Should have 3 days * 1 meal = 3 items
+      expect(itemsArg.data).toHaveLength(3);
+
+      // Check all day indices present
+      const dayIndices = itemsArg.data.map((item: TestMealPlanItem) => item.dayIndex);
+      expect(dayIndices).toEqual([0, 1, 2]);
+    });
+
+    it('generates correct items for multiple meals per day', async () => {
+      currentRecipes = [
+        {
+          id: 'breakfast-recipe',
+          title: 'Eggs',
+          mealTypes: ['breakfast'],
+          ingredients: [{ ingredient: { name: 'eggs' } }],
+        },
+        {
+          id: 'lunch-recipe',
+          title: 'Salad',
+          mealTypes: ['lunch'],
+          ingredients: [{ ingredient: { name: 'lettuce' } }],
+        },
+        {
+          id: 'dinner-recipe',
+          title: 'Pasta',
+          mealTypes: ['dinner'],
+          ingredients: [{ ingredient: { name: 'pasta' } }],
+        },
+      ];
+
+      const generator = new PlanGenerator(mockPrisma as unknown as PrismaClient);
+
+      await generator.generatePlan({
+        userId: 'user-1',
+        startDate,
+        days: 2,
+        mealsPerDay: 3,
+      });
+
+      const itemsArg = mockCreateItems.mock.calls[0]?.[0];
+
+      // Should have 2 days * 3 meals = 6 items
+      expect(itemsArg.data).toHaveLength(6);
+
+      // Each day should have breakfast, lunch, dinner
+      const day0Items = itemsArg.data.filter((item: TestMealPlanItem) => item.dayIndex === 0);
+      const day1Items = itemsArg.data.filter((item: TestMealPlanItem) => item.dayIndex === 1);
+
+      expect(day0Items).toHaveLength(3);
+      expect(day1Items).toHaveLength(3);
+
+      expect(day0Items.map((i: TestMealPlanItem) => i.mealType).sort()).toEqual([
+        'breakfast',
+        'dinner',
+        'lunch',
+      ]);
+      expect(day1Items.map((i: TestMealPlanItem) => i.mealType).sort()).toEqual([
+        'breakfast',
+        'dinner',
+        'lunch',
+      ]);
+    });
+  });
+
+  describe('Edge Cases', () => {
+    it('throws error when database is empty', async () => {
+      currentRecipes = [];
+
+      const generator = new PlanGenerator(mockPrisma as unknown as PrismaClient);
+
+      await expect(
+        generator.generatePlan({
+          userId: 'user-1',
+          startDate,
+          days: 1,
+          mealsPerDay: 1,
+        })
+      ).rejects.toThrow('No recipes available');
+    });
+
+    it('throws error when no recipes match dietary preferences', async () => {
+      currentRecipes = [
+        {
+          id: 'meat-recipe',
+          title: 'Steak',
+          mealTypes: ['dinner'],
+          ingredients: [{ ingredient: { name: 'beef' } }],
+        },
+      ];
+
+      // Mock prisma to return empty array for vegetarian filter
+      mockPrisma.recipe.findMany.mockResolvedValue([]);
+
+      const generator = new PlanGenerator(mockPrisma as unknown as PrismaClient);
+
+      await expect(
+        generator.generatePlan({
+          userId: 'user-1',
+          startDate,
+          days: 1,
+          mealsPerDay: 1,
+          isVegetarian: true,
+        })
+      ).rejects.toThrow('No recipes available');
+    });
+
+    it('throws error when all recipes filtered by dislikes', async () => {
+      currentRecipes = [
+        {
+          id: 'recipe-1',
+          title: 'Chicken Dinner',
+          mealTypes: ['dinner'],
+          ingredients: [{ ingredient: { name: 'chicken' } }],
+        },
+        {
+          id: 'recipe-2',
+          title: 'Beef Stew',
+          mealTypes: ['dinner'],
+          ingredients: [{ ingredient: { name: 'beef' } }],
+        },
+      ];
+
+      const generator = new PlanGenerator(mockPrisma as unknown as PrismaClient);
+
+      await expect(
+        generator.generatePlan({
+          userId: 'user-1',
+          startDate,
+          days: 1,
+          mealsPerDay: 1,
+          dislikes: 'chicken, beef',
+        })
+      ).rejects.toThrow('No recipes match your preferences');
+    });
+
+    it('handles recipe with empty ingredients array', async () => {
+      currentRecipes = [
+        {
+          id: 'recipe-1',
+          title: 'Simple Pasta',
+          mealTypes: ['dinner'],
+          ingredients: [],
+        },
+      ];
+
+      const generator = new PlanGenerator(mockPrisma as unknown as PrismaClient);
+
+      const plan = await generator.generatePlan({
+        userId: 'user-1',
+        startDate,
+        days: 1,
+        mealsPerDay: 1,
+        dislikes: 'mushroom',
+      });
+
+      expect(plan.id).toBe('plan-1');
+      expect(mockCreateItems).toHaveBeenCalledTimes(1);
+    });
+  });
+
   describe('Role-based Day Limits (#104)', () => {
     it('throws error when basic user requests more than 3 days', async () => {
       mockPrisma.user.findUnique.mockResolvedValue({ id: 'user-1', role: 'basic' });
