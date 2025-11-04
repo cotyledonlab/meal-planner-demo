@@ -1,0 +1,27 @@
+.checkButton {
+  transition: all 0.2s ease-in-out;
+}
+
+.checkButton:active {
+  transform: scale(0.95);
+}
+
+.itemLabel {
+  transition: all 0.3s ease-in-out;
+}
+
+.checked {
+  animation: checkAnimation 0.3s ease-in-out;
+}
+
+@keyframes checkAnimation {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}

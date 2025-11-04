@@ -83,7 +83,11 @@ export default async function PlanPage({ params }: PageProps) {
 
           {/* Shopping List */}
           <div className="lg:col-span-1">
-            <ShoppingList items={shoppingList?.items} planId={id} />
+            <ShoppingList
+              items={shoppingList?.items}
+              shoppingListId={shoppingList?.id}
+              planId={id}
+            />
           </div>
         </div>
       </div>

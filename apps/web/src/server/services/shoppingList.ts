@@ -2,10 +2,13 @@ import { type PrismaClient } from '@prisma/client';
 import { convertToNormalizedUnit } from '../../lib/unitConverter';
 
 interface ShoppingListItemData {
+  id: string;
   name: string;
   quantity: number;
   unit: string;
   ingredientId?: string;
+  category: string;
+  checked: boolean;
 }
 
 interface ShoppingListOutput {
@@ -159,7 +162,11 @@ export class ShoppingListService {
     const shoppingList = await this.prisma.shoppingList.findUnique({
       where: { planId },
       include: {
-        items: true,
+        items: {
+          include: {
+            ingredient: true,
+          },
+        },
       },
     });
 
@@ -171,12 +178,46 @@ export class ShoppingListService {
       id: shoppingList.id,
       planId: shoppingList.planId,
       items: shoppingList.items.map((item) => ({
+        id: item.id,
         name: item.name,
         quantity: item.quantity,
         unit: item.unit,
         ingredientId: item.ingredientId ?? undefined,
+        category: item.ingredient?.category ?? 'other',
+        checked: item.checked,
       })),
       createdAt: shoppingList.createdAt,
     };
+  }
+
+  async toggleItemChecked(itemId: string): Promise<void> {
+    const item = await this.prisma.shoppingListItem.findUnique({
+      where: { id: itemId },
+    });
+
+    if (!item) {
+      throw new Error('Shopping list item not found');
+    }
+
+    await this.prisma.shoppingListItem.update({
+      where: { id: itemId },
+      data: { checked: !item.checked },
+    });
+  }
+
+  async updateCategoryChecked(
+    shoppingListId: string,
+    category: string,
+    checked: boolean
+  ): Promise<void> {
+    await this.prisma.shoppingListItem.updateMany({
+      where: {
+        shoppingListId,
+        ingredient: {
+          category,
+        },
+      },
+      data: { checked },
+    });
   }
 }

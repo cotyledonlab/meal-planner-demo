@@ -189,6 +189,30 @@ export const shoppingListRouter = createTRPCRouter({
       };
     }),
 
+  // Toggle item checked state
+  toggleItemChecked: protectedProcedure
+    .input(z.object({ itemId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const service = new ShoppingListService(ctx.db);
+      await service.toggleItemChecked(input.itemId);
+      return { success: true };
+    }),
+
+  // Update all items in a category
+  updateCategoryChecked: protectedProcedure
+    .input(
+      z.object({
+        shoppingListId: z.string(),
+        category: z.string(),
+        checked: z.boolean(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const service = new ShoppingListService(ctx.db);
+      await service.updateCategoryChecked(input.shoppingListId, input.category, input.checked);
+      return { success: true };
+    }),
+
   // Export shopping list as CSV
   exportCSV: protectedProcedure
     .input(z.object({ mealPlanId: z.string() }))

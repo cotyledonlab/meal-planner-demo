@@ -129,6 +129,7 @@ model Ingredient {
     category         String              // e.g., "protein", "vegetables", "dairy", "grains"
     recipes          RecipeIngredient[]
     pantryItems      PantryItem[]
+    shoppingListItems ShoppingListItem[]
     createdAt        DateTime            @default(now())
     updatedAt        DateTime            @updatedAt
 
@@ -211,14 +212,17 @@ model ShoppingListItem {
     shoppingListId String
     shoppingList   ShoppingList @relation(fields: [shoppingListId], references: [id], onDelete: Cascade)
     ingredientId   String?
+    ingredient     Ingredient?  @relation(fields: [ingredientId], references: [id], onDelete: SetNull)
     name           String       // Ingredient name for display
     quantity       Float
     unit           String
     notes          String?
+    checked        Boolean      @default(false)
     createdAt      DateTime     @default(now())
     updatedAt      DateTime     @updatedAt
 
     @@index([shoppingListId])
+    @@index([ingredientId])
 }
 
 model PriceBaseline {
