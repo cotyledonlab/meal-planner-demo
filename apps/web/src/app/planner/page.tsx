@@ -33,7 +33,7 @@ export default function PlannerPage() {
         } else {
           console.error('Invalid plan data returned from mutation:', data);
         }
-      }, 1500);
+      }, 2500);
     },
     onError: (error) => {
       console.error('Plan generation failed:', error);
