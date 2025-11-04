@@ -1,7 +1,7 @@
 'use client';
 
 import { useSession } from 'next-auth/react';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { isPremiumUser } from '~/lib/auth';
 import { CATEGORY_ORDER, CATEGORY_EMOJI, CATEGORY_LABELS } from '~/lib/categoryConfig';
 import { api } from '~/trpc/react';
@@ -36,7 +36,40 @@ export default function ShoppingList({
   const isLoading = status === 'loading';
   const utils = api.useUtils();
 
+  const [localItems, setLocalItems] = useState<ShoppingListItem[]>(items ?? []);
+  const itemsRef = useRef(localItems);
+
+  useEffect(() => {
+    itemsRef.current = localItems;
+  }, [localItems]);
+
+  useEffect(() => {
+    if (items) {
+      setLocalItems(items);
+    } else {
+      setLocalItems([]);
+    }
+  }, [items]);
+
   const toggleItemMutation = api.shoppingList.toggleItemChecked.useMutation({
+    async onMutate(variables) {
+      if (!variables?.itemId) return { previousItems: itemsRef.current };
+      if (planId) {
+        await utils.shoppingList.getForPlan.cancel({ planId }).catch(() => undefined);
+      }
+      const previousItems = itemsRef.current;
+      setLocalItems((current) =>
+        current.map((item) =>
+          item.id === variables.itemId ? { ...item, checked: !item.checked } : item
+        )
+      );
+      return { previousItems };
+    },
+    onError: (_error, _variables, context) => {
+      if (context?.previousItems) {
+        setLocalItems(context.previousItems);
+      }
+    },
     onSuccess: () => {
       if (planId) {
         void utils.shoppingList.getForPlan.invalidate({ planId });
@@ -45,6 +78,24 @@ export default function ShoppingList({
   });
 
   const updateCategoryMutation = api.shoppingList.updateCategoryChecked.useMutation({
+    async onMutate(variables) {
+      if (!variables?.category) return { previousItems: itemsRef.current };
+      if (planId) {
+        await utils.shoppingList.getForPlan.cancel({ planId }).catch(() => undefined);
+      }
+      const previousItems = itemsRef.current;
+      setLocalItems((current) =>
+        current.map((item) =>
+          item.category === variables.category ? { ...item, checked: variables.checked } : item
+        )
+      );
+      return { previousItems };
+    },
+    onError: (_error, _variables, context) => {
+      if (context?.previousItems) {
+        setLocalItems(context.previousItems);
+      }
+    },
     onSuccess: () => {
       if (planId) {
         void utils.shoppingList.getForPlan.invalidate({ planId });
@@ -54,11 +105,11 @@ export default function ShoppingList({
 
   // Group items by category
   const groupedItems = useMemo(() => {
-    if (!items) return new Map();
+    if (!localItems.length) return new Map();
 
     const groups = new Map<string, ShoppingListItem[]>();
 
-    for (const item of items) {
+    for (const item of localItems) {
       const category = item.category || 'other';
       if (!groups.has(category)) {
         groups.set(category, []);
@@ -82,25 +133,27 @@ export default function ShoppingList({
     }
 
     return sorted;
-  }, [items]);
+  }, [localItems]);
 
-  const totalItems = items?.length ?? 0;
-  const checkedCount = items?.filter((item) => item.checked).length ?? 0;
+  const totalItems = localItems.length;
+  const checkedCount = localItems.filter((item) => item.checked).length;
 
   const toggleItem = (itemId: string) => {
-    void toggleItemMutation.mutateAsync({ itemId });
+    toggleItemMutation.mutateAsync({ itemId }).catch(() => undefined);
   };
 
   const toggleCategory = (category: string, checked: boolean) => {
     if (!shoppingListId) return;
-    void updateCategoryMutation.mutateAsync({
-      shoppingListId,
-      category,
-      checked,
-    });
+    updateCategoryMutation
+      .mutateAsync({
+        shoppingListId,
+        category,
+        checked,
+      })
+      .catch(() => undefined);
   };
 
-  if (!items || items.length === 0) {
+  if (localItems.length === 0) {
     return (
       <div className="rounded-xl bg-white p-8 text-center shadow-sm ring-1 ring-gray-200">
         <p className="text-gray-600">No shopping list available</p>
