@@ -34,6 +34,11 @@ describe('evaluateMealTypes', () => {
         title: 'Valid Types',
         mealTypes: ['breakfast', 'dinner'],
       },
+      {
+        id: 'suspicious',
+        title: 'Thai Red Curry with Rice',
+        mealTypes: ['breakfast', 'lunch'],
+      },
     ]);
 
     expect(valid).toHaveLength(1);
@@ -48,6 +53,9 @@ describe('evaluateMealTypes', () => {
     expect(issuesById.missing).toContain('Missing mealTypes array');
     expect(issuesById.empty).toContain('Empty mealTypes array');
     expect(issuesById.invalid).toContain('Invalid meal types: snack');
+    expect(issuesById.suspicious).toContain(
+      'Unexpected breakfast classification (keywords: curry)'
+    );
   });
 
   it('loads recipes via the provided delegate before evaluation', async () => {
@@ -97,19 +105,29 @@ describe('fixCorruptedMealTypes', () => {
         mealTypes: [],
         issues: ['Empty mealTypes array'],
       },
+      {
+        recipeId: 'thai-curry',
+        title: 'Thai Red Curry with Rice',
+        mealTypes: ['breakfast', 'lunch', 'dinner'],
+        issues: ['Unexpected breakfast classification (keywords: curry)'],
+      },
     ];
 
     const logSpy = vi.spyOn(console, 'log').mockImplementation(() => undefined);
 
     await fixCorruptedMealTypes(corrupted, recipeModel);
 
-    expect(update).toHaveBeenCalledTimes(2);
+    expect(update).toHaveBeenCalledTimes(3);
     expect(updates[0]).toEqual({
       where: { id: 'keep-valid' },
       data: { mealTypes: ['breakfast'] },
     });
     expect(updates[1]).toEqual({
       where: { id: 'fallback' },
+      data: { mealTypes: ['lunch', 'dinner'] },
+    });
+    expect(updates[2]).toEqual({
+      where: { id: 'thai-curry' },
       data: { mealTypes: ['lunch', 'dinner'] },
     });
 
