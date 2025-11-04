@@ -35,7 +35,7 @@ export default function ShoppingList({ planId, onComparePrices }: ShoppingListPr
     { enabled: !!planId }
   );
 
-  const items = shoppingList?.items ?? [];
+  const items = useMemo(() => shoppingList?.items ?? [], [shoppingList?.items]);
   const shoppingListId = shoppingList?.id;
   const itemsRef = useRef(items);
 
