@@ -210,13 +210,28 @@ export class ShoppingListService {
     category: string,
     checked: boolean
   ): Promise<void> {
+    const whereClause =
+      category === 'other'
+        ? {
+            shoppingListId,
+            OR: [
+              { ingredientId: null },
+              {
+                ingredient: {
+                  category,
+                },
+              },
+            ],
+          }
+        : {
+            shoppingListId,
+            ingredient: {
+              category,
+            },
+          };
+
     await this.prisma.shoppingListItem.updateMany({
-      where: {
-        shoppingListId,
-        ingredient: {
-          category,
-        },
-      },
+      where: whereClause,
       data: { checked },
     });
   }

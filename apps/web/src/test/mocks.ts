@@ -1,7 +1,7 @@
+import type { PrismaClient } from '@prisma/client';
 import { vi } from 'vitest';
 
-// Mock Prisma Client
-export const mockPrismaClient: any = {
+export const mockPrismaClient = {
   post: {
     create: vi.fn(),
     findFirst: vi.fn(),
@@ -44,6 +44,16 @@ export const mockPrismaClient: any = {
   priceBaseline: {
     findMany: vi.fn(),
   },
+  shoppingList: {
+    findUnique: vi.fn(),
+    create: vi.fn(),
+  },
+  shoppingListItem: {
+    findUnique: vi.fn(),
+    create: vi.fn(),
+    update: vi.fn(),
+    updateMany: vi.fn(),
+  },
   $disconnect: vi.fn(),
   $connect: vi.fn(),
   $executeRaw: vi.fn(),
@@ -52,7 +62,7 @@ export const mockPrismaClient: any = {
   $queryRawUnsafe: vi.fn(),
   $transaction: vi.fn(),
   $on: vi.fn(),
-};
+} as const;
 
 // Mock NextAuth session
 export const mockSession = {
@@ -66,16 +76,16 @@ export const mockSession = {
 };
 
 // Mock tRPC context
-export const createMockContext = (overrides = {}): any => ({
-  db: mockPrismaClient,
+export const createMockContext = (overrides: Record<string, unknown> = {}) => ({
+  db: mockPrismaClient as unknown as PrismaClient,
   session: mockSession,
   headers: new Headers(),
   ...overrides,
 });
 
 // Mock tRPC context without session (for public procedures)
-export const createMockPublicContext = (overrides = {}): any => ({
-  db: mockPrismaClient,
+export const createMockPublicContext = (overrides: Record<string, unknown> = {}) => ({
+  db: mockPrismaClient as unknown as PrismaClient,
   session: null,
   headers: new Headers(),
   ...overrides,
