@@ -186,8 +186,8 @@ export default function ShoppingList({ planId, onComparePrices }: ShoppingListPr
             return (
               <Disclosure key={category} defaultOpen={false}>
                 {({ open }: { open: boolean }) => (
-                  <div className="rounded-xl bg-white shadow-sm ring-1 ring-gray-200">
-                    <Disclosure.Button className="flex w-full items-center justify-between gap-3 rounded-xl px-4 py-3 text-left transition hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 sm:rounded-lg sm:px-5 sm:py-4 min-h-[56px]">
+                  <div className="rounded-2xl bg-white shadow-sm ring-1 ring-gray-200 sm:rounded-xl">
+                    <Disclosure.Button className="flex w-full items-center justify-between gap-3 rounded-2xl px-4 py-4 text-left transition hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 sm:rounded-lg sm:px-5 sm:py-4 min-h-[60px]">
                       <div className="flex items-center gap-3">
                         <span className="text-2xl">{CATEGORY_EMOJI[category] ?? '📦'}</span>
                         <div>
@@ -206,20 +206,20 @@ export default function ShoppingList({ planId, onComparePrices }: ShoppingListPr
                       />
                     </Disclosure.Button>
 
-                    <Disclosure.Panel className="border-t border-gray-200 p-4">
+                    <Disclosure.Panel className="border-t border-gray-200 p-4 sm:p-5">
                       {/* Category actions */}
                       <div className="mb-4 flex flex-wrap gap-2 sm:gap-3">
                         <button
                           onClick={() => toggleCategory(category, true)}
                           disabled={allChecked}
-                          className="flex-1 min-h-[44px] rounded-lg bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-700 shadow-sm transition hover:bg-emerald-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 disabled:opacity-50 sm:flex-initial sm:px-5"
+                          className="flex-1 min-h-[48px] rounded-lg bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-700 shadow-sm transition hover:bg-emerald-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 disabled:opacity-50 sm:flex-initial sm:px-5"
                         >
                           Check All
                         </button>
                         <button
                           onClick={() => toggleCategory(category, false)}
                           disabled={categoryCheckedCount === 0}
-                          className="flex-1 min-h-[44px] rounded-lg bg-gray-50 px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-500 disabled:opacity-50 sm:flex-initial sm:px-5"
+                          className="flex-1 min-h-[48px] rounded-lg bg-gray-50 px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-500 disabled:opacity-50 sm:flex-initial sm:px-5"
                         >
                           Uncheck All
                         </button>
@@ -234,14 +234,14 @@ export default function ShoppingList({ planId, onComparePrices }: ShoppingListPr
                               <button
                                 type="button"
                                 onClick={() => toggleItem(item.id)}
-                                className={`flex w-full items-center gap-3 rounded-2xl border border-gray-200 bg-gray-50 px-3 py-3 text-left transition hover:border-emerald-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 sm:rounded-xl sm:px-4 ${
+                                className={`flex w-full items-center gap-4 rounded-3xl border border-gray-200 bg-gray-50 px-4 py-4 text-left transition hover:border-emerald-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 sm:rounded-xl sm:px-5 ${
                                   isChecked ? 'border-emerald-500 bg-emerald-50' : ''
                                 }`}
                                 aria-label={`Toggle ${item.name}`}
                                 aria-pressed={isChecked}
                               >
                                 <span
-                                  className={`flex h-12 w-12 min-h-[48px] min-w-[48px] items-center justify-center rounded-xl border-2 transition sm:h-11 sm:w-11 sm:min-h-[44px] sm:min-w-[44px] ${
+                                  className={`flex h-12 w-12 min-h-[52px] min-w-[52px] items-center justify-center rounded-2xl border-2 transition sm:h-11 sm:w-11 sm:min-h-[48px] sm:min-w-[48px] ${
                                     isChecked
                                       ? 'border-emerald-600 bg-emerald-100 text-emerald-600'
                                       : 'border-gray-300 bg-white text-transparent'
