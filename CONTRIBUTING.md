@@ -45,15 +45,23 @@ Thank you for your interest in contributing to the Meal Planner Demo project! Th
 
 ## Development Workflow
 
-1. Create a new branch for your feature or bugfix:
+1. **Ensure your local main is up to date** before creating a feature branch:
+
+   ```bash
+   git checkout main
+   git fetch origin main
+   git rebase origin/main
+   ```
+
+2. Create a new branch for your feature or bugfix:
 
    ```bash
    git checkout -b feature/your-feature-name
    ```
 
-2. Make your changes following our [code quality standards](#code-quality-standards)
+3. Make your changes following our [code quality standards](#code-quality-standards)
 
-3. Run checks locally before committing:
+4. Run checks locally before committing:
 
    ```bash
    pnpm check        # Runs lint + typecheck
@@ -66,7 +74,7 @@ Thank you for your interest in contributing to the Meal Planner Demo project! Th
    pnpm precommit    # Run all pre-commit checks manually
    ```
 
-4. Commit your changes with clear, descriptive messages
+5. Commit your changes with clear, descriptive messages
 
    The pre-commit hook will automatically verify your code. If you need to bypass the hook (not recommended), use:
 
@@ -76,7 +84,7 @@ Thank you for your interest in contributing to the Meal Planner Demo project! Th
 
    **Warning**: Only bypass hooks if you're certain the code is correct and plan to fix issues in a follow-up commit.
 
-5. Push to your fork and create a pull request
+6. Push to your fork and create a pull request
 
    Before pushing, the pre-push hook will run format checking, linting, and type checking to catch issues before they reach CI.
 

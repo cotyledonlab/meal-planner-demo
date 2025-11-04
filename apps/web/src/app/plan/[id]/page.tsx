@@ -1,4 +1,5 @@
 import { notFound, redirect } from 'next/navigation';
+import Link from 'next/link';
 import { auth } from '~/server/auth';
 import { api } from '~/trpc/server';
 import MealPlanView from '~/app/_components/MealPlanView';
@@ -42,6 +43,25 @@ export default async function PlanPage({ params }: PageProps) {
   return (
     <main className="flex min-h-screen flex-col bg-gradient-to-b from-emerald-50 to-white">
       <div className="container mx-auto px-4 py-8 sm:px-6 lg:px-8">
+        {/* Back Button */}
+        <Link
+          href="/dashboard"
+          className="mb-6 inline-flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900"
+        >
+          <svg
+            className="h-4 w-4"
+            fill="none"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path d="M15 19l-7-7 7-7" />
+          </svg>
+          Back to Dashboard
+        </Link>
+
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Your Meal Plan</h1>

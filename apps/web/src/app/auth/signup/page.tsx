@@ -97,115 +97,137 @@ function SignUpForm() {
   };
 
   return (
-    <AuthLayout
-      title={isPremium ? 'Get Premium Access' : 'Create your account'}
-      subtitle={
-        <>
-          Already have an account?{' '}
-          <Link href="/auth/signin" className="font-medium text-emerald-600 hover:text-emerald-500">
-            Sign in
-          </Link>
-        </>
-      }
-    >
-      <form className="space-y-6" onSubmit={handleSubmit}>
-        {isPremium && (
-          <div className="rounded-md bg-emerald-50 p-4 border border-emerald-200">
-            <p className="text-sm text-emerald-800 font-medium">
-              Premium Tier: €4.99/month — Best value supermarket finder, advanced customisation, and
-              more!
-            </p>
-          </div>
-        )}
-
-        {error && (
-          <div className="rounded-md bg-red-50 p-4" role="alert" aria-live="polite">
-            <p className="text-sm text-red-800">{error}</p>
-          </div>
-        )}
-
-        <div className="space-y-4">
-          <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-              Name
-            </label>
-            <input
-              id="name"
-              name="name"
-              type="text"
-              autoComplete="name"
-              required
-              className="mt-1 block w-full rounded-md border-0 px-3 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-emerald-600 sm:text-sm sm:leading-6"
-              placeholder="Your name"
-              value={formData.name}
-              onChange={handleChange}
-            />
-            {validationErrors.name && (
-              <p className="mt-1 text-sm text-red-600" role="alert">
-                {validationErrors.name}
+    <>
+      <Link
+        href="/"
+        className="absolute left-4 top-4 inline-flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900"
+      >
+        <svg
+          className="h-4 w-4"
+          fill="none"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="2"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path d="M15 19l-7-7 7-7" />
+        </svg>
+        Back to Home
+      </Link>
+      <AuthLayout
+        title={isPremium ? 'Get Premium Access' : 'Create your account'}
+        subtitle={
+          <>
+            Already have an account?{' '}
+            <Link
+              href="/auth/signin"
+              className="font-medium text-emerald-600 hover:text-emerald-500"
+            >
+              Sign in
+            </Link>
+          </>
+        }
+      >
+        <form className="space-y-6" onSubmit={handleSubmit}>
+          {isPremium && (
+            <div className="rounded-md bg-emerald-50 p-4 border border-emerald-200">
+              <p className="text-sm text-emerald-800 font-medium">
+                Premium Tier: €4.99/month — Best value supermarket finder, advanced customisation,
+                and more!
               </p>
-            )}
+            </div>
+          )}
+
+          {error && (
+            <div className="rounded-md bg-red-50 p-4" role="alert" aria-live="polite">
+              <p className="text-sm text-red-800">{error}</p>
+            </div>
+          )}
+
+          <div className="space-y-4">
+            <div>
+              <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+                Name
+              </label>
+              <input
+                id="name"
+                name="name"
+                type="text"
+                autoComplete="name"
+                required
+                className="mt-1 block w-full rounded-md border-0 px-3 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-emerald-600 sm:text-sm sm:leading-6"
+                placeholder="Your name"
+                value={formData.name}
+                onChange={handleChange}
+              />
+              {validationErrors.name && (
+                <p className="mt-1 text-sm text-red-600" role="alert">
+                  {validationErrors.name}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                Email address
+              </label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                required
+                className="mt-1 block w-full rounded-md border-0 px-3 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-emerald-600 sm:text-sm sm:leading-6"
+                placeholder="you@example.com"
+                value={formData.email}
+                onChange={handleChange}
+              />
+              {validationErrors.email && (
+                <p className="mt-1 text-sm text-red-600" role="alert">
+                  {validationErrors.email}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                Password
+              </label>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                autoComplete="new-password"
+                required
+                className="mt-1 block w-full rounded-md border-0 px-3 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-emerald-600 sm:text-sm sm:leading-6"
+                placeholder="At least 8 characters"
+                value={formData.password}
+                onChange={handleChange}
+              />
+              {validationErrors.password && (
+                <p className="mt-1 text-sm text-red-600" role="alert">
+                  {validationErrors.password}
+                </p>
+              )}
+              <p className="mt-1 text-xs text-gray-500">
+                Must be at least 8 characters with one uppercase letter and one number
+              </p>
+            </div>
           </div>
 
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-              Email address
-            </label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              autoComplete="email"
-              required
-              className="mt-1 block w-full rounded-md border-0 px-3 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-emerald-600 sm:text-sm sm:leading-6"
-              placeholder="you@example.com"
-              value={formData.email}
-              onChange={handleChange}
-            />
-            {validationErrors.email && (
-              <p className="mt-1 text-sm text-red-600" role="alert">
-                {validationErrors.email}
-              </p>
-            )}
+            <button
+              type="submit"
+              disabled={loading}
+              className="flex w-full justify-center rounded-md bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 disabled:cursor-not-allowed disabled:bg-emerald-300"
+            >
+              {loading ? 'Creating account...' : 'Create account'}
+            </button>
           </div>
-
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-              Password
-            </label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              autoComplete="new-password"
-              required
-              className="mt-1 block w-full rounded-md border-0 px-3 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-emerald-600 sm:text-sm sm:leading-6"
-              placeholder="At least 8 characters"
-              value={formData.password}
-              onChange={handleChange}
-            />
-            {validationErrors.password && (
-              <p className="mt-1 text-sm text-red-600" role="alert">
-                {validationErrors.password}
-              </p>
-            )}
-            <p className="mt-1 text-xs text-gray-500">
-              Must be at least 8 characters with one uppercase letter and one number
-            </p>
-          </div>
-        </div>
-
-        <div>
-          <button
-            type="submit"
-            disabled={loading}
-            className="flex w-full justify-center rounded-md bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 disabled:cursor-not-allowed disabled:bg-emerald-300"
-          >
-            {loading ? 'Creating account...' : 'Create account'}
-          </button>
-        </div>
-      </form>
-    </AuthLayout>
+        </form>
+      </AuthLayout>
+    </>
   );
 }
 

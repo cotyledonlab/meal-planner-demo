@@ -220,11 +220,17 @@ When working in this environment, Claude Code is typically launched from the VPS
 
 ### Typical Workflow
 
-1. Make code changes locally
-2. Push to branch → Create/update PR
-3. Review and merge to main
-4. Dokploy automatically deploys changes
-5. Check deployment via:
+1. **Before creating feature branch**: Ensure local main is up to date
+   ```bash
+   git checkout main
+   git fetch origin main
+   git rebase origin/main
+   ```
+2. Create feature branch and make code changes
+3. Push to branch → Create/update PR
+4. Review and merge to main
+5. Dokploy automatically deploys changes
+6. Check deployment via:
    - MCP Dokploy tool for real-time logs
    - Chrome headless for visual verification
    - Check `/etc/dokploy/logs/` for deployment logs
