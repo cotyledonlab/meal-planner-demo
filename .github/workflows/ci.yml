@@ -118,6 +118,16 @@ jobs:
           echo "AUTH_SECRET=ci-test-secret-$(openssl rand -hex 32)" >> $GITHUB_ENV
           echo "DATABASE_URL=postgresql://postgres:password@localhost:5432/meal-planner-demo" >> $GITHUB_ENV
 
+      - name: Cache Next.js build
+        uses: actions/cache@v4
+        with:
+          path: |
+            apps/web/.next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('apps/web/**/*.ts', 'apps/web/**/*.tsx', 'apps/web/**/*.js', 'apps/web/**/*.jsx') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('pnpm-lock.yaml') }}-
+            ${{ runner.os }}-nextjs-
+
       - name: Build application
         run: pnpm build
 

@@ -13,8 +13,8 @@ export default function Pricing() {
         'Basic dietary preferences',
         'Email support',
       ],
-      cta: 'Try the Free Tier',
-      href: '/auth/signup?plan=free',
+      cta: 'Get Started',
+      href: '/auth/signup',
       highlighted: false,
     },
     {
@@ -30,8 +30,8 @@ export default function Pricing() {
         'Priority support',
         'Export and share plans',
       ],
-      cta: 'Get Premium',
-      href: '/auth/signup?plan=premium',
+      cta: 'Go Premium',
+      href: '/auth/signup?tier=premium',
       highlighted: true,
     },
   ];

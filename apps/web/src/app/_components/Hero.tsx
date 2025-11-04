@@ -38,22 +38,13 @@ export default function Hero() {
             >
               Get Started
             </Link>
-            <a
-              href="#pricing"
-              className="rounded-full bg-white px-8 py-3 text-base font-semibold text-emerald-700 shadow-sm ring-1 ring-emerald-600 transition hover:bg-emerald-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
-            >
-              See Premium
-            </a>
-          </div>
-          <p className="mt-6 text-sm text-emerald-100">
-            Already have an account?{' '}
             <Link
               href="/auth/signin"
-              className="font-medium text-emerald-200 transition hover:text-emerald-100"
+              className="rounded-full bg-white/10 px-8 py-3 text-base font-semibold text-white shadow-sm ring-1 ring-white/20 transition hover:bg-white/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
             >
-              Log in
+              Sign In
             </Link>
-          </p>
+          </div>
         </div>
       </div>
     </section>

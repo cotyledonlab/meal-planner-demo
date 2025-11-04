@@ -8,7 +8,7 @@ export default function CTA() {
       <div className="mx-auto max-w-7xl px-6 py-16 sm:py-20 lg:py-24">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="text-2xl font-semibold tracking-tight text-gray-900 sm:text-3xl">
-            Try It Free Today
+            Start Planning Smarter Today
           </h2>
           <p className="mt-4 text-base text-gray-600 sm:text-lg">
             Join hundreds of Irish families who are already planning smarter and saving more.
@@ -18,7 +18,7 @@ export default function CTA() {
               href="/auth/signup"
               className="inline-block rounded-full bg-emerald-600 px-8 py-3 text-base font-semibold text-white shadow-sm transition hover:bg-emerald-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
             >
-              Join Now
+              Get Started
             </Link>
           </div>
           <p className="mt-6 text-sm text-gray-600">Built for families in Ireland 🇮🇪</p>
