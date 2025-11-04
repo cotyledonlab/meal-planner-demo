@@ -1,6 +1,5 @@
 'use client';
 
-import { signIn } from 'next-auth/react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useState } from 'react';
@@ -58,21 +57,10 @@ function SignUpForm() {
         return;
       }
 
-      // Auto sign-in after successful registration
-      // FIXME return a session token from the server to negate the need to resend cleartext password
-      const result = await signIn('credentials', {
-        email: formData.email,
-        password: formData.password,
-        redirect: false,
-      });
-
-      if (result?.ok) {
-        router.push('/dashboard');
-        router.refresh();
-      } else {
-        // Registration succeeded but sign-in failed - redirect to sign-in page
-        router.push('/auth/signin?message=Account created successfully. Please sign in.');
-      }
+      // User is now signed in via session created on server
+      // No need to resend password in cleartext
+      router.push('/dashboard');
+      router.refresh();
     } catch (err) {
       setError('An unexpected error occurred');
       console.error('Sign up error:', err);

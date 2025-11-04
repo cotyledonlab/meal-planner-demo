@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 
 import { db } from '~/server/db';
+import { signIn } from '~/server/auth';
 
 const signUpSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -57,6 +58,13 @@ export async function POST(request: Request) {
           },
         },
       },
+    });
+
+    // Sign in the user to create a session, avoiding need to resend password
+    await signIn('credentials', {
+      email,
+      password,
+      redirect: false,
     });
 
     return NextResponse.json(
