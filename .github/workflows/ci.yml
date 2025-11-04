@@ -27,7 +27,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: "pnpm"
 
       - name: Get pnpm store directory
         shell: bash
@@ -108,6 +107,10 @@ jobs:
               ;;
             format)
               pnpm format:check
+              ;;
+            *)
+              echo "Unknown check: ${{ matrix.check }}"
+              exit 1
               ;;
           esac
 
@@ -242,7 +245,8 @@ jobs:
         run: |
           if [ "${{ needs.checks.result }}" != "success" ] || \
              [ "${{ needs.test.result }}" != "success" ] || \
-             [ "${{ needs.build.result }}" != "success" ]; then
+             [ "${{ needs.build.result }}" != "success" ] || \
+             [ "${{ needs.security.result }}" != "success" ]; then
             echo "One or more checks failed"
             exit 1
           fi
