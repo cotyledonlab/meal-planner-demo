@@ -16,6 +16,11 @@ export const env = createEnv({
         (url) => url.startsWith('postgresql://') || url.startsWith('postgres://'),
         'DATABASE_URL must be a valid PostgreSQL connection string'
       ),
+    SMTP_HOST: z.string().optional(),
+    SMTP_PORT: z.string().regex(/^\d+$/, 'SMTP_PORT must be a valid integer').optional(),
+    SMTP_USER: z.string().optional(),
+    SMTP_PASS: z.string().optional(),
+    SMTP_FROM: z.string().optional(),
     NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   },
 
@@ -37,6 +42,11 @@ export const env = createEnv({
     AUTH_DISCORD_ID: process.env.AUTH_DISCORD_ID,
     AUTH_DISCORD_SECRET: process.env.AUTH_DISCORD_SECRET,
     DATABASE_URL: process.env.DATABASE_URL,
+    SMTP_HOST: process.env.SMTP_HOST,
+    SMTP_PORT: process.env.SMTP_PORT,
+    SMTP_USER: process.env.SMTP_USER,
+    SMTP_PASS: process.env.SMTP_PASS,
+    SMTP_FROM: process.env.SMTP_FROM,
     NODE_ENV: process.env.NODE_ENV,
     NEXT_PUBLIC_BASE_PATH: process.env.BASE_PATH,
   },

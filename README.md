@@ -175,6 +175,12 @@ When running with Docker Compose:
 - **Mailpit UI**: http://localhost:8025 (for viewing emails)
 - **Mailpit SMTP**: localhost:1025
 
+### SMTP Configuration
+
+- **Local development**: Mailpit runs alongside Docker Compose. Keep `SMTP_HOST=mailpit`, `SMTP_PORT=1025`, and leave `SMTP_USER`/`SMTP_PASS` unset.
+- **Production (Mailersend)**: Set `SMTP_HOST=smtp.mailersend.net`, `SMTP_PORT=587`, and provide the Mailersend SMTP username/password along with a branded `SMTP_FROM` (for example, `MealMind AI <noreply@mealmind.ai>`).
+- Update the Dokploy deployment environment variables to include the `SMTP_*` values before redeploying so password reset emails are delivered via Mailersend.
+
 ## Development Scripts
 
 All scripts are run from the root directory and delegated to the appropriate workspace:
