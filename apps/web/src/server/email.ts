@@ -1,22 +1,94 @@
 import nodemailer from 'nodemailer';
+import type { Transporter } from 'nodemailer';
 
-const resolvedPort = process.env.SMTP_PORT ? Number.parseInt(process.env.SMTP_PORT, 10) : 1025;
-const smtpPort = Number.isNaN(resolvedPort) ? 1025 : resolvedPort;
+type EmailEnvInput = {
+  NODE_ENV?: string;
+  SMTP_HOST?: string;
+  SMTP_PORT?: string;
+  SMTP_USER?: string;
+  SMTP_PASS?: string;
+  SMTP_FROM?: string;
+};
 
-const fromAddress = process.env.SMTP_FROM ?? process.env.SMTP_USER ?? 'noreply@mealmind.ai';
+type SmtpConfig = {
+  host: string;
+  port: number;
+  secure: boolean;
+  auth?: {
+    user: string;
+    pass: string;
+  };
+  from: string;
+};
 
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST ?? 'mailpit',
-  port: smtpPort,
-  secure: smtpPort === 465,
-  auth:
-    process.env.SMTP_USER && process.env.SMTP_PASS
-      ? {
-          user: process.env.SMTP_USER,
-          pass: process.env.SMTP_PASS,
-        }
-      : undefined,
-});
+function parsePort(port: string | undefined): number | undefined {
+  if (!port) return undefined;
+
+  const parsed = Number.parseInt(port, 10);
+  if (!Number.isInteger(parsed) || parsed <= 0 || parsed > 65535) {
+    throw new Error(`Invalid SMTP_PORT value "${port}". Provide an integer between 1 and 65535.`);
+  }
+
+  return parsed;
+}
+
+export function resolveSmtpConfig(emailEnv: EmailEnvInput = process.env): SmtpConfig {
+  const nodeEnv = emailEnv.NODE_ENV ?? 'development';
+  const isProduction = nodeEnv === 'production';
+
+  const host = emailEnv.SMTP_HOST ?? (isProduction ? undefined : 'mailpit');
+  if (!host) {
+    throw new Error(
+      'SMTP_HOST must be configured when NODE_ENV=production. Set SMTP_HOST=mailpit for local Docker usage.'
+    );
+  }
+
+  const port = parsePort(emailEnv.SMTP_PORT ?? (isProduction ? undefined : '1025'));
+  if (port === undefined) {
+    throw new Error(
+      'SMTP_PORT must be configured when NODE_ENV=production. Use 587 for Mailersend.'
+    );
+  }
+
+  const user = emailEnv.SMTP_USER;
+  const pass = emailEnv.SMTP_PASS;
+
+  if (isProduction && (!user || !pass)) {
+    throw new Error('SMTP_USER and SMTP_PASS must be configured when NODE_ENV=production.');
+  }
+
+  return {
+    host,
+    port,
+    secure: port === 465,
+    auth: user && pass ? { user, pass } : undefined,
+    from: emailEnv.SMTP_FROM ?? user ?? 'noreply@mealmind.ai',
+  };
+}
+
+let cachedConfig: SmtpConfig | null = null;
+let cachedTransporter: Transporter | null = null;
+
+function getSmtpConfig(): SmtpConfig {
+  if (cachedConfig) return cachedConfig;
+
+  cachedConfig = resolveSmtpConfig();
+  return cachedConfig;
+}
+
+function getTransporter(): Transporter {
+  if (cachedTransporter) return cachedTransporter;
+
+  const config = getSmtpConfig();
+  cachedTransporter = nodemailer.createTransport({
+    host: config.host,
+    port: config.port,
+    secure: config.secure,
+    auth: config.auth,
+  });
+
+  return cachedTransporter;
+}
 
 export async function sendPasswordResetEmail(
   email: string,
@@ -24,9 +96,11 @@ export async function sendPasswordResetEmail(
   resetToken: string
 ) {
   const resetUrl = `${process.env.NEXTAUTH_URL}/auth/reset-password?token=${resetToken}`;
+  const config = getSmtpConfig();
+  const transporter = getTransporter();
 
   await transporter.sendMail({
-    from: fromAddress,
+    from: config.from,
     to: email,
     subject: 'Reset Your MealMind AI Password',
     html: `

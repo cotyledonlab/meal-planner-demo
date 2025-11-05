@@ -192,8 +192,11 @@ This command composes `docker-compose.yml` with `docker-compose.dev.yml`, exposi
 ### SMTP Configuration
 
 - **Local development**: Mailpit runs alongside Docker Compose. Keep `SMTP_HOST=mailpit`, `SMTP_PORT=1025`, and leave `SMTP_USER`/`SMTP_PASS` unset.
-- **Production (Mailersend)**: Set `SMTP_HOST=smtp.mailersend.net`, `SMTP_PORT=587`, and provide the Mailersend SMTP username/password. Use an address on your Mailersend domain for `SMTP_FROM` (or leave it blank and the SMTP username will be used).
-- Update the Dokploy deployment environment variables to include the `SMTP_*` values before redeploying so password reset emails are delivered via Mailersend.
+- **Production (Mailersend)**:
+  - Set `SMTP_HOST=smtp.mailersend.net` and `SMTP_PORT=587`
+  - Provide your Mailersend SMTP username/password via `SMTP_USER` and `SMTP_PASS`
+  - Set `SMTP_FROM` to a verified sender (defaults to the SMTP username if omitted)
+- In Dokploy: open the `meal-plan-demo-monostack` stack → Environment tab → add the `SMTP_*` variables above, redeploy, then request a password reset email in production to confirm delivery.
 
 ## Development Scripts
 

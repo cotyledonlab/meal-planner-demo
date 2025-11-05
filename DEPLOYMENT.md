@@ -217,6 +217,13 @@ Deploy both the web app and database as a single docker-compose stack:
    NODE_ENV=production
    SKIP_ENV_VALIDATION=1
 
+   # Mailersend SMTP (required for password reset emails)
+   SMTP_HOST=smtp.mailersend.net
+   SMTP_PORT=587
+   SMTP_USER=<mailersend-smtp-username>
+   SMTP_PASS=<mailersend-smtp-password>
+   SMTP_FROM="MealMind AI <noreply@your-domain.com>"
+
    # Optional OAuth
    AUTH_DISCORD_ID=<your-discord-client-id>
    AUTH_DISCORD_SECRET=<your-discord-client-secret>
@@ -236,6 +243,7 @@ Deploy both the web app and database as a single docker-compose stack:
    - Click "Deploy" in Dokploy dashboard
    - Monitor build logs for any errors
    - Once deployed, access your app at the configured domain
+   - Perform a password reset in production to confirm the email reaches your inbox
 
 #### Option 2: Separate App and Database
 
@@ -260,6 +268,11 @@ Deploy web app and database as separate Dokploy applications:
    NEXTAUTH_URL=https://your-domain.com
    NODE_ENV=production
    SKIP_ENV_VALIDATION=1
+   SMTP_HOST=smtp.mailersend.net
+   SMTP_PORT=587
+   SMTP_USER=<mailersend-smtp-username>
+   SMTP_PASS=<mailersend-smtp-password>
+   SMTP_FROM="MealMind AI <noreply@your-domain.com>"
    ```
 
 4. **Configure Port Mapping**
@@ -293,6 +306,8 @@ dokploy exec <app-name> -- pnpm --filter @meal-planner-demo/web db:migrate
 NODE_ENV=development
 DATABASE_URL=postgresql://user:pass@host:5432/meal-planner-dev
 NEXTAUTH_URL=https://staging.your-domain.com
+SMTP_HOST=mailpit
+SMTP_PORT=1025
 ```
 
 #### Production
@@ -302,6 +317,11 @@ NODE_ENV=production
 DATABASE_URL=postgresql://user:pass@host:5432/meal-planner-prod
 NEXTAUTH_URL=https://your-domain.com
 # Ensure AUTH_SECRET is cryptographically secure
+SMTP_HOST=smtp.mailersend.net
+SMTP_PORT=587
+SMTP_USER=<mailersend-smtp-username>
+SMTP_PASS=<mailersend-smtp-password>
+SMTP_FROM="MealMind AI <noreply@your-domain.com>"
 ```
 
 ### Monitoring and Logs
