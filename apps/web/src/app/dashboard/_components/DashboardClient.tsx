@@ -12,9 +12,10 @@ interface DashboardClientProps {
     email?: string | null;
     role?: string | null;
   };
+  hasMealPlan: boolean;
 }
 
-export default function DashboardClient({ user }: DashboardClientProps) {
+export default function DashboardClient({ user, hasMealPlan }: DashboardClientProps) {
   const [showPremiumModal, setShowPremiumModal] = useState(false);
 
   const isPremiumUser = user.role === 'premium';
@@ -56,14 +57,16 @@ export default function DashboardClient({ user }: DashboardClientProps) {
               className="inline-flex w-full min-h-[48px] items-center justify-center gap-2 rounded-lg bg-emerald-600 px-6 py-3 text-base font-semibold text-white shadow-sm transition hover:bg-emerald-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 sm:w-auto"
             >
               <span>🗓️</span>
-              Plan meals
+              {hasMealPlan ? 'Plan meals' : 'Create your first plan'}
             </Link>
-            <Link
-              href="/planner"
-              className="inline-flex w-full min-h-[48px] items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-6 py-3 text-base font-semibold text-gray-700 shadow-sm transition hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-500 sm:w-auto"
-            >
-              View last plan
-            </Link>
+            {hasMealPlan && (
+              <Link
+                href="/planner"
+                className="inline-flex w-full min-h-[48px] items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-6 py-3 text-base font-semibold text-gray-700 shadow-sm transition hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-500 sm:w-auto"
+              >
+                View last plan
+              </Link>
+            )}
           </div>
         </div>
 
