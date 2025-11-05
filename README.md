@@ -74,13 +74,19 @@ cp .env apps/web/.env
 
 Edit `.env` and `apps/web/.env` and fill in the required values.
 
-4. Start the database and supporting services:
+4. Start the database (and optional local mail relay):
 
 ```bash
-docker compose up -d postgres redis mailpit
+docker compose up -d postgres
 ```
 
-Or use the provided script:
+Need Mailpit locally? Run the composed stack instead:
+
+```bash
+pnpm docker:dev
+```
+
+Or use the provided script for a standalone Postgres container:
 
 ```bash
 ./start-database.sh
@@ -121,7 +127,7 @@ The app will be available at [http://localhost:3000](http://localhost:3000).
 
 ### Docker Compose Deployment
 
-Deploy the entire stack (PostgreSQL, Redis, Mailpit, and web app) with Docker Compose:
+Deploy the production stack (PostgreSQL and web app) with Docker Compose:
 
 1. Ensure Docker and Docker Compose are installed
 
@@ -167,13 +173,27 @@ docker compose down -v
 
 ### Available Services
 
-When running with Docker Compose:
+When running the base Docker Compose file (used for production deployments):
 
 - **Web App**: http://localhost:3000
 - **PostgreSQL**: localhost:5432
-- **Redis**: localhost:6379
-- **Mailpit UI**: http://localhost:8025 (for viewing emails)
+
+For local development, add the Mailpit service by running:
+
+```bash
+pnpm docker:dev
+```
+
+This command composes `docker-compose.yml` with `docker-compose.dev.yml`, exposing:
+
+- **Mailpit UI**: http://localhost:8025
 - **Mailpit SMTP**: localhost:1025
+
+### SMTP Configuration
+
+- **Local development**: Mailpit runs alongside Docker Compose. Keep `SMTP_HOST=mailpit`, `SMTP_PORT=1025`, and leave `SMTP_USER`/`SMTP_PASS` unset.
+- **Production (Mailersend)**: Set `SMTP_HOST=smtp.mailersend.net`, `SMTP_PORT=587`, and provide the Mailersend SMTP username/password. Use an address on your Mailersend domain for `SMTP_FROM` (or leave it blank and the SMTP username will be used).
+- Update the Dokploy deployment environment variables to include the `SMTP_*` values before redeploying so password reset emails are delivered via Mailersend.
 
 ## Development Scripts
 
@@ -181,6 +201,8 @@ All scripts are run from the root directory and delegated to the appropriate wor
 
 ### Development
 
+- `pnpm docker:dev` - Start the local stack (web + Postgres + Mailpit)
+- `pnpm docker:dev:down` - Stop the local Docker stack
 - `pnpm dev` - Start development server with Turbo
 - `pnpm build` - Build for production
 - `pnpm start` - Start production server

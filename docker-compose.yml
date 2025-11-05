@@ -54,26 +54,6 @@ services:
     networks:
       - app-network
 
-  redis:
-    image: redis:7-alpine
-    ports:
-      - "127.0.0.1:${REDIS_PORT:-6379}:6379"
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-    networks:
-      - app-network
-
-  mailpit:
-    image: axllent/mailpit:latest
-    ports:
-      - "127.0.0.1:${MAILPIT_WEB_PORT:-8025}:8025"
-      - "127.0.0.1:${MAILPIT_SMTP_PORT:-1025}:1025"
-    networks:
-      - app-network
-
   web:
     # Build cache invalidates when:
     # 1. Dependencies change (package.json/pnpm-lock.yaml)
@@ -97,6 +77,12 @@ services:
       # Default to http://localhost:3000 for local runs; override in Dokploy with your domain
       - NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:${WEB_PORT:-3000}}
       - AUTH_SECRET=${AUTH_SECRET}
+      # SMTP configuration (defaults to mailpit for local dev)
+      - SMTP_HOST=${SMTP_HOST:-mailpit}
+      - SMTP_PORT=${SMTP_PORT:-1025}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASS=${SMTP_PASS}
+      - SMTP_FROM=${SMTP_FROM:-}
       - SKIP_ENV_VALIDATION=1
     depends_on:
       postgres:

@@ -142,7 +142,7 @@ cp .env apps/web/.env
 # Edit both .env files with required values
 
 # 3. Start database services
-docker compose up -d postgres redis mailpit
+    docker compose up -d postgres
 # OR use the helper script:
 ./start-database.sh
 

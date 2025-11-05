@@ -49,10 +49,13 @@ pnpm lint:fix
 ### 1. Test with Local Database
 
 ```bash
-# Start database services
-docker compose up -d postgres redis mailpit
+# Start database services (Postgres only)
+docker compose up -d postgres
 
-# Or use the convenience script
+# Need Mailpit for email testing?
+pnpm docker:dev
+
+# Or use the convenience script for standalone Postgres
 ./start-database.sh
 
 # Install dependencies

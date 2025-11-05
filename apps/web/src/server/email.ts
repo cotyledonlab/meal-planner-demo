@@ -1,9 +1,14 @@
 import nodemailer from 'nodemailer';
 
+const resolvedPort = process.env.SMTP_PORT ? Number.parseInt(process.env.SMTP_PORT, 10) : 1025;
+const smtpPort = Number.isNaN(resolvedPort) ? 1025 : resolvedPort;
+
+const fromAddress = process.env.SMTP_FROM ?? process.env.SMTP_USER ?? 'noreply@mealmind.ai';
+
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST ?? 'mailpit',
-  port: parseInt(process.env.SMTP_PORT ?? '1025'),
-  secure: false,
+  port: smtpPort,
+  secure: smtpPort === 465,
   auth:
     process.env.SMTP_USER && process.env.SMTP_PASS
       ? {
@@ -21,7 +26,7 @@ export async function sendPasswordResetEmail(
   const resetUrl = `${process.env.NEXTAUTH_URL}/auth/reset-password?token=${resetToken}`;
 
   await transporter.sendMail({
-    from: process.env.SMTP_FROM ?? 'noreply@mealmind.ai',
+    from: fromAddress,
     to: email,
     subject: 'Reset Your MealMind AI Password',
     html: `
