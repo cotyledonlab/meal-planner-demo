@@ -297,7 +297,7 @@ When resolving GitHub issues as an autonomous agent:
 1. **Prerequisites**: Node.js 20+, pnpm 9+, Docker and Docker Compose
 2. **Install dependencies**: `pnpm install`
 3. **Set up environment**: Copy `.env.example` to `.env` and `apps/web/.env`
-4. **Start database**: `docker compose up -d postgres redis mailpit` or `./start-database.sh`
+4. **Start database**: `docker compose up -d postgres` (or `pnpm docker:dev` for Postgres + Mailpit) or `./start-database.sh`
 5. **Initialize database**: `pnpm db:push`
 6. **Seed data**: `pnpm db:seed` (creates test users and sample recipes)
 7. **Start dev server**: `pnpm dev`
@@ -309,7 +309,7 @@ The app will be available at [http://localhost:3000](http://localhost:3000).
 The project includes Docker Compose configuration for full stack deployment:
 
 ```bash
-# Build and start all services (PostgreSQL, Redis, Mailpit, web app)
+# Build and start services (PostgreSQL and web app)
 docker compose up --build
 
 # Run in detached mode

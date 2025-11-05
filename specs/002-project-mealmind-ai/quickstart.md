@@ -18,7 +18,8 @@
    - `SENTRY_DSN` (optional; leave blank to disable).
 2. Start backing services:
    ```bash
-   docker compose up -d postgres redis mailpit
+   docker compose up -d postgres
+   # Need Mailpit locally? pnpm docker:dev
    ```
 3. Install dependencies and prepare the workspace:
    ```bash

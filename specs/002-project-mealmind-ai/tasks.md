@@ -20,7 +20,7 @@
 **Purpose**: Prepare local tooling, environment, and workspace prerequisites.
 
 - [ ] T001 [P] Initialize environment variables per quickstart in `apps/web/.env.local` and ensure secrets placeholder values documented.
-- [ ] T002 [P] Verify Docker Compose stack (`postgres`, `redis`, `mailpit`) with `docker compose up` using repo root compose file and document any adjustments in `quickstart.md`.
+- [ ] T002 [P] Verify Docker Compose stack (`postgres`, optional `mailpit` via `pnpm docker:dev`) with `docker compose up` using repo root compose file and document any adjustments in `quickstart.md`.
 - [ ] T003 [P] Run `pnpm install` and bootstrap Turborepo caches; update `package.json` scripts if missing `lint`, `typecheck`, `playwright test`.
 - [ ] T004 Establish baseline `pnpm lint`, `pnpm typecheck`, and `pnpm test` workflows in CI notes at `specs/002-project-mealmind-ai/quickstart.md`.
 

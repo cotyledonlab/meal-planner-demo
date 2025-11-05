@@ -74,13 +74,19 @@ cp .env apps/web/.env
 
 Edit `.env` and `apps/web/.env` and fill in the required values.
 
-4. Start the database and supporting services:
+4. Start the database (and optional local mail relay):
 
 ```bash
-docker compose up -d postgres redis mailpit
+docker compose up -d postgres
 ```
 
-Or use the provided script:
+Need Mailpit locally? Run the composed stack instead:
+
+```bash
+pnpm docker:dev
+```
+
+Or use the provided script for a standalone Postgres container:
 
 ```bash
 ./start-database.sh
@@ -121,7 +127,7 @@ The app will be available at [http://localhost:3000](http://localhost:3000).
 
 ### Docker Compose Deployment
 
-Deploy the entire stack (PostgreSQL, Redis, Mailpit, and web app) with Docker Compose:
+Deploy the production stack (PostgreSQL and web app) with Docker Compose:
 
 1. Ensure Docker and Docker Compose are installed
 
@@ -171,7 +177,6 @@ When running the base Docker Compose file (used for production deployments):
 
 - **Web App**: http://localhost:3000
 - **PostgreSQL**: localhost:5432
-- **Redis**: localhost:6379
 
 For local development, add the Mailpit service by running:
 
@@ -196,7 +201,7 @@ All scripts are run from the root directory and delegated to the appropriate wor
 
 ### Development
 
-- `pnpm docker:dev` - Start the full local stack (web + Postgres + Redis + Mailpit)
+- `pnpm docker:dev` - Start the local stack (web + Postgres + Mailpit)
 - `pnpm docker:dev:down` - Stop the local Docker stack
 - `pnpm dev` - Start development server with Turbo
 - `pnpm build` - Build for production

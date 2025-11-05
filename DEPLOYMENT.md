@@ -106,13 +106,19 @@ docker compose down -v
 pnpm install
 ```
 
-1. **Start backing services** (PostgreSQL, Redis, Mailpit):
+1. **Start backing services** (PostgreSQL required; Mailpit optional for local email testing):
 
 ```bash
-docker compose up -d postgres redis mailpit
+docker compose up -d postgres
 ```
 
-Or use the provided script:
+Need Mailpit locally? Run the combined stack:
+
+```bash
+pnpm docker:dev
+```
+
+Or use the provided script for a standalone Postgres container:
 
 ```bash
 ./start-database.sh
@@ -218,12 +224,11 @@ Deploy both the web app and database as a single docker-compose stack:
 
 3. **Use the existing docker-compose.yml**
    - Dokploy will automatically use the `docker-compose.yml` at the repository root
-   - This includes postgres, redis, mailpit, `migrate`, and web services
+   - This includes postgres, mailpit (if `pnpm docker:dev` is used), `migrate`, and web services
    - Migrations run automatically in the dedicated `migrate` service before web starts
    - Host-port bindings are configurable via environment variables to avoid conflicts on shared hosts:
      - `WEB_PORT` (default 3000)
      - `POSTGRES_PORT` (default 5432)
-     - `REDIS_PORT` (default 6379)
      - `MAILPIT_WEB_PORT` (default 8025)
      - `MAILPIT_SMTP_PORT` (default 1025)
 
