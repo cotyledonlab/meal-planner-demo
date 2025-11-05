@@ -220,28 +220,60 @@ When working in this environment, Claude Code is typically launched from the VPS
 
 ### Typical Workflow
 
-**CRITICAL**: For any work to be committed to the repo:
+## ⚠️ CRITICAL FIRST STEP - WORKTREE CREATION
 
-1. **ALWAYS create a fresh worktree based off origin/main as the FIRST step**
-2. **ALWAYS change to the worktree directory immediately after creating it**
-3. This ensures concurrent agents can work without conflicts
+**MANDATORY**: Before ANY work on the repo, follow these steps:
+
+### Step 1: Fetch Latest from Remote Main
 
 ```bash
-# Fetch latest changes
+# ALWAYS fetch latest from origin/main first
 git fetch origin
+```
 
-# Create fresh worktree with timestamp
+### Step 2: Create Fresh Worktree from origin/main
+
+```bash
+# Create fresh worktree based on REMOTE origin/main (NOT local main)
 git worktree add ../meal-planner-worktree-$(date +%s) origin/main
+```
 
-# Change to worktree directory
+**Why origin/main?**
+
+- Ensures you branch from latest remote code
+- Avoids stale local main branch
+- Prevents conflicts with other concurrent agents
+
+### Step 3: Change to Worktree Directory
+
+```bash
+# IMMEDIATELY change to worktree directory
 cd ../meal-planner-worktree-*
+```
 
-# Install dependencies
+### Step 4: Install Dependencies
+
+```bash
+# Install dependencies in worktree
 pnpm install
 
 # Copy .env files if needed
-cp ../.env . 2>/dev/null || true
+cp /path/to/main/apps/web/.env apps/web/.env 2>/dev/null || true
 ```
+
+### Step 5: Create Feature Branch
+
+```bash
+# Create and switch to feature branch
+git checkout -b fix/descriptive-name-{issue-number}
+```
+
+**This worktree workflow**:
+
+- ✅ Allows multiple agents to work concurrently
+- ✅ Ensures clean slate from latest remote code
+- ✅ Prevents conflicts and merge issues
+- ✅ Isolates each task in separate working directory
 
 **Standard workflow steps**:
 
@@ -259,7 +291,11 @@ cp ../.env . 2>/dev/null || true
 
 When resolving GitHub issues as an autonomous agent:
 
-1. **Create Fresh Worktree**: Follow worktree creation steps above (REQUIRED)
+1. **🚨 MANDATORY FIRST STEP - Create Fresh Worktree**: Follow "CRITICAL FIRST STEP - WORKTREE CREATION" section above
+   - Fetch from origin: `git fetch origin`
+   - Create worktree from origin/main: `git worktree add ../meal-planner-worktree-$(date +%s) origin/main`
+   - Change to worktree: `cd ../meal-planner-worktree-*`
+   - Install deps: `pnpm install`
 2. **Pick Issue**: Query open issues with `gh issue list`, prioritize by labels/age
 3. **Create Branch**: `git checkout -b fix/descriptive-name-{issue-number}`
 4. **Implement Fix**:
