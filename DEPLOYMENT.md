@@ -243,7 +243,9 @@ Deploy both the web app and database as a single docker-compose stack:
    - Click "Deploy" in Dokploy dashboard
    - Monitor build logs for any errors
    - Once deployed, access your app at the configured domain
-   - Perform a password reset in production to confirm the email reaches your inbox
+
+- Perform a password reset in production to confirm the email reaches your inbox
+  - Alternatively run `pnpm --filter @meal-planner-demo/web email:test -- --to=you@your-domain.com` from the Dokploy host to trigger a smoke-test email using the live SMTP credentials.
 
 #### Option 2: Separate App and Database
 
