@@ -13,6 +13,8 @@
     "db:seed": "pnpm --filter @meal-planner-demo/web db:seed",
     "db:studio": "pnpm --filter @meal-planner-demo/web db:studio",
     "dev": "pnpm --filter @meal-planner-demo/web dev",
+    "docker:dev": "docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build",
+    "docker:dev:down": "docker compose -f docker-compose.yml -f docker-compose.dev.yml down",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md,mdx,yml,yaml}\" --cache --ignore-path .gitignore",
     "format:write": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,mdx,yml,yaml}\" --cache --ignore-path .gitignore",
     "lint": "pnpm --filter @meal-planner-demo/web lint",

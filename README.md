@@ -167,12 +167,21 @@ docker compose down -v
 
 ### Available Services
 
-When running with Docker Compose:
+When running the base Docker Compose file (used for production deployments):
 
 - **Web App**: http://localhost:3000
 - **PostgreSQL**: localhost:5432
 - **Redis**: localhost:6379
-- **Mailpit UI**: http://localhost:8025 (for viewing emails)
+
+For local development, add the Mailpit service by running:
+
+```bash
+pnpm docker:dev
+```
+
+This command composes `docker-compose.yml` with `docker-compose.dev.yml`, exposing:
+
+- **Mailpit UI**: http://localhost:8025
 - **Mailpit SMTP**: localhost:1025
 
 ### SMTP Configuration
@@ -187,6 +196,8 @@ All scripts are run from the root directory and delegated to the appropriate wor
 
 ### Development
 
+- `pnpm docker:dev` - Start the full local stack (web + Postgres + Redis + Mailpit)
+- `pnpm docker:dev:down` - Stop the local Docker stack
 - `pnpm dev` - Start development server with Turbo
 - `pnpm build` - Build for production
 - `pnpm start` - Start production server
