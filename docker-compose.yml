@@ -102,7 +102,7 @@ services:
       - SMTP_PORT=${SMTP_PORT:-1025}
       - SMTP_USER=${SMTP_USER}
       - SMTP_PASS=${SMTP_PASS}
-      - SMTP_FROM=${SMTP_FROM:-noreply@mealmind.ai}
+      - SMTP_FROM=${SMTP_FROM:-}
       - SKIP_ENV_VALIDATION=1
     depends_on:
       postgres:
