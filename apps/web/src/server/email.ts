@@ -3,9 +3,7 @@ import nodemailer from 'nodemailer';
 const resolvedPort = process.env.SMTP_PORT ? Number.parseInt(process.env.SMTP_PORT, 10) : 1025;
 const smtpPort = Number.isNaN(resolvedPort) ? 1025 : resolvedPort;
 
-const fromAddress =
-  process.env.SMTP_FROM ??
-  (process.env.SMTP_USER ? `MealMind AI <${process.env.SMTP_USER}>` : 'noreply@mealmind.ai');
+const fromAddress = process.env.SMTP_FROM ?? process.env.SMTP_USER ?? 'noreply@mealmind.ai';
 
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST ?? 'mailpit',

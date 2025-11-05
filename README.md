@@ -178,7 +178,7 @@ When running with Docker Compose:
 ### SMTP Configuration
 
 - **Local development**: Mailpit runs alongside Docker Compose. Keep `SMTP_HOST=mailpit`, `SMTP_PORT=1025`, and leave `SMTP_USER`/`SMTP_PASS` unset.
-- **Production (Mailersend)**: Set `SMTP_HOST=smtp.mailersend.net`, `SMTP_PORT=587`, and provide the Mailersend SMTP username/password. Use an address on your Mailersend domain for `SMTP_FROM` (or leave it blank to reuse the SMTP username automatically).
+- **Production (Mailersend)**: Set `SMTP_HOST=smtp.mailersend.net`, `SMTP_PORT=587`, and provide the Mailersend SMTP username/password. Use an address on your Mailersend domain for `SMTP_FROM` (or leave it blank and the SMTP username will be used).
 - Update the Dokploy deployment environment variables to include the `SMTP_*` values before redeploying so password reset emails are delivered via Mailersend.
 
 ## Development Scripts
