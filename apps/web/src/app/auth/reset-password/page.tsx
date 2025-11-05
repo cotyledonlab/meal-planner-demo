@@ -6,6 +6,7 @@ import { Suspense, useEffect, useState } from 'react';
 
 import { api } from '~/trpc/react';
 import AuthLayout from '../_components/AuthLayout';
+import PasswordInput from '../_components/PasswordInput';
 
 function ResetPasswordForm() {
   const router = useRouter();
@@ -200,14 +201,13 @@ function ResetPasswordForm() {
               <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                 New password
               </label>
-              <input
+              <PasswordInput
                 id="password"
                 name="password"
-                type="password"
                 autoComplete="new-password"
                 required
                 aria-describedby="password-requirements"
-                className="mt-1 block w-full rounded-lg border border-gray-200 px-4 py-3 text-base text-gray-900 shadow-sm transition placeholder:text-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                className="mt-1 block w-full rounded-lg border border-gray-200 px-4 py-3 pr-12 text-base text-gray-900 shadow-sm transition placeholder:text-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600"
                 placeholder="Enter new password (min 8 characters)"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -221,13 +221,12 @@ function ResetPasswordForm() {
               <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
                 Confirm new password
               </label>
-              <input
+              <PasswordInput
                 id="confirmPassword"
                 name="confirmPassword"
-                type="password"
                 autoComplete="new-password"
                 required
-                className="mt-1 block w-full rounded-lg border border-gray-200 px-4 py-3 text-base text-gray-900 shadow-sm transition placeholder:text-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                className="mt-1 block w-full rounded-lg border border-gray-200 px-4 py-3 pr-12 text-base text-gray-900 shadow-sm transition placeholder:text-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600"
                 placeholder="Confirm new password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
