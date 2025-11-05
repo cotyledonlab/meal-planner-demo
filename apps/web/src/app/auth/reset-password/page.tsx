@@ -206,11 +206,15 @@ function ResetPasswordForm() {
                 type="password"
                 autoComplete="new-password"
                 required
+                aria-describedby="password-requirements"
                 className="mt-1 block w-full rounded-lg border border-gray-200 px-4 py-3 text-base text-gray-900 shadow-sm transition placeholder:text-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600"
                 placeholder="Enter new password (min 8 characters)"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
+              <p id="password-requirements" className="mt-1 text-xs text-gray-500">
+                Minimum 8 characters required
+              </p>
             </div>
 
             <div>
