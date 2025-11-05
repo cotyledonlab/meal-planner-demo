@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { auth } from '~/server/auth';
 import { api, HydrateClient } from '~/trpc/server';
 import MealPlanView from '~/app/_components/MealPlanView';
+import ExportButtons from '~/app/_components/ExportButtons';
 import ShoppingList from '~/app/_components/ShoppingList';
 
 interface PageProps {
@@ -39,6 +40,7 @@ export default async function PlanPage({ params }: PageProps) {
   const startDate = plan.startDate instanceof Date ? plan.startDate : new Date(plan.startDate);
 
   const shoppingListAnchorId = 'plan-shopping-list-section';
+  const planStartDateIso = startDate.toISOString();
 
   return (
     <main className="flex min-h-screen flex-col bg-gradient-to-b from-emerald-50 to-white">
@@ -63,7 +65,7 @@ export default async function PlanPage({ params }: PageProps) {
         </Link>
 
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-8 space-y-4">
           <h1 className="text-3xl font-bold text-gray-900">Your Meal Plan</h1>
           <p className="mt-2 text-sm text-gray-600">
             {plan.days}-day plan starting{' '}
@@ -73,6 +75,7 @@ export default async function PlanPage({ params }: PageProps) {
               day: 'numeric',
             })}
           </p>
+          <ExportButtons planId={id} planStartDateIso={planStartDateIso} planDays={plan.days} />
         </div>
 
         <div className="grid gap-8 lg:grid-cols-3">

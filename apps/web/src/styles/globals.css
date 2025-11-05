@@ -61,3 +61,27 @@
 .animate-checkmark {
   animation: checkmark 0.5s ease-out forwards;
 }
+
+.no-print {
+  display: initial;
+}
+
+@media print {
+  body {
+    background: #ffffff !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .break-before-page {
+    break-before: page;
+    page-break-before: always;
+  }
+
+  .break-inside-avoid {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+}
