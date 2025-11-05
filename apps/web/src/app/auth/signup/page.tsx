@@ -188,6 +188,7 @@ function SignUpForm() {
                 type="password"
                 autoComplete="new-password"
                 required
+                aria-describedby="password-hint"
                 className="mt-1 block w-full rounded-lg border border-gray-200 px-4 py-3 text-base text-gray-900 shadow-sm transition placeholder:text-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600"
                 placeholder="At least 8 characters"
                 value={formData.password}
@@ -198,7 +199,7 @@ function SignUpForm() {
                   {validationErrors.password}
                 </p>
               )}
-              <p className="mt-1 text-xs text-gray-500">
+              <p id="password-hint" className="mt-1 text-xs text-gray-500">
                 Must be at least 8 characters with one uppercase letter and one number
               </p>
             </div>
