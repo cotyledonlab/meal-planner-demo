@@ -220,13 +220,33 @@ When working in this environment, Claude Code is typically launched from the VPS
 
 ### Typical Workflow
 
-1. **Before creating feature branch**: Ensure local main is up to date
-   ```bash
-   git checkout main
-   git fetch origin main
-   git rebase origin/main
-   ```
-2. Create feature branch and make code changes
+**CRITICAL**: For any work to be committed to the repo:
+
+1. **ALWAYS create a fresh worktree based off origin/main as the FIRST step**
+2. **ALWAYS change to the worktree directory immediately after creating it**
+3. This ensures concurrent agents can work without conflicts
+
+```bash
+# Fetch latest changes
+git fetch origin
+
+# Create fresh worktree with timestamp
+git worktree add ../meal-planner-worktree-$(date +%s) origin/main
+
+# Change to worktree directory
+cd ../meal-planner-worktree-*
+
+# Install dependencies
+pnpm install
+
+# Copy .env files if needed
+cp ../.env . 2>/dev/null || true
+```
+
+**Standard workflow steps**:
+
+1. Create feature branch in worktree
+2. Make code changes
 3. Push to branch → Create/update PR
 4. Review and merge to main
 5. Dokploy automatically deploys changes
@@ -239,14 +259,15 @@ When working in this environment, Claude Code is typically launched from the VPS
 
 When resolving GitHub issues as an autonomous agent:
 
-1. **Pick Issue**: Query open issues with `gh issue list`, prioritize by labels/age
-2. **Create Branch**: `git checkout -b fix/descriptive-name-{issue-number}`
-3. **Implement Fix**:
+1. **Create Fresh Worktree**: Follow worktree creation steps above (REQUIRED)
+2. **Pick Issue**: Query open issues with `gh issue list`, prioritize by labels/age
+3. **Create Branch**: `git checkout -b fix/descriptive-name-{issue-number}`
+4. **Implement Fix**:
    - Review existing code with Read/Grep tools
    - Make changes addressing all acceptance criteria
    - Run `pnpm typecheck && pnpm lint` continuously
-4. **Test Locally**: All checks must pass before commit
-5. **Commit & Push**:
+5. **Test Locally**: All checks must pass before commit
+6. **Commit & Push**:
 
    ```bash
    git add .
@@ -261,26 +282,28 @@ When resolving GitHub issues as an autonomous agent:
    git push -u origin branch-name
    ```
 
-6. **Create PR**: `gh pr create --title "..." --body "..."`
+7. **Create PR**: `gh pr create --title "..." --body "..."`
    - Summary of changes
    - "Closes #issue-number"
    - Test plan checklist
-7. **Deploy to Feature Branch**: User deploys feature branch for testing
-8. **E2E Testing with DevTools MCP**:
+8. **Deploy to Feature Branch**: User deploys feature branch for testing
+9. **E2E Testing with DevTools MCP**:
    - Navigate to deployed URL: `https://cotyledonlab.com/demos/meal-planner`
    - Test all acceptance criteria
    - Take screenshots of key functionality
    - Verify mobile and desktop experiences
    - Document any additional issues found
-9. **Log Additional Issues**: If bugs/enhancements discovered:
-   - Create new GitHub issues with `gh issue create`
-   - Include repro steps, screenshots, priority
-   - Link to related PR/issue
-10. **Update PR**: Comment with E2E test results
+10. **Log Additional Issues**: If bugs/enhancements discovered:
+
+- Create new GitHub issues with `gh issue create`
+- Include repro steps, screenshots, priority
+- Link to related PR/issue
+
+11. **Update PR**: Comment with E2E test results
     - List what's working
     - Link to any new issues created
     - Recommend merge or fixes needed
-11. **Document**: Update AGENTS.md with workflow learnings
+12. **Document**: Update AGENTS.md with workflow learnings
 
 **Example**: Issue #89 - Enhance meal planner wizard
 
