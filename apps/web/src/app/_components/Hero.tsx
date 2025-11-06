@@ -3,18 +3,23 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
+const BLUR_DATA_URL =
+  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAADCAIAAAA7ljmRAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAMElEQVR4nGO49+7Jt/+f61tL8ivSGeQ0NCLTkgsq82cuns7AzcygryeVVhiXnh4OAHsJD/ki5q1xAAAAAElFTkSuQmCC';
+
 export default function Hero() {
   return (
     <section className="relative isolate overflow-hidden bg-gradient-to-br from-emerald-950 via-emerald-900 to-emerald-800 text-white">
       {/* Background image */}
       <div className="absolute inset-0 -z-10">
         <Image
-          src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=1920&q=80"
+          src="/images/hero-cooking.jpg"
           alt="Fresh ingredients for home cooking in an Irish kitchen"
           fill
           sizes="100vw"
           className="object-cover opacity-70"
           priority
+          placeholder="blur"
+          blurDataURL={BLUR_DATA_URL}
         />
         <div
           aria-hidden="true"
