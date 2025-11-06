@@ -231,49 +231,84 @@ When working in this environment, Claude Code is typically launched from the VPS
 git fetch origin
 ```
 
-### Step 2: Create Fresh Worktree from origin/main
+### Step 2: Check for Existing Worktrees (Avoid Duplicate Work)
+
+```bash
+# CRITICAL: Check if issue is already being worked on
+# List all GitHub issues and existing worktrees
+gh issue list --state open --json number,title
+git worktree list
+
+# Example: If picking issue #156, check for worktree named:
+# ../meal-planner-156 or any worktree with "156" in path
+# If exists, pick a different issue to avoid duplicating work
+```
+
+**Why check first?**
+
+- Prevents multiple agents working on same issue concurrently
+- Avoids wasted effort and merge conflicts
+- Enables parallel work on different issues
+
+### Step 3: Create Fresh Worktree with Issue Number
 
 ```bash
 # Create fresh worktree based on REMOTE origin/main (NOT local main)
-git worktree add ../meal-planner-worktree-$(date +%s) origin/main
+# IMPORTANT: Include issue number in worktree name for tracking
+# Replace {issue-number} with actual issue number (e.g., 156)
+git worktree add ../meal-planner-{issue-number} origin/main
+
+# Example for issue #156:
+git worktree add ../meal-planner-156 origin/main
 ```
 
-**Why origin/main?**
+**Why origin/main with issue number?**
 
 - Ensures you branch from latest remote code
 - Avoids stale local main branch
-- Prevents conflicts with other concurrent agents
+- Issue number in path prevents duplicate work by other agents
+- Easy to identify which issue each worktree addresses
 
-### Step 3: Change to Worktree Directory
+### Step 4: Change to Worktree Directory
 
 ```bash
 # IMMEDIATELY change to worktree directory
-cd ../meal-planner-worktree-*
+# Use the issue number from previous step
+cd ../meal-planner-{issue-number}
+
+# Example for issue #156:
+cd ../meal-planner-156
 ```
 
-### Step 4: Install Dependencies
+### Step 5: Install Dependencies
 
 ```bash
 # Install dependencies in worktree
 pnpm install
 
 # Copy .env files if needed
-cp /path/to/main/apps/web/.env apps/web/.env 2>/dev/null || true
+cp /path/to/main/.env .env 2>/dev/null || true
 ```
 
-### Step 5: Create Feature Branch
+### Step 6: Create Feature Branch
 
 ```bash
 # Create and switch to feature branch
+# MUST include issue number for traceability
 git checkout -b fix/descriptive-name-{issue-number}
+
+# Example for issue #156:
+git checkout -b fix/dashboard-empty-state-156
 ```
 
 **This worktree workflow**:
 
-- ✅ Allows multiple agents to work concurrently
+- ✅ Allows multiple agents to work concurrently on different issues
 - ✅ Ensures clean slate from latest remote code
 - ✅ Prevents conflicts and merge issues
 - ✅ Isolates each task in separate working directory
+- ✅ Issue number in path enables easy tracking and avoids duplicate work
+- ✅ Quick check via `git worktree list` shows all active work
 
 **Standard workflow steps**:
 
@@ -291,19 +326,22 @@ git checkout -b fix/descriptive-name-{issue-number}
 
 When resolving GitHub issues as an autonomous agent:
 
-1. **🚨 MANDATORY FIRST STEP - Create Fresh Worktree**: Follow "CRITICAL FIRST STEP - WORKTREE CREATION" section above
+1. **Pick Issue First**: Query open issues with `gh issue list --state open --json number,title,labels`, prioritize by labels/age
+2. **🚨 Check for Existing Work**: Run `git worktree list` to verify issue isn't already being worked on
+   - If worktree exists with issue number (e.g., `../meal-planner-156`), pick different issue
+   - This prevents duplicate work by concurrent agents
+3. **Create Fresh Worktree**: Follow "CRITICAL FIRST STEP - WORKTREE CREATION" section above
    - Fetch from origin: `git fetch origin`
-   - Create worktree from origin/main: `git worktree add ../meal-planner-worktree-$(date +%s) origin/main`
-   - Change to worktree: `cd ../meal-planner-worktree-*`
+   - Create worktree with issue number: `git worktree add ../meal-planner-{issue-number} origin/main`
+   - Change to worktree: `cd ../meal-planner-{issue-number}`
    - Install deps: `pnpm install`
-2. **Pick Issue**: Query open issues with `gh issue list`, prioritize by labels/age
-3. **Create Branch**: `git checkout -b fix/descriptive-name-{issue-number}`
-4. **Implement Fix**:
+4. **Create Branch**: `git checkout -b fix/descriptive-name-{issue-number}`
+5. **Implement Fix**:
    - Review existing code with Read/Grep tools
    - Make changes addressing all acceptance criteria
    - Run `pnpm typecheck && pnpm lint` continuously
-5. **Test Locally**: All checks must pass before commit
-6. **Commit & Push**:
+6. **Test Locally**: All checks must pass before commit
+7. **Commit & Push**:
 
    ```bash
    git add .
@@ -318,38 +356,37 @@ When resolving GitHub issues as an autonomous agent:
    git push -u origin branch-name
    ```
 
-7. **Create PR**: `gh pr create --title "..." --body "..."`
+8. **Create PR**: `gh pr create --title "..." --body "..."`
    - Summary of changes
    - "Closes #issue-number"
    - Test plan checklist
-8. **Deploy to Feature Branch**: User deploys feature branch for testing
-9. **E2E Testing with DevTools MCP**:
-   - Navigate to deployed URL: `https://cotyledonlab.com/demos/meal-planner`
-   - Test all acceptance criteria
-   - Take screenshots of key functionality
-   - Verify mobile and desktop experiences
-   - Document any additional issues found
-10. **Log Additional Issues**: If bugs/enhancements discovered:
-
-- Create new GitHub issues with `gh issue create`
-- Include repro steps, screenshots, priority
-- Link to related PR/issue
-
-11. **Update PR**: Comment with E2E test results
+9. **Deploy to Feature Branch**: User deploys feature branch for testing
+10. **E2E Testing with DevTools MCP**:
+    - Navigate to deployed URL: `https://cotyledonlab.com/demos/meal-planner`
+    - Test all acceptance criteria
+    - Take screenshots of key functionality
+    - Verify mobile and desktop experiences
+    - Document any additional issues found
+11. **Log Additional Issues**: If bugs/enhancements discovered:
+    - Create new GitHub issues with `gh issue create`
+    - Include repro steps, screenshots, priority
+    - Link to related PR/issue
+12. **Update PR**: Comment with E2E test results
     - List what's working
     - Link to any new issues created
     - Recommend merge or fixes needed
-12. **Document**: Update AGENTS.md with workflow learnings
+13. **Document**: Update AGENTS.md with workflow learnings
 
-**Example**: Issue #89 - Enhance meal planner wizard
+**Example**: Issue #156 - Dashboard shows 'View last plan' when no plan exists
 
-- Created branch `fix/enhance-meal-planner-wizard-89`
-- Implemented: gradients, icons, animations, loading states
-- Tested locally: 129 tests passed
-- Created PR #128
-- Deployed and tested via DevTools MCP
-- Found minor issue: success animation too fast (#130)
-- Recommended merge with follow-up issue
+- Checked existing worktrees: `git worktree list` (no conflicts found)
+- Created worktree: `git worktree add ../meal-planner-156 origin/main`
+- Changed to worktree: `cd ../meal-planner-156`
+- Created branch: `fix/dashboard-empty-state-156`
+- Implemented: Conditional rendering based on meal plan existence
+- Tested locally: 139 tests passed, type checking passed
+- Created PR #165
+- Impact: Improved first-time user experience (P1 issue)
 
 ## Environment Setup
 
