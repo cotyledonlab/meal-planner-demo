@@ -1,10 +1,24 @@
 import { z } from 'zod';
+import { TRPCError } from '@trpc/server';
 import { createTRPCRouter, protectedProcedure } from '../trpc';
-import { PlanGenerator } from '../../services/planGenerator';
+import {
+  PlanGenerator,
+  PlanGenerationError,
+  type PlanGenerationErrorCode,
+} from '../../services/planGenerator';
 import { ShoppingListService } from '../../services/shoppingList';
 import { createLogger } from '~/lib/logger';
 
 const log = createLogger('plan-router');
+
+const PLAN_ERROR_TO_TRPC_CODE: Record<PlanGenerationErrorCode, TRPCError['code']> = {
+  NO_RECIPES_AVAILABLE: 'BAD_REQUEST',
+  NO_RECIPES_MATCH_PREFERENCES: 'BAD_REQUEST',
+  NO_RECIPES_FOR_MEAL_TYPE: 'BAD_REQUEST',
+  PLAN_LIMIT_EXCEEDED: 'FORBIDDEN',
+  PLAN_VALIDATION_FAILED: 'INTERNAL_SERVER_ERROR',
+  USER_NOT_FOUND: 'UNAUTHORIZED',
+};
 
 export const planRouter = createTRPCRouter({
   generate: protectedProcedure
@@ -51,7 +65,41 @@ export const planRouter = createTRPCRouter({
         return plan;
       } catch (error) {
         log.error({ error, userId: ctx.session.user.id }, 'Failed to generate meal plan');
-        throw error;
+
+        if (error && typeof error === 'object' && 'code' in error) {
+          const candidate = error as { code?: unknown; message?: unknown };
+          if (typeof candidate.code === 'string') {
+            const mappedCode = PLAN_ERROR_TO_TRPC_CODE[candidate.code as PlanGenerationErrorCode];
+            if (mappedCode) {
+              throw new TRPCError({
+                code: mappedCode,
+                message:
+                  typeof candidate.message === 'string'
+                    ? candidate.message
+                    : 'Failed to generate meal plan',
+                cause: error instanceof Error ? error : undefined,
+              });
+            }
+          }
+        }
+
+        if (error instanceof TRPCError) {
+          throw error;
+        }
+
+        if (error instanceof Error) {
+          throw new TRPCError({
+            code: 'INTERNAL_SERVER_ERROR',
+            message: error.message || 'Failed to generate meal plan',
+            cause: error,
+          });
+        }
+
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Failed to generate meal plan',
+          cause: error,
+        });
       }
     }),
 

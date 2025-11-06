@@ -2,6 +2,25 @@ import { type PrismaClient } from '@prisma/client';
 import { SUSPICIOUS_BREAKFAST_KEYWORDS } from '@meal-planner-demo/constants';
 import { createLogger } from '~/lib/logger';
 
+export type PlanGenerationErrorCode =
+  | 'NO_RECIPES_AVAILABLE'
+  | 'NO_RECIPES_MATCH_PREFERENCES'
+  | 'NO_RECIPES_FOR_MEAL_TYPE'
+  | 'PLAN_LIMIT_EXCEEDED'
+  | 'PLAN_VALIDATION_FAILED'
+  | 'USER_NOT_FOUND';
+
+export class PlanGenerationError extends Error {
+  constructor(
+    public readonly code: PlanGenerationErrorCode,
+    message: string
+  ) {
+    super(message);
+    this.name = 'PlanGenerationError';
+    Object.setPrototypeOf(this, PlanGenerationError.prototype);
+  }
+}
+
 interface GeneratePlanInput {
   userId: string;
   startDate?: Date;
@@ -44,7 +63,7 @@ export class PlanGenerator {
     });
 
     if (!user) {
-      throw new Error('User not found');
+      throw new PlanGenerationError('USER_NOT_FOUND', 'User not found');
     }
 
     // Role-based day limit validation
@@ -78,7 +97,10 @@ export class PlanGenerator {
     });
 
     if (recipesMatchingDiet.length === 0) {
-      throw new Error('No recipes available. Please seed the database first.');
+      throw new PlanGenerationError(
+        'NO_RECIPES_AVAILABLE',
+        'No recipes available. Please seed the database first.'
+      );
     }
 
     const eligibleRecipes =
@@ -89,7 +111,10 @@ export class PlanGenerator {
           );
 
     if (eligibleRecipes.length === 0) {
-      throw new Error('No recipes match your preferences. Please adjust and try again.');
+      throw new PlanGenerationError(
+        'NO_RECIPES_MATCH_PREFERENCES',
+        'No recipes match your preferences. Please adjust and try again.'
+      );
     }
 
     // Prepare meal plan items data
@@ -120,7 +145,8 @@ export class PlanGenerator {
         );
 
         if (appropriateRecipes.length === 0) {
-          throw new Error(
+          throw new PlanGenerationError(
+            'NO_RECIPES_FOR_MEAL_TYPE',
             `No recipes available for ${mealType}. Please add more recipes to the database.`
           );
         }
@@ -213,7 +239,8 @@ export class PlanGenerator {
         },
         'Generated plan has incorrect item count'
       );
-      throw new Error(
+      throw new PlanGenerationError(
+        'PLAN_VALIDATION_FAILED',
         `Plan validation failed: expected ${expectedItemCount} items but got ${items.length}`
       );
     }
@@ -239,7 +266,10 @@ export class PlanGenerator {
           },
           'Day missing expected meal types'
         );
-        throw new Error(`Plan validation failed: day ${dayIndex} has incorrect meal types`);
+        throw new PlanGenerationError(
+          'PLAN_VALIDATION_FAILED',
+          `Plan validation failed: day ${dayIndex} has incorrect meal types`
+        );
       }
 
       for (const expectedType of expectedMealTypes) {
@@ -252,7 +282,10 @@ export class PlanGenerator {
             },
             'Day missing expected meal type'
           );
-          throw new Error(`Plan validation failed: day ${dayIndex} missing ${expectedType}`);
+          throw new PlanGenerationError(
+            'PLAN_VALIDATION_FAILED',
+            `Plan validation failed: day ${dayIndex} missing ${expectedType}`
+          );
         }
       }
     }
