@@ -6,6 +6,7 @@ settings:
 
 overrides:
   vite@>=7.1.0 <=7.1.10: ">=7.1.11"
+  scheduler: 0.25.0
 
 importers:
   .:
@@ -5789,16 +5790,10 @@ packages:
       }
     engines: { node: ">=10" }
 
-  scheduler@0.25.0-rc-603e6108-20241029:
+  scheduler@0.25.0:
     resolution:
       {
-        integrity: sha512-pFwF6H1XrSdYYNLfOcGlM28/j8CGLu8IvdrxqhjWULe2bPcKiKW4CV+OWqR/9fT52mywx65l7ysNkjLKBda7eA==,
-      }
-
-  scheduler@0.27.0:
-    resolution:
-      {
-        integrity: sha512-eNv+WrVbKu1f3vbYJT/xtiF5syA5HPIMtf9IgY/nKg0sWqzAUEvqY/xm7OcZc/qafLx/iO9FgOmeSAp4v5ti/Q==,
+        integrity: sha512-xFVuu11jh+xcO7JOAGJNOXld8/TcEHK/4CituBUeUb5hqxJLj9YuemAEuvm9gQ/+pgXYfbQuqAkiYu+u7YEsNA==,
       }
 
   secure-json-parse@4.1.0:
@@ -7710,7 +7705,7 @@ snapshots:
     dependencies:
       object-assign: 4.1.1
       react: 19.2.0
-      scheduler: 0.25.0-rc-603e6108-20241029
+      scheduler: 0.25.0
 
   "@react-pdf/render@4.3.1":
     dependencies:
@@ -10233,7 +10228,7 @@ snapshots:
   react-dom@19.2.0(react@19.2.0):
     dependencies:
       react: 19.2.0
-      scheduler: 0.27.0
+      scheduler: 0.25.0
 
   react-is@16.13.1: {}
 
@@ -10356,9 +10351,7 @@ snapshots:
 
   safe-stable-stringify@2.5.0: {}
 
-  scheduler@0.25.0-rc-603e6108-20241029: {}
-
-  scheduler@0.27.0: {}
+  scheduler@0.25.0: {}
 
   secure-json-parse@4.1.0: {}
 

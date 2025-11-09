@@ -196,7 +196,16 @@ This command composes `docker-compose.yml` with `docker-compose.dev.yml`, exposi
   - Set `SMTP_HOST=smtp.mailersend.net` and `SMTP_PORT=587`
   - Provide your Mailersend SMTP username/password via `SMTP_USER` and `SMTP_PASS`
   - Set `SMTP_FROM` to a verified sender (defaults to the SMTP username if omitted)
-- In Dokploy: open the `meal-plan-demo-monostack` stack → Environment tab → add the `SMTP_*` variables above, redeploy, then request a password reset email in production to confirm delivery. You can also run `pnpm --filter @meal-planner-demo/web email:test -- --to=you@your-domain.com` on the Dokploy host to trigger a smoke-test message after updating credentials.
+- **In Dokploy**:
+  1. Open the `meal-plan-demo-monostack` stack.
+  2. Go to the **Environment** tab and add the `SMTP_*` variables listed above.
+  3. Redeploy the stack.
+  4. Request a password reset email in production to confirm delivery.
+  5. _(Optional)_ After updating credentials, run the following on the Dokploy host to trigger a smoke-test message:
+
+     ```bash
+     pnpm --filter @meal-planner-demo/web email:test -- --to=you@your-domain.com
+     ```
 
 ## Development Scripts
 

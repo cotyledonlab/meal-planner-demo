@@ -62,10 +62,6 @@
   animation: checkmark 0.5s ease-out forwards;
 }
 
-.no-print {
-  display: initial;
-}
-
 @media print {
   body {
     background: #ffffff !important;

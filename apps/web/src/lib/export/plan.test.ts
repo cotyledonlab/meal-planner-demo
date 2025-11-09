@@ -6,9 +6,11 @@ import {
   summarizeInstructions,
 } from './plan';
 
+const tomorrow = new Date(Date.now() + 24 * 60 * 60 * 1000);
+
 const samplePlan = {
   id: 'plan_1',
-  startDate: '2025-11-04T00:00:00.000Z',
+  startDate: tomorrow.toISOString(),
   days: 3,
   items: [
     {
@@ -99,6 +101,11 @@ describe('plan export utilities', () => {
   it('creates predictable filenames for exports', () => {
     const plan = normalizeMealPlanForExport(samplePlan);
     const filename = createPlanFilename('Meal Plan', plan.startDate, plan.days, 'pdf');
-    expect(filename).toBe('meal-plan-20251104.pdf');
+    const expectedSegment = [
+      plan.startDate.getFullYear(),
+      String(plan.startDate.getMonth() + 1).padStart(2, '0'),
+      String(plan.startDate.getDate()).padStart(2, '0'),
+    ].join('');
+    expect(filename).toBe(`meal-plan-${expectedSegment}.pdf`);
   });
 });

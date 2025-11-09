@@ -66,6 +66,10 @@ const styles = StyleSheet.create({
     fontWeight: 600,
     color: '#1f2937',
   },
+  mealTypeServings: {
+    fontSize: 11,
+    color: '#6b7280',
+  },
   recipeBadges: {
     flexDirection: 'row',
     gap: 6,
@@ -122,7 +126,9 @@ function MealPlanPdfDocument({ plan, userName }: MealPlanPdfDocumentProps) {
     <Document>
       <Page size="A4" style={styles.page} wrap>
         <View style={styles.header}>
-          <Text style={styles.planTitle}>Weekly Meal Plan</Text>
+          <Text style={styles.planTitle}>
+            {plan.days === 7 ? 'Weekly Meal Plan' : `${plan.days}-Day Meal Plan`}
+          </Text>
           <Text style={styles.planMeta}>
             {plan.days}-day plan • {label}
             {userName ? ` • Prepared for ${userName}` : ''}
@@ -142,16 +148,21 @@ function MealPlanPdfDocument({ plan, userName }: MealPlanPdfDocumentProps) {
 
             {day.items.map((item) => {
               const recipe = item.recipe;
-              const ingredientLines = recipe.ingredients.map((ingredient) =>
-                formatIngredientForExport(ingredient.quantity, ingredient.unit, ingredient.name)
-              );
+              const ingredientLines = recipe.ingredients.map((ingredient, idx) => ({
+                key: ingredient.id ?? `${item.id}-ingredient-${idx}`,
+                line: formatIngredientForExport(
+                  ingredient.quantity,
+                  ingredient.unit,
+                  ingredient.name
+                ),
+              }));
               const instructionSteps = summarizeInstructions(recipe.instructionsMd, 6);
 
               return (
                 <View key={item.id} style={styles.recipeCard}>
                   <View style={styles.recipeHeader}>
                     <Text style={styles.recipeTitle}>{recipe.title}</Text>
-                    <Text style={{ fontSize: 11, color: '#6b7280' }}>
+                    <Text style={styles.mealTypeServings}>
                       {getMealTypeLabel(item.mealType)} • Serves {item.servings}
                     </Text>
                   </View>
@@ -167,8 +178,8 @@ function MealPlanPdfDocument({ plan, userName }: MealPlanPdfDocumentProps) {
                     <Text>Ingredients</Text>
                   </View>
                   <View style={styles.bulletList}>
-                    {ingredientLines.map((line, idx) => (
-                      <Text key={`${item.id}-ing-${idx}`} style={styles.bulletItem}>
+                    {ingredientLines.map(({ key, line }) => (
+                      <Text key={key} style={styles.bulletItem}>
                         • {line}
                       </Text>
                     ))}
@@ -207,6 +218,7 @@ export async function generateMealPlanPdf(
 }
 
 export function createMealPlanPdfFilename(plan: ExportMealPlan, userName?: string | null): string {
-  const prefix = userName ? `${userName.split(' ')[0] ?? 'plan'}-meal-plan` : 'meal-plan';
+  const firstSegment = userName?.trim().split(/\s+/)[0];
+  const prefix = firstSegment ? `${firstSegment}-meal-plan` : 'meal-plan';
   return createPlanFilename(prefix.toLowerCase(), plan.startDate, plan.days, 'pdf');
 }

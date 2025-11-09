@@ -29,7 +29,7 @@ function parseArgs(argv: string[]) {
       continue;
     }
 
-    console.warn(`Ignoring unrecognised argument: ${arg}`);
+    console.warn(`Ignoring unrecognized argument: ${arg}`);
   }
 
   return args;

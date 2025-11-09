@@ -206,7 +206,7 @@ export function summarizeInstructions(markdown: string, maxSteps = 6): string[] 
     .split(/\r?\n/)
     .map((line) => line.trim())
     .filter(Boolean)
-    .map((line) => line.replace(/^[-*]\s+/, '').replace(/^\d+[\.).]\s+/, ''));
+    .map((line) => line.replace(/^[-*]\s+/, '').replace(/^\d+[.).]\s+/, ''));
 
   const deduped: string[] = [];
   for (const line of lines) {
@@ -237,7 +237,8 @@ export function formatIngredientForExport(quantity: number, unit: string, name: 
   try {
     const normalized = convertToNormalizedUnit(quantity, unit);
     return `${formatQuantity(normalized.quantity, normalized.unit)} ${name}`;
-  } catch {
+  } catch (error) {
+    console.warn('Failed to normalize unit for ingredient', { quantity, unit, name, error });
     const rounded = Math.round(quantity * 10) / 10;
     return `${rounded} ${unit} ${name}`.trim();
   }

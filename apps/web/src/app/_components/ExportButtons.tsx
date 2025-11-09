@@ -10,10 +10,7 @@ interface ExportButtonsProps {
 
 type ExportMode = 'pdf' | 'csv';
 
-const BASE_PATH =
-  typeof process !== 'undefined'
-    ? (process.env.NEXT_PUBLIC_BASE_PATH?.replace(/\/$/, '') ?? '')
-    : '';
+const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH?.replace(/\/$/, '') ?? '';
 
 function resolveExportUrl(planId: string, mode: ExportMode): string {
   const endpoint =

@@ -12,9 +12,7 @@ export type ShoppingListCsvItem = {
 export function generateShoppingListCsv(items: ShoppingListCsvItem[]): string {
   const rows = items.map((item) => ({
     item: item.name,
-    quantity: Number.isFinite(item.quantity)
-      ? Math.round(item.quantity * 100) / 100
-      : item.quantity,
+    quantity: Number.isFinite(item.quantity) ? Math.round(item.quantity * 100) / 100 : 'N/A',
     unit: item.unit,
     category: item.category,
     checked: item.checked ? 'yes' : 'no',

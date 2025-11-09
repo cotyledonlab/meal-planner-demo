@@ -160,7 +160,7 @@ export default async function PlanPrintPage({ params }: PageProps) {
           <section className="break-before-page rounded-2xl border border-gray-200 bg-white p-6 shadow-sm print:shadow-none">
             <h2 className="text-2xl font-semibold text-emerald-700">Shopping List</h2>
             <p className="text-sm text-gray-500">
-              Organised by category to speed up your grocery run.
+              Organized by category to speed up your grocery run.
             </p>
             <div className="mt-4 grid gap-6 md:grid-cols-2">
               {shoppingListByCategory.map(([category, items]) => (
