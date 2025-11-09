@@ -4,8 +4,14 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useState } from 'react';
 
+import { PLAN_METADATA } from '@meal-planner-demo/constants';
+
 import AuthLayout from '../_components/AuthLayout';
 import PasswordInput from '../_components/PasswordInput';
+
+const premiumPlan = PLAN_METADATA.premium;
+const premiumPriceLabel = `${premiumPlan.price}${premiumPlan.period ?? ''}`;
+const premiumFeatureHighlights = premiumPlan.features.slice(0, 3);
 
 function SignUpForm() {
   const router = useRouter();
@@ -186,8 +192,7 @@ function SignUpForm() {
                 {isPaymentStep ? 'Step 2 of 2 — Mock payment' : 'Step 1 of 2 — Account details'}
               </p>
               <p className="mt-1 text-sm text-emerald-800">
-                Premium Tier: €4.99/month • Advanced plan settings, longer plans, and supermarket
-                comparisons.
+                Premium Tier: {premiumPriceLabel} • {premiumPlan.spotlight}
               </p>
               {isPaymentStep && (
                 <p className="mt-2 text-xs text-emerald-700">
@@ -285,14 +290,14 @@ function SignUpForm() {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="font-semibold">MealMind Premium</p>
-                      <p className="text-emerald-800">€4.99/month — charged later</p>
+                      <p className="text-emerald-800">{premiumPriceLabel} — charged later</p>
                     </div>
                     <p className="text-lg font-semibold text-emerald-700">€0.00 today</p>
                   </div>
                   <ul className="mt-3 list-disc space-y-1 pl-5 text-emerald-800">
-                    <li>Generate up to 7-day plans</li>
-                    <li>Advanced dietary filters</li>
-                    <li>Premium shopping list exports</li>
+                    {premiumFeatureHighlights.map((feature) => (
+                      <li key={feature}>{feature}</li>
+                    ))}
                   </ul>
                 </div>
 

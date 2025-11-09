@@ -36,13 +36,16 @@ export default function Hero() {
             Plan, prep, and shop smarter with weekly recipes and cost-saving supermarket insights.
             Your meal plan, recipes, and shopping list — in minutes, not hours.
           </p>
-          <div className="mt-10 flex items-center justify-center gap-4">
+          <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4">
             <Link
-              href="/auth/signup"
+              href="#plan-selector"
               className="rounded-full bg-emerald-600 px-8 py-3 text-base font-semibold text-white shadow-sm transition-all duration-150 ease-in-out hover:scale-[1.02] hover:bg-emerald-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
             >
-              Get Started
+              Start with Premium
             </Link>
+            <p className="text-xs uppercase tracking-[0.2em] text-emerald-200">
+              Premium recommended
+            </p>
             <Link
               href="/auth/signin"
               className="rounded-full bg-white/10 px-8 py-3 text-base font-semibold text-white shadow-sm ring-1 ring-white/20 transition-all duration-150 ease-in-out hover:scale-[1.02] hover:bg-white/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"

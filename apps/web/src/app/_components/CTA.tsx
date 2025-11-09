@@ -15,11 +15,14 @@ export default function CTA() {
           </p>
           <div className="mt-8">
             <Link
-              href="/auth/signup"
+              href="#plan-selector"
               className="inline-block rounded-full bg-emerald-600 px-8 py-3 text-base font-semibold text-white shadow-sm transition-all duration-150 ease-in-out hover:scale-[1.02] hover:bg-emerald-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
             >
-              Get Started
+              Choose your plan
             </Link>
+            <p className="mt-2 text-xs uppercase tracking-[0.2em] text-emerald-500">
+              Premium highlighted first
+            </p>
           </div>
           <p className="mt-6 text-sm text-gray-600">Built for families in Ireland 🇮🇪</p>
         </div>

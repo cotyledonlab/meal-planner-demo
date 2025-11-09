@@ -1,40 +1,30 @@
 // Pricing tiers comparison section
 import Link from 'next/link';
 
+import { PLAN_DISPLAY_ORDER, PLAN_METADATA, type PlanTier } from '@meal-planner-demo/constants';
+import { PLAN_SIGNUP_ROUTES } from '~/lib/plans';
+
+const CTA_LABEL: Record<PlanTier, string> = {
+  basic: 'Get Started',
+  premium: 'Go Premium',
+};
+
 export default function Pricing() {
-  const tiers = [
-    {
-      name: 'Free Tier',
-      price: '€0',
-      description: 'Perfect for getting started with meal planning',
-      features: [
-        'Weekly meal-prep recipes',
-        'Automatic shopping list',
-        'Basic dietary preferences',
-        'Email support',
-      ],
-      cta: 'Get Started',
-      href: '/auth/signup',
-      highlighted: false,
-    },
-    {
-      name: 'Premium',
-      price: '€4.99',
-      period: '/month',
-      description: 'For families who want to save time and money',
-      features: [
-        'Everything in Free',
-        'Best value supermarket finder',
-        'Advanced customisation',
-        'Multiple meal plans',
-        'Priority support',
-        'Export and share plans',
-      ],
-      cta: 'Go Premium',
-      href: '/auth/signup?tier=premium',
-      highlighted: true,
-    },
-  ];
+  const tiers = PLAN_DISPLAY_ORDER.map((tier) => {
+    const plan = PLAN_METADATA[tier];
+    return {
+      id: plan.id,
+      name: plan.name,
+      price: plan.price,
+      period: plan.period,
+      description: plan.description,
+      features: plan.features,
+      highlighted: tier === 'premium',
+      cta: CTA_LABEL[tier],
+      href: PLAN_SIGNUP_ROUTES[tier],
+      badge: plan.badge,
+    };
+  });
 
   return (
     <section id="pricing" className="bg-white py-16 sm:py-20 lg:py-24">
@@ -51,16 +41,16 @@ export default function Pricing() {
         <div className="mx-auto mt-12 grid max-w-5xl grid-cols-1 gap-8 lg:grid-cols-2">
           {tiers.map((tier) => (
             <div
-              key={tier.name}
+              key={tier.id}
               className={`relative rounded-2xl p-8 shadow-sm ${
                 tier.highlighted
                   ? 'bg-emerald-50 ring-2 ring-emerald-600'
                   : 'bg-white ring-1 ring-gray-200'
               }`}
             >
-              {tier.highlighted && (
+              {tier.badge && (
                 <span className="absolute right-8 top-0 -translate-y-1/2 rounded-full bg-emerald-600 px-4 py-1 text-sm font-semibold text-white">
-                  Most Popular
+                  {tier.badge}
                 </span>
               )}
               <h3 className="text-xl font-semibold text-gray-900">{tier.name}</h3>
