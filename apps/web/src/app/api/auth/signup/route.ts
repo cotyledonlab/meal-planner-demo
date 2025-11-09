@@ -1,20 +1,10 @@
 import { hash } from '@node-rs/argon2';
 import { NextResponse } from 'next/server';
-import { z } from 'zod';
 
 import { db } from '~/server/db';
 import { signIn } from '~/server/auth';
 
-const signUpSchema = z.object({
-  email: z.string().email('Invalid email address'),
-  password: z
-    .string()
-    .min(8, 'Password must be at least 8 characters')
-    .max(128, 'Password must be at most 128 characters')
-    .regex(/[A-Z]/, 'Password must include at least one uppercase letter')
-    .regex(/[0-9]/, 'Password must include at least one number'),
-  name: z.string().trim().min(1, 'Name is required'),
-});
+import { signUpSchema } from './schema';
 
 export async function POST(request: Request) {
   try {
@@ -28,7 +18,8 @@ export async function POST(request: Request) {
       );
     }
 
-    const { email, password, name } = parsed.data;
+    const { email, password, name, tier } = parsed.data;
+    const role = tier === 'premium' ? 'premium' : 'basic';
 
     // Check if user already exists
     const existingUser = await db.user.findUnique({
@@ -52,6 +43,7 @@ export async function POST(request: Request) {
       data: {
         email,
         name: name ?? null,
+        role,
         password: {
           create: {
             hash: passwordHash,
@@ -74,6 +66,7 @@ export async function POST(request: Request) {
           id: user.id,
           email: user.email,
           name: user.name,
+          role: user.role,
         },
       },
       { status: 201 }
