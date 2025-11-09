@@ -1,35 +1,22 @@
 import { describe, it, expect } from 'vitest';
-import { z } from 'zod';
 
-// Import the schema from the signup route
-const signUpSchema = z.object({
-  email: z.string().email('Invalid email address'),
-  password: z
-    .string()
-    .min(8, 'Password must be at least 8 characters')
-    .max(128, 'Password must be at most 128 characters')
-    .regex(/[A-Z]/, 'Password must include at least one uppercase letter')
-    .regex(/[0-9]/, 'Password must include at least one number'),
-  name: z.string().trim().min(1, 'Name is required'),
-});
+import { signUpSchema } from './schema';
+
+const basePayload = {
+  name: 'John Doe',
+  email: 'john@example.com',
+  password: 'Password123',
+};
 
 describe('Sign Up Schema Validation', () => {
   describe('name validation', () => {
     it('accepts valid name', () => {
-      const result = signUpSchema.safeParse({
-        name: 'John Doe',
-        email: 'john@example.com',
-        password: 'Password123',
-      });
+      const result = signUpSchema.safeParse({ ...basePayload, tier: 'basic' });
       expect(result.success).toBe(true);
     });
 
     it('rejects empty name', () => {
-      const result = signUpSchema.safeParse({
-        name: '',
-        email: 'john@example.com',
-        password: 'Password123',
-      });
+      const result = signUpSchema.safeParse({ ...basePayload, name: '', tier: 'basic' });
       expect(result.success).toBe(false);
       if (!result.success) {
         expect(result.error.issues[0]?.message).toBe('Name is required');
@@ -37,11 +24,7 @@ describe('Sign Up Schema Validation', () => {
     });
 
     it('trims and rejects whitespace-only name', () => {
-      const result = signUpSchema.safeParse({
-        name: '   ',
-        email: 'john@example.com',
-        password: 'Password123',
-      });
+      const result = signUpSchema.safeParse({ ...basePayload, name: '   ', tier: 'basic' });
       expect(result.success).toBe(false);
       if (!result.success) {
         expect(result.error.issues[0]?.message).toBe('Name is required');
@@ -50,9 +33,9 @@ describe('Sign Up Schema Validation', () => {
 
     it('trims valid name with whitespace', () => {
       const result = signUpSchema.safeParse({
+        ...basePayload,
         name: '  John Doe  ',
-        email: 'john@example.com',
-        password: 'Password123',
+        tier: 'basic',
       });
       expect(result.success).toBe(true);
       if (result.success) {
@@ -63,19 +46,15 @@ describe('Sign Up Schema Validation', () => {
 
   describe('email validation', () => {
     it('accepts valid email', () => {
-      const result = signUpSchema.safeParse({
-        name: 'John Doe',
-        email: 'john@example.com',
-        password: 'Password123',
-      });
+      const result = signUpSchema.safeParse({ ...basePayload, tier: 'basic' });
       expect(result.success).toBe(true);
     });
 
     it('rejects invalid email', () => {
       const result = signUpSchema.safeParse({
-        name: 'John Doe',
+        ...basePayload,
         email: 'not-an-email',
-        password: 'Password123',
+        tier: 'basic',
       });
       expect(result.success).toBe(false);
     });
@@ -83,39 +62,58 @@ describe('Sign Up Schema Validation', () => {
 
   describe('password validation', () => {
     it('accepts valid password', () => {
-      const result = signUpSchema.safeParse({
-        name: 'John Doe',
-        email: 'john@example.com',
-        password: 'Password123',
-      });
+      const result = signUpSchema.safeParse({ ...basePayload, tier: 'basic' });
       expect(result.success).toBe(true);
     });
 
     it('rejects password without uppercase', () => {
       const result = signUpSchema.safeParse({
-        name: 'John Doe',
-        email: 'john@example.com',
+        ...basePayload,
         password: 'password123',
+        tier: 'basic',
       });
       expect(result.success).toBe(false);
     });
 
     it('rejects password without number', () => {
       const result = signUpSchema.safeParse({
-        name: 'John Doe',
-        email: 'john@example.com',
+        ...basePayload,
         password: 'PasswordOnly',
+        tier: 'basic',
       });
       expect(result.success).toBe(false);
     });
 
     it('rejects password shorter than 8 characters', () => {
-      const result = signUpSchema.safeParse({
-        name: 'John Doe',
-        email: 'john@example.com',
-        password: 'Pass1',
-      });
+      const result = signUpSchema.safeParse({ ...basePayload, password: 'Pass1', tier: 'basic' });
       expect(result.success).toBe(false);
+    });
+  });
+
+  describe('tier validation', () => {
+    it('defaults to basic when omitted', () => {
+      const result = signUpSchema.safeParse(basePayload);
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.tier).toBe('basic');
+      }
+    });
+
+    it('accepts premium tier', () => {
+      const result = signUpSchema.safeParse({ ...basePayload, tier: 'premium' });
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.tier).toBe('premium');
+      }
+    });
+
+    it('rejects invalid tier values', () => {
+      const result = signUpSchema.safeParse({ ...basePayload, tier: 'vip' });
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.issues[0]?.message).toContain('Invalid enum value');
+        expect(result.error.issues[0]?.message).toContain('vip');
+      }
     });
   });
 });
