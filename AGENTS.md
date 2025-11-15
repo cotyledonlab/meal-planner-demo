@@ -471,6 +471,9 @@ pnpm db:push --dry-run
 
 ## Recent Changes
 
+- **2025-11-09**: Added tier selection to signup flow with mock payment step for premium users (PR #170)
+- **2025-11-09**: Added meal plan export functionality - PDF, CSV, and print views (PR #133)
+- **2025-11-09**: Added SMTP configuration and smoke test script for password reset emails (PR #137)
 - **2025-11-02**: Fixed day count validation and premium user controls (PRs #113, #112, #104)
 - **2025-11-01**: Fixed inappropriate breakfast assignments in seed data (PRs #111, #110)
 - **2025-10-31**: Fixed meal type filtering to prevent inappropriate assignments (PRs #109, #105)
