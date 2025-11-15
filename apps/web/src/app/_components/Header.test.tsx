@@ -20,7 +20,7 @@ describe('Header - Mobile Menu', () => {
   it('renders hamburger button when user is logged in', () => {
     vi.mocked(useSession).mockReturnValue({
       data: {
-        user: { email: 'test@example.com' },
+        user: { id: 'test-id', email: 'test@example.com' },
         expires: new Date(Date.now() + 86400000).toISOString(),
       },
       status: 'authenticated',
@@ -47,7 +47,7 @@ describe('Header - Mobile Menu', () => {
   it('toggles mobile menu when hamburger button is clicked', () => {
     vi.mocked(useSession).mockReturnValue({
       data: {
-        user: { email: 'test@example.com' },
+        user: { id: 'test-id', email: 'test@example.com' },
         expires: new Date(Date.now() + 86400000).toISOString(),
       },
       status: 'authenticated',
@@ -76,7 +76,7 @@ describe('Header - Mobile Menu', () => {
   it('changes button styling when menu is open', () => {
     vi.mocked(useSession).mockReturnValue({
       data: {
-        user: { email: 'test@example.com' },
+        user: { id: 'test-id', email: 'test@example.com' },
         expires: new Date(Date.now() + 86400000).toISOString(),
       },
       status: 'authenticated',
@@ -101,7 +101,7 @@ describe('Header - Mobile Menu', () => {
   it('sets aria-expanded attribute correctly', () => {
     vi.mocked(useSession).mockReturnValue({
       data: {
-        user: { email: 'test@example.com' },
+        user: { id: 'test-id', email: 'test@example.com' },
         expires: new Date(Date.now() + 86400000).toISOString(),
       },
       status: 'authenticated',
@@ -126,7 +126,7 @@ describe('Header - Mobile Menu', () => {
   it('renders backdrop overlay when menu is open', () => {
     vi.mocked(useSession).mockReturnValue({
       data: {
-        user: { email: 'test@example.com' },
+        user: { id: 'test-id', email: 'test@example.com' },
         expires: new Date(Date.now() + 86400000).toISOString(),
       },
       status: 'authenticated',
@@ -151,7 +151,7 @@ describe('Header - Mobile Menu', () => {
   it('closes menu when backdrop is clicked', () => {
     vi.mocked(useSession).mockReturnValue({
       data: {
-        user: { email: 'test@example.com' },
+        user: { id: 'test-id', email: 'test@example.com' },
         expires: new Date(Date.now() + 86400000).toISOString(),
       },
       status: 'authenticated',
@@ -176,7 +176,7 @@ describe('Header - Mobile Menu', () => {
   it('applies correct animation classes to menu', () => {
     vi.mocked(useSession).mockReturnValue({
       data: {
-        user: { email: 'test@example.com' },
+        user: { id: 'test-id', email: 'test@example.com' },
         expires: new Date(Date.now() + 86400000).toISOString(),
       },
       status: 'authenticated',
