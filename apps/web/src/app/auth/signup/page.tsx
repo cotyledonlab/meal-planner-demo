@@ -16,9 +16,7 @@ function SignUpForm() {
   const [currentStep, setCurrentStep] = useState<'tier' | 'details' | 'payment'>(
     tierParam === 'premium' ? 'details' : 'tier'
   );
-  const [selectedTier, setSelectedTier] = useState<'basic' | 'premium'>(
-    tierParam === 'premium' ? 'premium' : 'premium' // Default to premium
-  );
+  const [selectedTier, setSelectedTier] = useState<'basic' | 'premium'>('premium');
   
   const isPremium = selectedTier === 'premium';
   const isPaymentStep = isPremium && currentStep === 'payment';
