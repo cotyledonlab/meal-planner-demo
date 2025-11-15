@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { ChevronDownIcon } from '@heroicons/react/24/outline';
 
 interface MealPlanWizardProps {
   onComplete: (preferences: MealPreferences) => void;
@@ -123,18 +124,24 @@ export default function MealPlanWizard({
                   👥
                 </span>
               </label>
-              <select
-                id="householdSize"
-                value={householdSize}
-                onChange={(e) => setHouseholdSize(Number(e.target.value))}
-                className="mt-2 block w-full rounded-2xl border-2 border-gray-200 bg-white px-4 py-3.5 text-base text-gray-900 shadow-sm transition hover:border-emerald-300 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600 sm:rounded-xl min-h-[56px]"
-              >
-                {[1, 2, 3, 4, 5, 6].map((num) => (
-                  <option key={num} value={num}>
-                    {num} {num === 1 ? 'person' : 'people'}
-                  </option>
-                ))}
-              </select>
+              <div className="relative mt-2">
+                <select
+                  id="householdSize"
+                  value={householdSize}
+                  onChange={(e) => setHouseholdSize(Number(e.target.value))}
+                  className="block w-full appearance-none rounded-2xl border-2 border-gray-200 bg-white px-4 py-3.5 pr-12 text-base text-gray-900 shadow-sm transition hover:border-emerald-300 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600 sm:rounded-xl min-h-[56px]"
+                >
+                  {[1, 2, 3, 4, 5, 6].map((num) => (
+                    <option key={num} value={num}>
+                      {num} {num === 1 ? 'person' : 'people'}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDownIcon
+                  className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400"
+                  aria-hidden="true"
+                />
+              </div>
             </div>
 
             {/* Meals per day */}
@@ -148,16 +155,22 @@ export default function MealPlanWizard({
                   🍽️
                 </span>
               </label>
-              <select
-                id="mealsPerDay"
-                value={mealsPerDay}
-                onChange={(e) => setMealsPerDay(Number(e.target.value))}
-                className="mt-2 block w-full rounded-2xl border-2 border-gray-200 bg-white px-4 py-3.5 text-base text-gray-900 shadow-sm transition hover:border-emerald-300 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600 sm:rounded-xl min-h-[56px]"
-              >
-                <option value={1}>1 meal (Dinner only)</option>
-                <option value={2}>2 meals (Lunch & Dinner)</option>
-                <option value={3}>3 meals (All meals)</option>
-              </select>
+              <div className="relative mt-2">
+                <select
+                  id="mealsPerDay"
+                  value={mealsPerDay}
+                  onChange={(e) => setMealsPerDay(Number(e.target.value))}
+                  className="block w-full appearance-none rounded-2xl border-2 border-gray-200 bg-white px-4 py-3.5 pr-12 text-base text-gray-900 shadow-sm transition hover:border-emerald-300 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600 sm:rounded-xl min-h-[56px]"
+                >
+                  <option value={1}>1 meal (Dinner only)</option>
+                  <option value={2}>2 meals (Lunch & Dinner)</option>
+                  <option value={3}>3 meals (All meals)</option>
+                </select>
+                <ChevronDownIcon
+                  className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400"
+                  aria-hidden="true"
+                />
+              </div>
             </div>
 
             {/* How many days */}
@@ -171,21 +184,27 @@ export default function MealPlanWizard({
                   📅
                 </span>
               </label>
-              <select
-                id="days"
-                value={days}
-                onChange={(e) => setDays(Number(e.target.value))}
-                className="mt-2 block w-full rounded-2xl border-2 border-gray-200 bg-white px-4 py-3.5 text-base text-gray-900 shadow-sm transition hover:border-emerald-300 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600 sm:rounded-xl min-h-[56px]"
-              >
-                {[3, 4, 5, 6, 7].map((num) => {
-                  const isPremiumOption = !isPremium && num > 3;
-                  return (
-                    <option key={num} value={num} disabled={isPremiumOption}>
-                      {num} days{isPremiumOption ? ' ⭐ Premium' : ''}
-                    </option>
-                  );
-                })}
-              </select>
+              <div className="relative mt-2">
+                <select
+                  id="days"
+                  value={days}
+                  onChange={(e) => setDays(Number(e.target.value))}
+                  className="block w-full appearance-none rounded-2xl border-2 border-gray-200 bg-white px-4 py-3.5 pr-12 text-base text-gray-900 shadow-sm transition hover:border-emerald-300 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600 sm:rounded-xl min-h-[56px]"
+                >
+                  {[3, 4, 5, 6, 7].map((num) => {
+                    const isPremiumOption = !isPremium && num > 3;
+                    return (
+                      <option key={num} value={num} disabled={isPremiumOption}>
+                        {num} days{isPremiumOption ? ' ⭐ Premium' : ''}
+                      </option>
+                    );
+                  })}
+                </select>
+                <ChevronDownIcon
+                  className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400"
+                  aria-hidden="true"
+                />
+              </div>
               {!isPremium && (
                 <p className="mt-2 rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-700 border border-amber-200">
                   💡 Basic users limited to 3 days. Upgrade to premium for 4-7 day plans.
