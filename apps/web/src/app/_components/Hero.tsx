@@ -30,7 +30,9 @@ export default function Hero() {
       <div className="relative mx-auto max-w-7xl px-6 py-16 sm:py-20 lg:py-24">
         <div className="mx-auto max-w-2xl text-center">
           <h1 className="text-4xl font-semibold tracking-tight text-white sm:text-5xl">
-            Simplify Your Weekly Meals — Without Breaking the Bank
+            Simplify Your Weekly Meals
+            <br className="sm:hidden" aria-hidden="true" /> —{' '}
+            <span className="inline-block">Without Breaking the Bank</span>
           </h1>
           <p className="mt-6 text-base text-emerald-100 sm:text-lg">
             Plan, prep, and shop smarter with weekly recipes and cost-saving supermarket insights.
