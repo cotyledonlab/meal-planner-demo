@@ -13,7 +13,7 @@ export default function Pricing() {
     {
       ...PRICING.PREMIUM,
       cta: 'Go Premium',
-      href: '/auth/signup',
+      href: '/auth/signup?tier=premium',
       highlighted: true,
     },
   ];
