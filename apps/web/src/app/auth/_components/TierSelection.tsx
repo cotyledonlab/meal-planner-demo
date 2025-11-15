@@ -16,10 +16,7 @@ export default function TierSelection({ selectedTier, onTierSelect }: TierSelect
     },
     {
       id: 'basic' as const,
-      name: PRICING.FREE.name,
-      price: PRICING.FREE.price,
-      description: PRICING.FREE.description,
-      features: PRICING.FREE.features,
+      ...PRICING.FREE,
       recommended: false,
     },
   ];
