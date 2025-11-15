@@ -119,7 +119,7 @@ export default function MealPlanWizard({
                 className="flex items-center gap-2 text-sm font-semibold text-gray-900"
               >
                 <span>How many people?</span>
-                <span className="text-lg leading-none sm:text-xl" role="img" aria-label="people">
+                <span className="text-sm leading-none sm:text-base" role="img" aria-label="people">
                   👥
                 </span>
               </label>
@@ -144,7 +144,7 @@ export default function MealPlanWizard({
                 className="flex items-center gap-2 text-sm font-semibold text-gray-900"
               >
                 <span>How many meals per day?</span>
-                <span className="text-lg leading-none sm:text-xl" role="img" aria-label="meals">
+                <span className="text-sm leading-none sm:text-base" role="img" aria-label="meals">
                   🍽️
                 </span>
               </label>
@@ -167,7 +167,7 @@ export default function MealPlanWizard({
                 className="flex items-center gap-2 text-sm font-semibold text-gray-900"
               >
                 <span>How many days to plan?</span>
-                <span className="text-lg leading-none sm:text-xl" role="img" aria-label="calendar">
+                <span className="text-sm leading-none sm:text-base" role="img" aria-label="calendar">
                   📅
                 </span>
               </label>
@@ -197,7 +197,7 @@ export default function MealPlanWizard({
             <div className="space-y-3">
               <span className="flex items-center gap-2 text-sm font-semibold text-gray-900">
                 <span>Dietary preferences</span>
-                <span className="text-lg leading-none sm:text-xl" role="img" aria-label="diet">
+                <span className="text-sm leading-none sm:text-base" role="img" aria-label="diet">
                   🥗
                 </span>
               </span>
@@ -242,7 +242,7 @@ export default function MealPlanWizard({
                 className="flex items-center gap-2 text-sm font-semibold text-gray-900"
               >
                 <span>Foods to avoid (optional)</span>
-                <span className="text-lg leading-none sm:text-xl" role="img" aria-label="avoid">
+                <span className="text-sm leading-none sm:text-base" role="img" aria-label="avoid">
                   🚫
                 </span>
               </label>
