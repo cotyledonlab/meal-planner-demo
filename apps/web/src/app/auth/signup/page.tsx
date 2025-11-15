@@ -6,13 +6,21 @@ import { Suspense, useState } from 'react';
 
 import AuthLayout from '../_components/AuthLayout';
 import PasswordInput from '../_components/PasswordInput';
+import TierSelection from '../_components/TierSelection';
 
 function SignUpForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const tier = searchParams.get('tier');
-  const isPremium = tier === 'premium';
-  const [currentStep, setCurrentStep] = useState<'details' | 'payment'>('details');
+  const tierParam = searchParams.get('tier');
+  
+  const [currentStep, setCurrentStep] = useState<'tier' | 'details' | 'payment'>(
+    tierParam === 'premium' ? 'details' : 'tier'
+  );
+  const [selectedTier, setSelectedTier] = useState<'basic' | 'premium'>(
+    tierParam === 'premium' ? 'premium' : 'premium' // Default to premium
+  );
+  
+  const isPremium = selectedTier === 'premium';
   const isPaymentStep = isPremium && currentStep === 'payment';
 
   const [formData, setFormData] = useState({
@@ -52,6 +60,11 @@ function SignUpForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (currentStep === 'tier') {
+      setCurrentStep('details');
+      return;
+    }
+
     if (isPremium && currentStep === 'details') {
       setCurrentStep('payment');
       return;
@@ -75,7 +88,7 @@ function SignUpForm() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...formData,
-          tier: isPremium ? 'premium' : 'basic',
+          tier: selectedTier === 'premium' ? 'premium' : 'basic',
         }),
       });
 
@@ -142,9 +155,11 @@ function SignUpForm() {
     ? 'Creating account...'
     : isPaymentStep
       ? 'Complete payment & create account'
-      : isPremium
-        ? 'Continue to payment'
-        : 'Create account';
+      : currentStep === 'tier'
+        ? 'Continue'
+        : isPremium
+          ? 'Continue to payment'
+          : 'Create account';
 
   return (
     <>
@@ -166,7 +181,13 @@ function SignUpForm() {
         Back to Home
       </Link>
       <AuthLayout
-        title={isPremium ? 'Get Premium Access' : 'Create your account'}
+        title={
+          currentStep === 'tier'
+            ? 'Create your account'
+            : isPremium
+              ? 'Get Premium Access'
+              : 'Create your account'
+        }
         subtitle={
           <>
             Already have an account?{' '}
@@ -180,10 +201,10 @@ function SignUpForm() {
         }
       >
         <form className="space-y-6" onSubmit={handleSubmit}>
-          {isPremium && (
+          {isPremium && currentStep !== 'tier' && (
             <div className="rounded-md border border-emerald-200 bg-emerald-50 p-4">
               <p className="text-sm font-semibold text-emerald-900">
-                {isPaymentStep ? 'Step 2 of 2 — Mock payment' : 'Step 1 of 2 — Account details'}
+                {isPaymentStep ? 'Step 3 of 3 — Mock payment' : 'Step 2 of 3 — Account details'}
               </p>
               <p className="mt-1 text-sm text-emerald-800">
                 Premium Tier: €4.99/month • Advanced plan settings, longer plans, and supermarket
@@ -198,13 +219,26 @@ function SignUpForm() {
             </div>
           )}
 
+          {!isPremium && currentStep === 'details' && (
+            <div className="rounded-md border border-gray-200 bg-gray-50 p-4">
+              <p className="text-sm font-semibold text-gray-900">
+                Step 2 of 2 — Account details
+              </p>
+              <p className="mt-1 text-sm text-gray-700">
+                Free Tier: Get started with basic meal planning features.
+              </p>
+            </div>
+          )}
+
           {error && (
             <div className="rounded-md bg-red-50 p-4" role="alert" aria-live="polite">
               <p className="text-sm text-red-800">{error}</p>
             </div>
           )}
 
-          {isPaymentStep ? (
+          {currentStep === 'tier' ? (
+            <TierSelection selectedTier={selectedTier} onTierSelect={setSelectedTier} />
+          ) : isPaymentStep ? (
             <div className="space-y-6 rounded-xl border border-emerald-100 bg-white/80 p-5 shadow-sm">
               <div>
                 <h2 className="text-base font-semibold text-gray-900">Mock payment details</h2>
@@ -396,6 +430,17 @@ function SignUpForm() {
             >
               {primaryButtonLabel}
             </button>
+            {currentStep === 'details' && (
+              <button
+                type="button"
+                className="mt-3 w-full min-h-[44px] rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
+                onClick={() => {
+                  setCurrentStep('tier');
+                }}
+              >
+                Back to plan selection
+              </button>
+            )}
             {isPaymentStep && (
               <button
                 type="button"

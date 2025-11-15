@@ -1,37 +1,19 @@
 // Pricing tiers comparison section
 import Link from 'next/link';
+import { PRICING } from '@meal-planner-demo/constants';
 
 export default function Pricing() {
   const tiers = [
     {
-      name: 'Free Tier',
-      price: '€0',
-      description: 'Perfect for getting started with meal planning',
-      features: [
-        'Weekly meal-prep recipes',
-        'Automatic shopping list',
-        'Basic dietary preferences',
-        'Email support',
-      ],
+      ...PRICING.FREE,
       cta: 'Get Started',
       href: '/auth/signup',
       highlighted: false,
     },
     {
-      name: 'Premium',
-      price: '€4.99',
-      period: '/month',
-      description: 'For families who want to save time and money',
-      features: [
-        'Everything in Free',
-        'Best value supermarket finder',
-        'Advanced customisation',
-        'Multiple meal plans',
-        'Priority support',
-        'Export and share plans',
-      ],
+      ...PRICING.PREMIUM,
       cta: 'Go Premium',
-      href: '/auth/signup?tier=premium',
+      href: '/auth/signup',
       highlighted: true,
     },
   ];
@@ -69,7 +51,9 @@ export default function Pricing() {
                 <span className="text-4xl font-semibold tracking-tight text-gray-900">
                   {tier.price}
                 </span>
-                {tier.period && <span className="text-base text-gray-600">{tier.period}</span>}
+                {'period' in tier && tier.period && (
+                  <span className="text-base text-gray-600">{tier.period}</span>
+                )}
               </div>
               <ul className="mt-8 space-y-3">
                 {tier.features.map((feature) => (

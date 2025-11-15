@@ -21,3 +21,32 @@ export const SUSPICIOUS_BREAKFAST_KEYWORDS = [
   "bolognese",
   "chili",
 ] as const;
+
+// Pricing and tier information
+export const PRICING = {
+  FREE: {
+    name: "Free Tier",
+    price: "€0",
+    description: "Perfect for getting started with meal planning",
+    features: [
+      "Weekly meal-prep recipes",
+      "Automatic shopping list",
+      "Basic dietary preferences",
+      "Email support",
+    ],
+  },
+  PREMIUM: {
+    name: "Premium",
+    price: "€4.99",
+    period: "/month",
+    description: "For families who want to save time and money",
+    features: [
+      "Everything in Free",
+      "Best value supermarket finder",
+      "Advanced customisation",
+      "Multiple meal plans",
+      "Priority support",
+      "Export and share plans",
+    ],
+  },
+} as const;
