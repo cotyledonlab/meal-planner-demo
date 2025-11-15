@@ -9,6 +9,7 @@ interface PremiumFeatureCardProps {
   isPremiumUser: boolean;
   onPreview?: () => void;
   onLearnMore?: () => void;
+  previewLabel?: string;
 }
 
 export default function PremiumFeatureCard({
@@ -18,6 +19,7 @@ export default function PremiumFeatureCard({
   isPremiumUser,
   onPreview,
   onLearnMore,
+  previewLabel,
 }: PremiumFeatureCardProps) {
   return (
     <div className="relative overflow-hidden rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition hover:shadow-md">
@@ -65,12 +67,20 @@ export default function PremiumFeatureCard({
                   Go Premium
                 </Link>
                 {onPreview && (
-                  <button
-                    onClick={onPreview}
-                    className="inline-flex w-full min-h-[44px] items-center justify-center gap-1 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-semibold text-gray-700 shadow-sm transition hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-500 sm:w-auto"
-                  >
-                    Preview
-                  </button>
+                  <div className="flex flex-col gap-1">
+                    <button
+                      onClick={onPreview}
+                      className="inline-flex w-full min-h-[44px] items-center justify-center gap-1 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-semibold text-gray-700 shadow-sm transition hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-500 sm:w-auto"
+                      aria-label="See example of this feature with sample data"
+                    >
+                      See Example
+                    </button>
+                    {previewLabel && (
+                      <p className="text-xs text-gray-500 text-center sm:text-left">
+                        {previewLabel}
+                      </p>
+                    )}
+                  </div>
                 )}
               </>
             ) : (

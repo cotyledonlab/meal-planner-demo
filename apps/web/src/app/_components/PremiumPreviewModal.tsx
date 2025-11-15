@@ -64,7 +64,7 @@ export default function PremiumPreviewModal({ onClose }: PremiumPreviewModalProp
           {/* Premium badge */}
           <div className="mt-6 inline-flex items-center gap-2 rounded-full bg-emerald-100 px-4 py-2 text-sm font-semibold text-emerald-700">
             <span>✨</span>
-            <span>Premium Feature Preview</span>
+            <span>Example with Sample Data</span>
           </div>
 
           {/* Price comparison table */}
@@ -127,14 +127,14 @@ export default function PremiumPreviewModal({ onClose }: PremiumPreviewModalProp
 
           {/* CTA */}
           <div className="mt-8 space-y-3">
-            <button
-              onClick={onClose}
-              className="w-full min-h-[48px] rounded-full bg-emerald-600 px-6 py-3 text-base font-semibold text-white shadow-sm transition hover:bg-emerald-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
+            <a
+              href="/#pricing"
+              className="block w-full min-h-[48px] rounded-full bg-emerald-600 px-6 py-3 text-base font-semibold text-white text-center shadow-sm transition hover:bg-emerald-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
             >
-              Upgrade to Unlock Real Comparisons
-            </button>
+              Upgrade to Premium for Real Prices
+            </a>
             <p className="text-center text-xs text-gray-500">
-              Prototype pricing only • Real prices available with Premium subscription
+              This example uses sample data • Get actual supermarket prices with Premium
             </p>
           </div>
         </div>

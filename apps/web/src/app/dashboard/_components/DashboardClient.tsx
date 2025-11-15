@@ -154,6 +154,9 @@ export default function DashboardClient({ user, hasMealPlan }: DashboardClientPr
                 onPreview={
                   feature.id === 'price-comparison' ? () => setShowPremiumModal(true) : undefined
                 }
+                previewLabel={
+                  feature.id === 'price-comparison' ? 'View sample price comparison' : undefined
+                }
                 onLearnMore={() => {
                   // TODO: Add feature-specific learn more pages
                   console.log('Learn more about:', feature.id);
