@@ -82,7 +82,7 @@ export function Header() {
           <>
             {/* Backdrop Overlay */}
             <div
-              className="animate-backdrop-fade-in fixed inset-0 z-40 bg-black/50 md:hidden"
+              className="animate-backdrop-fade-in fixed inset-x-0 bottom-0 top-16 z-40 bg-black/50 md:hidden"
               onClick={() => setMobileMenuOpen(false)}
               aria-hidden="true"
             />
