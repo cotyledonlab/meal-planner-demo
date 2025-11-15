@@ -12,12 +12,12 @@ function SignUpForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const tierParam = searchParams.get('tier');
-  
+
   const [currentStep, setCurrentStep] = useState<'tier' | 'details' | 'payment'>(
     tierParam === 'premium' ? 'details' : 'tier'
   );
   const [selectedTier, setSelectedTier] = useState<'basic' | 'premium'>('premium');
-  
+
   const isPremium = selectedTier === 'premium';
   const isPaymentStep = isPremium && currentStep === 'payment';
 
@@ -219,9 +219,7 @@ function SignUpForm() {
 
           {!isPremium && currentStep === 'details' && (
             <div className="rounded-md border border-gray-200 bg-gray-50 p-4">
-              <p className="text-sm font-semibold text-gray-900">
-                Step 2 of 2 — Account details
-              </p>
+              <p className="text-sm font-semibold text-gray-900">Step 2 of 2 — Account details</p>
               <p className="mt-1 text-sm text-gray-700">
                 Free Tier: Get started with basic meal planning features.
               </p>

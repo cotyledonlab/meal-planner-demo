@@ -26,7 +26,9 @@ describe('TierSelection', () => {
     const mockOnTierSelect = vi.fn();
     render(<TierSelection selectedTier="premium" onTierSelect={mockOnTierSelect} />);
 
-    expect(screen.getByText(/Payment details will be collected in the next step/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Payment details will be collected in the next step/)
+    ).toBeInTheDocument();
     expect(screen.getByText(/no real charges will be made/)).toBeInTheDocument();
   });
 

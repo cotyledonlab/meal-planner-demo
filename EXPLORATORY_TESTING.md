@@ -1,12 +1,15 @@
 # Exploratory Testing: Signup/Onboarding Flow
 
 ## Testing Date
+
 2025-11-15
 
 ## Scope
+
 Testing the signup and onboarding experience focusing on tier selection, pricing consistency, and user flow.
 
 ## Test Environment
+
 - Local development server
 - Browser: Chromium (via Playwright)
 - Database: PostgreSQL (Docker)
@@ -16,7 +19,9 @@ Testing the signup and onboarding experience focusing on tier selection, pricing
 ## Test Scenarios & Findings
 
 ### 1. Homepage to Signup Flow
+
 **Test Steps:**
+
 1. Navigate to homepage (`/`)
 2. Click "Get Started" button in Hero section
 3. Verify landing on signup page with tier selection
@@ -27,13 +32,16 @@ Testing the signup and onboarding experience focusing on tier selection, pricing
 ✅ **PASS** - User lands on tier selection step (not bypassing to account details)
 
 **Observations:**
+
 - Both Hero and CTA buttons use consistent styling and messaging
 - No tier parameter in URL, letting user make explicit choice
 
 ---
 
 ### 2. Tier Selection Step
+
 **Test Steps:**
+
 1. Access signup page
 2. Verify tier selection is first step
 3. Check premium is default selection
@@ -45,13 +53,15 @@ Testing the signup and onboarding experience focusing on tier selection, pricing
 ✅ **PASS** - Premium tier shows "Recommended" badge
 ✅ **PASS** - Premium tier appears first (left side on desktop)
 ✅ **PASS** - Pricing matches shared constants:
-  - Premium: €4.99/month
-  - Free: €0
-✅ **PASS** - Features list matches shared constants
-✅ **PASS** - Payment notice shown for premium selection
-✅ **PASS** - No payment notice shown for free selection
+
+- Premium: €4.99/month
+- Free: €0
+  ✅ **PASS** - Features list matches shared constants
+  ✅ **PASS** - Payment notice shown for premium selection
+  ✅ **PASS** - No payment notice shown for free selection
 
 **Observations:**
+
 - Clear visual distinction between selected and unselected tiers
 - Premium tier has emerald border when selected
 - Free tier gets emerald border when selected
@@ -60,7 +70,9 @@ Testing the signup and onboarding experience focusing on tier selection, pricing
 ---
 
 ### 3. Premium Signup Flow (3 Steps)
+
 **Test Steps:**
+
 1. Select premium tier → Continue
 2. Enter account details → Continue to payment
 3. Enter mock payment details → Complete signup
@@ -74,6 +86,7 @@ Testing the signup and onboarding experience focusing on tier selection, pricing
 ✅ **PASS** - Clear messaging that payment is mock/demo
 
 **Step Indicators:**
+
 - Step 1: "Choose your plan"
 - Step 2: "Step 2 of 3 — Account details" with "Premium Tier: €4.99/month • Advanced plan settings, longer plans, and supermarket comparisons."
 - Step 3: "Step 3 of 3 — Mock payment"
@@ -81,7 +94,9 @@ Testing the signup and onboarding experience focusing on tier selection, pricing
 ---
 
 ### 4. Free Tier Signup Flow (2 Steps)
+
 **Test Steps:**
+
 1. Select free tier → Continue
 2. Enter account details → Create account
 
@@ -93,13 +108,16 @@ Testing the signup and onboarding experience focusing on tier selection, pricing
 ✅ **PASS** - Button text is "Create account" (not "Continue to payment")
 
 **Step Indicators:**
+
 - Step 1: "Choose your plan"
 - Step 2: "Step 2 of 2 — Account details" with "Free Tier: Get started with basic meal planning features."
 
 ---
 
 ### 5. Pricing Consistency Audit
+
 **Test Steps:**
+
 1. Check all pricing references across the application
 2. Verify consistency with shared constants
 
@@ -110,6 +128,7 @@ Testing the signup and onboarding experience focusing on tier selection, pricing
 ✅ **PASS** - Feature lists match across components
 
 **Locations Checked:**
+
 - `/` - Pricing component: ✅ Uses shared constants
 - `/auth/signup` - TierSelection: ✅ Uses shared constants
 - Dashboard upgrade CTA: Links to `/#pricing` ✅
@@ -120,7 +139,9 @@ Testing the signup and onboarding experience focusing on tier selection, pricing
 ---
 
 ### 6. Navigation & Back Buttons
+
 **Test Steps:**
+
 1. Test "Back to plan selection" button on account details step
 2. Test "Back to details" button on payment step
 3. Verify tier selection is preserved
@@ -132,6 +153,7 @@ Testing the signup and onboarding experience focusing on tier selection, pricing
 ✅ **PASS** - Form data is preserved when navigating back
 
 **Observations:**
+
 - State management works correctly
 - No data loss during navigation
 - Clear button labels guide user
@@ -139,7 +161,9 @@ Testing the signup and onboarding experience focusing on tier selection, pricing
 ---
 
 ### 7. Direct URL Access Tests
+
 **Test Steps:**
+
 1. Access `/auth/signup?tier=premium` directly
 2. Verify behavior
 
@@ -148,11 +172,13 @@ Testing the signup and onboarding experience focusing on tier selection, pricing
 ⚠️ **MINOR OBSERVATION** - This maintains backward compatibility with existing Pricing component CTAs
 
 **Analysis:**
+
 - The old behavior is preserved for users coming from external links
 - The Pricing component "Go Premium" button still uses `?tier=premium`
 - This is acceptable as it provides a shortcut for users who already made their choice on the pricing page
 
 **Recommendation:**
+
 - Consider if Pricing CTAs should remove the tier parameter to force tier selection
 - Current implementation is valid - users who click "Go Premium" have already seen pricing and made a choice
 - **DECISION:** Keep current behavior - it's a valid optimization for users from pricing page
@@ -160,7 +186,9 @@ Testing the signup and onboarding experience focusing on tier selection, pricing
 ---
 
 ### 8. Accessibility Testing
+
 **Test Steps:**
+
 1. Check keyboard navigation
 2. Verify ARIA labels and roles
 3. Check focus management
@@ -175,7 +203,9 @@ Testing the signup and onboarding experience focusing on tier selection, pricing
 ---
 
 ### 9. Mobile Responsiveness
+
 **Test Steps:**
+
 1. Test tier selection on mobile viewport
 2. Verify button sizes and spacing
 3. Check form usability
@@ -191,9 +221,11 @@ Testing the signup and onboarding experience focusing on tier selection, pricing
 ## Summary
 
 ### Issues Found: 0 Critical, 0 Minor
+
 No critical issues or bugs were identified during exploratory testing.
 
 ### Strengths
+
 1. **Consistent Pricing** - All pricing information sourced from shared constants
 2. **Clear User Flow** - Step-by-step progression with clear indicators
 3. **Good UX** - Premium default encourages upgrade while allowing free choice
@@ -202,12 +234,14 @@ No critical issues or bugs were identified during exploratory testing.
 6. **Responsive Design** - Works well on mobile and desktop
 
 ### Recommendations for Future Enhancements
+
 1. Consider A/B testing the default tier selection (premium vs free)
 2. Add analytics to track which tier users select
 3. Consider adding a comparison table directly in tier selection
 4. Add testimonials or social proof in the tier selection step
 
 ### Testing Coverage
+
 - ✅ User flows (premium and free paths)
 - ✅ Pricing consistency
 - ✅ Navigation and back buttons
@@ -220,11 +254,14 @@ No critical issues or bugs were identified during exploratory testing.
 ---
 
 ## Test Evidence
+
 Screenshots captured and included in PR description:
+
 1. Tier selection with premium default
 2. Premium account details step
 3. Free tier selected
 4. Free account details step
 
 ## Conclusion
+
 The signup/onboarding flow successfully promotes premium choice during signup as required. The implementation is clean, consistent, and maintains backward compatibility. All acceptance criteria met with no issues found during exploratory testing.
