@@ -1,0 +1,97 @@
+import { describe, it, expect, vi } from 'vitest';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import TierSelection from './TierSelection';
+
+describe('TierSelection', () => {
+  it('should render both premium and free tier options', () => {
+    const mockOnTierSelect = vi.fn();
+    render(<TierSelection selectedTier="premium" onTierSelect={mockOnTierSelect} />);
+
+    expect(screen.getByText('Choose your plan')).toBeInTheDocument();
+    expect(screen.getByText('Premium')).toBeInTheDocument();
+    expect(screen.getByText('Free Tier')).toBeInTheDocument();
+    expect(screen.getByText('€4.99')).toBeInTheDocument();
+    expect(screen.getByText('€0')).toBeInTheDocument();
+  });
+
+  it('should show premium as recommended', () => {
+    const mockOnTierSelect = vi.fn();
+    render(<TierSelection selectedTier="premium" onTierSelect={mockOnTierSelect} />);
+
+    expect(screen.getByText('Recommended')).toBeInTheDocument();
+  });
+
+  it('should show payment notice when premium is selected', () => {
+    const mockOnTierSelect = vi.fn();
+    render(<TierSelection selectedTier="premium" onTierSelect={mockOnTierSelect} />);
+
+    expect(screen.getByText(/Payment details will be collected in the next step/)).toBeInTheDocument();
+    expect(screen.getByText(/no real charges will be made/)).toBeInTheDocument();
+  });
+
+  it('should not show payment notice when free tier is selected', () => {
+    const mockOnTierSelect = vi.fn();
+    render(<TierSelection selectedTier="basic" onTierSelect={mockOnTierSelect} />);
+
+    expect(screen.queryByText(/Payment details will be collected/)).not.toBeInTheDocument();
+  });
+
+  it('should call onTierSelect when premium tier is clicked', async () => {
+    const user = userEvent.setup();
+    const mockOnTierSelect = vi.fn();
+    render(<TierSelection selectedTier="basic" onTierSelect={mockOnTierSelect} />);
+
+    const premiumButton = screen.getByRole('button', { name: /Premium/ });
+    await user.click(premiumButton);
+
+    expect(mockOnTierSelect).toHaveBeenCalledWith('premium');
+  });
+
+  it('should call onTierSelect when free tier is clicked', async () => {
+    const user = userEvent.setup();
+    const mockOnTierSelect = vi.fn();
+    render(<TierSelection selectedTier="premium" onTierSelect={mockOnTierSelect} />);
+
+    const freeButton = screen.getByRole('button', { name: /Free Tier/ });
+    await user.click(freeButton);
+
+    expect(mockOnTierSelect).toHaveBeenCalledWith('basic');
+  });
+
+  it('should show selected indicator for premium tier', () => {
+    const mockOnTierSelect = vi.fn();
+    render(<TierSelection selectedTier="premium" onTierSelect={mockOnTierSelect} />);
+
+    const premiumButton = screen.getByRole('button', { name: /Premium/ });
+    expect(premiumButton).toHaveTextContent('Selected');
+  });
+
+  it('should show selected indicator for free tier', () => {
+    const mockOnTierSelect = vi.fn();
+    render(<TierSelection selectedTier="basic" onTierSelect={mockOnTierSelect} />);
+
+    const freeButton = screen.getByRole('button', { name: /Free Tier/ });
+    expect(freeButton).toHaveTextContent('Selected');
+  });
+
+  it('should display premium features from shared constants', () => {
+    const mockOnTierSelect = vi.fn();
+    render(<TierSelection selectedTier="premium" onTierSelect={mockOnTierSelect} />);
+
+    expect(screen.getByText('Everything in Free')).toBeInTheDocument();
+    expect(screen.getByText('Best value supermarket finder')).toBeInTheDocument();
+    expect(screen.getByText('Advanced customisation')).toBeInTheDocument();
+    expect(screen.getByText('Multiple meal plans')).toBeInTheDocument();
+  });
+
+  it('should display free tier features from shared constants', () => {
+    const mockOnTierSelect = vi.fn();
+    render(<TierSelection selectedTier="basic" onTierSelect={mockOnTierSelect} />);
+
+    expect(screen.getByText('Weekly meal-prep recipes')).toBeInTheDocument();
+    expect(screen.getByText('Automatic shopping list')).toBeInTheDocument();
+    expect(screen.getByText('Basic dietary preferences')).toBeInTheDocument();
+    expect(screen.getByText('Email support')).toBeInTheDocument();
+  });
+});
