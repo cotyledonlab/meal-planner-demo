@@ -180,7 +180,11 @@ export default function MealPlanWizard({
                 className="flex items-center gap-2 text-sm font-semibold text-gray-900"
               >
                 <span>How many days to plan?</span>
-                <span className="text-sm leading-none sm:text-base" role="img" aria-label="calendar">
+                <span
+                  className="text-sm leading-none sm:text-base"
+                  role="img"
+                  aria-label="calendar"
+                >
                   📅
                 </span>
               </label>

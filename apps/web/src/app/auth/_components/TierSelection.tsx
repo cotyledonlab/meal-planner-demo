@@ -25,9 +25,7 @@ export default function TierSelection({ selectedTier, onTierSelect }: TierSelect
     <div className="space-y-4">
       <div className="text-center">
         <h2 className="text-xl font-semibold text-gray-900">Choose your plan</h2>
-        <p className="mt-1 text-sm text-gray-600">
-          Select the plan that best fits your needs
-        </p>
+        <p className="mt-1 text-sm text-gray-600">Select the plan that best fits your needs</p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
@@ -47,7 +45,7 @@ export default function TierSelection({ selectedTier, onTierSelect }: TierSelect
                 Recommended
               </span>
             )}
-            
+
             <div className="mb-4">
               <div className="flex items-baseline gap-1">
                 <span className="text-3xl font-bold text-gray-900">{tier.price}</span>
@@ -100,8 +98,8 @@ export default function TierSelection({ selectedTier, onTierSelect }: TierSelect
             💳 Payment details will be collected in the next step
           </p>
           <p className="mt-1 text-emerald-800">
-            This is a demo app — no real charges will be made. Premium access is granted
-            immediately for testing purposes.
+            This is a demo app — no real charges will be made. Premium access is granted immediately
+            for testing purposes.
           </p>
         </div>
       )}
