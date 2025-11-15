@@ -226,14 +226,14 @@ export default function MealPlanWizard({
               </span>
               <label
                 htmlFor="isVegetarian"
-                className="flex min-h-[60px] cursor-pointer items-center gap-3 rounded-2xl border-2 border-gray-200 bg-white px-4 py-3 text-base text-gray-700 shadow-sm transition hover:border-emerald-400 hover:bg-emerald-50/30 focus-within:border-emerald-500 focus-within:ring-2 focus-within:ring-emerald-600 sm:rounded-xl"
+                className="flex min-h-[60px] cursor-pointer items-center gap-3 rounded-2xl border-2 border-gray-200 bg-white px-4 py-3 text-base text-gray-700 shadow-sm transition hover:border-emerald-400 hover:bg-emerald-50/30 focus-within:border-emerald-500 focus-within:ring-2 focus-within:ring-emerald-600 sm:rounded-xl active:scale-[0.98]"
               >
                 <input
                   type="checkbox"
                   id="isVegetarian"
                   checked={isVegetarian}
                   onChange={(e) => setIsVegetarian(e.target.checked)}
-                  className="h-6 w-6 shrink-0 rounded-md border-2 border-gray-300 text-emerald-600 focus:ring-2 focus:ring-emerald-600"
+                  className="h-7 w-7 shrink-0 rounded-md border-2 border-gray-300 text-emerald-600 transition-all focus:ring-2 focus:ring-emerald-600 checked:bg-emerald-600 checked:border-emerald-600 active:scale-90"
                 />
                 <span className="flex items-center gap-2">
                   <span>🌱</span>
@@ -242,14 +242,14 @@ export default function MealPlanWizard({
               </label>
               <label
                 htmlFor="isDairyFree"
-                className="flex min-h-[60px] cursor-pointer items-center gap-3 rounded-2xl border-2 border-gray-200 bg-white px-4 py-3 text-base text-gray-700 shadow-sm transition hover:border-emerald-400 hover:bg-emerald-50/30 focus-within:border-emerald-500 focus-within:ring-2 focus-within:ring-emerald-600 sm:rounded-xl"
+                className="flex min-h-[60px] cursor-pointer items-center gap-3 rounded-2xl border-2 border-gray-200 bg-white px-4 py-3 text-base text-gray-700 shadow-sm transition hover:border-emerald-400 hover:bg-emerald-50/30 focus-within:border-emerald-500 focus-within:ring-2 focus-within:ring-emerald-600 sm:rounded-xl active:scale-[0.98]"
               >
                 <input
                   type="checkbox"
                   id="isDairyFree"
                   checked={isDairyFree}
                   onChange={(e) => setIsDairyFree(e.target.checked)}
-                  className="h-6 w-6 shrink-0 rounded-md border-2 border-gray-300 text-emerald-600 focus:ring-2 focus:ring-emerald-600"
+                  className="h-7 w-7 shrink-0 rounded-md border-2 border-gray-300 text-emerald-600 transition-all focus:ring-2 focus:ring-emerald-600 checked:bg-emerald-600 checked:border-emerald-600 active:scale-90"
                 />
                 <span className="flex items-center gap-2">
                   <span>🥛</span>
