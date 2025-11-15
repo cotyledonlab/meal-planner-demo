@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import Link from 'next/link';
 import storesData from '~/mockData/stores.json';
 
 interface PremiumPreviewModalProps {
@@ -127,12 +128,12 @@ export default function PremiumPreviewModal({ onClose }: PremiumPreviewModalProp
 
           {/* CTA */}
           <div className="mt-8 space-y-3">
-            <a
+            <Link
               href="/#pricing"
               className="block w-full min-h-[48px] rounded-full bg-emerald-600 px-6 py-3 text-base font-semibold text-white text-center shadow-sm transition hover:bg-emerald-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
             >
               Upgrade to Premium for Real Prices
-            </a>
+            </Link>
             <p className="text-center text-xs text-gray-500">
               This example uses sample data • Get actual supermarket prices with Premium
             </p>
