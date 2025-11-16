@@ -177,6 +177,7 @@ export const planRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
+      // Swap a recipe in a meal plan with an alternative that matches dietary preferences
       const { planId, mealPlanItemId } = input;
 
       // Fetch the meal plan with all items to verify ownership and get preferences
