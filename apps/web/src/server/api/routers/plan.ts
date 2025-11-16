@@ -1,11 +1,7 @@
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
 import { createTRPCRouter, protectedProcedure } from '../trpc';
-import {
-  PlanGenerator,
-  PlanGenerationError,
-  type PlanGenerationErrorCode,
-} from '../../services/planGenerator';
+import { PlanGenerator, type PlanGenerationErrorCode } from '../../services/planGenerator';
 import { ShoppingListService } from '../../services/shoppingList';
 import { createLogger } from '~/lib/logger';
 
