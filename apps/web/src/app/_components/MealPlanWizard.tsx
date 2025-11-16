@@ -338,12 +338,16 @@ export default function MealPlanWizard({
 
       {/* Confirmation Dialog */}
       {showConfirmDialog && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 p-4">
+        <div
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 p-4"
+          onClick={cancelClose}
+        >
           <div 
             className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl"
             role="alertdialog"
             aria-labelledby="confirm-dialog-title"
             aria-describedby="confirm-dialog-description"
+            onClick={(e) => e.stopPropagation()}
           >
             <h3 id="confirm-dialog-title" className="text-lg font-semibold text-gray-900">
               Discard changes?
