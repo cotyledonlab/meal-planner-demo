@@ -1,9 +1,11 @@
 'use client';
 
 import { useCallback, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import type { MealPreferences } from './MealPlanWizard';
 import RecipeCard from './RecipeCard';
 import RecipeDetailModal from './RecipeDetailModal';
+import { api } from '~/trpc/react';
 
 type RecipeIngredient = {
   id: string;
@@ -67,6 +69,16 @@ export default function MealPlanView({
 }: MealPlanViewProps) {
   const [selectedItem, setSelectedItem] = useState<MealPlanItem | null>(null);
   const [isNavigatorOpen, setIsNavigatorOpen] = useState(false);
+  const [isSwapping, setIsSwapping] = useState(false);
+  const [swapError, setSwapError] = useState<string | null>(null);
+  const router = useRouter();
+
+  const swapRecipeMutation = api.plan.swapRecipe.useMutation({
+    onSuccess: () => {
+      // Refresh the page to show the updated plan
+      router.refresh();
+    },
+  });
 
   const scrollToAnchor = useCallback((anchor?: string) => {
     if (!anchor) return;
@@ -109,16 +121,37 @@ export default function MealPlanView({
 
   const handleOpenDetail = (item: MealPlanItem) => {
     setSelectedItem(item);
+    setSwapError(null); // Clear any previous errors
   };
 
   const handleCloseDetail = () => {
     setSelectedItem(null);
+    setSwapError(null); // Clear errors when closing
   };
 
-  const handleSwapRecipe = () => {
-    // TODO: Implement recipe swapping functionality
-    alert('Recipe swapping feature coming soon!');
-    handleCloseDetail();
+  const handleSwapRecipe = async () => {
+    if (!plan || !selectedItem) return;
+
+    setIsSwapping(true);
+    setSwapError(null); // Clear any previous errors
+    try {
+      await swapRecipeMutation.mutateAsync({
+        planId: plan.id,
+        mealPlanItemId: selectedItem.id,
+      });
+      handleCloseDetail();
+    } catch (error) {
+      console.error('Failed to swap recipe:', error);
+      const errorMessage =
+        error && typeof error === 'object' && error !== null && 'data' in error && error.data && typeof error.data === 'object' && 'message' in error.data
+          ? String(error.data.message)
+          : error && typeof error === 'object' && 'message' in error
+          ? String(error.message)
+          : 'Failed to swap recipe. Please try again.';
+      setSwapError(errorMessage);
+    } finally {
+      setIsSwapping(false);
+    }
   };
 
   return (
@@ -272,6 +305,8 @@ export default function MealPlanView({
           isOpen={!!selectedItem}
           onClose={handleCloseDetail}
           onSwapRecipe={handleSwapRecipe}
+          isSwapping={isSwapping}
+          swapError={swapError}
         />
       )}
     </>

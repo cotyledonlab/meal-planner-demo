@@ -1,11 +1,7 @@
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
 import { createTRPCRouter, protectedProcedure } from '../trpc';
-import {
-  PlanGenerator,
-  PlanGenerationError,
-  type PlanGenerationErrorCode,
-} from '../../services/planGenerator';
+import { PlanGenerator, type PlanGenerationErrorCode } from '../../services/planGenerator';
 import { ShoppingListService } from '../../services/shoppingList';
 import { createLogger } from '~/lib/logger';
 
@@ -172,4 +168,172 @@ export const planRouter = createTRPCRouter({
 
     return plans;
   }),
+
+  swapRecipe: protectedProcedure
+    .input(
+      z.object({
+        planId: z.string(),
+        mealPlanItemId: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      // Swap a recipe in a meal plan with an alternative that matches dietary preferences
+      const { planId, mealPlanItemId } = input;
+
+      // Fetch the meal plan with all items to verify ownership and get preferences
+      const plan = await ctx.db.mealPlan.findUnique({
+        where: { id: planId },
+        include: {
+          items: {
+            include: {
+              recipe: {
+                include: {
+                  ingredients: {
+                    include: {
+                      ingredient: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+          user: {
+            include: {
+              preferences: true,
+            },
+          },
+        },
+      });
+
+      if (!plan) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Meal plan not found',
+        });
+      }
+
+      // Verify the plan belongs to the user
+      if (plan.userId !== ctx.session.user.id) {
+        throw new TRPCError({
+          code: 'FORBIDDEN',
+          message: 'Unauthorized to modify this meal plan',
+        });
+      }
+
+      // Find the specific meal plan item to swap
+      const itemToSwap = plan.items.find((item) => item.id === mealPlanItemId);
+      if (!itemToSwap) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Meal plan item not found',
+        });
+      }
+
+      // Get user preferences for dietary constraints
+      const preferences = plan.user.preferences;
+      const isVegetarian = preferences?.isVegetarian ?? false;
+      const isDairyFree = preferences?.isDairyFree ?? false;
+      const dislikes = preferences?.dislikes ?? '';
+
+      // Parse dislikes
+      const dislikeTerms = dislikes
+        ? dislikes
+            .toLowerCase()
+            .split(',')
+            .map((term) => term.trim())
+            .filter((term) => term.length > 0)
+        : [];
+
+      // Find alternative recipes that match:
+      // 1. Same meal type
+      // 2. Dietary preferences
+      // 3. Not the current recipe
+      // 4. Not disliked
+      const currentRecipeId = itemToSwap.recipeId;
+      const mealType = itemToSwap.mealType;
+
+      const alternativeRecipes = await ctx.db.recipe.findMany({
+        where: {
+          id: { not: currentRecipeId },
+          mealTypes: { has: mealType },
+          ...(isVegetarian && { isVegetarian: true }),
+          ...(isDairyFree && { isDairyFree: true }),
+        },
+        include: {
+          ingredients: {
+            include: {
+              ingredient: true,
+            },
+          },
+        },
+      });
+
+      // Filter out recipes with disliked ingredients
+      const eligibleRecipes =
+        dislikeTerms.length === 0
+          ? alternativeRecipes
+          : alternativeRecipes.filter((recipe) => {
+              const ingredientNames = recipe.ingredients
+                .map((ri) => ri.ingredient.name.toLowerCase());
+              return !dislikeTerms.some((dislike) => {
+                const dislikeLower = dislike.toLowerCase();
+                return ingredientNames.some((ingredient) => {
+                  // Match exact ingredient name or as a whole word in multi-word ingredient
+                  if (ingredient === dislikeLower) return true;
+                  // Match as whole word in multi-word ingredient name
+                  // e.g. dislike "peas" matches "snap peas" but not "chickpeas"
+                  return ingredient.split(/\s+/).includes(dislikeLower);
+                });
+              });
+            });
+
+      if (eligibleRecipes.length === 0) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'No alternative recipes found that match your preferences',
+        });
+      }
+
+      // Pick a random alternative recipe
+      const randomIndex = Math.floor(Math.random() * eligibleRecipes.length);
+      const newRecipe = eligibleRecipes[randomIndex]!; // Safe because we checked length > 0
+
+      // Update the meal plan item with the new recipe
+      await ctx.db.mealPlanItem.update({
+        where: { id: mealPlanItemId },
+        data: { recipeId: newRecipe.id },
+      });
+
+      // Recalculate shopping list
+      const shoppingListService = new ShoppingListService(ctx.db);
+      try {
+        await shoppingListService.buildAndStoreForPlan(planId);
+      } catch (error) {
+        log.error({ error, planId }, 'Failed to update shopping list after recipe swap');
+        // Don't fail the mutation - the swap was successful
+      }
+
+      // Return the updated plan
+      const updatedPlan = await ctx.db.mealPlan.findUnique({
+        where: { id: planId },
+        include: {
+          items: {
+            include: {
+              recipe: {
+                include: {
+                  ingredients: {
+                    include: {
+                      ingredient: true,
+                    },
+                  },
+                },
+              },
+            },
+            orderBy: [{ dayIndex: 'asc' }, { mealType: 'asc' }],
+          },
+        },
+      });
+
+      return updatedPlan;
+    }),
 });
