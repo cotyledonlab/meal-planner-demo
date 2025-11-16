@@ -148,4 +148,44 @@ describe('MealPlanWizard', () => {
       expect(icon.getAttribute('aria-hidden')).toBe('true');
     });
   });
+
+  it('should have enhanced visual feedback for checkboxes on mobile', () => {
+    const mockOnComplete = vi.fn();
+    const { container } = render(<MealPlanWizard onComplete={mockOnComplete} />);
+
+    const vegetarianCheckbox = container.querySelector('#isVegetarian');
+    const dairyFreeCheckbox = container.querySelector('#isDairyFree');
+
+    // Verify larger checkbox size (28px instead of 24px)
+    expect(vegetarianCheckbox?.classList.contains('h-7')).toBe(true);
+    expect(vegetarianCheckbox?.classList.contains('w-7')).toBe(true);
+    expect(dairyFreeCheckbox?.classList.contains('h-7')).toBe(true);
+    expect(dairyFreeCheckbox?.classList.contains('w-7')).toBe(true);
+
+    // Verify background fill when checked
+    expect(vegetarianCheckbox?.classList.contains('checked:bg-emerald-600')).toBe(true);
+    expect(vegetarianCheckbox?.classList.contains('checked:border-emerald-600')).toBe(true);
+    expect(dairyFreeCheckbox?.classList.contains('checked:bg-emerald-600')).toBe(true);
+    expect(dairyFreeCheckbox?.classList.contains('checked:border-emerald-600')).toBe(true);
+
+    // Verify transition animation
+    expect(vegetarianCheckbox?.classList.contains('transition-all')).toBe(true);
+    expect(dairyFreeCheckbox?.classList.contains('transition-all')).toBe(true);
+
+    // Verify scale animation on tap
+    expect(vegetarianCheckbox?.classList.contains('active:scale-90')).toBe(true);
+    expect(dairyFreeCheckbox?.classList.contains('active:scale-90')).toBe(true);
+  });
+
+  it('should have scale animation on parent label for touch feedback', () => {
+    const mockOnComplete = vi.fn();
+    const { container } = render(<MealPlanWizard onComplete={mockOnComplete} />);
+
+    const vegetarianLabel = container.querySelector('label[for="isVegetarian"]');
+    const dairyFreeLabel = container.querySelector('label[for="isDairyFree"]');
+
+    // Verify parent label has active scale for better touch feedback
+    expect(vegetarianLabel?.classList.contains('active:scale-[0.98]')).toBe(true);
+    expect(dairyFreeLabel?.classList.contains('active:scale-[0.98]')).toBe(true);
+  });
 });
