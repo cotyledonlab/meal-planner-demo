@@ -34,7 +34,7 @@ export default function DashboardClient({ user, hasMealPlan }: DashboardClientPr
     id: string;
     title: string;
     description: string;
-    Icon: typeof ChartBarIcon;
+    Icon: React.ComponentType<React.ComponentProps<'svg'>>;
     color: 'blue' | 'amber' | 'purple' | 'emerald';
   }> = [
     {
