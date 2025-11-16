@@ -70,6 +70,7 @@ export default function MealPlanView({
   const [selectedItem, setSelectedItem] = useState<MealPlanItem | null>(null);
   const [isNavigatorOpen, setIsNavigatorOpen] = useState(false);
   const [isSwapping, setIsSwapping] = useState(false);
+  const [swapError, setSwapError] = useState<string | null>(null);
   const router = useRouter();
 
   const swapRecipeMutation = api.plan.swapRecipe.useMutation({
@@ -120,16 +121,19 @@ export default function MealPlanView({
 
   const handleOpenDetail = (item: MealPlanItem) => {
     setSelectedItem(item);
+    setSwapError(null); // Clear any previous errors
   };
 
   const handleCloseDetail = () => {
     setSelectedItem(null);
+    setSwapError(null); // Clear errors when closing
   };
 
   const handleSwapRecipe = async () => {
     if (!plan || !selectedItem) return;
 
     setIsSwapping(true);
+    setSwapError(null); // Clear any previous errors
     try {
       await swapRecipeMutation.mutateAsync({
         planId: plan.id,
@@ -144,7 +148,7 @@ export default function MealPlanView({
           : error && typeof error === 'object' && 'message' in error
           ? String(error.message)
           : 'Failed to swap recipe. Please try again.';
-      alert(errorMessage);
+      setSwapError(errorMessage);
     } finally {
       setIsSwapping(false);
     }
@@ -302,6 +306,7 @@ export default function MealPlanView({
           onClose={handleCloseDetail}
           onSwapRecipe={handleSwapRecipe}
           isSwapping={isSwapping}
+          swapError={swapError}
         />
       )}
     </>

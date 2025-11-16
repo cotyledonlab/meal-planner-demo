@@ -45,6 +45,7 @@ interface RecipeDetailModalProps {
   onClose: () => void;
   onSwapRecipe?: () => void;
   isSwapping?: boolean;
+  swapError?: string | null;
 }
 
 /**
@@ -137,6 +138,7 @@ export default function RecipeDetailModal({
   onClose,
   onSwapRecipe,
   isSwapping = false,
+  swapError = null,
 }: RecipeDetailModalProps) {
   const { recipe, mealType, servings } = item;
 
@@ -344,6 +346,31 @@ export default function RecipeDetailModal({
                 </button>
               )}
             </div>
+
+            {/* Error message display */}
+            {swapError && (
+              <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4">
+                <div className="flex items-start gap-3">
+                  <svg
+                    className="h-5 w-5 flex-shrink-0 text-red-600"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                  <div className="flex-1">
+                    <h4 className="text-sm font-semibold text-red-900">Unable to swap recipe</h4>
+                    <p className="mt-1 text-sm text-red-700">{swapError}</p>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Ingredients section */}
             <div className="mb-8">

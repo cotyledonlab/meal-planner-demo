@@ -296,7 +296,7 @@ export const planRouter = createTRPCRouter({
 
       // Pick a random alternative recipe
       const randomIndex = Math.floor(Math.random() * eligibleRecipes.length);
-      const newRecipe = eligibleRecipes[randomIndex];
+      const newRecipe = eligibleRecipes[randomIndex]!; // Safe because we checked length > 0
 
       // Update the meal plan item with the new recipe
       await ctx.db.mealPlanItem.update({
