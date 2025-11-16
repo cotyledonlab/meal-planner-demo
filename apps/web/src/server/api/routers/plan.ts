@@ -274,9 +274,17 @@ export const planRouter = createTRPCRouter({
           ? alternativeRecipes
           : alternativeRecipes.filter((recipe) => {
               const ingredientNames = recipe.ingredients
-                .map((ri) => ri.ingredient.name.toLowerCase())
-                .join(' ');
-              return !dislikeTerms.some((dislike) => ingredientNames.includes(dislike));
+                .map((ri) => ri.ingredient.name.toLowerCase());
+              return !dislikeTerms.some((dislike) => {
+                const dislikeLower = dislike.toLowerCase();
+                return ingredientNames.some((ingredient) => {
+                  // Match exact ingredient name or as a whole word in multi-word ingredient
+                  if (ingredient === dislikeLower) return true;
+                  // Match as whole word in multi-word ingredient name
+                  // e.g. dislike "peas" matches "snap peas" but not "chickpeas"
+                  return ingredient.split(/\s+/).includes(dislikeLower);
+                });
+              });
             });
 
       if (eligibleRecipes.length === 0) {
