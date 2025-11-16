@@ -1,35 +1,49 @@
 // User testimonials section
+import { StarIcon } from '@heroicons/react/24/solid';
+
 export default function Testimonials() {
   const testimonials = [
     {
       quote:
-        'Since using this app, my Sunday meal prep takes half the time — and we’re saving €20 a week!',
+        'Since using this app, my Sunday meal prep takes half the time and we are saving 20 euro a week!',
       author: 'Aoife',
       location: 'Cork',
       initials: 'A',
+      rating: 5,
+      color: 'emerald',
     },
     {
       quote: 'Finally a meal planner that actually works with Irish stores. Love it.',
       author: 'Conor',
       location: 'Dublin',
       initials: 'C',
+      rating: 5,
+      color: 'blue',
     },
     {
       quote: 'The free version already made our dinners so much easier. Just upgraded to Premium!',
       author: 'Niamh',
       location: 'Galway',
       initials: 'N',
+      rating: 5,
+      color: 'purple',
     },
   ];
 
+  const avatarColors = {
+    emerald: 'bg-gradient-to-br from-emerald-500 to-emerald-600',
+    blue: 'bg-gradient-to-br from-blue-500 to-blue-600',
+    purple: 'bg-gradient-to-br from-purple-500 to-purple-600',
+  };
+
   return (
-    <section className="bg-emerald-50 py-16 sm:py-20 lg:py-24">
+    <section className="bg-gradient-to-b from-emerald-50 via-emerald-50/50 to-white py-16 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-7xl px-6">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-2xl font-semibold tracking-tight text-gray-900 sm:text-3xl">
+          <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
             Loved by families across Ireland
           </h2>
-          <p className="mt-4 text-base text-gray-600 sm:text-lg">
+          <p className="mt-4 text-lg text-gray-600 sm:text-xl">
             See what people are saying about their meal planning experience.
           </p>
         </div>
@@ -38,14 +52,19 @@ export default function Testimonials() {
           {testimonials.map((testimonial) => (
             <figure
               key={testimonial.author}
-              className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-200"
+              className="rounded-2xl bg-white p-6 shadow-md ring-1 ring-gray-100 transition-all duration-200 hover:shadow-xl hover:-translate-y-1"
               aria-label={`Testimonial from ${testimonial.author} in ${testimonial.location}`}
             >
+              <div className="mb-4 flex gap-1">
+                {Array.from({ length: testimonial.rating }).map((_, i) => (
+                  <StarIcon key={i} className="h-5 w-5 text-amber-400" aria-hidden="true" />
+                ))}
+              </div>
               <blockquote>
-                <p className="text-base text-gray-700">&ldquo;{testimonial.quote}&rdquo;</p>
+                <p className="text-base leading-relaxed text-gray-700">&ldquo;{testimonial.quote}&rdquo;</p>
               </blockquote>
               <figcaption className="mt-6 flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-600 text-sm font-semibold text-white">
+                <div className={`flex h-12 w-12 items-center justify-center rounded-full text-base font-bold text-white shadow-md ${avatarColors[testimonial.color as keyof typeof avatarColors]}`}>
                   {testimonial.initials}
                 </div>
                 <div>

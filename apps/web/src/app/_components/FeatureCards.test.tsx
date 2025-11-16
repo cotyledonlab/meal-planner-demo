@@ -15,8 +15,8 @@ describe('FeatureCards', () => {
   it('renders premium badges with correct styling', () => {
     const { container } = render(<FeatureCards />);
 
-    // Find all premium badges
-    const premiumBadges = container.querySelectorAll('.bg-amber-100');
+    // Find all premium badge spans (they have the lock icon)
+    const premiumBadges = container.querySelectorAll('span.bg-amber-100.px-2\\.5');
 
     // Should have 2 premium features
     expect(premiumBadges).toHaveLength(2);
@@ -30,8 +30,8 @@ describe('FeatureCards', () => {
   it('renders lock icons in premium badges', () => {
     const { container } = render(<FeatureCards />);
 
-    // Find all SVG lock icons in premium badges
-    const lockIcons = container.querySelectorAll('.bg-amber-100 svg');
+    // Find all SVG lock icons in premium badges (more specific selector)
+    const lockIcons = container.querySelectorAll('span.bg-amber-100.px-2\\.5 svg');
 
     // Should have 2 lock icons (one per premium feature)
     expect(lockIcons).toHaveLength(2);
@@ -46,7 +46,7 @@ describe('FeatureCards', () => {
   it('positions premium badges in top-right corner', () => {
     const { container } = render(<FeatureCards />);
 
-    const premiumBadges = container.querySelectorAll('.bg-amber-100');
+    const premiumBadges = container.querySelectorAll('span.bg-amber-100.px-2\\.5');
 
     premiumBadges.forEach((badge) => {
       expect(badge.classList.contains('absolute')).toBe(true);
@@ -65,15 +65,15 @@ describe('FeatureCards', () => {
     const firstCard = cards[0];
     const secondCard = cards[1];
 
-    expect(firstCard?.querySelector('.bg-amber-100')).toBeNull();
-    expect(secondCard?.querySelector('.bg-amber-100')).toBeNull();
+    expect(firstCard?.querySelector('span.bg-amber-100.px-2\\.5')).toBeNull();
+    expect(secondCard?.querySelector('span.bg-amber-100.px-2\\.5')).toBeNull();
   });
 
   it('renders premium badge with inline-flex layout', () => {
     const { container } = render(<FeatureCards />);
 
     // Get premium badge spans
-    const premiumBadges = container.querySelectorAll('.bg-amber-100');
+    const premiumBadges = container.querySelectorAll('span.bg-amber-100.px-2\\.5');
 
     // Should have 2 premium badges
     expect(premiumBadges).toHaveLength(2);
