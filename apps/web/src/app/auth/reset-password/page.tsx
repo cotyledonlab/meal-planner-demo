@@ -80,6 +80,7 @@ function ResetPasswordForm() {
         <AuthLayout
           title="Invalid reset link"
           subtitle="This password reset link is invalid or has expired"
+          showMarketing={false}
         >
           <div className="rounded-lg border border-red-200 bg-red-50 p-6 text-center">
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
@@ -137,6 +138,7 @@ function ResetPasswordForm() {
         <AuthLayout
           title="Password reset successful"
           subtitle="You can now sign in with your new password"
+          showMarketing={false}
         >
           <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-6 text-center">
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100">
@@ -188,7 +190,7 @@ function ResetPasswordForm() {
         </svg>
         Back to Sign In
       </Link>
-      <AuthLayout title="Create new password" subtitle="Enter your new password below">
+      <AuthLayout title="Create new password" subtitle="Enter your new password below" showMarketing={false}>
         <form className="space-y-6" onSubmit={handleSubmit}>
           {error && (
             <div className="rounded-md bg-red-50 p-4" role="alert" aria-live="polite">
