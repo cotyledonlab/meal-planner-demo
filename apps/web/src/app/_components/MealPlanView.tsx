@@ -139,8 +139,10 @@ export default function MealPlanView({
     } catch (error) {
       console.error('Failed to swap recipe:', error);
       const errorMessage =
-        error instanceof Error
-          ? error.message
+        error && typeof error === 'object' && error !== null && 'data' in error && error.data && typeof error.data === 'object' && 'message' in error.data
+          ? String(error.data.message)
+          : error && typeof error === 'object' && 'message' in error
+          ? String(error.message)
           : 'Failed to swap recipe. Please try again.';
       alert(errorMessage);
     } finally {
