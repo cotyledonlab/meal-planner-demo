@@ -44,6 +44,7 @@ interface RecipeDetailModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSwapRecipe?: () => void;
+  isSwapping?: boolean;
 }
 
 /**
@@ -135,6 +136,7 @@ export default function RecipeDetailModal({
   isOpen,
   onClose,
   onSwapRecipe,
+  isSwapping = false,
 }: RecipeDetailModalProps) {
   const { recipe, mealType, servings } = item;
 
@@ -301,17 +303,44 @@ export default function RecipeDetailModal({
               {onSwapRecipe && (
                 <button
                   onClick={onSwapRecipe}
-                  className="flex min-h-[44px] items-center gap-2 rounded-lg bg-emerald-100 px-5 py-2.5 text-sm font-medium text-emerald-700 transition hover:bg-emerald-200"
+                  disabled={isSwapping}
+                  className="flex min-h-[44px] items-center gap-2 rounded-lg bg-emerald-100 px-5 py-2.5 text-sm font-medium text-emerald-700 transition hover:bg-emerald-200 disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                    />
-                  </svg>
-                  Swap Recipe
+                  {isSwapping ? (
+                    <>
+                      <svg
+                        className="h-4 w-4 animate-spin"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                        />
+                      </svg>
+                      Swapping...
+                    </>
+                  ) : (
+                    <>
+                      <svg
+                        className="h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                        />
+                      </svg>
+                      Swap Recipe
+                    </>
+                  )}
                 </button>
               )}
             </div>

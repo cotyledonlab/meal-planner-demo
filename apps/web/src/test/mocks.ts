@@ -38,6 +38,11 @@ export const mockPrismaClient = {
     create: vi.fn(),
     delete: vi.fn(),
   },
+  mealPlanItem: {
+    update: vi.fn(),
+    create: vi.fn(),
+    findMany: vi.fn(),
+  },
   pantryItem: {
     findMany: vi.fn(),
   },

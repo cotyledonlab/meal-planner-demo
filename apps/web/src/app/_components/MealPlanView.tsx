@@ -1,9 +1,11 @@
 'use client';
 
 import { useCallback, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import type { MealPreferences } from './MealPlanWizard';
 import RecipeCard from './RecipeCard';
 import RecipeDetailModal from './RecipeDetailModal';
+import { api } from '~/trpc/react';
 
 type RecipeIngredient = {
   id: string;
@@ -67,6 +69,15 @@ export default function MealPlanView({
 }: MealPlanViewProps) {
   const [selectedItem, setSelectedItem] = useState<MealPlanItem | null>(null);
   const [isNavigatorOpen, setIsNavigatorOpen] = useState(false);
+  const [isSwapping, setIsSwapping] = useState(false);
+  const router = useRouter();
+
+  const swapRecipeMutation = api.plan.swapRecipe.useMutation({
+    onSuccess: () => {
+      // Refresh the page to show the updated plan
+      router.refresh();
+    },
+  });
 
   const scrollToAnchor = useCallback((anchor?: string) => {
     if (!anchor) return;
@@ -115,10 +126,26 @@ export default function MealPlanView({
     setSelectedItem(null);
   };
 
-  const handleSwapRecipe = () => {
-    // TODO: Implement recipe swapping functionality
-    alert('Recipe swapping feature coming soon!');
-    handleCloseDetail();
+  const handleSwapRecipe = async () => {
+    if (!plan || !selectedItem) return;
+
+    setIsSwapping(true);
+    try {
+      await swapRecipeMutation.mutateAsync({
+        planId: plan.id,
+        mealPlanItemId: selectedItem.id,
+      });
+      handleCloseDetail();
+    } catch (error) {
+      console.error('Failed to swap recipe:', error);
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : 'Failed to swap recipe. Please try again.';
+      alert(errorMessage);
+    } finally {
+      setIsSwapping(false);
+    }
   };
 
   return (
@@ -272,6 +299,7 @@ export default function MealPlanView({
           isOpen={!!selectedItem}
           onClose={handleCloseDetail}
           onSwapRecipe={handleSwapRecipe}
+          isSwapping={isSwapping}
         />
       )}
     </>
