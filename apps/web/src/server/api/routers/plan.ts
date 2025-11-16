@@ -290,13 +290,6 @@ export const planRouter = createTRPCRouter({
       const randomIndex = Math.floor(Math.random() * eligibleRecipes.length);
       const newRecipe = eligibleRecipes[randomIndex];
 
-      if (!newRecipe) {
-        throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'Failed to select alternative recipe',
-        });
-      }
-
       // Update the meal plan item with the new recipe
       await ctx.db.mealPlanItem.update({
         where: { id: mealPlanItemId },
