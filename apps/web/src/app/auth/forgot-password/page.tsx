@@ -44,6 +44,7 @@ export default function ForgotPasswordPage() {
         <AuthLayout
           title="Check your email"
           subtitle="We've sent password reset instructions to your email"
+          showMarketing={false}
         >
           <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-6 text-center">
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100">
@@ -103,6 +104,7 @@ export default function ForgotPasswordPage() {
       <AuthLayout
         title="Reset your password"
         subtitle="Enter your email and we'll send you a link to reset your password"
+        showMarketing={false}
       >
         <form className="space-y-6" onSubmit={handleSubmit}>
           {requestReset.error && (

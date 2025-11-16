@@ -7,9 +7,17 @@ interface AuthLayoutProps {
   subtitle?: ReactNode;
   children: ReactNode;
   footerSlot?: ReactNode;
+  /** When true, shows full marketing content. When false, shows minimal branding (logo + tagline only). Default: true */
+  showMarketing?: boolean;
 }
 
-export default function AuthLayout({ title, subtitle, children, footerSlot }: AuthLayoutProps) {
+export default function AuthLayout({
+  title,
+  subtitle,
+  children,
+  footerSlot,
+  showMarketing = true,
+}: AuthLayoutProps) {
   return (
     <div className="flex min-h-full">
       {/* Left Panel - Brand and Value Props (hidden on mobile) */}
@@ -21,35 +29,41 @@ export default function AuthLayout({ title, subtitle, children, footerSlot }: Au
               <span className="text-4xl">🍽️</span>
               <h1 className="text-3xl font-bold text-gray-900">MealMind AI</h1>
             </div>
-            <p className="text-xl font-semibold text-gray-900">
-              Your AI-powered meal planning assistant
-            </p>
-            <ul className="mt-8 space-y-4">
-              <li className="flex items-start gap-3">
-                <span className="mt-1 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
-                  ✓
-                </span>
-                <span className="text-gray-700">
-                  Generate personalized 7-day meal plans in seconds
-                </span>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="mt-1 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
-                  ✓
-                </span>
-                <span className="text-gray-700">
-                  Automatic shopping lists with smart ingredients
-                </span>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="mt-1 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
-                  ✓
-                </span>
-                <span className="text-gray-700">
-                  Tailored to your dietary needs and preferences
-                </span>
-              </li>
-            </ul>
+            {showMarketing ? (
+              <>
+                <p className="text-xl font-semibold text-gray-900">
+                  Your AI-powered meal planning assistant
+                </p>
+                <ul className="mt-8 space-y-4">
+                  <li className="flex items-start gap-3">
+                    <span className="mt-1 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
+                      ✓
+                    </span>
+                    <span className="text-gray-700">
+                      Generate personalized 7-day meal plans in seconds
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="mt-1 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
+                      ✓
+                    </span>
+                    <span className="text-gray-700">
+                      Automatic shopping lists with smart ingredients
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="mt-1 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
+                      ✓
+                    </span>
+                    <span className="text-gray-700">
+                      Tailored to your dietary needs and preferences
+                    </span>
+                  </li>
+                </ul>
+              </>
+            ) : (
+              <p className="text-lg text-gray-600">Smart meal planning made simple</p>
+            )}
           </div>
         </div>
       </div>

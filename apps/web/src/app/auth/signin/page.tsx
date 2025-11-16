@@ -81,6 +81,7 @@ function SignInForm() {
             </Link>
           </>
         }
+        showMarketing={false}
       >
         <form className="space-y-6" onSubmit={handleSubmit}>
           {error && (
