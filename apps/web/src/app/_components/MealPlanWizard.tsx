@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { ChevronDownIcon } from '@heroicons/react/24/outline';
 
 interface MealPlanWizardProps {
@@ -29,18 +29,45 @@ export default function MealPlanWizard({
   const [isVegetarian, setIsVegetarian] = useState(false);
   const [isDairyFree, setIsDairyFree] = useState(false);
   const [dislikes, setDislikes] = useState('');
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+
+  // Check if form has any user input (different from defaults)
+  const hasUserInput = 
+    householdSize !== 2 || 
+    mealsPerDay !== 1 || 
+    days !== (isPremium ? 7 : 3) || 
+    isVegetarian || 
+    isDairyFree || 
+    dislikes.trim().length > 0;
+
+  const handleClose = useCallback(() => {
+    if (hasUserInput) {
+      setShowConfirmDialog(true);
+    } else {
+      onClose?.();
+    }
+  }, [hasUserInput, onClose]);
+
+  const confirmClose = () => {
+    setShowConfirmDialog(false);
+    onClose?.();
+  };
+
+  const cancelClose = () => {
+    setShowConfirmDialog(false);
+  };
 
   // Handle ESC key
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && onClose) {
-        onClose();
+        handleClose();
       }
     };
 
     document.addEventListener('keydown', handleEscape);
     return () => document.removeEventListener('keydown', handleEscape);
-  }, [onClose]);
+  }, [onClose, handleClose]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,69 +75,81 @@ export default function MealPlanWizard({
   };
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-emerald-50 via-white to-amber-50 p-0 sm:bg-gray-900/50 sm:p-4"
-      onClick={() => onClose?.()}
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="wizard-title"
-    >
+    <>
       <div
-        className="flex h-full w-full items-center justify-center"
-        onClick={(e) => e.stopPropagation()}
+        className="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-emerald-50 via-white to-amber-50 p-0 sm:bg-gray-900/50 sm:p-4"
+        onClick={handleClose}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="wizard-title"
       >
-        <div className="flex h-full w-full flex-col overflow-y-auto rounded-none bg-gradient-to-b from-white to-emerald-50/30 p-6 shadow-xl sm:h-auto sm:max-h-[90vh] sm:max-w-lg sm:rounded-2xl sm:border sm:border-emerald-100/50 sm:p-8">
-          {/* Header icon/illustration */}
-          <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-600 shadow-lg shadow-emerald-500/30">
-            <svg
-              className="h-10 w-10 text-white"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.5}
-                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-              />
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.5}
-                d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-          </div>
-
-          <div className="flex items-start justify-between">
-            <div className="flex-1">
-              <h2 id="wizard-title" className="text-center text-3xl font-bold text-gray-900">
-                Let&apos;s plan your week!
-              </h2>
-              <p className="mt-3 text-center text-base text-gray-600">
-                Answer a few quick questions to get your personalised meal plan.
-              </p>
-              <p className="mt-1 text-center text-sm text-gray-500">Takes about 10 seconds</p>
+        <div
+          className="flex h-full w-full items-center justify-center"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="flex h-full w-full flex-col overflow-y-auto rounded-none bg-gradient-to-b from-white to-emerald-50/30 shadow-xl sm:h-auto sm:max-h-[90vh] sm:max-w-lg sm:rounded-2xl sm:border sm:border-emerald-100/50">
+            {/* Persistent header with branding */}
+            <div className="sticky top-0 z-10 flex items-center justify-between border-b border-gray-200 bg-white px-4 py-3 sm:px-6 sm:rounded-t-2xl">
+              <div className="flex items-center gap-2">
+                <span className="text-xl">🍽️</span>
+                <span className="text-base font-bold text-gray-900 sm:text-lg">MealMind AI</span>
+              </div>
+              {onClose && (
+                <button
+                  onClick={handleClose}
+                  type="button"
+                  className="flex min-h-[44px] items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
+                  aria-label="Cancel and return to dashboard"
+                >
+                  Cancel
+                </button>
+              )}
             </div>
-            {onClose && (
-              <button
-                onClick={onClose}
-                type="button"
-                className="absolute right-4 top-4 flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full bg-white p-2.5 text-gray-400 shadow-md transition hover:bg-gray-50 hover:text-gray-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 sm:right-6 sm:top-6"
-                aria-label="Close and return to dashboard"
-              >
-                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+
+            {/* Main content */}
+            <div className="flex-1 p-6 sm:p-8">
+              {/* Progress indicator */}
+              <div className="mb-6 text-center">
+                <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
+                  Step 1 of 1
+                </p>
+                <div className="mx-auto mt-2 h-1 w-16 rounded-full bg-emerald-600"></div>
+              </div>
+
+              {/* Header icon/illustration */}
+              <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-600 shadow-lg shadow-emerald-500/30">
+                <svg
+                  className="h-10 w-10 text-white"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
+                    strokeWidth={1.5}
+                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                  />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={1.5}
+                    d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                   />
                 </svg>
-              </button>
-            )}
-          </div>
+              </div>
+
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <h2 id="wizard-title" className="text-center text-3xl font-bold text-gray-900">
+                    Let&apos;s plan your week!
+                  </h2>
+                  <p className="mt-3 text-center text-base text-gray-600">
+                    Answer a few quick questions to get your personalised meal plan.
+                  </p>
+                  <p className="mt-1 text-center text-sm text-gray-500">Takes about 10 seconds</p>
+                </div>
+              </div>
 
           <form onSubmit={handleSubmit} className="mt-8 space-y-6">
             {/* Household size */}
@@ -292,8 +331,47 @@ export default function MealPlanWizard({
               </span>
             </button>
           </form>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+
+      {/* Confirmation Dialog */}
+      {showConfirmDialog && (
+        <div
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 p-4"
+          onClick={cancelClose}
+        >
+          <div 
+            className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl"
+            role="alertdialog"
+            aria-labelledby="confirm-dialog-title"
+            aria-describedby="confirm-dialog-description"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 id="confirm-dialog-title" className="text-lg font-semibold text-gray-900">
+              Discard changes?
+            </h3>
+            <p id="confirm-dialog-description" className="mt-2 text-sm text-gray-600">
+              You have unsaved changes. Are you sure you want to cancel?
+            </p>
+            <div className="mt-6 flex gap-3">
+              <button
+                onClick={cancelClose}
+                className="flex-1 rounded-lg border-2 border-gray-300 bg-white px-4 py-2.5 text-sm font-semibold text-gray-900 transition hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
+              >
+                Keep Editing
+              </button>
+              <button
+                onClick={confirmClose}
+                className="flex-1 rounded-lg bg-red-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-red-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+              >
+                Discard
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
