@@ -79,7 +79,7 @@ describe('MealPlanWizard', () => {
     const mockOnClose = vi.fn();
     render(<MealPlanWizard onComplete={mockOnComplete} onClose={mockOnClose} />);
 
-    const closeButton = screen.getByLabelText(/Close and return to dashboard/i);
+    const closeButton = screen.getByLabelText(/Cancel and return to dashboard/i);
     expect(closeButton).toBeInTheDocument();
   });
 
@@ -89,7 +89,7 @@ describe('MealPlanWizard', () => {
     const mockOnClose = vi.fn();
     render(<MealPlanWizard onComplete={mockOnComplete} onClose={mockOnClose} />);
 
-    const closeButton = screen.getByLabelText(/Close and return to dashboard/i);
+    const closeButton = screen.getByLabelText(/Cancel and return to dashboard/i);
     await user.click(closeButton);
 
     expect(mockOnClose).toHaveBeenCalled();
@@ -187,5 +187,113 @@ describe('MealPlanWizard', () => {
     // Verify parent label has active scale for better touch feedback
     expect(vegetarianLabel?.classList.contains('active:scale-[0.98]')).toBe(true);
     expect(dairyFreeLabel?.classList.contains('active:scale-[0.98]')).toBe(true);
+  });
+
+  it('should render persistent header with MealMind AI branding', () => {
+    const mockOnComplete = vi.fn();
+    const mockOnClose = vi.fn();
+    const { container } = render(<MealPlanWizard onComplete={mockOnComplete} onClose={mockOnClose} />);
+
+    expect(screen.getByText('MealMind AI')).toBeInTheDocument();
+    
+    // Check for the header (sticky top-0) containing the emoji
+    const header = container.querySelector('.sticky.top-0');
+    expect(header).toBeInTheDocument();
+    expect(header?.textContent).toContain('🍽️');
+    expect(header?.textContent).toContain('MealMind AI');
+  });
+
+  it('should render progress indicator showing Step 1 of 1', () => {
+    const mockOnComplete = vi.fn();
+    render(<MealPlanWizard onComplete={mockOnComplete} />);
+
+    expect(screen.getByText('Step 1 of 1')).toBeInTheDocument();
+  });
+
+  it('should render Cancel button text instead of X icon', () => {
+    const mockOnComplete = vi.fn();
+    const mockOnClose = vi.fn();
+    render(<MealPlanWizard onComplete={mockOnComplete} onClose={mockOnClose} />);
+
+    expect(screen.getByRole('button', { name: /Cancel and return to dashboard/i })).toHaveTextContent('Cancel');
+  });
+
+  it('should show confirmation dialog when closing with user input', async () => {
+    const user = userEvent.setup();
+    const mockOnComplete = vi.fn();
+    const mockOnClose = vi.fn();
+    render(<MealPlanWizard onComplete={mockOnComplete} onClose={mockOnClose} />);
+
+    // Make a change to the form
+    const householdSelect = screen.getByLabelText(/How many people/i);
+    await user.selectOptions(householdSelect, '4');
+
+    // Click cancel button
+    const closeButton = screen.getByLabelText(/Cancel and return to dashboard/i);
+    await user.click(closeButton);
+
+    // Should show confirmation dialog
+    expect(screen.getByText('Discard changes?')).toBeInTheDocument();
+    expect(screen.getByText(/You have unsaved changes/i)).toBeInTheDocument();
+    expect(mockOnClose).not.toHaveBeenCalled();
+  });
+
+  it('should not show confirmation dialog when closing without user input', async () => {
+    const user = userEvent.setup();
+    const mockOnComplete = vi.fn();
+    const mockOnClose = vi.fn();
+    render(<MealPlanWizard onComplete={mockOnComplete} onClose={mockOnClose} />);
+
+    // Click cancel button without making any changes
+    const closeButton = screen.getByLabelText(/Cancel and return to dashboard/i);
+    await user.click(closeButton);
+
+    // Should not show confirmation dialog
+    expect(screen.queryByText('Discard changes?')).not.toBeInTheDocument();
+    expect(mockOnClose).toHaveBeenCalled();
+  });
+
+  it('should close wizard when user confirms discard in confirmation dialog', async () => {
+    const user = userEvent.setup();
+    const mockOnComplete = vi.fn();
+    const mockOnClose = vi.fn();
+    render(<MealPlanWizard onComplete={mockOnComplete} onClose={mockOnClose} />);
+
+    // Make a change to the form
+    const householdSelect = screen.getByLabelText(/How many people/i);
+    await user.selectOptions(householdSelect, '4');
+
+    // Click cancel button
+    const closeButton = screen.getByLabelText(/Cancel and return to dashboard/i);
+    await user.click(closeButton);
+
+    // Click Discard button in confirmation dialog
+    const discardButton = screen.getByRole('button', { name: /Discard/i });
+    await user.click(discardButton);
+
+    expect(mockOnClose).toHaveBeenCalled();
+  });
+
+  it('should not close wizard when user cancels discard in confirmation dialog', async () => {
+    const user = userEvent.setup();
+    const mockOnComplete = vi.fn();
+    const mockOnClose = vi.fn();
+    render(<MealPlanWizard onComplete={mockOnComplete} onClose={mockOnClose} />);
+
+    // Make a change to the form
+    const householdSelect = screen.getByLabelText(/How many people/i);
+    await user.selectOptions(householdSelect, '4');
+
+    // Click cancel button
+    const closeButton = screen.getByLabelText(/Cancel and return to dashboard/i);
+    await user.click(closeButton);
+
+    // Click Keep Editing button in confirmation dialog
+    const keepEditingButton = screen.getByRole('button', { name: /Keep Editing/i });
+    await user.click(keepEditingButton);
+
+    // Dialog should be closed but wizard should still be open
+    expect(screen.queryByText('Discard changes?')).not.toBeInTheDocument();
+    expect(mockOnClose).not.toHaveBeenCalled();
   });
 });
