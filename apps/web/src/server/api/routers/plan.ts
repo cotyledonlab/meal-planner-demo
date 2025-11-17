@@ -247,14 +247,17 @@ export const planRouter = createTRPCRouter({
       // Find alternative recipes that match:
       // 1. Same meal type
       // 2. Dietary preferences
-      // 3. Not the current recipe
+      // 3. Not already in the plan
       // 4. Not disliked
       const currentRecipeId = itemToSwap.recipeId;
       const mealType = itemToSwap.mealType;
 
+      // Get all recipe IDs currently in the plan to avoid duplicates
+      const usedRecipeIds = plan.items.map((item) => item.recipeId);
+
       const alternativeRecipes = await ctx.db.recipe.findMany({
         where: {
-          id: { not: currentRecipeId },
+          id: { notIn: usedRecipeIds },
           mealTypes: { has: mealType },
           ...(isVegetarian && { isVegetarian: true }),
           ...(isDairyFree && { isDairyFree: true }),
