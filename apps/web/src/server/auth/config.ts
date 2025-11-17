@@ -171,9 +171,12 @@ export const authConfig = {
   },
   callbacks: {
     jwt: async ({ token, user }) => {
-      // On first sign-in, ensure we attach the user id and role
+      // On first sign-in, ensure we attach the user id, email, and role
       if (user?.id) {
         token.id = user.id;
+      }
+      if (user?.email) {
+        token.email = user.email;
       }
       // If user object has role (from authorize), use it directly
       if (user && 'role' in user) {
@@ -197,6 +200,7 @@ export const authConfig = {
       user: {
         ...session.user,
         id: typeof token.id === 'string' ? token.id : session.user.id,
+        email: typeof token.email === 'string' ? token.email : session.user.email,
         role: typeof token.role === 'string' ? token.role : undefined,
       },
     }),
