@@ -176,7 +176,7 @@ export const authConfig = {
         token.id = user.id;
       }
       // If user object has role (from authorize), use it directly
-      if (user && 'role' in user && user.role) {
+      if (user && 'role' in user) {
         token.role = user.role;
       }
       // Populate role if missing or on initial sign in (fallback for other auth providers)
