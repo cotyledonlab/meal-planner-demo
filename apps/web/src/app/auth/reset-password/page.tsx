@@ -190,7 +190,11 @@ function ResetPasswordForm() {
         </svg>
         Back to Sign In
       </Link>
-      <AuthLayout title="Create new password" subtitle="Enter your new password below" showMarketing={false}>
+      <AuthLayout
+        title="Create new password"
+        subtitle="Enter your new password below"
+        showMarketing={false}
+      >
         <form className="space-y-6" onSubmit={handleSubmit}>
           {error && (
             <div className="rounded-md bg-red-50 p-4" role="alert" aria-live="polite">

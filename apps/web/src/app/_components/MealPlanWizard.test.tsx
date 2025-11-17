@@ -192,10 +192,12 @@ describe('MealPlanWizard', () => {
   it('should render persistent header with MealMind AI branding', () => {
     const mockOnComplete = vi.fn();
     const mockOnClose = vi.fn();
-    const { container } = render(<MealPlanWizard onComplete={mockOnComplete} onClose={mockOnClose} />);
+    const { container } = render(
+      <MealPlanWizard onComplete={mockOnComplete} onClose={mockOnClose} />
+    );
 
     expect(screen.getByText('MealMind AI')).toBeInTheDocument();
-    
+
     // Check for the header (sticky top-0) containing the emoji
     const header = container.querySelector('.sticky.top-0');
     expect(header).toBeInTheDocument();
@@ -215,7 +217,9 @@ describe('MealPlanWizard', () => {
     const mockOnClose = vi.fn();
     render(<MealPlanWizard onComplete={mockOnComplete} onClose={mockOnClose} />);
 
-    expect(screen.getByRole('button', { name: /Cancel and return to dashboard/i })).toHaveTextContent('Cancel');
+    expect(
+      screen.getByRole('button', { name: /Cancel and return to dashboard/i })
+    ).toHaveTextContent('Cancel');
   });
 
   it('should show confirmation dialog when closing with user input', async () => {

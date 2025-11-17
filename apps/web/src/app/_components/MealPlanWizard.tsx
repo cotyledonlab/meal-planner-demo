@@ -32,12 +32,12 @@ export default function MealPlanWizard({
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
   // Check if form has any user input (different from defaults)
-  const hasUserInput = 
-    householdSize !== 2 || 
-    mealsPerDay !== 1 || 
-    days !== (isPremium ? 7 : 3) || 
-    isVegetarian || 
-    isDairyFree || 
+  const hasUserInput =
+    householdSize !== 2 ||
+    mealsPerDay !== 1 ||
+    days !== (isPremium ? 7 : 3) ||
+    isVegetarian ||
+    isDairyFree ||
     dislikes.trim().length > 0;
 
   const handleClose = useCallback(() => {
@@ -151,186 +151,204 @@ export default function MealPlanWizard({
                 </div>
               </div>
 
-          <form onSubmit={handleSubmit} className="mt-8 space-y-6">
-            {/* Household size */}
-            <div className="group">
-              <label
-                htmlFor="householdSize"
-                className="flex items-center gap-2 text-sm font-semibold text-gray-900"
-              >
-                <span>How many people?</span>
-                <span className="text-sm leading-none sm:text-base" role="img" aria-label="people">
-                  👥
-                </span>
-              </label>
-              <div className="relative mt-2">
-                <select
-                  id="householdSize"
-                  value={householdSize}
-                  onChange={(e) => setHouseholdSize(Number(e.target.value))}
-                  className="block w-full appearance-none rounded-2xl border-2 border-gray-200 bg-white px-4 py-3.5 pr-12 text-base text-gray-900 shadow-sm transition hover:border-emerald-300 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600 sm:rounded-xl min-h-[56px]"
+              <form onSubmit={handleSubmit} className="mt-8 space-y-6">
+                {/* Household size */}
+                <div className="group">
+                  <label
+                    htmlFor="householdSize"
+                    className="flex items-center gap-2 text-sm font-semibold text-gray-900"
+                  >
+                    <span>How many people?</span>
+                    <span
+                      className="text-sm leading-none sm:text-base"
+                      role="img"
+                      aria-label="people"
+                    >
+                      👥
+                    </span>
+                  </label>
+                  <div className="relative mt-2">
+                    <select
+                      id="householdSize"
+                      value={householdSize}
+                      onChange={(e) => setHouseholdSize(Number(e.target.value))}
+                      className="block w-full appearance-none rounded-2xl border-2 border-gray-200 bg-white px-4 py-3.5 pr-12 text-base text-gray-900 shadow-sm transition hover:border-emerald-300 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600 sm:rounded-xl min-h-[56px]"
+                    >
+                      {[1, 2, 3, 4, 5, 6].map((num) => (
+                        <option key={num} value={num}>
+                          {num} {num === 1 ? 'person' : 'people'}
+                        </option>
+                      ))}
+                    </select>
+                    <ChevronDownIcon
+                      className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400"
+                      aria-hidden="true"
+                    />
+                  </div>
+                </div>
+
+                {/* Meals per day */}
+                <div className="group">
+                  <label
+                    htmlFor="mealsPerDay"
+                    className="flex items-center gap-2 text-sm font-semibold text-gray-900"
+                  >
+                    <span>How many meals per day?</span>
+                    <span
+                      className="text-sm leading-none sm:text-base"
+                      role="img"
+                      aria-label="meals"
+                    >
+                      🍽️
+                    </span>
+                  </label>
+                  <div className="relative mt-2">
+                    <select
+                      id="mealsPerDay"
+                      value={mealsPerDay}
+                      onChange={(e) => setMealsPerDay(Number(e.target.value))}
+                      className="block w-full appearance-none rounded-2xl border-2 border-gray-200 bg-white px-4 py-3.5 pr-12 text-base text-gray-900 shadow-sm transition hover:border-emerald-300 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600 sm:rounded-xl min-h-[56px]"
+                    >
+                      <option value={1}>1 meal (Dinner only)</option>
+                      <option value={2}>2 meals (Lunch & Dinner)</option>
+                      <option value={3}>3 meals (All meals)</option>
+                    </select>
+                    <ChevronDownIcon
+                      className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400"
+                      aria-hidden="true"
+                    />
+                  </div>
+                </div>
+
+                {/* How many days */}
+                <div className="group">
+                  <label
+                    htmlFor="days"
+                    className="flex items-center gap-2 text-sm font-semibold text-gray-900"
+                  >
+                    <span>How many days to plan?</span>
+                    <span
+                      className="text-sm leading-none sm:text-base"
+                      role="img"
+                      aria-label="calendar"
+                    >
+                      📅
+                    </span>
+                  </label>
+                  <div className="relative mt-2">
+                    <select
+                      id="days"
+                      value={days}
+                      onChange={(e) => setDays(Number(e.target.value))}
+                      className="block w-full appearance-none rounded-2xl border-2 border-gray-200 bg-white px-4 py-3.5 pr-12 text-base text-gray-900 shadow-sm transition hover:border-emerald-300 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600 sm:rounded-xl min-h-[56px]"
+                    >
+                      {[3, 4, 5, 6, 7].map((num) => {
+                        const isPremiumOption = !isPremium && num > 3;
+                        return (
+                          <option key={num} value={num} disabled={isPremiumOption}>
+                            {num} days{isPremiumOption ? ' ⭐ Premium' : ''}
+                          </option>
+                        );
+                      })}
+                    </select>
+                    <ChevronDownIcon
+                      className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400"
+                      aria-hidden="true"
+                    />
+                  </div>
+                  {!isPremium && (
+                    <p className="mt-2 rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-700 border border-amber-200">
+                      💡 Basic users limited to 3 days. Upgrade to premium for 4-7 day plans.
+                    </p>
+                  )}
+                </div>
+
+                {/* Diet preferences */}
+                <div className="space-y-3">
+                  <span className="flex items-center gap-2 text-sm font-semibold text-gray-900">
+                    <span>Dietary preferences</span>
+                    <span
+                      className="text-sm leading-none sm:text-base"
+                      role="img"
+                      aria-label="diet"
+                    >
+                      🥗
+                    </span>
+                  </span>
+                  <label
+                    htmlFor="isVegetarian"
+                    className="flex min-h-[60px] cursor-pointer items-center gap-3 rounded-2xl border-2 border-gray-200 bg-white px-4 py-3 text-base text-gray-700 shadow-sm transition hover:border-emerald-400 hover:bg-emerald-50/30 focus-within:border-emerald-500 focus-within:ring-2 focus-within:ring-emerald-600 sm:rounded-xl active:scale-[0.98]"
+                  >
+                    <input
+                      type="checkbox"
+                      id="isVegetarian"
+                      checked={isVegetarian}
+                      onChange={(e) => setIsVegetarian(e.target.checked)}
+                      className="h-7 w-7 shrink-0 rounded-md border-2 border-gray-300 text-emerald-600 transition-all focus:ring-2 focus:ring-emerald-600 checked:bg-emerald-600 checked:border-emerald-600 active:scale-90"
+                    />
+                    <span className="flex items-center gap-2">
+                      <span>🌱</span>
+                      <span>Vegetarian</span>
+                    </span>
+                  </label>
+                  <label
+                    htmlFor="isDairyFree"
+                    className="flex min-h-[60px] cursor-pointer items-center gap-3 rounded-2xl border-2 border-gray-200 bg-white px-4 py-3 text-base text-gray-700 shadow-sm transition hover:border-emerald-400 hover:bg-emerald-50/30 focus-within:border-emerald-500 focus-within:ring-2 focus-within:ring-emerald-600 sm:rounded-xl active:scale-[0.98]"
+                  >
+                    <input
+                      type="checkbox"
+                      id="isDairyFree"
+                      checked={isDairyFree}
+                      onChange={(e) => setIsDairyFree(e.target.checked)}
+                      className="h-7 w-7 shrink-0 rounded-md border-2 border-gray-300 text-emerald-600 transition-all focus:ring-2 focus:ring-emerald-600 checked:bg-emerald-600 checked:border-emerald-600 active:scale-90"
+                    />
+                    <span className="flex items-center gap-2">
+                      <span>🥛</span>
+                      <span>Dairy-free</span>
+                    </span>
+                  </label>
+                </div>
+
+                {/* Dislikes */}
+                <div className="group">
+                  <label
+                    htmlFor="dislikes"
+                    className="flex items-center gap-2 text-sm font-semibold text-gray-900"
+                  >
+                    <span>Foods to avoid (optional)</span>
+                    <span
+                      className="text-sm leading-none sm:text-base"
+                      role="img"
+                      aria-label="avoid"
+                    >
+                      🚫
+                    </span>
+                  </label>
+                  <input
+                    type="text"
+                    id="dislikes"
+                    value={dislikes}
+                    onChange={(e) => setDislikes(e.target.value)}
+                    placeholder="e.g., mushrooms, olives"
+                    className="mt-2 block w-full rounded-2xl border-2 border-gray-200 bg-white px-4 py-3.5 text-base text-gray-900 placeholder-gray-400 shadow-sm transition hover:border-emerald-300 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600 sm:rounded-xl min-h-[56px]"
+                  />
+                  <p className="mt-2 text-xs text-gray-500">
+                    💬 Separate multiple items with commas
+                  </p>
+                </div>
+
+                {/* Submit button */}
+                <button
+                  type="submit"
+                  className="w-full min-h-[56px] rounded-full bg-gradient-to-r from-emerald-600 to-emerald-700 px-6 py-3.5 text-base font-semibold text-white shadow-lg shadow-emerald-600/30 transition hover:from-emerald-700 hover:to-emerald-800 hover:shadow-xl hover:shadow-emerald-600/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 active:scale-[0.98]"
                 >
-                  {[1, 2, 3, 4, 5, 6].map((num) => (
-                    <option key={num} value={num}>
-                      {num} {num === 1 ? 'person' : 'people'}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDownIcon
-                  className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400"
-                  aria-hidden="true"
-                />
-              </div>
-            </div>
-
-            {/* Meals per day */}
-            <div className="group">
-              <label
-                htmlFor="mealsPerDay"
-                className="flex items-center gap-2 text-sm font-semibold text-gray-900"
-              >
-                <span>How many meals per day?</span>
-                <span className="text-sm leading-none sm:text-base" role="img" aria-label="meals">
-                  🍽️
-                </span>
-              </label>
-              <div className="relative mt-2">
-                <select
-                  id="mealsPerDay"
-                  value={mealsPerDay}
-                  onChange={(e) => setMealsPerDay(Number(e.target.value))}
-                  className="block w-full appearance-none rounded-2xl border-2 border-gray-200 bg-white px-4 py-3.5 pr-12 text-base text-gray-900 shadow-sm transition hover:border-emerald-300 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600 sm:rounded-xl min-h-[56px]"
-                >
-                  <option value={1}>1 meal (Dinner only)</option>
-                  <option value={2}>2 meals (Lunch & Dinner)</option>
-                  <option value={3}>3 meals (All meals)</option>
-                </select>
-                <ChevronDownIcon
-                  className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400"
-                  aria-hidden="true"
-                />
-              </div>
-            </div>
-
-            {/* How many days */}
-            <div className="group">
-              <label
-                htmlFor="days"
-                className="flex items-center gap-2 text-sm font-semibold text-gray-900"
-              >
-                <span>How many days to plan?</span>
-                <span
-                  className="text-sm leading-none sm:text-base"
-                  role="img"
-                  aria-label="calendar"
-                >
-                  📅
-                </span>
-              </label>
-              <div className="relative mt-2">
-                <select
-                  id="days"
-                  value={days}
-                  onChange={(e) => setDays(Number(e.target.value))}
-                  className="block w-full appearance-none rounded-2xl border-2 border-gray-200 bg-white px-4 py-3.5 pr-12 text-base text-gray-900 shadow-sm transition hover:border-emerald-300 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600 sm:rounded-xl min-h-[56px]"
-                >
-                  {[3, 4, 5, 6, 7].map((num) => {
-                    const isPremiumOption = !isPremium && num > 3;
-                    return (
-                      <option key={num} value={num} disabled={isPremiumOption}>
-                        {num} days{isPremiumOption ? ' ⭐ Premium' : ''}
-                      </option>
-                    );
-                  })}
-                </select>
-                <ChevronDownIcon
-                  className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400"
-                  aria-hidden="true"
-                />
-              </div>
-              {!isPremium && (
-                <p className="mt-2 rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-700 border border-amber-200">
-                  💡 Basic users limited to 3 days. Upgrade to premium for 4-7 day plans.
-                </p>
-              )}
-            </div>
-
-            {/* Diet preferences */}
-            <div className="space-y-3">
-              <span className="flex items-center gap-2 text-sm font-semibold text-gray-900">
-                <span>Dietary preferences</span>
-                <span className="text-sm leading-none sm:text-base" role="img" aria-label="diet">
-                  🥗
-                </span>
-              </span>
-              <label
-                htmlFor="isVegetarian"
-                className="flex min-h-[60px] cursor-pointer items-center gap-3 rounded-2xl border-2 border-gray-200 bg-white px-4 py-3 text-base text-gray-700 shadow-sm transition hover:border-emerald-400 hover:bg-emerald-50/30 focus-within:border-emerald-500 focus-within:ring-2 focus-within:ring-emerald-600 sm:rounded-xl active:scale-[0.98]"
-              >
-                <input
-                  type="checkbox"
-                  id="isVegetarian"
-                  checked={isVegetarian}
-                  onChange={(e) => setIsVegetarian(e.target.checked)}
-                  className="h-7 w-7 shrink-0 rounded-md border-2 border-gray-300 text-emerald-600 transition-all focus:ring-2 focus:ring-emerald-600 checked:bg-emerald-600 checked:border-emerald-600 active:scale-90"
-                />
-                <span className="flex items-center gap-2">
-                  <span>🌱</span>
-                  <span>Vegetarian</span>
-                </span>
-              </label>
-              <label
-                htmlFor="isDairyFree"
-                className="flex min-h-[60px] cursor-pointer items-center gap-3 rounded-2xl border-2 border-gray-200 bg-white px-4 py-3 text-base text-gray-700 shadow-sm transition hover:border-emerald-400 hover:bg-emerald-50/30 focus-within:border-emerald-500 focus-within:ring-2 focus-within:ring-emerald-600 sm:rounded-xl active:scale-[0.98]"
-              >
-                <input
-                  type="checkbox"
-                  id="isDairyFree"
-                  checked={isDairyFree}
-                  onChange={(e) => setIsDairyFree(e.target.checked)}
-                  className="h-7 w-7 shrink-0 rounded-md border-2 border-gray-300 text-emerald-600 transition-all focus:ring-2 focus:ring-emerald-600 checked:bg-emerald-600 checked:border-emerald-600 active:scale-90"
-                />
-                <span className="flex items-center gap-2">
-                  <span>🥛</span>
-                  <span>Dairy-free</span>
-                </span>
-              </label>
-            </div>
-
-            {/* Dislikes */}
-            <div className="group">
-              <label
-                htmlFor="dislikes"
-                className="flex items-center gap-2 text-sm font-semibold text-gray-900"
-              >
-                <span>Foods to avoid (optional)</span>
-                <span className="text-sm leading-none sm:text-base" role="img" aria-label="avoid">
-                  🚫
-                </span>
-              </label>
-              <input
-                type="text"
-                id="dislikes"
-                value={dislikes}
-                onChange={(e) => setDislikes(e.target.value)}
-                placeholder="e.g., mushrooms, olives"
-                className="mt-2 block w-full rounded-2xl border-2 border-gray-200 bg-white px-4 py-3.5 text-base text-gray-900 placeholder-gray-400 shadow-sm transition hover:border-emerald-300 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600 sm:rounded-xl min-h-[56px]"
-              />
-              <p className="mt-2 text-xs text-gray-500">💬 Separate multiple items with commas</p>
-            </div>
-
-            {/* Submit button */}
-            <button
-              type="submit"
-              className="w-full min-h-[56px] rounded-full bg-gradient-to-r from-emerald-600 to-emerald-700 px-6 py-3.5 text-base font-semibold text-white shadow-lg shadow-emerald-600/30 transition hover:from-emerald-700 hover:to-emerald-800 hover:shadow-xl hover:shadow-emerald-600/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 active:scale-[0.98]"
-            >
-              <span className="flex items-center justify-center gap-2">
-                <span>✨</span>
-                <span>Create My Plan</span>
-                <span>🎯</span>
-              </span>
-            </button>
-          </form>
+                  <span className="flex items-center justify-center gap-2">
+                    <span>✨</span>
+                    <span>Create My Plan</span>
+                    <span>🎯</span>
+                  </span>
+                </button>
+              </form>
             </div>
           </div>
         </div>
@@ -342,7 +360,7 @@ export default function MealPlanWizard({
           className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 p-4"
           onClick={cancelClose}
         >
-          <div 
+          <div
             className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl"
             role="alertdialog"
             aria-labelledby="confirm-dialog-title"

@@ -273,8 +273,9 @@ export const planRouter = createTRPCRouter({
         dislikeTerms.length === 0
           ? alternativeRecipes
           : alternativeRecipes.filter((recipe) => {
-              const ingredientNames = recipe.ingredients
-                .map((ri) => ri.ingredient.name.toLowerCase());
+              const ingredientNames = recipe.ingredients.map((ri) =>
+                ri.ingredient.name.toLowerCase()
+              );
               return !dislikeTerms.some((dislike) => {
                 const dislikeLower = dislike.toLowerCase();
                 return ingredientNames.some((ingredient) => {

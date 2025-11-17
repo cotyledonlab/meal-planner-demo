@@ -19,7 +19,10 @@ export default function Pricing() {
   ];
 
   return (
-    <section id="pricing" className="bg-gradient-to-b from-white to-gray-50 py-16 sm:py-20 lg:py-24">
+    <section
+      id="pricing"
+      className="bg-gradient-to-b from-white to-gray-50 py-16 sm:py-20 lg:py-24"
+    >
       <div className="mx-auto max-w-7xl px-6">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
@@ -58,7 +61,9 @@ export default function Pricing() {
               <ul className="mt-8 space-y-4">
                 {tier.features.map((feature) => (
                   <li key={feature} className="flex items-start gap-3">
-                    <span className={`mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full ${tier.highlighted ? 'bg-emerald-600 text-white' : 'bg-emerald-100 text-emerald-600'}`}>
+                    <span
+                      className={`mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full ${tier.highlighted ? 'bg-emerald-600 text-white' : 'bg-emerald-100 text-emerald-600'}`}
+                    >
                       ✓
                     </span>
                     <span className="text-base text-gray-700">{feature}</span>

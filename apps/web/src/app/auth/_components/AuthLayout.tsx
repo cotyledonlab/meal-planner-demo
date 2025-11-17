@@ -26,7 +26,7 @@ export default function AuthLayout({
         <div className="absolute inset-0 bg-gradient-to-br from-emerald-600 via-emerald-700 to-emerald-900" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,_rgba(255,255,255,0.1)_0%,_transparent_50%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,_rgba(255,255,255,0.08)_0%,_transparent_50%)]" />
-        
+
         <div className="relative flex h-full flex-col justify-center px-8 lg:px-12">
           <div className="max-w-md">
             <div className="mb-8 flex items-center gap-3">
