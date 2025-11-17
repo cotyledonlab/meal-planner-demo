@@ -17,9 +17,7 @@ describe('AuthLayout', () => {
       screen.getByText('Generate personalized 7-day meal plans in seconds')
     ).toBeInTheDocument();
     expect(screen.getByText('Automatic shopping lists with smart ingredients')).toBeInTheDocument();
-    expect(
-      screen.getByText('Tailored to your dietary needs and preferences')
-    ).toBeInTheDocument();
+    expect(screen.getByText('Tailored to your dietary needs and preferences')).toBeInTheDocument();
 
     // Check that title and subtitle are rendered
     expect(screen.getByText('Test Title')).toBeInTheDocument();
@@ -37,9 +35,7 @@ describe('AuthLayout', () => {
     expect(screen.getByText('Smart meal planning made simple')).toBeInTheDocument();
 
     // Check that marketing bullets are NOT visible
-    expect(
-      screen.queryByText('Your AI-powered meal planning assistant')
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText('Your AI-powered meal planning assistant')).not.toBeInTheDocument();
     expect(
       screen.queryByText('Generate personalized 7-day meal plans in seconds')
     ).not.toBeInTheDocument();

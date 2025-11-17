@@ -1,5 +1,10 @@
 // Feature highlights cards section
-import { CalendarDaysIcon, ShoppingCartIcon, CurrencyEuroIcon, Cog6ToothIcon } from '@heroicons/react/24/outline';
+import {
+  CalendarDaysIcon,
+  ShoppingCartIcon,
+  CurrencyEuroIcon,
+  Cog6ToothIcon,
+} from '@heroicons/react/24/outline';
 
 export default function FeatureCards() {
   const features = [
@@ -79,7 +84,9 @@ export default function FeatureCards() {
                   Premium
                 </span>
               )}
-              <div className={`inline-flex rounded-xl p-3 transition-all duration-200 ${colorClasses[feature.color as keyof typeof colorClasses]}`}>
+              <div
+                className={`inline-flex rounded-xl p-3 transition-all duration-200 ${colorClasses[feature.color as keyof typeof colorClasses]}`}
+              >
                 <feature.Icon className="h-6 w-6" aria-hidden="true" />
               </div>
               <h3 className="mt-4 text-lg font-semibold text-gray-900">{feature.title}</h3>

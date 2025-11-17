@@ -2,13 +2,13 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { 
-  CalendarDaysIcon, 
-  ShoppingBagIcon, 
+import {
+  CalendarDaysIcon,
+  ShoppingBagIcon,
   SparklesIcon,
   ChartBarIcon,
   AdjustmentsHorizontalIcon,
-  BuildingStorefrontIcon 
+  BuildingStorefrontIcon,
 } from '@heroicons/react/24/outline';
 
 import PremiumFeatureCard from '~/app/_components/dashboard/PremiumFeatureCard';
@@ -70,7 +70,9 @@ export default function DashboardClient({ user, hasMealPlan }: DashboardClientPr
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,_rgba(255,255,255,0.1)_0%,_transparent_50%)]" />
             <div className="relative">
               <h1 className="text-4xl font-bold text-white">Welcome back, {displayName}!</h1>
-              <p className="mt-3 text-lg text-emerald-100">Ready to plan your meals for the week?</p>
+              <p className="mt-3 text-lg text-emerald-100">
+                Ready to plan your meals for the week?
+              </p>
               <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                 <Link
                   href="/planner"

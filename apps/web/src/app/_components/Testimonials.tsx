@@ -61,10 +61,14 @@ export default function Testimonials() {
                 ))}
               </div>
               <blockquote>
-                <p className="text-base leading-relaxed text-gray-700">&ldquo;{testimonial.quote}&rdquo;</p>
+                <p className="text-base leading-relaxed text-gray-700">
+                  &ldquo;{testimonial.quote}&rdquo;
+                </p>
               </blockquote>
               <figcaption className="mt-6 flex items-center gap-3">
-                <div className={`flex h-12 w-12 items-center justify-center rounded-full text-base font-bold text-white shadow-md ${avatarColors[testimonial.color as keyof typeof avatarColors]}`}>
+                <div
+                  className={`flex h-12 w-12 items-center justify-center rounded-full text-base font-bold text-white shadow-md ${avatarColors[testimonial.color as keyof typeof avatarColors]}`}
+                >
                   {testimonial.initials}
                 </div>
                 <div>

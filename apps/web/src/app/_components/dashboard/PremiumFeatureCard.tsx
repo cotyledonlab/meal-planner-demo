@@ -59,7 +59,9 @@ export default function PremiumFeatureCard({
       )}
 
       <div className="flex flex-col items-start gap-4 sm:flex-row">
-        <div className={`flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-xl text-white shadow-md ${colorClasses[iconColor]}`}>
+        <div
+          className={`flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-xl text-white shadow-md ${colorClasses[iconColor]}`}
+        >
           {typeof icon === 'string' ? <span className="text-2xl">{icon}</span> : icon}
         </div>
 
