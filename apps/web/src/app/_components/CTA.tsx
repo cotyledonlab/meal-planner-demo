@@ -45,7 +45,7 @@ export default function CTA() {
               Privacy
             </Link>
           </nav>
-          <p className="mt-6 text-center text-sm text-gray-500">
+          <p className="mt-6 text-center text-sm text-gray-700">
             © {new Date().getFullYear()} Meal Planner Demo. Prototype for demonstration purposes.
           </p>
         </div>

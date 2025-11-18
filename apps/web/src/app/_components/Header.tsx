@@ -34,7 +34,10 @@ export function Header() {
           {/* Logo */}
           <div className="flex items-center gap-3">
             <span className="text-2xl">🍽️</span>
-            <Link href="/dashboard" className="text-xl font-bold text-gray-900 hover:text-gray-700">
+            <Link
+              href="/dashboard"
+              className="text-xl font-bold text-gray-900 hover:text-gray-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 rounded"
+            >
               MealMind AI
             </Link>
           </div>
@@ -44,14 +47,14 @@ export function Header() {
             <div className="hidden items-center gap-6 md:flex">
               <Link
                 href="/dashboard"
-                className="text-sm font-medium text-gray-700 hover:text-gray-900"
+                className="text-sm font-medium text-gray-700 hover:text-gray-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 rounded px-2 py-1"
               >
                 Dashboard
               </Link>
               <span className="text-sm text-gray-700">{session.user.email}</span>
               <button
                 onClick={handleSignOut}
-                className="rounded-md bg-white px-3 py-1.5 text-sm font-medium text-gray-700 ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                className="rounded-md bg-white px-3 py-1.5 text-sm font-medium text-gray-700 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
               >
                 Sign out
               </button>
@@ -63,7 +66,7 @@ export function Header() {
             <div className="md:hidden">
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className={`rounded-md p-2 transition-colors ${
+                className={`rounded-md p-2 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 ${
                   mobileMenuOpen
                     ? 'bg-gray-900 text-white hover:bg-gray-800'
                     : 'text-gray-700 hover:bg-gray-100'
@@ -106,7 +109,7 @@ export function Header() {
               <div className="space-y-3 p-4">
                 <Link
                   href="/dashboard"
-                  className="block rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                  className="block rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Dashboard
@@ -119,7 +122,7 @@ export function Header() {
                     setMobileMenuOpen(false);
                     void handleSignOut();
                   }}
-                  className="block w-full rounded-md px-3 py-2 text-left text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                  className="block w-full rounded-md px-3 py-2 text-left text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
                 >
                   Sign out
                 </button>

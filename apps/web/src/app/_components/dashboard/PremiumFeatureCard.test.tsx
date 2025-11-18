@@ -31,7 +31,7 @@ describe('PremiumFeatureCard', () => {
     const { container } = render(<PremiumFeatureCard {...defaultProps} />);
 
     // Lock icon should be present in a gray background container
-    const lockContainer = container.querySelector('.bg-gray-100.text-gray-400');
+    const lockContainer = container.querySelector('.bg-gray-100.text-gray-600');
     expect(lockContainer).toBeInTheDocument();
   });
 

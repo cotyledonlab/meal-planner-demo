@@ -139,7 +139,7 @@ export default function DashboardClient({ user, hasMealPlan }: DashboardClientPr
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-gray-700">Shopping List</h3>
-                  <p className="mt-1 text-sm text-gray-500">Available after creating a meal plan</p>
+                  <p className="mt-1 text-sm text-gray-700">Available after creating a meal plan</p>
                 </div>
               </div>
             </div>

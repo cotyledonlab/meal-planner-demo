@@ -25,11 +25,6 @@ fi
 echo "Running lint-staged..."
 pnpm exec lint-staged || exit 1
 
-# Run TypeScript type checking
-echo "Running TypeScript type checking..."
-pnpm typecheck || exit 1
-
-# Run tests
-echo "Running tests..."
-pnpm test || exit 1
+# Note: Typecheck and tests run on pre-push and in CI
+# This keeps commits fast while maintaining quality gates
 

@@ -36,7 +36,7 @@ export default function PremiumFeatureCard({
       {/* Lock overlay for non-premium users */}
       {!isPremiumUser && (
         <div className="absolute right-4 top-4">
-          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 text-gray-400 shadow-sm">
+          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 text-gray-600 shadow-sm">
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path
                 strokeLinecap="round"
@@ -88,7 +88,7 @@ export default function PremiumFeatureCard({
                       See Example
                     </button>
                     {previewLabel && (
-                      <p className="text-xs text-gray-500 text-center sm:text-left">
+                      <p className="text-xs text-gray-700 text-center sm:text-left">
                         {previewLabel}
                       </p>
                     )}

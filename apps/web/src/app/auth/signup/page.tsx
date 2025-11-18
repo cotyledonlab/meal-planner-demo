@@ -254,7 +254,7 @@ function SignUpForm() {
                     name="cardName"
                     type="text"
                     autoComplete="cc-name"
-                    className="mt-1 block w-full rounded-lg border border-gray-200 px-4 py-3 text-base text-gray-900 shadow-sm transition placeholder:text-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                    className="mt-1 block w-full rounded-lg border border-gray-200 px-4 py-3 text-base text-gray-900 shadow-sm transition placeholder:text-gray-600 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600"
                     placeholder="Jamie Example"
                     value={paymentData.cardName}
                     onChange={handlePaymentChange}
@@ -270,7 +270,7 @@ function SignUpForm() {
                     type="text"
                     inputMode="numeric"
                     autoComplete="cc-number"
-                    className="mt-1 block w-full rounded-lg border border-gray-200 px-4 py-3 text-base text-gray-900 shadow-sm transition placeholder:text-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                    className="mt-1 block w-full rounded-lg border border-gray-200 px-4 py-3 text-base text-gray-900 shadow-sm transition placeholder:text-gray-600 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600"
                     placeholder="4242 4242 4242 4242"
                     value={paymentData.cardNumber}
                     onChange={handlePaymentChange}
@@ -287,7 +287,7 @@ function SignUpForm() {
                       name="expiry"
                       type="text"
                       autoComplete="cc-exp"
-                      className="mt-1 block w-full rounded-lg border border-gray-200 px-4 py-3 text-base text-gray-900 shadow-sm transition placeholder:text-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                      className="mt-1 block w-full rounded-lg border border-gray-200 px-4 py-3 text-base text-gray-900 shadow-sm transition placeholder:text-gray-600 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600"
                       placeholder="04 / 28"
                       value={paymentData.expiry}
                       onChange={handlePaymentChange}
@@ -303,7 +303,7 @@ function SignUpForm() {
                       type="text"
                       inputMode="numeric"
                       autoComplete="cc-csc"
-                      className="mt-1 block w-full rounded-lg border border-gray-200 px-4 py-3 text-base text-gray-900 shadow-sm transition placeholder:text-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                      className="mt-1 block w-full rounded-lg border border-gray-200 px-4 py-3 text-base text-gray-900 shadow-sm transition placeholder:text-gray-600 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600"
                       placeholder="123"
                       value={paymentData.cvc}
                       onChange={handlePaymentChange}
@@ -357,7 +357,7 @@ function SignUpForm() {
                   type="text"
                   autoComplete="name"
                   required
-                  className="mt-1 block w-full rounded-lg border border-gray-200 px-4 py-3 text-base text-gray-900 shadow-sm transition placeholder:text-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                  className="mt-1 block w-full rounded-lg border border-gray-200 px-4 py-3 text-base text-gray-900 shadow-sm transition placeholder:text-gray-600 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600"
                   placeholder="Your name"
                   value={formData.name}
                   onChange={handleChange}
@@ -379,7 +379,7 @@ function SignUpForm() {
                   type="email"
                   autoComplete="email"
                   required
-                  className="mt-1 block w-full rounded-lg border border-gray-200 px-4 py-3 text-base text-gray-900 shadow-sm transition placeholder:text-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                  className="mt-1 block w-full rounded-lg border border-gray-200 px-4 py-3 text-base text-gray-900 shadow-sm transition placeholder:text-gray-600 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600"
                   placeholder="you@example.com"
                   value={formData.email}
                   onChange={handleChange}
@@ -401,7 +401,7 @@ function SignUpForm() {
                   autoComplete="new-password"
                   required
                   aria-describedby="password-hint"
-                  className="mt-1 block w-full rounded-lg border border-gray-200 px-4 py-3 pr-12 text-base text-gray-900 shadow-sm transition placeholder:text-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                  className="mt-1 block w-full rounded-lg border border-gray-200 px-4 py-3 pr-12 text-base text-gray-900 shadow-sm transition placeholder:text-gray-600 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600"
                   placeholder="At least 8 characters"
                   value={formData.password}
                   onChange={handleChange}
@@ -411,7 +411,7 @@ function SignUpForm() {
                     {validationErrors.password}
                   </p>
                 )}
-                <p id="password-hint" className="mt-1 text-xs text-gray-500">
+                <p id="password-hint" className="mt-1 text-xs text-gray-700">
                   Must be at least 8 characters with one uppercase letter and one number
                 </p>
               </div>

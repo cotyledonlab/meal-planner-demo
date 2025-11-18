@@ -48,7 +48,7 @@ export default function ContactPage() {
                     hello@mealplanner.demo
                   </a>
                 </p>
-                <p className="mt-1 text-sm text-gray-500">We typically respond within 24 hours</p>
+                <p className="mt-1 text-sm text-gray-700">We typically respond within 24 hours</p>
               </div>
 
               <div>
@@ -71,7 +71,7 @@ export default function ContactPage() {
                 <p className="mt-2 text-gray-600">
                   Common questions about meal planning, recipes, and using the platform.
                 </p>
-                <p className="mt-4 text-sm text-gray-500">
+                <p className="mt-4 text-sm text-gray-700">
                   Check our{' '}
                   <Link href="/dashboard" className="text-emerald-600 hover:text-emerald-700">
                     dashboard

@@ -110,7 +110,7 @@ export default function MealPlanWizard({
             <div className="flex-1 p-6 sm:p-8">
               {/* Progress indicator */}
               <div className="mb-6 text-center">
-                <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
+                <p className="text-xs font-medium uppercase tracking-wide text-gray-700">
                   Step 1 of 1
                 </p>
                 <div className="mx-auto mt-2 h-1 w-16 rounded-full bg-emerald-600"></div>
@@ -147,7 +147,7 @@ export default function MealPlanWizard({
                   <p className="mt-3 text-center text-base text-gray-600">
                     Answer a few quick questions to get your personalised meal plan.
                   </p>
-                  <p className="mt-1 text-center text-sm text-gray-500">Takes about 10 seconds</p>
+                  <p className="mt-1 text-center text-sm text-gray-700">Takes about 10 seconds</p>
                 </div>
               </div>
 
@@ -181,7 +181,7 @@ export default function MealPlanWizard({
                       ))}
                     </select>
                     <ChevronDownIcon
-                      className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400"
+                      className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-600"
                       aria-hidden="true"
                     />
                   </div>
@@ -214,7 +214,7 @@ export default function MealPlanWizard({
                       <option value={3}>3 meals (All meals)</option>
                     </select>
                     <ChevronDownIcon
-                      className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400"
+                      className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-600"
                       aria-hidden="true"
                     />
                   </div>
@@ -252,7 +252,7 @@ export default function MealPlanWizard({
                       })}
                     </select>
                     <ChevronDownIcon
-                      className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400"
+                      className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-600"
                       aria-hidden="true"
                     />
                   </div>
@@ -330,9 +330,9 @@ export default function MealPlanWizard({
                     value={dislikes}
                     onChange={(e) => setDislikes(e.target.value)}
                     placeholder="e.g., mushrooms, olives"
-                    className="mt-2 block w-full rounded-2xl border-2 border-gray-200 bg-white px-4 py-3.5 text-base text-gray-900 placeholder-gray-400 shadow-sm transition hover:border-emerald-300 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600 sm:rounded-xl min-h-[56px]"
+                    className="mt-2 block w-full rounded-2xl border-2 border-gray-200 bg-white px-4 py-3.5 text-base text-gray-900 placeholder-gray-600 shadow-sm transition hover:border-emerald-300 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600 sm:rounded-xl min-h-[56px]"
                   />
-                  <p className="mt-2 text-xs text-gray-500">
+                  <p className="mt-2 text-xs text-gray-700">
                     💬 Separate multiple items with commas
                   </p>
                 </div>
