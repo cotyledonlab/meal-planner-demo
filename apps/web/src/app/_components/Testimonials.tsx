@@ -44,7 +44,7 @@ export default function Testimonials() {
             Real Irish families, real results
           </h2>
           <p className="mt-4 text-lg text-gray-600 sm:text-xl">
-            Join hundreds of families who've reclaimed their evenings and their peace of mind.
+            {`Join hundreds of families who've reclaimed their evenings and their peace of mind.`}
           </p>
         </div>
 

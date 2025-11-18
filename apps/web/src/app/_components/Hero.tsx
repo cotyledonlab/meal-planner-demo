@@ -33,8 +33,8 @@ export default function Hero() {
             Your Family, Fed and Happy
           </h1>
           <p className="mt-6 text-base text-emerald-100 sm:text-lg">
-            Stop stressing about "What's for dinner?" Spend less time planning, less money shopping, 
-            and more time with the people who matter. Fresh, home-cooked meals made simple.
+            {`Stop stressing about "What's for dinner?" Spend less time planning, less money shopping, 
+            and more time with the people who matter. Fresh, home-cooked meals made simple.`}
           </p>
           <div className="mt-10 flex items-center justify-center gap-4">
             <Link
