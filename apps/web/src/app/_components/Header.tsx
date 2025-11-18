@@ -36,7 +36,7 @@ export function Header() {
             <span className="text-2xl">🍽️</span>
             <Link
               href="/dashboard"
-              className="text-xl font-bold text-gray-900 hover:text-gray-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 rounded"
+              className="rounded text-xl font-bold text-gray-900 transition-colors duration-150 hover:text-gray-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
             >
               MealMind AI
             </Link>
@@ -47,14 +47,14 @@ export function Header() {
             <div className="hidden items-center gap-6 md:flex">
               <Link
                 href="/dashboard"
-                className="inline-flex min-h-[44px] items-center rounded px-3 py-2.5 text-sm font-medium text-gray-700 hover:text-gray-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
+                className="inline-flex min-h-[44px] items-center rounded px-3 py-2.5 text-sm font-medium text-gray-700 transition-colors duration-150 hover:bg-gray-50 hover:text-gray-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
               >
                 Dashboard
               </Link>
               <span className="text-sm text-gray-700">{session.user.email}</span>
               <button
                 onClick={handleSignOut}
-                className="inline-flex min-h-[44px] items-center justify-center rounded-md bg-white px-4 py-2.5 text-sm font-medium text-gray-700 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
+                className="inline-flex min-h-[44px] items-center justify-center rounded-md bg-white px-4 py-2.5 text-sm font-medium text-gray-700 ring-1 ring-inset ring-gray-300 transition-all duration-150 hover:bg-gray-50 active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
               >
                 Sign out
               </button>
@@ -109,7 +109,7 @@ export function Header() {
               <div className="space-y-2 p-4">
                 <Link
                   href="/dashboard"
-                  className="flex min-h-[44px] items-center rounded-md px-4 py-3 text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
+                  className="flex min-h-[44px] items-center rounded-md px-4 py-3 text-base font-medium text-gray-700 transition-colors duration-150 hover:bg-gray-50 hover:text-gray-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Dashboard
@@ -122,7 +122,7 @@ export function Header() {
                     setMobileMenuOpen(false);
                     void handleSignOut();
                   }}
-                  className="flex min-h-[44px] w-full items-center rounded-md px-4 py-3 text-left text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
+                  className="flex min-h-[44px] w-full items-center rounded-md px-4 py-3 text-left text-base font-medium text-gray-700 transition-colors duration-150 hover:bg-gray-50 hover:text-gray-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
                 >
                   Sign out
                 </button>

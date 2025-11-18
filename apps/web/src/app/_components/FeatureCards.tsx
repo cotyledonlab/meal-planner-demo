@@ -63,7 +63,7 @@ export default function FeatureCards() {
           {features.map((feature) => (
             <div
               key={feature.title}
-              className="group relative rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-200 transition-all duration-200 hover:shadow-lg hover:-translate-y-1"
+              className="group relative rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-200 transition-all duration-200 ease-out hover:shadow-lg hover:-translate-y-1 hover:scale-[1.01]"
             >
               {feature.premium && (
                 <span className="absolute right-4 top-4 inline-flex items-center gap-1 rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-700">

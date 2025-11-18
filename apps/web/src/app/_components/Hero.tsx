@@ -39,13 +39,13 @@ export default function Hero() {
           <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
             <Link
               href="/auth/signup"
-              className="inline-flex min-h-[44px] items-center justify-center rounded-full bg-emerald-600 px-8 py-3 text-base font-semibold text-white shadow-sm transition-all duration-150 ease-in-out hover:scale-[1.02] hover:bg-emerald-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
+              className="inline-flex min-h-[44px] items-center justify-center rounded-full bg-emerald-600 px-8 py-3 text-base font-semibold text-white shadow-sm transition-all duration-150 ease-out hover:scale-[1.02] hover:bg-emerald-500 hover:shadow-md active:scale-[0.98] active:shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
             >
               Start Planning Free
             </Link>
             <Link
               href="/auth/signin"
-              className="inline-flex min-h-[44px] items-center justify-center rounded-full bg-white/10 px-8 py-3 text-base font-semibold text-white shadow-sm ring-1 ring-white/20 transition-all duration-150 ease-in-out hover:scale-[1.02] hover:bg-white/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+              className="inline-flex min-h-[44px] items-center justify-center rounded-full bg-white/10 px-8 py-3 text-base font-semibold text-white shadow-sm ring-1 ring-white/20 transition-all duration-150 ease-out hover:scale-[1.02] hover:bg-white/20 hover:ring-white/30 active:scale-[0.98] active:bg-white/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
             >
               Sign In
             </Link>
