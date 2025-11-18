@@ -5,6 +5,7 @@ import { type Metadata } from 'next';
 import { TRPCReactProvider } from '~/trpc/react';
 import { SessionProvider } from '~/app/_components/SessionProvider';
 import { ConditionalHeader } from '~/app/_components/ConditionalHeader';
+import { PageTransition } from '~/app/_components/PageTransition';
 
 export const metadata: Metadata = {
   title: 'MealMind AI - Your Family, Fed and Happy',
@@ -15,11 +16,13 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className="h-full">
+    <html lang="en" className="h-full scroll-smooth">
       <body className="h-full">
         <SessionProvider>
           <ConditionalHeader />
-          <TRPCReactProvider>{children}</TRPCReactProvider>
+          <TRPCReactProvider>
+            <PageTransition>{children}</PageTransition>
+          </TRPCReactProvider>
         </SessionProvider>
       </body>
     </html>

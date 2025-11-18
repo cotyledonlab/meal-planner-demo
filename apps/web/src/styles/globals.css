@@ -78,6 +78,49 @@
   }
 }
 
+/* Page transition animations */
+@keyframes page-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes page-slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes modal-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes modal-scale-fade {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 .animate-progress {
   animation: progress 10s ease-in-out forwards;
 }
@@ -100,6 +143,22 @@
 
 .animate-backdrop-fade-in {
   animation: backdrop-fade-in 0.2s ease-out forwards;
+}
+
+.animate-page-fade-in {
+  animation: page-fade-in 0.25s ease-out forwards;
+}
+
+.animate-page-slide-in {
+  animation: page-slide-in 0.3s ease-out forwards;
+}
+
+.animate-modal-slide-up {
+  animation: modal-slide-up 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.animate-modal-scale-fade {
+  animation: modal-scale-fade 0.2s ease-out forwards;
 }
 
 .no-print {
