@@ -57,7 +57,7 @@ export const PRICING = {
     annualPeriod: "/year",
     annualSavings: "18%",
     annualMonthlyEquivalent: "€4.08",
-    dailyCost: "€0.16",
+    dailyCost: "€0.17",
     description: "More family time, less kitchen stress",
     valueProposition: "Less than the price of a coffee",
     socialProof: "Join 1,000+ families saving time & money",
