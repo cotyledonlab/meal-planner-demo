@@ -102,7 +102,7 @@ export async function sendPasswordResetEmail(
   await transporter.sendMail({
     from: config.from,
     to: email,
-    subject: 'Reset Your MealMind AI Password',
+    subject: 'Reset Your Password – MealMind AI',
     html: `
 <!DOCTYPE html>
 <html>
@@ -123,7 +123,7 @@ export async function sendPasswordResetEmail(
                 Hi${name ? ` ${name}` : ''},
               </p>
               <p style="margin: 0 0 30px; font-size: 16px; line-height: 24px; color: #4a4a4a;">
-                We received a request to reset your password. Click the button below to create a new password:
+                We received a request to reset your password. Click the button below to create a new one and get back to planning delicious meals!
               </p>
               <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
                 <tr>
@@ -144,14 +144,14 @@ export async function sendPasswordResetEmail(
                 </p>
               </div>
               <p style="margin: 0; font-size: 14px; line-height: 20px; color: #6b7280;">
-                If you didn't request this, you can safely ignore this email.
+                If you didn't request this, you can safely ignore this email. Your password won't be changed.
               </p>
             </td>
           </tr>
           <tr>
             <td style="padding: 30px 40px; background-color: #f9fafb; border-top: 1px solid #e5e7eb; border-radius: 0 0 8px 8px;">
               <p style="margin: 0; font-size: 14px; line-height: 20px; color: #6b7280; text-align: center;">
-                Thanks,<br>The MealMind AI Team
+                Happy meal planning! ❤️<br>The MealMind AI Team
               </p>
             </td>
           </tr>
@@ -164,15 +164,15 @@ export async function sendPasswordResetEmail(
     `,
     text: `Hi${name ? ` ${name}` : ''},
 
-We received a request to reset your password. Click the link below to create a new password:
+We received a request to reset your password. Click the link below to create a new one and get back to planning delicious meals!
 
 ${resetUrl}
 
 This link will expire in 1 hour for security reasons.
 
-If you didn't request this, you can safely ignore this email.
+If you didn't request this, you can safely ignore this email. Your password won't be changed.
 
-Thanks,
+Happy meal planning! ❤️
 The MealMind AI Team`,
   });
 }

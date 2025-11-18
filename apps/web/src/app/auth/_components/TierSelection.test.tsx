@@ -82,18 +82,18 @@ describe('TierSelection', () => {
     render(<TierSelection selectedTier="premium" onTierSelect={mockOnTierSelect} />);
 
     expect(screen.getByText('Everything in Free')).toBeInTheDocument();
-    expect(screen.getByText('Best value supermarket finder')).toBeInTheDocument();
-    expect(screen.getByText('Advanced customisation')).toBeInTheDocument();
-    expect(screen.getByText('Multiple meal plans')).toBeInTheDocument();
+    expect(screen.getByText(/Find the best value supermarkets/)).toBeInTheDocument();
+    expect(screen.getByText(/Advanced customisation for picky eaters/)).toBeInTheDocument();
+    expect(screen.getByText(/Multiple meal plans for busy weeks/)).toBeInTheDocument();
   });
 
   it('should display free tier features from shared constants', () => {
     const mockOnTierSelect = vi.fn();
     render(<TierSelection selectedTier="basic" onTierSelect={mockOnTierSelect} />);
 
-    expect(screen.getByText('Weekly meal-prep recipes')).toBeInTheDocument();
-    expect(screen.getByText('Automatic shopping list')).toBeInTheDocument();
+    expect(screen.getByText(/Weekly meal-prep recipes your family will love/)).toBeInTheDocument();
+    expect(screen.getByText(/Automatic shopping list/)).toBeInTheDocument();
     expect(screen.getByText('Basic dietary preferences')).toBeInTheDocument();
-    expect(screen.getByText('Email support')).toBeInTheDocument();
+    expect(screen.getByText(/Friendly email support/)).toBeInTheDocument();
   });
 });

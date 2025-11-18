@@ -9,31 +9,31 @@ import {
 export default function FeatureCards() {
   const features = [
     {
-      title: 'Weekly Meal Plans',
+      title: 'No More "What\'s for Dinner?" Panic',
       description:
-        'Get a complete 7-day meal plan tailored to your preferences. Breakfast, lunch, and dinner sorted.',
+        'Get a complete 7-day meal plan tailored to your family. Breakfast, lunch, dinner – all sorted. Finally, peace of mind.',
       Icon: CalendarDaysIcon,
       color: 'emerald',
     },
     {
-      title: 'Smart Shopping Lists',
+      title: 'Shopping Made Stupidly Simple',
       description:
-        'Automatically generated shopping lists from your meal plan. Never forget an ingredient again.',
+        'Your ingredients, automatically listed and organized by aisle. No more forgotten items, no more extra trips to the shop.',
       Icon: ShoppingCartIcon,
       color: 'blue',
     },
     {
-      title: 'Best Value Finder',
+      title: 'Save Money Without the Hassle',
       description:
-        'Premium feature: Each week, we scan prices so you buy smart — not more. Find the most cost-effective supermarkets.',
+        'Premium: We scan supermarket prices so you don\'t have to. Find the best deals and save €20+ every week – that\'s over €1,000 a year.',
       Icon: CurrencyEuroIcon,
       color: 'amber',
       premium: true,
     },
     {
-      title: 'Custom Preferences',
+      title: 'Actually Works for Your Family',
       description:
-        'Premium feature: Set dietary restrictions, favourite ingredients, and cuisine preferences for truly personalised plans.',
+        'Premium: Picky eaters? Dietary restrictions? Favorite ingredients? Set your preferences once, and get meals your family will actually eat.',
       Icon: Cog6ToothIcon,
       color: 'purple',
       premium: true,
@@ -52,10 +52,10 @@ export default function FeatureCards() {
       <div className="mx-auto max-w-7xl px-6">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-            Everything you need for stress-free meal planning
+            Everything you need for happier mealtimes
           </h2>
           <p className="mt-4 text-lg text-gray-600 sm:text-xl">
-            Save time, save money, and enjoy delicious home-cooked meals every week.
+            Less stress. Less waste. More time for what matters – your family.
           </p>
         </div>
 

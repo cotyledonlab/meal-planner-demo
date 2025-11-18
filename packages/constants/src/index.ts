@@ -3,6 +3,20 @@
 export const APP_NAME = "MealMind AI";
 export const APP_VERSION = "0.1.0";
 
+// Brand Identity
+export const BRAND = {
+  name: "MealMind AI",
+  tagline: "Your family, fed and happy",
+  personality: "warm, empowering, and genuinely helpful",
+  voice: {
+    friendly: true,
+    sophisticated: false,
+    playful: true,
+    authoritative: false,
+  },
+  irishIdentity: true,
+} as const;
+
 // Database constants
 export const DEFAULT_DB_POOL_SIZE = 10;
 export const DB_CONNECTION_TIMEOUT = 5000;
@@ -27,26 +41,26 @@ export const PRICING = {
   FREE: {
     name: "Free Tier",
     price: "€0",
-    description: "Perfect for getting started with meal planning",
+    description: "Start your journey to stress-free family meals",
     features: [
-      "Weekly meal-prep recipes",
-      "Automatic shopping list",
+      "Weekly meal-prep recipes your family will love",
+      "Automatic shopping list – never forget ingredients",
       "Basic dietary preferences",
-      "Email support",
+      "Friendly email support",
     ],
   },
   PREMIUM: {
     name: "Premium",
     price: "€4.99",
     period: "/month",
-    description: "For families who want to save time and money",
+    description: "More family time, less kitchen stress",
     features: [
       "Everything in Free",
-      "Best value supermarket finder",
-      "Advanced customisation",
-      "Multiple meal plans",
-      "Priority support",
-      "Export and share plans",
+      "Find the best value supermarkets – save €20+ weekly",
+      "Advanced customisation for picky eaters",
+      "Multiple meal plans for busy weeks",
+      "Priority support when you need us",
+      "Export and share plans with family",
     ],
   },
 } as const;

@@ -21,36 +21,14 @@ describe('Hero Component', () => {
     const heading = screen.getByRole('heading', { level: 1 });
     expect(heading).toBeInTheDocument();
 
-    // Check that all parts of the heading are present
-    expect(heading.textContent).toContain('Simplify Your Weekly Meals');
-    expect(heading.textContent).toContain('—');
-    expect(heading.textContent).toContain('Without Breaking the Bank');
-  });
-
-  it('includes a mobile-only line break for better typography', () => {
-    const { container } = render(<Hero />);
-
-    const heading = container.querySelector('h1');
-    const mobileBreak = heading?.querySelector('br.sm\\:hidden');
-
-    expect(mobileBreak).toBeInTheDocument();
-    expect(mobileBreak).toHaveAttribute('aria-hidden', 'true');
-  });
-
-  it('wraps "Without Breaking the Bank" to prevent orphaning', () => {
-    const { container } = render(<Hero />);
-
-    const heading = container.querySelector('h1');
-    const inlineBlock = heading?.querySelector('span.inline-block');
-
-    expect(inlineBlock).toBeInTheDocument();
-    expect(inlineBlock?.textContent).toBe('Without Breaking the Bank');
+    // Check that the new emotional tagline is present
+    expect(heading.textContent).toContain('Your Family, Fed and Happy');
   });
 
   it('renders call-to-action buttons', () => {
     render(<Hero />);
 
-    const getStartedButton = screen.getByRole('link', { name: /get started/i });
+    const getStartedButton = screen.getByRole('link', { name: /start planning free/i });
     const signInButton = screen.getByRole('link', { name: /sign in/i });
 
     expect(getStartedButton).toBeInTheDocument();
@@ -59,11 +37,12 @@ describe('Hero Component', () => {
     expect(signInButton).toHaveAttribute('href', '/auth/signin');
   });
 
-  it('renders the subtext', () => {
+  it('renders the subtext with emotional messaging', () => {
     render(<Hero />);
 
-    const subtext = screen.getByText(/plan, prep, and shop smarter/i);
+    const subtext = screen.getByText(/stop stressing about/i);
     expect(subtext).toBeInTheDocument();
+    expect(subtext.textContent).toContain('more time with the people who matter');
   });
 
   it('includes background image with proper alt text', () => {

@@ -12,20 +12,20 @@ export default function CTA() {
 
           <div className="relative mx-auto max-w-2xl text-center">
             <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
-              Start Planning Smarter Today
+              Ready for Happier Mealtimes?
             </h2>
             <p className="mt-4 text-lg text-emerald-100 sm:text-xl">
-              Join hundreds of Irish families who are already planning smarter and saving more.
+              Join hundreds of Irish families saving time, money, and sanity. Start free today – no credit card needed.
             </p>
             <div className="mt-8">
               <Link
                 href="/auth/signup"
                 className="inline-block rounded-full bg-white px-8 py-3.5 text-base font-semibold text-emerald-700 shadow-lg transition-all duration-150 ease-in-out hover:scale-[1.02] hover:bg-emerald-50 hover:shadow-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
               >
-                Get Started Free
+                Start Planning Free
               </Link>
             </div>
-            <p className="mt-6 text-sm text-emerald-100">Built for families in Ireland 🇮🇪</p>
+            <p className="mt-6 text-sm text-emerald-100">Made with ❤️ for Irish families</p>
           </div>
         </div>
       </div>
