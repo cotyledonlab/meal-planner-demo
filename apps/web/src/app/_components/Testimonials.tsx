@@ -5,7 +5,7 @@ export default function Testimonials() {
   const testimonials = [
     {
       quote:
-        'My Sunday evenings used to be chaos – now they\'re peaceful. Meal prep takes half the time, and we\'re actually saving €20 a week. Game changer for our family.',
+        "My Sunday evenings used to be chaos – now they're peaceful. Meal prep takes half the time, and we're actually saving €20 a week. Game changer for our family.",
       author: 'Aoife M.',
       location: 'Cork',
       initials: 'A',
@@ -13,7 +13,8 @@ export default function Testimonials() {
       color: 'emerald',
     },
     {
-      quote: 'No more arguing about what\'s for dinner! The kids know what\'s coming and actually look forward to meals. Worth every cent.',
+      quote:
+        "No more arguing about what's for dinner! The kids know what's coming and actually look forward to meals. Worth every cent.",
       author: 'Conor D.',
       location: 'Dublin',
       initials: 'C',
@@ -21,7 +22,8 @@ export default function Testimonials() {
       color: 'blue',
     },
     {
-      quote: 'I was skeptical, but this genuinely changed how we eat. Fresh, home-cooked meals without the stress. My partner is impressed!',
+      quote:
+        'I was skeptical, but this genuinely changed how we eat. Fresh, home-cooked meals without the stress. My partner is impressed!',
       author: 'Niamh O.',
       location: 'Galway',
       initials: 'N',

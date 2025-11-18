@@ -15,7 +15,8 @@ export default function CTA() {
               Ready for Happier Mealtimes?
             </h2>
             <p className="mt-4 text-lg text-emerald-100 sm:text-xl">
-              Join hundreds of Irish families saving time, money, and sanity. Start free today – no credit card needed.
+              Join hundreds of Irish families saving time, money, and sanity. Start free today – no
+              credit card needed.
             </p>
             <div className="mt-8">
               <Link

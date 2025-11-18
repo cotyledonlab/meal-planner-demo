@@ -96,4 +96,62 @@ describe('TierSelection', () => {
     expect(screen.getByText('Basic dietary preferences')).toBeInTheDocument();
     expect(screen.getByText(/Friendly email support/)).toBeInTheDocument();
   });
+
+  it('should display psychological pricing elements for premium', () => {
+    const mockOnTierSelect = vi.fn();
+    render(<TierSelection selectedTier="premium" onTierSelect={mockOnTierSelect} />);
+
+    expect(screen.getByText(/Less than the price of a coffee/)).toBeInTheDocument();
+    expect(screen.getByText(/Just €0.17\/day/)).toBeInTheDocument();
+  });
+
+  it('should show value comparison against meal kits', () => {
+    const mockOnTierSelect = vi.fn();
+    render(<TierSelection selectedTier="premium" onTierSelect={mockOnTierSelect} />);
+
+    expect(screen.getByText(/Meal kits/)).toBeInTheDocument();
+    expect(screen.getByText(/€50-80\/week/)).toBeInTheDocument();
+    expect(screen.getByText(/Save €20\/week on groceries/)).toBeInTheDocument();
+  });
+
+  it('should show trust signals when premium is selected', () => {
+    const mockOnTierSelect = vi.fn();
+    render(<TierSelection selectedTier="premium" onTierSelect={mockOnTierSelect} />);
+
+    expect(screen.getByText(/30-day money-back guarantee/)).toBeInTheDocument();
+    expect(screen.getByText(/Cancel anytime, no questions asked/)).toBeInTheDocument();
+  });
+
+  it('should show billing period toggle', () => {
+    const mockOnTierSelect = vi.fn();
+    render(<TierSelection selectedTier="premium" onTierSelect={mockOnTierSelect} />);
+
+    expect(screen.getByRole('button', { name: /Monthly/ })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Annual/ })).toBeInTheDocument();
+  });
+
+  it('should toggle between monthly and annual pricing', async () => {
+    const user = userEvent.setup();
+    const mockOnTierSelect = vi.fn();
+    render(<TierSelection selectedTier="premium" onTierSelect={mockOnTierSelect} />);
+
+    // Should show monthly price by default
+    expect(screen.getByText('€4.99')).toBeInTheDocument();
+
+    // Click annual toggle
+    const annualButton = screen.getByRole('button', { name: /Annual/ });
+    await user.click(annualButton);
+
+    // Should show annual price
+    expect(screen.getByText('€49')).toBeInTheDocument();
+    expect(screen.getByText(/€4.08\/month billed annually/)).toBeInTheDocument();
+  });
+
+  it('should show savings percentage on annual toggle button', () => {
+    const mockOnTierSelect = vi.fn();
+    render(<TierSelection selectedTier="premium" onTierSelect={mockOnTierSelect} />);
+
+    const annualButton = screen.getByRole('button', { name: /Annual/ });
+    expect(annualButton).toHaveTextContent('Save 18%');
+  });
 });
