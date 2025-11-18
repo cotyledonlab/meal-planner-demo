@@ -276,7 +276,7 @@ export default function MealPlanView({
                   >
                     <span>
                       Day {day.dayIndex + 1}
-                      <span className="block text-xs font-normal text-gray-500">
+                      <span className="block text-xs font-normal text-gray-700">
                         {day.date.toLocaleDateString('en-US', {
                           weekday: 'long',
                           month: 'short',

@@ -64,13 +64,13 @@ export default async function PlanPrintPage({ params }: PageProps) {
                 {normalizedPlan.days}-day plan · {label}
               </p>
               {session.user?.name && (
-                <p className="text-gray-500">Prepared for {session.user.name}</p>
+                <p className="text-gray-700">Prepared for {session.user.name}</p>
               )}
             </div>
             <div className="no-print text-right">
-              <p className="text-sm text-gray-500">Printing tips</p>
-              <p className="text-xs text-gray-400">
-                Use “Fit to width” and disable headers/footers for best results.
+              <p className="text-sm text-gray-700">Printing tips</p>
+              <p className="text-xs text-gray-700">
+                Use &quot;Fit to width&quot; and disable headers/footers for best results.
               </p>
             </div>
           </div>
@@ -110,7 +110,7 @@ export default async function PlanPrintPage({ params }: PageProps) {
                     <div key={item.id} className="rounded-xl border border-gray-200 p-4">
                       <div className="flex flex-wrap items-baseline justify-between gap-2">
                         <h3 className="text-lg font-semibold text-gray-900">{recipe.title}</h3>
-                        <p className="text-sm font-medium text-gray-500">
+                        <p className="text-sm font-medium text-gray-700">
                           {getMealTypeLabel(item.mealType)} · Serves {item.servings}
                         </p>
                       </div>
@@ -122,7 +122,7 @@ export default async function PlanPrintPage({ params }: PageProps) {
                       </div>
                       <div className="mt-4 grid gap-4 md:grid-cols-2">
                         <div>
-                          <h4 className="text-sm font-semibold uppercase tracking-wide text-gray-500">
+                          <h4 className="text-sm font-semibold uppercase tracking-wide text-gray-700">
                             Ingredients
                           </h4>
                           <ul className="mt-2 space-y-1 text-sm">
@@ -135,7 +135,7 @@ export default async function PlanPrintPage({ params }: PageProps) {
                           </ul>
                         </div>
                         <div>
-                          <h4 className="text-sm font-semibold uppercase tracking-wide text-gray-500">
+                          <h4 className="text-sm font-semibold uppercase tracking-wide text-gray-700">
                             Steps
                           </h4>
                           <ol className="mt-2 space-y-2 text-sm leading-relaxed">
@@ -159,13 +159,13 @@ export default async function PlanPrintPage({ params }: PageProps) {
         {shoppingListByCategory.length > 0 && (
           <section className="break-before-page rounded-2xl border border-gray-200 bg-white p-6 shadow-sm print:shadow-none">
             <h2 className="text-2xl font-semibold text-emerald-700">Shopping List</h2>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-gray-700">
               Organised by category to speed up your grocery run.
             </p>
             <div className="mt-4 grid gap-6 md:grid-cols-2">
               {shoppingListByCategory.map(([category, items]) => (
                 <div key={category} className="space-y-2 rounded-xl border border-gray-100 p-4">
-                  <h3 className="text-sm font-semibold uppercase tracking-wide text-gray-500">
+                  <h3 className="text-sm font-semibold uppercase tracking-wide text-gray-700">
                     {category}
                   </h3>
                   <ul className="space-y-1 text-sm">

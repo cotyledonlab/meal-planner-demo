@@ -264,7 +264,7 @@ export default function ShoppingList({ planId, onComparePrices }: ShoppingListPr
                                 </span>
                                 <span
                                   className={`flex-1 text-base leading-6 ${
-                                    isChecked ? 'text-gray-400 line-through' : 'text-gray-700'
+                                    isChecked ? 'text-gray-600 line-through' : 'text-gray-700'
                                   }`}
                                 >
                                   {item.quantity > 0 && (
@@ -298,7 +298,7 @@ export default function ShoppingList({ planId, onComparePrices }: ShoppingListPr
           >
             {isPremium ? 'Compare Prices' : 'Compare Prices (Premium Preview)'}
           </button>
-          <p className="mt-3 text-sm text-gray-500">
+          <p className="mt-3 text-sm text-gray-700">
             {isPremium
               ? 'See real-time price comparisons across stores'
               : 'See how much you could save at different stores'}

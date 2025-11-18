@@ -122,7 +122,7 @@ export default function Pricing() {
                       Compare: Meal kit services
                     </p>
                     <p className="text-sm text-gray-600">
-                      <span className="line-through text-gray-400">
+                      <span className="line-through text-gray-500">
                         {PRICING.VALUE_COMPARISON.mealKitServices}
                       </span>
                       <span className="ml-2 font-semibold text-emerald-700">
@@ -176,7 +176,7 @@ export default function Pricing() {
           <p className="text-base font-semibold text-gray-700">{PRICING.PREMIUM.socialProof}</p>
         </div>
 
-        <p className="mt-8 text-center text-sm text-gray-500">
+        <p className="mt-8 text-center text-sm text-gray-700">
           Prototype pricing — subject to change.
         </p>
       </div>

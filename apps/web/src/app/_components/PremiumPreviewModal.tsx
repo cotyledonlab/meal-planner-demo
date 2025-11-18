@@ -48,7 +48,7 @@ export default function PremiumPreviewModal({ onClose }: PremiumPreviewModalProp
             </div>
             <button
               onClick={onClose}
-              className="ml-4 flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full p-2.5 text-gray-400 transition hover:bg-gray-100 hover:text-gray-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
+              className="ml-4 flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full p-2.5 text-gray-600 transition hover:bg-gray-100 hover:text-gray-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
               aria-label="Close modal"
             >
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -134,7 +134,7 @@ export default function PremiumPreviewModal({ onClose }: PremiumPreviewModalProp
             >
               Upgrade to Premium for Real Prices
             </Link>
-            <p className="text-center text-xs text-gray-500">
+            <p className="text-center text-xs text-gray-700">
               This example uses sample data • Get actual supermarket prices with Premium
             </p>
           </div>

@@ -133,7 +133,7 @@ export default function TierSelection({ selectedTier, onTierSelect }: TierSelect
                   </li>
                 ))}
                 {tier.features.length > 4 && (
-                  <li className="text-sm text-gray-500">
+                  <li className="text-sm text-gray-700">
                     + {tier.features.length - 4} more features
                   </li>
                 )}
