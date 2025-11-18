@@ -89,8 +89,8 @@ export default function FeatureCards() {
               >
                 <feature.Icon className="h-6 w-6" aria-hidden="true" />
               </div>
-              <h3 className="mt-4 text-lg font-semibold text-gray-900">{feature.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-gray-600">{feature.description}</p>
+              <h3 className="mt-4 text-lg font-semibold leading-snug text-gray-900">{feature.title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-gray-600 sm:text-base">{feature.description}</p>
             </div>
           ))}
         </div>

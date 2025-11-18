@@ -37,10 +37,10 @@ export default function Pricing() {
           </p>
 
           {/* Billing period toggle */}
-          <div className="mt-8 flex items-center justify-center gap-3">
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
             <button
               onClick={() => setBillingPeriod('monthly')}
-              className={`rounded-full px-5 py-2 text-sm font-semibold transition-all ${
+              className={`inline-flex min-h-[44px] items-center justify-center rounded-full px-6 py-2.5 text-sm font-semibold transition-all ${
                 billingPeriod === 'monthly'
                   ? 'bg-emerald-600 text-white shadow-md'
                   : 'bg-white text-gray-700 hover:bg-gray-50'
@@ -50,7 +50,7 @@ export default function Pricing() {
             </button>
             <button
               onClick={() => setBillingPeriod('annual')}
-              className={`relative rounded-full px-5 py-2 text-sm font-semibold transition-all ${
+              className={`relative inline-flex min-h-[44px] items-center justify-center rounded-full px-6 py-2.5 text-sm font-semibold transition-all ${
                 billingPeriod === 'annual'
                   ? 'bg-emerald-600 text-white shadow-md'
                   : 'bg-white text-gray-700 hover:bg-gray-50'
@@ -148,7 +148,7 @@ export default function Pricing() {
 
                 <Link
                   href={tier.href}
-                  className={`mt-8 block w-full rounded-full py-3.5 text-center text-base font-semibold shadow-md transition-all duration-150 ease-in-out hover:scale-[1.02] hover:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${
+                  className={`mt-8 flex min-h-[48px] w-full items-center justify-center rounded-full py-3.5 text-center text-base font-semibold shadow-md transition-all duration-150 ease-in-out hover:scale-[1.02] hover:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${
                     tier.highlighted
                       ? 'bg-gradient-to-r from-emerald-600 to-emerald-500 text-white hover:from-emerald-500 hover:to-emerald-400 focus-visible:outline-emerald-600'
                       : 'bg-white text-emerald-700 ring-2 ring-emerald-600 hover:bg-emerald-50 focus-visible:outline-emerald-600'

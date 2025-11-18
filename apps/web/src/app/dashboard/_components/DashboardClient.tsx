@@ -69,8 +69,8 @@ export default function DashboardClient({ user, hasMealPlan }: DashboardClientPr
           <div className="relative">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,_rgba(255,255,255,0.1)_0%,_transparent_50%)]" />
             <div className="relative">
-              <h1 className="text-4xl font-bold text-white">Welcome back, {displayName}!</h1>
-              <p className="mt-3 text-lg text-emerald-100">
+              <h1 className="text-3xl font-bold leading-tight text-white break-words sm:text-4xl">Welcome back, {displayName}!</h1>
+              <p className="mt-3 text-base leading-relaxed text-emerald-100 sm:text-lg">
                 Ready to plan your meals for the week?
               </p>
               <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
@@ -108,7 +108,7 @@ export default function DashboardClient({ user, hasMealPlan }: DashboardClientPr
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900">New Weekly Plan</h3>
-                  <p className="mt-1 text-sm text-gray-600">
+                  <p className="mt-1 text-sm leading-relaxed text-gray-600 sm:text-base">
                     Generate a fresh 7-day meal plan tailored to your preferences
                   </p>
                 </div>
@@ -125,7 +125,7 @@ export default function DashboardClient({ user, hasMealPlan }: DashboardClientPr
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900">Open Planner</h3>
-                  <p className="mt-1 text-sm text-gray-600">
+                  <p className="mt-1 text-sm leading-relaxed text-gray-600 sm:text-base">
                     View and edit your current meal plan and recipes
                   </p>
                 </div>
@@ -139,7 +139,7 @@ export default function DashboardClient({ user, hasMealPlan }: DashboardClientPr
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-gray-700">Shopping List</h3>
-                  <p className="mt-1 text-sm text-gray-700">Available after creating a meal plan</p>
+                  <p className="mt-1 text-sm leading-relaxed text-gray-700 sm:text-base">Available after creating a meal plan</p>
                 </div>
               </div>
             </div>
