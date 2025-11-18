@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import {
   CalendarDaysIcon,
@@ -28,7 +28,33 @@ export default function DashboardClient({ user, hasMealPlan }: DashboardClientPr
 
   const isPremiumUser = user.role === 'premium';
 
-  const displayName = user.name ?? user.email?.split('@')[0] ?? 'there';
+  // Extract first name for personalization
+  const firstName = user.name?.split(' ')[0] ?? user.email?.split('@')[0] ?? null;
+
+  // Memoized greeting calculation
+  const { greeting, displayName } = useMemo(() => {
+    const now = new Date();
+    const hour = now.getHours();
+    const dayOfWeek = now.getDay();
+
+    // Time-based greeting helper
+    const getTimeBasedGreeting = () => {
+      if (hour < 12) return 'Good morning';
+      if (hour < 17) return 'Good afternoon';
+      return 'Good evening';
+    };
+
+    // Varied greetings (rotate based on day of week for consistency within same day)
+    const greetings = ['Welcome back', 'Great to see you', 'Ready to plan', 'Time-based'];
+    const selectedGreeting = greetings[dayOfWeek % greetings.length];
+    const greetingText =
+      selectedGreeting === 'Time-based' ? getTimeBasedGreeting() : selectedGreeting;
+
+    return {
+      greeting: greetingText,
+      displayName: firstName ? `, ${firstName}` : '',
+    };
+  }, [firstName]);
 
   const premiumFeatures: Array<{
     id: string;
@@ -70,7 +96,8 @@ export default function DashboardClient({ user, hasMealPlan }: DashboardClientPr
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,_rgba(255,255,255,0.1)_0%,_transparent_50%)]" />
             <div className="relative">
               <h1 className="text-3xl font-bold leading-tight text-white break-words sm:text-4xl">
-                Welcome back, {displayName}!
+                {greeting}
+                {displayName}!
               </h1>
               <p className="mt-3 text-base leading-relaxed text-emerald-100 sm:text-lg">
                 Ready to plan your meals for the week?
