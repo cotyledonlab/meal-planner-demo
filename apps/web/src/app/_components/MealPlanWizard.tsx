@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { ChevronDownIcon } from '@heroicons/react/24/outline';
 
 interface MealPlanWizardProps {
@@ -17,6 +17,10 @@ export interface MealPreferences {
   isDairyFree: boolean;
   dislikes: string;
 }
+
+// Animation timing constants
+const ICON_ANIMATION_DELAY_MS = 50;
+const ENCOURAGEMENT_DISPLAY_DURATION_MS = 600;
 
 export default function MealPlanWizard({
   onComplete,
@@ -78,14 +82,14 @@ export default function MealPlanWizard({
   // Track changes for animations
   const markChanged = (field: string) => {
     setJustChanged(field);
-    setTimeout(() => setJustChanged(null), 600);
+    setTimeout(() => setJustChanged(null), ENCOURAGEMENT_DISPLAY_DURATION_MS);
   };
 
   // Calculate estimated meals
   const totalMeals = householdSize * mealsPerDay * days;
 
   // Get encouragement message
-  const getEncouragement = () => {
+  const encouragement = useMemo(() => {
     if (justChanged === 'household' && householdSize > 3) {
       return "Cooking for a crowd! We'll make sure everyone's fed 👨‍👩‍👧‍👦";
     }
@@ -102,9 +106,7 @@ export default function MealPlanWizard({
       return 'Dairy-free options included! 🥥';
     }
     return null;
-  };
-
-  const encouragement = getEncouragement();
+  }, [justChanged, householdSize, mealsPerDay, days]);
 
   return (
     <>
@@ -189,7 +191,8 @@ export default function MealPlanWizard({
                           <span
                             key={i}
                             className="text-2xl transition-all duration-300 animate-in zoom-in"
-                            style={{ animationDelay: `${i * 50}ms` }}
+                            style={{ animationDelay: `${i * ICON_ANIMATION_DELAY_MS}ms` }}
+                            aria-hidden="true"
                           >
                             👤
                           </span>
@@ -200,11 +203,12 @@ export default function MealPlanWizard({
 
                       {/* Meal Icons */}
                       <div className="flex items-center gap-1.5">
-                        {Array.from({ length: mealsPerDay }).map((_, i) => (
+                        {Array.from({ length: Math.min(mealsPerDay, 3) }).map((_, i) => (
                           <span
                             key={i}
                             className="text-2xl transition-all duration-300 animate-in zoom-in"
-                            style={{ animationDelay: `${i * 50}ms` }}
+                            style={{ animationDelay: `${i * ICON_ANIMATION_DELAY_MS}ms` }}
+                            aria-hidden="true"
                           >
                             🍽️
                           </span>
@@ -219,7 +223,8 @@ export default function MealPlanWizard({
                           <span
                             key={i}
                             className="text-2xl transition-all duration-300 animate-in zoom-in"
-                            style={{ animationDelay: `${i * 50}ms` }}
+                            style={{ animationDelay: `${i * ICON_ANIMATION_DELAY_MS}ms` }}
+                            aria-hidden="true"
                           >
                             📅
                           </span>
