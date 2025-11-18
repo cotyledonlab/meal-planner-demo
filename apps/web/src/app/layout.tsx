@@ -9,7 +9,7 @@ import { ConditionalHeader } from '~/app/_components/ConditionalHeader';
 export const metadata: Metadata = {
   title: 'MealMind AI - Your Family, Fed and Happy',
   description:
-    'Stop stressing about "What\'s for dinner?" Join Irish families saving time, money, and sanity with smart meal planning. Free meal plans, shopping lists, and supermarket savings.',
+    'Stop stressing about &ldquo;What&rsquo;s for dinner?&rdquo; Join Irish families saving time, money, and sanity with smart meal planning. Free meal plans, shopping lists, and supermarket savings.',
   icons: { icon: '/favicon.svg' },
 };
 
