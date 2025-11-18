@@ -53,7 +53,15 @@ export const PRICING = {
     name: "Premium",
     price: "€4.99",
     period: "/month",
+    annualPrice: "€49",
+    annualPeriod: "/year",
+    annualSavings: "18%",
+    annualMonthlyEquivalent: "€4.08",
+    dailyCost: "€0.16",
     description: "More family time, less kitchen stress",
+    valueProposition: "Less than the price of a coffee",
+    socialProof: "Join 1,000+ families saving time & money",
+    roi: "Avg. user saves 3 hours and €20/week",
     features: [
       "Everything in Free",
       "Find the best value supermarkets – save €20+ weekly",
@@ -62,5 +70,14 @@ export const PRICING = {
       "Priority support when you need us",
       "Export and share plans with family",
     ],
+  },
+  VALUE_COMPARISON: {
+    mealKitServices: "€50-80/week",
+    grocerySavings: "Save €20/week on groceries",
+  },
+  TRUST_SIGNALS: {
+    moneyBackGuarantee: "30-day money-back guarantee",
+    cancelAnytime: "Cancel anytime, no questions asked",
+    limitedBetaPricing: "Limited beta pricing",
   },
 } as const;
