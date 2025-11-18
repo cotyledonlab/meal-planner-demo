@@ -21,7 +21,7 @@ export default function CTA() {
             <div className="mt-8">
               <Link
                 href="/auth/signup"
-                className="inline-block rounded-full bg-white px-8 py-3.5 text-base font-semibold text-emerald-700 shadow-lg transition-all duration-150 ease-in-out hover:scale-[1.02] hover:bg-emerald-50 hover:shadow-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                className="inline-flex min-h-[48px] items-center justify-center rounded-full bg-white px-8 py-3.5 text-base font-semibold text-emerald-700 shadow-lg transition-all duration-150 ease-in-out hover:scale-[1.02] hover:bg-emerald-50 hover:shadow-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
               >
                 Start Planning Free
               </Link>
@@ -34,14 +34,23 @@ export default function CTA() {
       {/* Footer */}
       <footer className="border-t border-gray-200 bg-white">
         <div className="mx-auto max-w-7xl px-6 py-8">
-          <nav className="flex flex-wrap justify-center gap-6 text-sm text-gray-600">
-            <Link href="/about" className="transition hover:text-emerald-600">
+          <nav className="flex flex-wrap justify-center gap-4 text-sm text-gray-600">
+            <Link
+              href="/about"
+              className="inline-flex min-h-[44px] items-center px-3 py-2 transition hover:text-emerald-600"
+            >
               About
             </Link>
-            <Link href="/contact" className="transition hover:text-emerald-600">
+            <Link
+              href="/contact"
+              className="inline-flex min-h-[44px] items-center px-3 py-2 transition hover:text-emerald-600"
+            >
               Contact
             </Link>
-            <Link href="/privacy" className="transition hover:text-emerald-600">
+            <Link
+              href="/privacy"
+              className="inline-flex min-h-[44px] items-center px-3 py-2 transition hover:text-emerald-600"
+            >
               Privacy
             </Link>
           </nav>

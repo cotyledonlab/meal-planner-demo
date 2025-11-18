@@ -47,14 +47,14 @@ export function Header() {
             <div className="hidden items-center gap-6 md:flex">
               <Link
                 href="/dashboard"
-                className="text-sm font-medium text-gray-700 hover:text-gray-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 rounded px-2 py-1"
+                className="inline-flex min-h-[44px] items-center rounded px-3 py-2.5 text-sm font-medium text-gray-700 hover:text-gray-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
               >
                 Dashboard
               </Link>
               <span className="text-sm text-gray-700">{session.user.email}</span>
               <button
                 onClick={handleSignOut}
-                className="rounded-md bg-white px-3 py-1.5 text-sm font-medium text-gray-700 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
+                className="inline-flex min-h-[44px] items-center justify-center rounded-md bg-white px-4 py-2.5 text-sm font-medium text-gray-700 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
               >
                 Sign out
               </button>
@@ -66,7 +66,7 @@ export function Header() {
             <div className="md:hidden">
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className={`rounded-md p-2 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 ${
+                className={`inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md p-2.5 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 ${
                   mobileMenuOpen
                     ? 'bg-gray-900 text-white hover:bg-gray-800'
                     : 'text-gray-700 hover:bg-gray-100'
@@ -106,15 +106,15 @@ export function Header() {
 
             {/* Mobile Dropdown Menu */}
             <div className="animate-slide-in-right fixed right-0 top-16 z-50 h-[calc(100vh-4rem)] w-64 border-l border-gray-200 bg-white shadow-2xl md:hidden">
-              <div className="space-y-3 p-4">
+              <div className="space-y-2 p-4">
                 <Link
                   href="/dashboard"
-                  className="block rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
+                  className="flex min-h-[44px] items-center rounded-md px-4 py-3 text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Dashboard
                 </Link>
-                <div className="rounded-md bg-gray-50 px-3 py-2 text-sm text-gray-700">
+                <div className="rounded-md bg-gray-50 px-4 py-3 text-sm text-gray-700 break-words">
                   {session.user.email}
                 </div>
                 <button
@@ -122,7 +122,7 @@ export function Header() {
                     setMobileMenuOpen(false);
                     void handleSignOut();
                   }}
-                  className="block w-full rounded-md px-3 py-2 text-left text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
+                  className="flex min-h-[44px] w-full items-center rounded-md px-4 py-3 text-left text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
                 >
                   Sign out
                 </button>
