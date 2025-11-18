@@ -30,20 +30,18 @@ export default function Hero() {
       <div className="relative mx-auto max-w-7xl px-6 py-16 sm:py-20 lg:py-24">
         <div className="mx-auto max-w-2xl text-center">
           <h1 className="text-4xl font-semibold tracking-tight text-white sm:text-5xl">
-            Simplify Your Weekly Meals
-            <br className="sm:hidden" aria-hidden="true" /> —{' '}
-            <span className="inline-block">Without Breaking the Bank</span>
+            Your Family, Fed and Happy
           </h1>
           <p className="mt-6 text-base text-emerald-100 sm:text-lg">
-            Plan, prep, and shop smarter with weekly recipes and cost-saving supermarket insights.
-            Your meal plan, recipes, and shopping list — in minutes, not hours.
+            Stop stressing about "What's for dinner?" Spend less time planning, less money shopping, 
+            and more time with the people who matter. Fresh, home-cooked meals made simple.
           </p>
           <div className="mt-10 flex items-center justify-center gap-4">
             <Link
               href="/auth/signup"
               className="rounded-full bg-emerald-600 px-8 py-3 text-base font-semibold text-white shadow-sm transition-all duration-150 ease-in-out hover:scale-[1.02] hover:bg-emerald-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
             >
-              Get Started
+              Start Planning Free
             </Link>
             <Link
               href="/auth/signin"

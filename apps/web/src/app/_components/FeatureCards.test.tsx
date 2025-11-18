@@ -3,13 +3,13 @@ import { describe, it, expect } from 'vitest';
 import FeatureCards from './FeatureCards';
 
 describe('FeatureCards', () => {
-  it('renders all feature cards', () => {
+  it('renders all feature cards with new emotional messaging', () => {
     render(<FeatureCards />);
 
-    expect(screen.getByText('Weekly Meal Plans')).toBeInTheDocument();
-    expect(screen.getByText('Smart Shopping Lists')).toBeInTheDocument();
-    expect(screen.getByText('Best Value Finder')).toBeInTheDocument();
-    expect(screen.getByText('Custom Preferences')).toBeInTheDocument();
+    expect(screen.getByText(/No More "What's for Dinner\?" Panic/)).toBeInTheDocument();
+    expect(screen.getByText('Shopping Made Stupidly Simple')).toBeInTheDocument();
+    expect(screen.getByText('Save Money Without the Hassle')).toBeInTheDocument();
+    expect(screen.getByText('Actually Works for Your Family')).toBeInTheDocument();
   });
 
   it('renders premium badges with correct styling', () => {

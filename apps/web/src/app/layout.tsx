@@ -7,9 +7,9 @@ import { SessionProvider } from '~/app/_components/SessionProvider';
 import { ConditionalHeader } from '~/app/_components/ConditionalHeader';
 
 export const metadata: Metadata = {
-  title: 'MealMind AI - Simplify Your Weekly Meals',
+  title: 'MealMind AI - Your Family, Fed and Happy',
   description:
-    'Plan, prep, and shop smarter with weekly recipes and cost-saving supermarket insights. Built for families in Ireland. Free meal plans and shopping lists.',
+    'Stop stressing about "What\'s for dinner?" Join Irish families saving time, money, and sanity with smart meal planning. Free meal plans, shopping lists, and supermarket savings.',
   icons: { icon: '/favicon.svg' },
 };
 

@@ -5,24 +5,24 @@ export default function Testimonials() {
   const testimonials = [
     {
       quote:
-        'Since using this app, my Sunday meal prep takes half the time and we are saving 20 euro a week!',
-      author: 'Aoife',
+        'My Sunday evenings used to be chaos – now they\'re peaceful. Meal prep takes half the time, and we\'re actually saving €20 a week. Game changer for our family.',
+      author: 'Aoife M.',
       location: 'Cork',
       initials: 'A',
       rating: 5,
       color: 'emerald',
     },
     {
-      quote: 'Finally a meal planner that actually works with Irish stores. Love it.',
-      author: 'Conor',
+      quote: 'No more arguing about what\'s for dinner! The kids know what\'s coming and actually look forward to meals. Worth every cent.',
+      author: 'Conor D.',
       location: 'Dublin',
       initials: 'C',
       rating: 5,
       color: 'blue',
     },
     {
-      quote: 'The free version already made our dinners so much easier. Just upgraded to Premium!',
-      author: 'Niamh',
+      quote: 'I was skeptical, but this genuinely changed how we eat. Fresh, home-cooked meals without the stress. My partner is impressed!',
+      author: 'Niamh O.',
       location: 'Galway',
       initials: 'N',
       rating: 5,
@@ -41,10 +41,10 @@ export default function Testimonials() {
       <div className="mx-auto max-w-7xl px-6">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-            Loved by families across Ireland
+            Real Irish families, real results
           </h2>
           <p className="mt-4 text-lg text-gray-600 sm:text-xl">
-            See what people are saying about their meal planning experience.
+            Join hundreds of families who've reclaimed their evenings and their peace of mind.
           </p>
         </div>
 
