@@ -4,7 +4,8 @@ import { type Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Contact Us - MealMind AI',
-  description: "Get in touch with MealMind AI. Have questions or feedback? We'd love to hear from you.",
+  description:
+    "Get in touch with MealMind AI. Have questions or feedback? We'd love to hear from you.",
 };
 export default function ContactPage() {
   return (

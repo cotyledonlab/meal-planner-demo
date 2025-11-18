@@ -35,7 +35,7 @@ export default function Pricing() {
           <p className="mt-4 text-lg text-gray-600 sm:text-xl">
             Start free – no credit card required. Upgrade anytime for extra peace of mind.
           </p>
-          
+
           {/* Billing period toggle */}
           <div className="mt-8 flex items-center justify-center gap-3">
             <button
@@ -67,12 +67,14 @@ export default function Pricing() {
         <div className="mx-auto mt-12 grid max-w-5xl grid-cols-1 gap-8 lg:grid-cols-2">
           {tiers.map((tier) => {
             const isPremium = tier.highlighted;
-            const displayPrice = isPremium && billingPeriod === 'annual' 
-              ? PRICING.PREMIUM.annualPrice 
-              : tier.price;
-            const displayPeriod = isPremium && billingPeriod === 'annual'
-              ? PRICING.PREMIUM.annualPeriod
-              : 'period' in tier ? tier.period : undefined;
+            const displayPrice =
+              isPremium && billingPeriod === 'annual' ? PRICING.PREMIUM.annualPrice : tier.price;
+            const displayPeriod =
+              isPremium && billingPeriod === 'annual'
+                ? PRICING.PREMIUM.annualPeriod
+                : 'period' in tier
+                  ? tier.period
+                  : undefined;
 
             return (
               <div
@@ -90,14 +92,12 @@ export default function Pricing() {
                 )}
                 <h3 className="text-2xl font-bold text-gray-900">{tier.name}</h3>
                 <p className="mt-2 text-base text-gray-600">{tier.description}</p>
-                
+
                 <div className="mt-6 flex items-baseline gap-1">
                   <span className="text-5xl font-bold tracking-tight text-gray-900">
                     {displayPrice}
                   </span>
-                  {displayPeriod && (
-                    <span className="text-lg text-gray-600">{displayPeriod}</span>
-                  )}
+                  {displayPeriod && <span className="text-lg text-gray-600">{displayPeriod}</span>}
                 </div>
 
                 {/* Psychological pricing enhancements */}
@@ -111,9 +111,7 @@ export default function Pricing() {
                     <p className="text-sm text-gray-600">
                       {PRICING.PREMIUM.valueProposition} • Just {PRICING.PREMIUM.dailyCost}/day
                     </p>
-                    <p className="text-sm font-semibold text-emerald-700">
-                      {PRICING.PREMIUM.roi}
-                    </p>
+                    <p className="text-sm font-semibold text-emerald-700">{PRICING.PREMIUM.roi}</p>
                   </div>
                 )}
 
@@ -128,7 +126,8 @@ export default function Pricing() {
                         {PRICING.VALUE_COMPARISON.mealKitServices}
                       </span>
                       <span className="ml-2 font-semibold text-emerald-700">
-                        vs. Only {displayPrice}{displayPeriod}
+                        vs. Only {displayPrice}
+                        {displayPeriod}
                       </span>
                     </p>
                   </div>
@@ -146,7 +145,7 @@ export default function Pricing() {
                     </li>
                   ))}
                 </ul>
-                
+
                 <Link
                   href={tier.href}
                   className={`mt-8 block w-full rounded-full py-3.5 text-center text-base font-semibold shadow-md transition-all duration-150 ease-in-out hover:scale-[1.02] hover:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${
@@ -164,9 +163,7 @@ export default function Pricing() {
                     <p className="text-xs text-gray-600">
                       ✓ {PRICING.TRUST_SIGNALS.moneyBackGuarantee}
                     </p>
-                    <p className="text-xs text-gray-600">
-                      ✓ {PRICING.TRUST_SIGNALS.cancelAnytime}
-                    </p>
+                    <p className="text-xs text-gray-600">✓ {PRICING.TRUST_SIGNALS.cancelAnytime}</p>
                   </div>
                 )}
               </div>
@@ -176,9 +173,7 @@ export default function Pricing() {
 
         {/* Social proof */}
         <div className="mt-10 text-center">
-          <p className="text-base font-semibold text-gray-700">
-            {PRICING.PREMIUM.socialProof}
-          </p>
+          <p className="text-base font-semibold text-gray-700">{PRICING.PREMIUM.socialProof}</p>
         </div>
 
         <p className="mt-8 text-center text-sm text-gray-500">

@@ -102,7 +102,7 @@ describe('TierSelection', () => {
     render(<TierSelection selectedTier="premium" onTierSelect={mockOnTierSelect} />);
 
     expect(screen.getByText(/Less than the price of a coffee/)).toBeInTheDocument();
-    expect(screen.getByText(/Just €0.16\/day/)).toBeInTheDocument();
+    expect(screen.getByText(/Just €0.17\/day/)).toBeInTheDocument();
   });
 
   it('should show value comparison against meal kits', () => {

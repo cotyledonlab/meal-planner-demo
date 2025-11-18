@@ -61,12 +61,14 @@ export default function TierSelection({ selectedTier, onTierSelect }: TierSelect
       <div className="grid gap-4 md:grid-cols-2">
         {tiers.map((tier) => {
           const isPremium = tier.id === 'premium';
-          const displayPrice = isPremium && billingPeriod === 'annual'
-            ? PRICING.PREMIUM.annualPrice
-            : tier.price;
-          const displayPeriod = isPremium && billingPeriod === 'annual'
-            ? PRICING.PREMIUM.annualPeriod
-            : 'period' in tier ? tier.period : undefined;
+          const displayPrice =
+            isPremium && billingPeriod === 'annual' ? PRICING.PREMIUM.annualPrice : tier.price;
+          const displayPeriod =
+            isPremium && billingPeriod === 'annual'
+              ? PRICING.PREMIUM.annualPeriod
+              : 'period' in tier
+                ? tier.period
+                : undefined;
 
           return (
             <button
@@ -88,11 +90,9 @@ export default function TierSelection({ selectedTier, onTierSelect }: TierSelect
               <div className="mb-4">
                 <div className="flex items-baseline gap-1">
                   <span className="text-3xl font-bold text-gray-900">{displayPrice}</span>
-                  {displayPeriod && (
-                    <span className="text-sm text-gray-600">{displayPeriod}</span>
-                  )}
+                  {displayPeriod && <span className="text-sm text-gray-600">{displayPeriod}</span>}
                 </div>
-                
+
                 {/* Psychological pricing enhancements */}
                 {isPremium && (
                   <div className="mt-2 space-y-0.5">
@@ -101,15 +101,13 @@ export default function TierSelection({ selectedTier, onTierSelect }: TierSelect
                         {PRICING.PREMIUM.annualMonthlyEquivalent}/month billed annually
                       </p>
                     )}
-                    <p className="text-xs text-gray-600">
-                      {PRICING.PREMIUM.valueProposition}
-                    </p>
+                    <p className="text-xs text-gray-600">{PRICING.PREMIUM.valueProposition}</p>
                     <p className="text-xs font-semibold text-emerald-700">
                       Just {PRICING.PREMIUM.dailyCost}/day
                     </p>
                   </div>
                 )}
-                
+
                 <h3 className="mt-2 text-lg font-semibold text-gray-900">{tier.name}</h3>
                 <p className="mt-1 text-sm text-gray-600">{tier.description}</p>
               </div>
@@ -118,7 +116,8 @@ export default function TierSelection({ selectedTier, onTierSelect }: TierSelect
               {isPremium && (
                 <div className="mb-3 rounded-md bg-emerald-50 border border-emerald-200 p-2">
                   <p className="text-xs text-gray-600">
-                    Meal kits: <span className="line-through">{PRICING.VALUE_COMPARISON.mealKitServices}</span>
+                    Meal kits:{' '}
+                    <span className="line-through">{PRICING.VALUE_COMPARISON.mealKitServices}</span>
                   </p>
                   <p className="text-xs font-semibold text-emerald-700">
                     {PRICING.VALUE_COMPARISON.grocerySavings}
@@ -172,12 +171,8 @@ export default function TierSelection({ selectedTier, onTierSelect }: TierSelect
             for testing purposes.
           </p>
           <div className="pt-2 border-t border-emerald-200 space-y-1">
-            <p className="text-xs text-emerald-700">
-              ✓ {PRICING.TRUST_SIGNALS.moneyBackGuarantee}
-            </p>
-            <p className="text-xs text-emerald-700">
-              ✓ {PRICING.TRUST_SIGNALS.cancelAnytime}
-            </p>
+            <p className="text-xs text-emerald-700">✓ {PRICING.TRUST_SIGNALS.moneyBackGuarantee}</p>
+            <p className="text-xs text-emerald-700">✓ {PRICING.TRUST_SIGNALS.cancelAnytime}</p>
           </div>
         </div>
       )}

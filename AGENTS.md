@@ -134,6 +134,8 @@ pnpm --filter @meal-planner-demo/types <command>  # Run command in types package
 - Playwright for E2E tests (coming soon)
 - No `any` types allowed in code
 - **All checks must pass before committing changes**
+- **All CI checks MUST pass before PR is considered complete**
+- **New logic or component behavior MUST include tests**
 - Tests are located alongside source files for better maintainability
 
 ### Pre-Commit Checklist

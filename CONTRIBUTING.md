@@ -94,6 +94,10 @@ We maintain high code quality standards through automated checks and manual revi
 
 - **TypeScript**: Use strict typing, avoid `any` types
 - **Code Style**: Follow ESLint rules and Prettier formatting
+- **Testing**: Write tests for all new logic, components, and behavior changes
+  - Use Vitest for unit tests (colocated with source files)
+  - Test files: `ComponentName.test.tsx` or `fileName.test.ts`
+  - New logic MUST include corresponding tests
 - **File Organization**: Keep components modular and well-organized
 - **Documentation**: Add comments for complex logic, update docs when needed
 - **Environment Variables**: Never commit secrets or API keys
@@ -138,7 +142,25 @@ Validates consistent code formatting.
 - Single quotes, trailing commas, semicolons
 - Line length and indentation
 
-### 4. Build
+### 4. Tests
+
+Runs all unit tests to verify functionality.
+
+**Command**: `pnpm test`
+
+**What it checks**:
+
+- All test suites pass
+- No regression in existing functionality
+- New logic has corresponding test coverage
+
+**Requirements**:
+
+- All new components must have tests
+- All new logic must have tests
+- Tests must pass before PR can be merged
+
+### 5. Build
 
 Verifies the application builds successfully.
 
@@ -150,7 +172,7 @@ Verifies the application builds successfully.
 - All imports resolve correctly
 - No runtime errors during build
 
-### 5. Security Scan
+### 6. Security Scan
 
 Scans for dependency vulnerabilities.
 
@@ -258,8 +280,9 @@ pnpm update [package-name]
 ## Pull Request Process
 
 1. **Before Submitting**:
-   - Run all checks locally: `pnpm check && pnpm format:check && pnpm build`
-   - Ensure all CI checks pass
+   - Run all checks locally: `pnpm check && pnpm format:check && pnpm test && pnpm build`
+   - **CRITICAL**: All CI checks MUST pass before PR is considered complete
+   - Write tests for any new logic or component behavior
    - Update documentation if needed
    - Add meaningful commit messages
 

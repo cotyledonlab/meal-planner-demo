@@ -119,6 +119,8 @@ pnpm --filter @meal-planner-demo/types <command>
 - Test with Vitest for unit tests (colocated with source files using `.test.ts` or `.test.tsx`)
 - Playwright for E2E tests (coming soon)
 - No `any` types allowed in code
+- **All CI checks MUST pass before PR is considered complete**
+- **New logic or component behavior MUST include tests**
 - All tests must pass before merging
 - Pre-commit hooks run automatically via Husky and lint-staged
 

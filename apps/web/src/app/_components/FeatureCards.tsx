@@ -25,7 +25,7 @@ export default function FeatureCards() {
     {
       title: 'Save Money Without the Hassle',
       description:
-        'Premium: We scan supermarket prices so you don\'t have to. Find the best deals and save €20+ every week – that\'s over €1,000 a year.',
+        "Premium: We scan supermarket prices so you don't have to. Find the best deals and save €20+ every week – that's over €1,000 a year.",
       Icon: CurrencyEuroIcon,
       color: 'amber',
       premium: true,
