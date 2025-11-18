@@ -3,7 +3,7 @@
 > **📌 Note**: This file is maintained for GitHub Copilot compatibility. For the complete and authoritative
 > development guidelines used by all AI assistants, see [`/AGENTS.md`](../AGENTS.md) at the repository root.
 
-Last updated: 2025-10-23
+Last updated: 2025-11-02
 
 ## Project Overview
 
@@ -190,14 +190,27 @@ All checks must pass before merging. The project uses:
 - **lint-staged** for automatic formatting and linting
 - Hooks are automatically set up when you run `pnpm install`
 
+## Workflow Expectations for Copilot Agents
+
+1. Treat `/AGENTS.md` as the authoritative guide; this document is a quick reference only.
+2. Use the GitHub CLI (`gh issue list`, `gh pr status`, `gh pr create`, etc.) for all GitHub workflows. MCP servers are not guaranteed—plan to rely on the standard CLI toolchain shipped with the repo.
+3. Follow the required git worktree flow before making changes:
+   - `git fetch origin`
+   - `gh issue list --state open --json number,title` to see active work
+   - `git worktree list` to confirm the issue number is free
+   - `git worktree add ../meal-planner-{issue-number} origin/main`
+   - `cd ../meal-planner-{issue-number}` then `git checkout -b <topic>-{issue-number}`
+4. Run all commands from the monorepo root inside your worktree so workspace scripts delegate correctly.
+5. Commit, push, and open PRs from inside the worktree; do not work directly from the root repository checkout.
+
 ## Important Notes for AI Assistants
 
-- **Always work from the monorepo root** - commands delegate automatically
-- **Tests are colocated** with source files (e.g., `post.ts` has `post.test.ts`)
-- **Environment validation** can be skipped in CI with `SKIP_ENV_VALIDATION=1`
-- **Never commit secrets** - use environment variables
-- **Database schema** lives in `apps/web/prisma/schema.prisma`
-- **Follow the existing code style** - it's enforced by ESLint and Prettier
+- **Always work from the monorepo root** inside your worktree so scripts delegate automatically.
+- **Tests are colocated** with source files (e.g., `post.ts` has `post.test.ts`).
+- **Environment validation** can be skipped in CI with `SKIP_ENV_VALIDATION=1` when necessary.
+- **Never commit secrets**—use environment variables.
+- **Database schema** lives in `apps/web/prisma/schema.prisma`.
+- **Follow the existing code style** enforced by ESLint and Prettier.
 
 ## Recent Changes
 
