@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import {
   CalendarDaysIcon,
@@ -31,23 +31,30 @@ export default function DashboardClient({ user, hasMealPlan }: DashboardClientPr
   // Extract first name for personalization
   const firstName = user.name?.split(' ')[0] ?? user.email?.split('@')[0] ?? null;
 
-  // Time-based greeting
-  const getTimeBasedGreeting = () => {
-    const hour = new Date().getHours();
-    if (hour < 12) return 'Good morning';
-    if (hour < 17) return 'Good afternoon';
-    return 'Good evening';
-  };
+  // Memoized greeting calculation
+  const { greeting, displayName } = useMemo(() => {
+    const now = new Date();
+    const hour = now.getHours();
+    const dayOfWeek = now.getDay();
 
-  // Varied greetings (rotate based on day of week for consistency within same day)
-  const getVariedGreeting = () => {
-    const greetings = ['Welcome back', 'Great to see you', 'Ready to plan', getTimeBasedGreeting()];
-    const dayOfWeek = new Date().getDay();
-    return greetings[dayOfWeek % greetings.length];
-  };
+    // Time-based greeting helper
+    const getTimeBasedGreeting = () => {
+      if (hour < 12) return 'Good morning';
+      if (hour < 17) return 'Good afternoon';
+      return 'Good evening';
+    };
 
-  const greeting = getVariedGreeting();
-  const displayName = firstName ? `, ${firstName}` : '';
+    // Varied greetings (rotate based on day of week for consistency within same day)
+    const greetings = ['Welcome back', 'Great to see you', 'Ready to plan', 'Time-based'];
+    const selectedGreeting = greetings[dayOfWeek % greetings.length];
+    const greetingText =
+      selectedGreeting === 'Time-based' ? getTimeBasedGreeting() : selectedGreeting;
+
+    return {
+      greeting: greetingText,
+      displayName: firstName ? `, ${firstName}` : '',
+    };
+  }, [firstName]);
 
   const premiumFeatures: Array<{
     id: string;
