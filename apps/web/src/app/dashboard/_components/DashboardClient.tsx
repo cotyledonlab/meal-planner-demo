@@ -69,7 +69,9 @@ export default function DashboardClient({ user, hasMealPlan }: DashboardClientPr
           <div className="relative">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,_rgba(255,255,255,0.1)_0%,_transparent_50%)]" />
             <div className="relative">
-              <h1 className="text-3xl font-bold leading-tight text-white break-words sm:text-4xl">Welcome back, {displayName}!</h1>
+              <h1 className="text-3xl font-bold leading-tight text-white break-words sm:text-4xl">
+                Welcome back, {displayName}!
+              </h1>
               <p className="mt-3 text-base leading-relaxed text-emerald-100 sm:text-lg">
                 Ready to plan your meals for the week?
               </p>
@@ -139,7 +141,9 @@ export default function DashboardClient({ user, hasMealPlan }: DashboardClientPr
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-gray-700">Shopping List</h3>
-                  <p className="mt-1 text-sm leading-relaxed text-gray-700 sm:text-base">Available after creating a meal plan</p>
+                  <p className="mt-1 text-sm leading-relaxed text-gray-700 sm:text-base">
+                    Available after creating a meal plan
+                  </p>
                 </div>
               </div>
             </div>

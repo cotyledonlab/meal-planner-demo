@@ -35,13 +35,22 @@ export default function CTA() {
       <footer className="border-t border-gray-200 bg-white">
         <div className="mx-auto max-w-7xl px-6 py-8">
           <nav className="flex flex-wrap justify-center gap-4 text-sm text-gray-600">
-            <Link href="/about" className="inline-flex min-h-[44px] items-center px-3 py-2 transition hover:text-emerald-600">
+            <Link
+              href="/about"
+              className="inline-flex min-h-[44px] items-center px-3 py-2 transition hover:text-emerald-600"
+            >
               About
             </Link>
-            <Link href="/contact" className="inline-flex min-h-[44px] items-center px-3 py-2 transition hover:text-emerald-600">
+            <Link
+              href="/contact"
+              className="inline-flex min-h-[44px] items-center px-3 py-2 transition hover:text-emerald-600"
+            >
               Contact
             </Link>
-            <Link href="/privacy" className="inline-flex min-h-[44px] items-center px-3 py-2 transition hover:text-emerald-600">
+            <Link
+              href="/privacy"
+              className="inline-flex min-h-[44px] items-center px-3 py-2 transition hover:text-emerald-600"
+            >
               Privacy
             </Link>
           </nav>
