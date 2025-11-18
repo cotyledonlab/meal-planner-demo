@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { ChevronDownIcon } from '@heroicons/react/24/outline';
 
 interface MealPlanWizardProps {
@@ -18,6 +18,10 @@ export interface MealPreferences {
   dislikes: string;
 }
 
+// Animation timing constants
+const ICON_ANIMATION_DELAY_MS = 50;
+const ENCOURAGEMENT_DISPLAY_DURATION_MS = 600;
+
 export default function MealPlanWizard({
   onComplete,
   onClose,
@@ -30,6 +34,7 @@ export default function MealPlanWizard({
   const [isDairyFree, setIsDairyFree] = useState(false);
   const [dislikes, setDislikes] = useState('');
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [justChanged, setJustChanged] = useState<string | null>(null);
 
   // Check if form has any user input (different from defaults)
   const hasUserInput =
@@ -73,6 +78,35 @@ export default function MealPlanWizard({
     e.preventDefault();
     onComplete({ householdSize, mealsPerDay, days, isVegetarian, isDairyFree, dislikes });
   };
+
+  // Track changes for animations
+  const markChanged = (field: string) => {
+    setJustChanged(field);
+    setTimeout(() => setJustChanged(null), ENCOURAGEMENT_DISPLAY_DURATION_MS);
+  };
+
+  // Calculate estimated meals
+  const totalMeals = householdSize * mealsPerDay * days;
+
+  // Get encouragement message
+  const encouragement = useMemo(() => {
+    if (justChanged === 'household' && householdSize > 3) {
+      return "Cooking for a crowd! We'll make sure everyone's fed 👨‍👩‍👧‍👦";
+    }
+    if (justChanged === 'meals' && mealsPerDay === 3) {
+      return "Three meals a day! You're taking meal planning seriously 💪";
+    }
+    if (justChanged === 'days' && days >= 5) {
+      return `${days} days planned = less stress, more time for you! ⏰`;
+    }
+    if (justChanged === 'vegetarian') {
+      return 'Plant-based goodness coming right up! 🌿';
+    }
+    if (justChanged === 'dairy') {
+      return 'Dairy-free options included! 🥥';
+    }
+    return null;
+  }, [justChanged, householdSize, mealsPerDay, days]);
 
   return (
     <>
@@ -145,9 +179,91 @@ export default function MealPlanWizard({
                     Let&apos;s plan your week!
                   </h2>
                   <p className="mt-3 text-center text-base text-gray-600">
-                    Answer a few quick questions to get your personalised meal plan.
+                    Tell us about your preferences and we&apos;ll create something special.
                   </p>
-                  <p className="mt-1 text-center text-sm text-gray-700">Takes about 10 seconds</p>
+
+                  {/* Visual Preview */}
+                  <div className="mt-6 rounded-2xl bg-gradient-to-br from-emerald-50 to-amber-50 p-4 border-2 border-emerald-100 shadow-sm">
+                    <div className="flex items-center justify-center gap-3 flex-wrap">
+                      {/* People Icons */}
+                      <div className="flex items-center gap-1.5">
+                        {Array.from({ length: Math.min(householdSize, 6) }).map((_, i) => (
+                          <span
+                            key={i}
+                            className="text-2xl transition-all duration-300 animate-in zoom-in"
+                            style={{ animationDelay: `${i * ICON_ANIMATION_DELAY_MS}ms` }}
+                            aria-hidden="true"
+                          >
+                            👤
+                          </span>
+                        ))}
+                      </div>
+
+                      <span className="text-gray-400">×</span>
+
+                      {/* Meal Icons */}
+                      <div className="flex items-center gap-1.5">
+                        {Array.from({ length: Math.min(mealsPerDay, 3) }).map((_, i) => (
+                          <span
+                            key={i}
+                            className="text-2xl transition-all duration-300 animate-in zoom-in"
+                            style={{ animationDelay: `${i * ICON_ANIMATION_DELAY_MS}ms` }}
+                            aria-hidden="true"
+                          >
+                            🍽️
+                          </span>
+                        ))}
+                      </div>
+
+                      <span className="text-gray-400">×</span>
+
+                      {/* Day Icons */}
+                      <div className="flex items-center gap-1.5">
+                        {Array.from({ length: Math.min(days, 7) }).map((_, i) => (
+                          <span
+                            key={i}
+                            className="text-2xl transition-all duration-300 animate-in zoom-in"
+                            style={{ animationDelay: `${i * ICON_ANIMATION_DELAY_MS}ms` }}
+                            aria-hidden="true"
+                          >
+                            📅
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Preview Text */}
+                    <p className="mt-3 text-center text-sm font-medium text-gray-700">
+                      Your <span className="text-emerald-700 font-bold">{days}-day plan</span> for{' '}
+                      <span className="text-emerald-700 font-bold">
+                        {householdSize} {householdSize === 1 ? 'person' : 'people'}
+                      </span>{' '}
+                      will include{' '}
+                      <span className="text-emerald-700 font-bold">{totalMeals} meals</span>
+                      {(isVegetarian || isDairyFree) && (
+                        <>
+                          {' '}
+                          —{' '}
+                          {[isVegetarian && 'vegetarian', isDairyFree && 'dairy-free']
+                            .filter(Boolean)
+                            .join(' & ')}
+                        </>
+                      )}
+                    </p>
+
+                    <p className="mt-2 text-center text-xs text-gray-600">
+                      ⚡ Plan ready in ~30 seconds
+                    </p>
+                  </div>
+
+                  {/* Encouragement Message */}
+                  {encouragement && (
+                    <div className="mt-4 animate-in fade-in slide-in-from-top-2 duration-300">
+                      <p className="text-center text-sm font-medium text-emerald-700 bg-emerald-50 rounded-lg px-4 py-2 border border-emerald-200">
+                        {encouragement}
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -158,7 +274,7 @@ export default function MealPlanWizard({
                     htmlFor="householdSize"
                     className="flex items-center gap-2 text-sm font-semibold text-gray-900"
                   >
-                    <span>How many people?</span>
+                    <span>Who&apos;s joining you for meals?</span>
                     <span
                       className="text-sm leading-none sm:text-base"
                       role="img"
@@ -171,7 +287,10 @@ export default function MealPlanWizard({
                     <select
                       id="householdSize"
                       value={householdSize}
-                      onChange={(e) => setHouseholdSize(Number(e.target.value))}
+                      onChange={(e) => {
+                        setHouseholdSize(Number(e.target.value));
+                        markChanged('household');
+                      }}
                       className="block w-full appearance-none rounded-2xl border-2 border-gray-200 bg-white px-4 py-3.5 pr-12 text-base text-gray-900 shadow-sm transition hover:border-emerald-300 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600 sm:rounded-xl min-h-[56px]"
                     >
                       {[1, 2, 3, 4, 5, 6].map((num) => (
@@ -193,7 +312,7 @@ export default function MealPlanWizard({
                     htmlFor="mealsPerDay"
                     className="flex items-center gap-2 text-sm font-semibold text-gray-900"
                   >
-                    <span>How many meals per day?</span>
+                    <span>How often do you want to cook?</span>
                     <span
                       className="text-sm leading-none sm:text-base"
                       role="img"
@@ -206,7 +325,10 @@ export default function MealPlanWizard({
                     <select
                       id="mealsPerDay"
                       value={mealsPerDay}
-                      onChange={(e) => setMealsPerDay(Number(e.target.value))}
+                      onChange={(e) => {
+                        setMealsPerDay(Number(e.target.value));
+                        markChanged('meals');
+                      }}
                       className="block w-full appearance-none rounded-2xl border-2 border-gray-200 bg-white px-4 py-3.5 pr-12 text-base text-gray-900 shadow-sm transition hover:border-emerald-300 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600 sm:rounded-xl min-h-[56px]"
                     >
                       <option value={1}>1 meal (Dinner only)</option>
@@ -226,7 +348,7 @@ export default function MealPlanWizard({
                     htmlFor="days"
                     className="flex items-center gap-2 text-sm font-semibold text-gray-900"
                   >
-                    <span>How many days to plan?</span>
+                    <span>How far ahead should we plan?</span>
                     <span
                       className="text-sm leading-none sm:text-base"
                       role="img"
@@ -239,7 +361,10 @@ export default function MealPlanWizard({
                     <select
                       id="days"
                       value={days}
-                      onChange={(e) => setDays(Number(e.target.value))}
+                      onChange={(e) => {
+                        setDays(Number(e.target.value));
+                        markChanged('days');
+                      }}
                       className="block w-full appearance-none rounded-2xl border-2 border-gray-200 bg-white px-4 py-3.5 pr-12 text-base text-gray-900 shadow-sm transition hover:border-emerald-300 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600 sm:rounded-xl min-h-[56px]"
                     >
                       {[3, 4, 5, 6, 7].map((num) => {
@@ -283,7 +408,10 @@ export default function MealPlanWizard({
                       type="checkbox"
                       id="isVegetarian"
                       checked={isVegetarian}
-                      onChange={(e) => setIsVegetarian(e.target.checked)}
+                      onChange={(e) => {
+                        setIsVegetarian(e.target.checked);
+                        if (e.target.checked) markChanged('vegetarian');
+                      }}
                       className="h-7 w-7 shrink-0 rounded-md border-2 border-gray-300 text-emerald-600 transition-all focus:ring-2 focus:ring-emerald-600 checked:bg-emerald-600 checked:border-emerald-600 active:scale-90"
                     />
                     <span className="flex items-center gap-2">
@@ -299,7 +427,10 @@ export default function MealPlanWizard({
                       type="checkbox"
                       id="isDairyFree"
                       checked={isDairyFree}
-                      onChange={(e) => setIsDairyFree(e.target.checked)}
+                      onChange={(e) => {
+                        setIsDairyFree(e.target.checked);
+                        if (e.target.checked) markChanged('dairy');
+                      }}
                       className="h-7 w-7 shrink-0 rounded-md border-2 border-gray-300 text-emerald-600 transition-all focus:ring-2 focus:ring-emerald-600 checked:bg-emerald-600 checked:border-emerald-600 active:scale-90"
                     />
                     <span className="flex items-center gap-2">
@@ -315,7 +446,7 @@ export default function MealPlanWizard({
                     htmlFor="dislikes"
                     className="flex items-center gap-2 text-sm font-semibold text-gray-900"
                   >
-                    <span>Foods to avoid (optional)</span>
+                    <span>Anything you&apos;d rather skip? (optional)</span>
                     <span
                       className="text-sm leading-none sm:text-base"
                       role="img"
@@ -329,7 +460,7 @@ export default function MealPlanWizard({
                     id="dislikes"
                     value={dislikes}
                     onChange={(e) => setDislikes(e.target.value)}
-                    placeholder="e.g., mushrooms, olives"
+                    placeholder="e.g., mushrooms, olives, cilantro"
                     className="mt-2 block w-full rounded-2xl border-2 border-gray-200 bg-white px-4 py-3.5 text-base text-gray-900 placeholder-gray-600 shadow-sm transition hover:border-emerald-300 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600 sm:rounded-xl min-h-[56px]"
                   />
                   <p className="mt-2 text-xs text-gray-700">
