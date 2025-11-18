@@ -1,5 +1,10 @@
 import Link from 'next/link';
+import { type Metadata } from 'next';
 
+export const metadata: Metadata = {
+  title: 'About - MealMind AI',
+  description: 'Learn about MealMind AI and our mission to simplify meal planning for families in Ireland.',
+};
 export default function AboutPage() {
   return (
     <div className="min-h-screen bg-white">
