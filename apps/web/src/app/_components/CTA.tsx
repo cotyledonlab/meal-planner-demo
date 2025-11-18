@@ -34,15 +34,15 @@ export default function CTA() {
       <footer className="border-t border-gray-200 bg-white">
         <div className="mx-auto max-w-7xl px-6 py-8">
           <nav className="flex flex-wrap justify-center gap-6 text-sm text-gray-600">
-            <a href="#" className="transition hover:text-emerald-600">
+            <Link href="/about" className="transition hover:text-emerald-600">
               About
-            </a>
-            <a href="#" className="transition hover:text-emerald-600">
+            </Link>
+            <Link href="/contact" className="transition hover:text-emerald-600">
               Contact
-            </a>
-            <a href="#" className="transition hover:text-emerald-600">
+            </Link>
+            <Link href="/privacy" className="transition hover:text-emerald-600">
               Privacy
-            </a>
+            </Link>
           </nav>
           <p className="mt-6 text-center text-sm text-gray-500">
             © {new Date().getFullYear()} Meal Planner Demo. Prototype for demonstration purposes.
