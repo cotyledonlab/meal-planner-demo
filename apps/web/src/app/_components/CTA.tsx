@@ -22,7 +22,7 @@ export default function CTA() {
                 href="/auth/signup"
                 className="inline-block rounded-full bg-white px-8 py-3.5 text-base font-semibold text-emerald-700 shadow-lg transition-all duration-150 ease-in-out hover:scale-[1.02] hover:bg-emerald-50 hover:shadow-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
               >
-                Start Your Free Plan
+                Start Planning Free
               </Link>
             </div>
             <p className="mt-6 text-sm text-emerald-100">Made with ❤️ for Irish families</p>
