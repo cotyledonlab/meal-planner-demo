@@ -8,12 +8,12 @@ describe('MealPlanWizard', () => {
     const mockOnComplete = vi.fn();
     render(<MealPlanWizard onComplete={mockOnComplete} />);
 
-    expect(screen.getByLabelText(/How many people/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/How many meals per day/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/How many days to plan/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Who's joining you for meals/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/How often do you want to cook/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/How far ahead should we plan/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/Vegetarian/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/Dairy-free/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Foods to avoid/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Anything you'd rather skip/i)).toBeInTheDocument();
   });
 
   it('should render chevron icons for all select elements', () => {
@@ -52,9 +52,9 @@ describe('MealPlanWizard', () => {
     const mockOnComplete = vi.fn();
     render(<MealPlanWizard onComplete={mockOnComplete} />);
 
-    const householdSelect = screen.getByLabelText(/How many people/i);
-    const mealsSelect = screen.getByLabelText(/How many meals per day/i);
-    const daysSelect = screen.getByLabelText(/How many days to plan/i);
+    const householdSelect = screen.getByLabelText(/Who's joining you for meals/i);
+    const mealsSelect = screen.getByLabelText(/How often do you want to cook/i);
+    const daysSelect = screen.getByLabelText(/How far ahead should we plan/i);
     const vegetarianCheckbox = screen.getByLabelText(/Vegetarian/i);
     const submitButton = screen.getByRole('button', { name: /Create My Plan/i });
 
@@ -99,7 +99,7 @@ describe('MealPlanWizard', () => {
     const mockOnComplete = vi.fn();
     render(<MealPlanWizard onComplete={mockOnComplete} isPremium={false} />);
 
-    const daysSelect = screen.getByLabelText(/How many days to plan/i);
+    const daysSelect = screen.getByLabelText(/How far ahead should we plan/i);
     const options = Array.from((daysSelect as HTMLSelectElement).options);
 
     // Check that options 4-7 are disabled for non-premium users
@@ -114,7 +114,7 @@ describe('MealPlanWizard', () => {
     const mockOnComplete = vi.fn();
     render(<MealPlanWizard onComplete={mockOnComplete} isPremium={true} />);
 
-    const daysSelect = screen.getByLabelText(/How many days to plan/i);
+    const daysSelect = screen.getByLabelText(/How far ahead should we plan/i);
     const options = Array.from((daysSelect as HTMLSelectElement).options);
 
     // Check that all options are enabled for premium users
@@ -229,7 +229,7 @@ describe('MealPlanWizard', () => {
     render(<MealPlanWizard onComplete={mockOnComplete} onClose={mockOnClose} />);
 
     // Make a change to the form
-    const householdSelect = screen.getByLabelText(/How many people/i);
+    const householdSelect = screen.getByLabelText(/Who's joining you for meals/i);
     await user.selectOptions(householdSelect, '4');
 
     // Click cancel button
@@ -264,7 +264,7 @@ describe('MealPlanWizard', () => {
     render(<MealPlanWizard onComplete={mockOnComplete} onClose={mockOnClose} />);
 
     // Make a change to the form
-    const householdSelect = screen.getByLabelText(/How many people/i);
+    const householdSelect = screen.getByLabelText(/Who's joining you for meals/i);
     await user.selectOptions(householdSelect, '4');
 
     // Click cancel button
@@ -285,7 +285,7 @@ describe('MealPlanWizard', () => {
     render(<MealPlanWizard onComplete={mockOnComplete} onClose={mockOnClose} />);
 
     // Make a change to the form
-    const householdSelect = screen.getByLabelText(/How many people/i);
+    const householdSelect = screen.getByLabelText(/Who's joining you for meals/i);
     await user.selectOptions(householdSelect, '4');
 
     // Click cancel button
