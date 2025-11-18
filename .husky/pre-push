@@ -32,7 +32,7 @@ pnpm format:check || {
 
 # Run linting
 echo "2/3 Running linter..."
-pnpm lint || {
+SKIP_ENV_VALIDATION=1 pnpm lint || {
   echo "❌ Linting failed. Run 'pnpm lint:fix' to auto-fix issues."
   exit 1
 }
