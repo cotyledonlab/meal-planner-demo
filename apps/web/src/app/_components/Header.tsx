@@ -122,7 +122,7 @@ export function Header() {
                     setMobileMenuOpen(false);
                     void handleSignOut();
                   }}
-                  className="flex min-h-[44px] w-full items-center rounded-md px-4 py-3 text-left text-base font-medium text-gray-700 transition-colors duration-150 hover:bg-gray-50 hover:text-gray-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
+                  className="flex min-h-[44px] w-full items-center rounded-md px-4 py-3 text-left text-base font-medium text-gray-700 transition-all duration-150 hover:bg-gray-50 hover:text-gray-900 active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
                 >
                   Sign out
                 </button>

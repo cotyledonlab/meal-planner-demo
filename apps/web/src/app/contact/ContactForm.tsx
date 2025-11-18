@@ -13,7 +13,7 @@ export function ContactForm() {
             type="text"
             id="name"
             name="name"
-            className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-2.5 shadow-sm transition-all duration-150 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:shadow-md"
+            className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-2.5 shadow-sm transition-all duration-150 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/50 focus:shadow-md"
             placeholder="Your name"
           />
         </div>
@@ -26,7 +26,7 @@ export function ContactForm() {
             type="email"
             id="email"
             name="email"
-            className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-2.5 shadow-sm transition-all duration-150 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:shadow-md"
+            className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-2.5 shadow-sm transition-all duration-150 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/50 focus:shadow-md"
             placeholder="you@example.com"
           />
         </div>
@@ -39,7 +39,7 @@ export function ContactForm() {
             type="text"
             id="subject"
             name="subject"
-            className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-2.5 shadow-sm transition-all duration-150 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:shadow-md"
+            className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-2.5 shadow-sm transition-all duration-150 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/50 focus:shadow-md"
             placeholder="How can we help?"
           />
         </div>
@@ -52,7 +52,7 @@ export function ContactForm() {
             id="message"
             name="message"
             rows={5}
-            className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-2.5 shadow-sm transition-all duration-150 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:shadow-md"
+            className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-2.5 shadow-sm transition-all duration-150 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/50 focus:shadow-md"
             placeholder="Tell us more..."
           />
         </div>
