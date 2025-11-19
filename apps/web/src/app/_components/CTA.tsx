@@ -21,7 +21,7 @@ export default function CTA() {
             <div className="mt-8">
               <Link
                 href="/auth/signup"
-                className="inline-flex min-h-[48px] items-center justify-center rounded-full bg-white px-8 py-3.5 text-base font-semibold text-emerald-700 shadow-lg transition-all duration-150 ease-in-out hover:scale-[1.02] hover:bg-emerald-50 hover:shadow-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                className="inline-flex min-h-[48px] items-center justify-center rounded-full bg-white px-8 py-3.5 text-base font-semibold text-emerald-700 shadow-lg transition-all duration-150 ease-out hover:scale-[1.02] hover:bg-emerald-50 hover:shadow-xl active:scale-[0.98] active:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
               >
                 Start Planning Free
               </Link>
@@ -37,19 +37,19 @@ export default function CTA() {
           <nav className="flex flex-wrap justify-center gap-4 text-sm text-gray-600">
             <Link
               href="/about"
-              className="inline-flex min-h-[44px] items-center px-3 py-2 transition hover:text-emerald-600"
+              className="inline-flex min-h-[44px] items-center px-3 py-2 transition-colors duration-150 hover:text-emerald-600"
             >
               About
             </Link>
             <Link
               href="/contact"
-              className="inline-flex min-h-[44px] items-center px-3 py-2 transition hover:text-emerald-600"
+              className="inline-flex min-h-[44px] items-center px-3 py-2 transition-colors duration-150 hover:text-emerald-600"
             >
               Contact
             </Link>
             <Link
               href="/privacy"
-              className="inline-flex min-h-[44px] items-center px-3 py-2 transition hover:text-emerald-600"
+              className="inline-flex min-h-[44px] items-center px-3 py-2 transition-colors duration-150 hover:text-emerald-600"
             >
               Privacy
             </Link>

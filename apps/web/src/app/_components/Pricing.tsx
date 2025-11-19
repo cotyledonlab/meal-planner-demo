@@ -40,20 +40,20 @@ export default function Pricing() {
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
             <button
               onClick={() => setBillingPeriod('monthly')}
-              className={`inline-flex min-h-[44px] items-center justify-center rounded-full px-6 py-2.5 text-sm font-semibold transition-all ${
+              className={`inline-flex min-h-[44px] items-center justify-center rounded-full px-6 py-2.5 text-sm font-semibold transition-all duration-150 ease-out ${
                 billingPeriod === 'monthly'
                   ? 'bg-emerald-600 text-white shadow-md'
-                  : 'bg-white text-gray-700 hover:bg-gray-50'
+                  : 'bg-white text-gray-700 hover:bg-gray-50 active:scale-[0.98]'
               }`}
             >
               Monthly
             </button>
             <button
               onClick={() => setBillingPeriod('annual')}
-              className={`relative inline-flex min-h-[44px] items-center justify-center rounded-full px-6 py-2.5 text-sm font-semibold transition-all ${
+              className={`relative inline-flex min-h-[44px] items-center justify-center rounded-full px-6 py-2.5 text-sm font-semibold transition-all duration-150 ease-out ${
                 billingPeriod === 'annual'
                   ? 'bg-emerald-600 text-white shadow-md'
-                  : 'bg-white text-gray-700 hover:bg-gray-50'
+                  : 'bg-white text-gray-700 hover:bg-gray-50 active:scale-[0.98]'
               }`}
             >
               Annual
@@ -79,10 +79,10 @@ export default function Pricing() {
             return (
               <div
                 key={tier.name}
-                className={`relative rounded-2xl p-8 transition-all duration-200 ${
+                className={`relative rounded-2xl p-8 transition-all duration-200 ease-out ${
                   tier.highlighted
-                    ? 'bg-gradient-to-br from-emerald-50 to-emerald-100/50 ring-2 ring-emerald-600 shadow-xl hover:shadow-2xl hover:-translate-y-1'
-                    : 'bg-white shadow-md ring-1 ring-gray-200 hover:shadow-lg hover:-translate-y-1'
+                    ? 'bg-gradient-to-br from-emerald-50 to-emerald-100/50 ring-2 ring-emerald-600 shadow-xl hover:shadow-2xl hover:-translate-y-1 hover:scale-[1.01]'
+                    : 'bg-white shadow-md ring-1 ring-gray-200 hover:shadow-lg hover:-translate-y-1 hover:scale-[1.01]'
                 }`}
               >
                 {tier.highlighted && (
@@ -148,7 +148,7 @@ export default function Pricing() {
 
                 <Link
                   href={tier.href}
-                  className={`mt-8 flex min-h-[48px] w-full items-center justify-center rounded-full py-3.5 text-center text-base font-semibold shadow-md transition-all duration-150 ease-in-out hover:scale-[1.02] hover:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${
+                  className={`mt-8 flex min-h-[48px] w-full items-center justify-center rounded-full py-3.5 text-center text-base font-semibold shadow-md transition-all duration-150 ease-out hover:scale-[1.02] hover:shadow-lg active:scale-[0.98] active:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${
                     tier.highlighted
                       ? 'bg-gradient-to-r from-emerald-600 to-emerald-500 text-white hover:from-emerald-500 hover:to-emerald-400 focus-visible:outline-emerald-600'
                       : 'bg-white text-emerald-700 ring-2 ring-emerald-600 hover:bg-emerald-50 focus-visible:outline-emerald-600'
