@@ -13,6 +13,7 @@ import {
 
 import PremiumFeatureCard from '~/app/_components/dashboard/PremiumFeatureCard';
 import PremiumPreviewModal from '~/app/_components/PremiumPreviewModal';
+import EmptyState from '~/app/_components/EmptyState';
 
 interface DashboardClientProps {
   user: {
@@ -161,19 +162,58 @@ export default function DashboardClient({ user, hasMealPlan }: DashboardClientPr
               </div>
             </Link>
 
-            <div className="rounded-2xl border border-gray-200 bg-gradient-to-br from-gray-50 to-gray-100 p-6 opacity-60 shadow-sm">
-              <div className="flex items-start gap-4">
-                <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-gray-300 text-gray-500 shadow-sm">
-                  <ShoppingBagIcon className="h-6 w-6" />
+            {!hasMealPlan ? (
+              <EmptyState
+                icon={<ShoppingBagIcon className="h-8 w-8" />}
+                iconColor="blue"
+                title="Your shopping list awaits!"
+                description="Create your first meal plan to automatically generate a personalized shopping list with all the ingredients you need."
+                actionLabel="Create meal plan"
+                actionHref="/planner"
+                preview={
+                  <div className="rounded-xl border border-gray-200 bg-white/50 p-4 text-left">
+                    <p className="mb-3 text-sm font-semibold text-gray-700">
+                      Sample shopping list:
+                    </p>
+                    <div className="space-y-2 text-sm text-gray-600">
+                      <div className="flex items-center gap-2">
+                        <span className="text-emerald-600">✓</span>
+                        <span>2 lbs chicken breast</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-emerald-600">✓</span>
+                        <span>1 bunch broccoli</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-emerald-600">✓</span>
+                        <span>3 cups quinoa</span>
+                      </div>
+                      <p className="mt-3 text-xs italic text-gray-500">
+                        Automatically organized by category
+                      </p>
+                    </div>
+                  </div>
+                }
+                className="h-full"
+              />
+            ) : (
+              <Link
+                href="/planner"
+                className="group h-full rounded-2xl border border-gray-200 bg-white p-6 shadow-md transition-all duration-200 hover:shadow-xl hover:-translate-y-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+              >
+                <div className="flex items-start gap-4">
+                  <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-md transition-transform group-hover:scale-110">
+                    <ShoppingBagIcon className="h-6 w-6" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900">Shopping List</h3>
+                    <p className="mt-1 text-sm leading-relaxed text-gray-600 sm:text-base">
+                      View your organized shopping list for this week&apos;s meals
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-700">Shopping List</h3>
-                  <p className="mt-1 text-sm leading-relaxed text-gray-700 sm:text-base">
-                    Available after creating a meal plan
-                  </p>
-                </div>
-              </div>
-            </div>
+              </Link>
+            )}
           </div>
         </div>
 

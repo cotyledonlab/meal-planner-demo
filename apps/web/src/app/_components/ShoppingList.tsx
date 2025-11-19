@@ -6,7 +6,8 @@ import { isPremiumUser } from '~/lib/auth';
 import { CATEGORY_ORDER, CATEGORY_EMOJI, CATEGORY_LABELS } from '~/lib/categoryConfig';
 import { api } from '~/trpc/react';
 import { Disclosure } from '@headlessui/react';
-import { ChevronDownIcon } from '@heroicons/react/24/outline';
+import { ChevronDownIcon, ShoppingBagIcon } from '@heroicons/react/24/outline';
+import EmptyState from './EmptyState';
 
 interface ShoppingListItem {
   id: string;
@@ -157,9 +158,14 @@ export default function ShoppingList({ planId, onComparePrices }: ShoppingListPr
 
   if (items.length === 0) {
     return (
-      <div className="rounded-xl bg-white p-8 text-center shadow-sm ring-1 ring-gray-200">
-        <p className="text-gray-600">No shopping list available</p>
-      </div>
+      <EmptyState
+        icon={<ShoppingBagIcon className="h-8 w-8" />}
+        iconColor="blue"
+        title="Your shopping list is empty"
+        description="This shouldn't happen! Your meal plan should have generated a shopping list. Try creating a new meal plan or contact support if the problem persists."
+        actionLabel="Create new plan"
+        actionHref="/planner"
+      />
     );
   }
 
