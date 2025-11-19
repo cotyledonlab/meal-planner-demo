@@ -182,12 +182,7 @@ function SignUpForm() {
     if (isPremium) {
       steps.push({
         label: 'Payment',
-        status:
-          currentStep === 'payment'
-            ? ('current' as const)
-            : currentStep === 'details'
-              ? ('upcoming' as const)
-              : ('upcoming' as const),
+        status: currentStep === 'payment' ? ('current' as const) : ('upcoming' as const),
       });
     }
 

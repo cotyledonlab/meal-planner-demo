@@ -53,20 +53,29 @@ export default function CelebrationModal({ userName, tier }: CelebrationModalPro
         ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="celebration-modal-title"
+    >
       {/* Confetti animation */}
-      {confettiPieces.map((piece) => (
-        <div
-          key={piece.id}
-          className="pointer-events-none absolute top-0 h-3 w-3 animate-confetti"
-          style={{
-            left: `${piece.left}%`,
-            animationDelay: `${piece.delay}s`,
-            animationDuration: `${piece.duration}s`,
-            backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6'][piece.id % 5],
-          }}
-        />
-      ))}
+      <div aria-hidden="true">
+        {confettiPieces.map((piece) => (
+          <div
+            key={piece.id}
+            className="pointer-events-none absolute top-0 h-3 w-3 animate-confetti"
+            style={{
+              left: `${piece.left}%`,
+              animationDelay: `${piece.delay}s`,
+              animationDuration: `${piece.duration}s`,
+              backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6'][
+                piece.id % 5
+              ],
+            }}
+          />
+        ))}
+      </div>
 
       {/* Modal content */}
       <div
@@ -85,6 +94,7 @@ export default function CelebrationModal({ userName, tier }: CelebrationModalPro
               strokeWidth="2"
               viewBox="0 0 24 24"
               stroke="currentColor"
+              aria-hidden="true"
             >
               <path d="M5 13l4 4L19 7" />
             </svg>
@@ -92,7 +102,7 @@ export default function CelebrationModal({ userName, tier }: CelebrationModalPro
         </div>
 
         {/* Title */}
-        <h2 className="text-center text-3xl font-bold text-gray-900">
+        <h2 id="celebration-modal-title" className="text-center text-3xl font-bold text-gray-900">
           Welcome to MealMind{tier === 'premium' ? ' Premium' : ''}!
         </h2>
 
@@ -111,7 +121,7 @@ export default function CelebrationModal({ userName, tier }: CelebrationModalPro
         {/* Key features */}
         <div className="mt-8 space-y-3">
           <p className="text-center text-sm font-semibold text-gray-900">
-            Here&rsquo;s what you can do now:
+            Here&apos;s what you can do now:
           </p>
           <div className="grid gap-3">
             {keyFeatures.map((feature, idx) => (
@@ -138,7 +148,7 @@ export default function CelebrationModal({ userName, tier }: CelebrationModalPro
             Create your first meal plan
           </button>
           <p className="text-center text-xs text-gray-500">
-            We&rsquo;ll guide you through the process step by step
+            We&apos;ll guide you through the process step by step
           </p>
         </div>
       </div>
