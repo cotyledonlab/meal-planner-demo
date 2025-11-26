@@ -41,6 +41,11 @@ vi.mock('next/image', () => ({
       ...imgProps
     } = props;
 
+    void _fill;
+    void _priority;
+    void _placeholder;
+    void _blurDataURL;
+
     return (
       // eslint-disable-next-line @next/next/no-img-element
       <img alt={alt} src={resolveMockSrc(src)} className={className} {...imgProps} />
