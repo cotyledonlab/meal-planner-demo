@@ -2,9 +2,11 @@
 
 import { useCallback, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { SparklesIcon } from '@heroicons/react/24/outline';
 import type { MealPreferences } from './MealPlanWizard';
 import RecipeCard from './RecipeCard';
 import RecipeDetailModal from './RecipeDetailModal';
+import EmptyState from './EmptyState';
 import { api } from '~/trpc/react';
 
 type RecipeIngredient = {
@@ -96,9 +98,37 @@ export default function MealPlanView({
   // Use real plan data if available, otherwise fall back to preferences-based view
   if (!plan && !preferences) {
     return (
-      <div className="rounded-xl bg-white p-8 text-center shadow-sm ring-1 ring-gray-200">
-        <p className="text-gray-600">No meal plan available</p>
-      </div>
+      <EmptyState
+        icon={<SparklesIcon className="h-8 w-8" />}
+        iconColor="emerald"
+        title="Let's create your first meal plan!"
+        description="Start planning delicious, healthy meals for the week. Our AI will help you create a personalized plan based on your preferences."
+        actionLabel="Start planning"
+        actionHref="/planner"
+        preview={
+          <div className="rounded-xl border border-gray-200 bg-white/50 p-4 text-left">
+            <p className="mb-3 text-sm font-semibold text-gray-700">You&apos;ll get:</p>
+            <div className="space-y-2 text-sm text-gray-600">
+              <div className="flex items-center gap-2">
+                <span className="text-emerald-600">✓</span>
+                <span>7 days of personalized meals</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-emerald-600">✓</span>
+                <span>Automatic shopping list</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-emerald-600">✓</span>
+                <span>Nutritional information</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-emerald-600">✓</span>
+                <span>Step-by-step recipes</span>
+              </div>
+            </div>
+          </div>
+        }
+      />
     );
   }
 
