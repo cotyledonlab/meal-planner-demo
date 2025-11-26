@@ -1,26 +1,118 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import {
-  CalendarDaysIcon,
-  ShoppingBagIcon,
-  SparklesIcon,
-  ChartBarIcon,
   AdjustmentsHorizontalIcon,
   BuildingStorefrontIcon,
+  CalendarDaysIcon,
+  ChartBarIcon,
+  ShoppingBagIcon,
+  SparklesIcon,
 } from '@heroicons/react/24/outline';
 
 import PremiumFeatureCard from '~/app/_components/dashboard/PremiumFeatureCard';
 import PremiumPreviewModal from '~/app/_components/PremiumPreviewModal';
 
+type DashboardUser = {
+  name?: string | null;
+  email?: string | null;
+  role?: string | null;
+};
+
+type PremiumFeature = {
+  id: string;
+  title: string;
+  description: string;
+  Icon: React.ComponentType<React.ComponentProps<'svg'>>;
+  color: 'blue' | 'amber' | 'purple' | 'emerald';
+};
+
+type QuickAction = {
+  id: string;
+  title: string;
+  description: string;
+  href: string;
+  Icon: React.ComponentType<React.ComponentProps<'svg'>>;
+  iconGradientClass: string;
+  outlineClass: string;
+};
+
+const PREMIUM_FEATURES: PremiumFeature[] = [
+  {
+    id: 'nutrition',
+    title: 'Tailored Nutritional Requirements',
+    description: 'Macros and calories tuned to your goals; diabetic- and allergy-aware options.',
+    Icon: ChartBarIcon,
+    color: 'blue',
+  },
+  {
+    id: 'price-comparison',
+    title: 'Supermarket Price Comparison',
+    description: 'See estimated totals across Aldi, Lidl, Tesco & Dunnes to save more.',
+    Icon: BuildingStorefrontIcon,
+    color: 'amber',
+  },
+  {
+    id: 'pantry',
+    title: 'Pantry-Aware Substitutions',
+    description: 'Auto-skip what you already have and suggest smart swaps.',
+    Icon: AdjustmentsHorizontalIcon,
+    color: 'purple',
+  },
+];
+
+const QUICK_ACTIONS: QuickAction[] = [
+  {
+    id: 'new-plan',
+    title: 'New Weekly Plan',
+    description: 'Generate a fresh 7-day meal plan tailored to your preferences',
+    href: '/planner',
+    Icon: SparklesIcon,
+    iconGradientClass: 'bg-gradient-to-br from-emerald-500 to-emerald-600 text-white',
+    outlineClass: 'focus-visible:outline-emerald-600',
+  },
+  {
+    id: 'open-planner',
+    title: 'Open Planner',
+    description: 'View and edit your current meal plan and recipes',
+    href: '/planner',
+    Icon: CalendarDaysIcon,
+    iconGradientClass: 'bg-gradient-to-br from-blue-500 to-blue-600 text-white',
+    outlineClass: 'focus-visible:outline-blue-600',
+  },
+];
+
 interface DashboardClientProps {
-  user: {
-    name?: string | null;
-    email?: string | null;
-    role?: string | null;
-  };
+  user: DashboardUser;
   hasMealPlan: boolean;
+}
+
+function getFirstName(user: DashboardUser): string | null {
+  if (user.name) return user.name.split(' ')[0];
+  if (user.email) return user.email.split('@')[0];
+  return null;
+}
+
+function getGreetingParts(firstName: string | null, now: Date = new Date()) {
+  const hour = now.getHours();
+  const dayOfWeek = now.getDay();
+
+  const getTimeBasedGreeting = () => {
+    if (hour < 12) return 'Good morning';
+    if (hour < 17) return 'Good afternoon';
+    return 'Good evening';
+  };
+
+  const greetings = ['Welcome back', 'Great to see you', 'Ready to plan', 'Time-based'] as const;
+  const selectedGreeting = greetings[dayOfWeek % greetings.length];
+  const greetingText =
+    selectedGreeting === 'Time-based' ? getTimeBasedGreeting() : selectedGreeting;
+
+  return {
+    greeting: greetingText,
+    displayName: firstName ? `, ${firstName}` : '',
+  };
 }
 
 export default function DashboardClient({ user, hasMealPlan }: DashboardClientProps) {
@@ -28,63 +120,9 @@ export default function DashboardClient({ user, hasMealPlan }: DashboardClientPr
 
   const isPremiumUser = user.role === 'premium';
 
-  // Extract first name for personalization
-  const firstName = user.name?.split(' ')[0] ?? user.email?.split('@')[0] ?? null;
+  const firstName = useMemo(() => getFirstName(user), [user]);
 
-  // Memoized greeting calculation
-  const { greeting, displayName } = useMemo(() => {
-    const now = new Date();
-    const hour = now.getHours();
-    const dayOfWeek = now.getDay();
-
-    // Time-based greeting helper
-    const getTimeBasedGreeting = () => {
-      if (hour < 12) return 'Good morning';
-      if (hour < 17) return 'Good afternoon';
-      return 'Good evening';
-    };
-
-    // Varied greetings (rotate based on day of week for consistency within same day)
-    const greetings = ['Welcome back', 'Great to see you', 'Ready to plan', 'Time-based'];
-    const selectedGreeting = greetings[dayOfWeek % greetings.length];
-    const greetingText =
-      selectedGreeting === 'Time-based' ? getTimeBasedGreeting() : selectedGreeting;
-
-    return {
-      greeting: greetingText,
-      displayName: firstName ? `, ${firstName}` : '',
-    };
-  }, [firstName]);
-
-  const premiumFeatures: Array<{
-    id: string;
-    title: string;
-    description: string;
-    Icon: React.ComponentType<React.ComponentProps<'svg'>>;
-    color: 'blue' | 'amber' | 'purple' | 'emerald';
-  }> = [
-    {
-      id: 'nutrition',
-      title: 'Tailored Nutritional Requirements',
-      description: 'Macros and calories tuned to your goals; diabetic- and allergy-aware options.',
-      Icon: ChartBarIcon,
-      color: 'blue',
-    },
-    {
-      id: 'price-comparison',
-      title: 'Supermarket Price Comparison',
-      description: 'See estimated totals across Aldi, Lidl, Tesco & Dunnes to save more.',
-      Icon: BuildingStorefrontIcon,
-      color: 'amber',
-    },
-    {
-      id: 'pantry',
-      title: 'Pantry-Aware Substitutions',
-      description: 'Auto-skip what you already have and suggest smart swaps.',
-      Icon: AdjustmentsHorizontalIcon,
-      color: 'purple',
-    },
-  ];
+  const { greeting, displayName } = useMemo(() => getGreetingParts(firstName), [firstName]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
@@ -127,39 +165,27 @@ export default function DashboardClient({ user, hasMealPlan }: DashboardClientPr
         <div className="mb-12">
           <h2 className="mb-6 text-2xl font-bold text-gray-900">Quick Actions</h2>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            <Link
-              href="/planner"
-              className="group rounded-2xl border border-gray-200 bg-white p-6 shadow-md transition-all duration-200 hover:shadow-xl hover:-translate-y-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
-            >
-              <div className="flex items-start gap-4">
-                <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 text-white shadow-md transition-transform group-hover:scale-110">
-                  <SparklesIcon className="h-6 w-6" />
+            {QUICK_ACTIONS.map((action) => (
+              <Link
+                key={action.id}
+                href={action.href}
+                className={`group rounded-2xl border border-gray-200 bg-white p-6 shadow-md transition-all duration-200 hover:shadow-xl hover:-translate-y-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${action.outlineClass}`}
+              >
+                <div className="flex items-start gap-4">
+                  <div
+                    className={`flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl ${action.iconGradientClass} shadow-md transition-transform group-hover:scale-110`}
+                  >
+                    <action.Icon className="h-6 w-6" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900">{action.title}</h3>
+                    <p className="mt-1 text-sm leading-relaxed text-gray-600 sm:text-base">
+                      {action.description}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900">New Weekly Plan</h3>
-                  <p className="mt-1 text-sm leading-relaxed text-gray-600 sm:text-base">
-                    Generate a fresh 7-day meal plan tailored to your preferences
-                  </p>
-                </div>
-              </div>
-            </Link>
-
-            <Link
-              href="/planner"
-              className="group rounded-2xl border border-gray-200 bg-white p-6 shadow-md transition-all duration-200 hover:shadow-xl hover:-translate-y-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-            >
-              <div className="flex items-start gap-4">
-                <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-md transition-transform group-hover:scale-110">
-                  <CalendarDaysIcon className="h-6 w-6" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900">Open Planner</h3>
-                  <p className="mt-1 text-sm leading-relaxed text-gray-600 sm:text-base">
-                    View and edit your current meal plan and recipes
-                  </p>
-                </div>
-              </div>
-            </Link>
+              </Link>
+            ))}
 
             <div className="rounded-2xl border border-gray-200 bg-gradient-to-br from-gray-50 to-gray-100 p-6 opacity-60 shadow-sm">
               <div className="flex items-start gap-4">
@@ -199,7 +225,7 @@ export default function DashboardClient({ user, hasMealPlan }: DashboardClientPr
           </div>
 
           <div className="grid gap-6 lg:grid-cols-2">
-            {premiumFeatures.map((feature) => (
+            {PREMIUM_FEATURES.map((feature) => (
               <PremiumFeatureCard
                 key={feature.id}
                 title={feature.title}
