@@ -249,7 +249,6 @@ export const planRouter = createTRPCRouter({
       // 2. Dietary preferences
       // 3. Not already in the plan
       // 4. Not disliked
-      const currentRecipeId = itemToSwap.recipeId;
       const mealType = itemToSwap.mealType;
 
       // Get all recipe IDs currently in the plan to avoid duplicates
