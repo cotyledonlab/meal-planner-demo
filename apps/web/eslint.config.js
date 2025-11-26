@@ -18,6 +18,11 @@ export default tseslint.config(
   },
   ...compat.extends('next/core-web-vitals'),
   {
+    rules: {
+      '@next/next/no-html-link-for-pages': 'off',
+    },
+  },
+  {
     files: ['**/*.ts', '**/*.tsx'],
     extends: [
       ...tseslint.configs.recommended,
