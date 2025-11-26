@@ -27,12 +27,15 @@ const getDataMock = vi.fn(() => {
     items: mockShoppingListData.items.map((item) => ({ ...item })),
   };
 });
-const setDataMock = vi.fn((params: any, updater: (old: any) => any) => {
-  if (mockShoppingListData) {
-    const newData = updater(mockShoppingListData);
-    mockShoppingListData = newData;
-    updateDataCallback?.(newData);
-  }
+const setDataMock = vi.fn((params: any, updater: any) => {
+  if (!mockShoppingListData) return;
+
+  const nextData = typeof updater === 'function' ? updater(mockShoppingListData) : updater;
+
+  if (!nextData) return;
+
+  mockShoppingListData = nextData;
+  updateDataCallback?.(nextData);
 });
 
 const baseItems: TestShoppingListItem[] = [
@@ -176,8 +179,7 @@ describe('ShoppingList', () => {
     expect(invalidateMock).toHaveBeenCalledTimes(1);
   });
 
-  it.skip('reverts optimistic update when the toggle mutation fails', async () => {
-    // TODO: Fix this test - mock needs better handling of error rollback
+  it('reverts optimistic update when the toggle mutation fails', async () => {
     toggleShouldFail = true;
     const user = userEvent.setup();
     renderComponent();
