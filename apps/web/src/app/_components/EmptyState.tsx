@@ -56,7 +56,7 @@ export default function EmptyState({
       <p className="mb-6 max-w-md text-base leading-relaxed text-gray-600">{description}</p>
 
       {/* Actions */}
-      {(actionLabel ?? secondaryAction) && (
+      {(actionLabel || secondaryAction) && (
         <div className="flex flex-col gap-3 sm:flex-row">
           {actionLabel && actionHref && (
             <Link
