@@ -1,10 +1,51 @@
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
+import type { ImageProps } from 'next/image';
 import Hero from './Hero';
 
-// Mock next/image
+const resolveMockSrc = (source: ImageProps['src']) => {
+  if (typeof source === 'string') return source;
+
+  if (
+    typeof source === 'object' &&
+    source !== null &&
+    'src' in source &&
+    typeof source.src === 'string'
+  ) {
+    return source.src;
+  }
+
+  if (
+    typeof source === 'object' &&
+    source !== null &&
+    'default' in source &&
+    source.default &&
+    typeof source.default === 'object' &&
+    'src' in source.default &&
+    typeof source.default.src === 'string'
+  ) {
+    return source.default.src;
+  }
+
+  return '';
+};
+
+// Mock next/image while stripping non-standard DOM props
 vi.mock('next/image', () => ({
-  default: ({ alt, ...props }: { alt: string }) => <img alt={alt} {...props} />,
+  default: ({ alt, src, className, ...props }: ImageProps) => {
+    const {
+      fill: _fill,
+      priority: _priority,
+      placeholder: _placeholder,
+      blurDataURL: _blurDataURL,
+      ...imgProps
+    } = props;
+
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img alt={alt} src={resolveMockSrc(src)} className={className} {...imgProps} />
+    );
+  },
 }));
 
 // Mock next/link
