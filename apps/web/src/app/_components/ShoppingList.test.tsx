@@ -188,4 +188,11 @@ describe('ShoppingList', () => {
     await waitFor(() => expect(screen.getByText('0 of 3 items checked')).toBeInTheDocument());
     expect(invalidateMock).not.toHaveBeenCalled();
   });
+
+  it('renders EmptyState when no items are present', () => {
+    renderComponent([]);
+
+    expect(screen.getByText('Your shopping list is empty')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /create new plan/i })).toBeInTheDocument();
+  });
 });
