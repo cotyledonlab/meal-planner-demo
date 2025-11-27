@@ -38,7 +38,9 @@ function SignInForm() {
         router.refresh();
       }
     } catch (err) {
-      setError('An unexpected error occurred');
+      setError(
+        "We couldn't sign you in right now. Check your connection and try again in a moment."
+      );
       console.error('Sign in error:', err);
     } finally {
       setLoading(false);
@@ -85,8 +87,26 @@ function SignInForm() {
       >
         <form className="space-y-6" onSubmit={handleSubmit}>
           {error && (
-            <div className="rounded-md bg-red-50 p-4" role="alert" aria-live="polite">
-              <p className="text-sm text-red-800">{error}</p>
+            <div
+              className="flex items-start gap-3 rounded-md border border-amber-200 bg-amber-50 p-4"
+              role="alert"
+              aria-live="polite"
+            >
+              <svg
+                className="mt-0.5 h-5 w-5 text-amber-700"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M12 9v4" />
+                <path d="M12 17h.01" />
+                <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z" />
+              </svg>
+              <p className="text-sm text-amber-900">{error}</p>
             </div>
           )}
 
@@ -137,9 +157,27 @@ function SignInForm() {
             <button
               type="submit"
               disabled={loading}
-              className="flex w-full min-h-[48px] items-center justify-center rounded-lg bg-emerald-600 px-4 py-3 text-base font-semibold text-white shadow-sm transition-all duration-150 ease-out hover:bg-emerald-700 hover:shadow-md active:scale-[0.98] active:shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 disabled:cursor-not-allowed disabled:bg-emerald-300 disabled:hover:shadow-sm disabled:active:scale-100"
+              className={`group flex w-full min-h-[48px] items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-3 text-base font-semibold text-white shadow-md transition-all duration-150 ease-out hover:bg-emerald-700 hover:shadow-md active:scale-[0.98] active:shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 disabled:cursor-not-allowed disabled:bg-emerald-300 disabled:hover:shadow-sm disabled:active:scale-100 ${
+                loading ? 'animate-pulse' : ''
+              }`}
+              aria-busy={loading}
             >
-              {loading ? 'Signing in...' : 'Sign in'}
+              {loading && (
+                <svg
+                  className="h-5 w-5 animate-spin text-white drop-shadow-sm"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <circle className="opacity-30" cx="12" cy="12" r="9" />
+                  <path d="M21 12a9 9 0 0 0-9-9" />
+                </svg>
+              )}
+              <span>{loading ? 'Signing you in...' : 'Sign in'}</span>
             </button>
           </div>
 
@@ -175,7 +213,21 @@ function SignInForm() {
 export default function SignInPage() {
   return (
     <Suspense
-      fallback={<div className="flex min-h-screen items-center justify-center">Loading...</div>}
+      fallback={
+        <div className="flex min-h-screen items-center justify-center gap-3 text-sm font-semibold text-gray-600">
+          <svg
+            className="h-5 w-5 animate-spin text-emerald-600"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
+            <circle className="opacity-25" cx="12" cy="12" r="10" />
+            <path d="M22 12a10 10 0 0 0-10-10" />
+          </svg>
+          Loading sign in…
+        </div>
+      }
     >
       <SignInForm />
     </Suspense>

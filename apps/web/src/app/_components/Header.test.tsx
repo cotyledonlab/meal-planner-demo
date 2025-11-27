@@ -54,23 +54,25 @@ describe('Header - Mobile Menu', () => {
       update: vi.fn(),
     });
 
-    const { container } = render(<Header />);
+    const { getByTestId } = render(<Header />);
     const button = screen.getByLabelText('Toggle menu');
 
-    // Menu should not be visible initially
-    expect(container.querySelector('.animate-slide-in-right')).not.toBeInTheDocument();
+    const menu = getByTestId('mobile-menu-panel');
+
+    // Menu should be hidden initially
+    expect(menu).toHaveClass('translate-x-full');
 
     // Click to open
     fireEvent.click(button);
 
     // Menu should be visible
-    expect(container.querySelector('.animate-slide-in-right')).toBeInTheDocument();
+    expect(menu).toHaveClass('translate-x-0');
 
     // Click to close
     fireEvent.click(button);
 
     // Menu should be hidden
-    expect(container.querySelector('.animate-slide-in-right')).not.toBeInTheDocument();
+    expect(menu).toHaveClass('translate-x-full');
   });
 
   it('changes button styling when menu is open', () => {
@@ -133,19 +135,20 @@ describe('Header - Mobile Menu', () => {
       update: vi.fn(),
     });
 
-    const { container } = render(<Header />);
+    const { getByTestId } = render(<Header />);
     const button = screen.getByLabelText('Toggle menu');
 
-    // Backdrop should not exist initially
-    expect(container.querySelector('.animate-backdrop-fade-in')).not.toBeInTheDocument();
+    const backdrop = getByTestId('mobile-menu-backdrop');
+
+    // Backdrop should be hidden initially
+    expect(backdrop).toHaveClass('pointer-events-none');
 
     // Open menu
     fireEvent.click(button);
 
     // Backdrop should be visible
-    const backdrop = container.querySelector('.animate-backdrop-fade-in');
-    expect(backdrop).toBeInTheDocument();
-    expect(backdrop).toHaveClass('bg-black/50');
+    expect(backdrop).toHaveClass('pointer-events-auto');
+    expect(backdrop).toHaveClass('bg-black/40');
   });
 
   it('closes menu when backdrop is clicked', () => {
@@ -158,19 +161,20 @@ describe('Header - Mobile Menu', () => {
       update: vi.fn(),
     });
 
-    const { container } = render(<Header />);
+    const { getByTestId } = render(<Header />);
     const button = screen.getByLabelText('Toggle menu');
 
     // Open menu
     fireEvent.click(button);
-    expect(container.querySelector('.animate-slide-in-right')).toBeInTheDocument();
+    const menu = getByTestId('mobile-menu-panel');
+    expect(menu).toHaveClass('translate-x-0');
 
     // Click backdrop
-    const backdrop = container.querySelector('.animate-backdrop-fade-in');
-    fireEvent.click(backdrop!);
+    const backdrop = getByTestId('mobile-menu-backdrop');
+    fireEvent.click(backdrop);
 
     // Menu should be closed
-    expect(container.querySelector('.animate-slide-in-right')).not.toBeInTheDocument();
+    expect(menu).toHaveClass('translate-x-full');
   });
 
   it('applies correct animation classes to menu', () => {
@@ -183,16 +187,17 @@ describe('Header - Mobile Menu', () => {
       update: vi.fn(),
     });
 
-    const { container } = render(<Header />);
+    const { getByTestId } = render(<Header />);
     const button = screen.getByLabelText('Toggle menu');
 
     // Open menu
     fireEvent.click(button);
 
-    const menu = container.querySelector('.animate-slide-in-right');
+    const menu = getByTestId('mobile-menu-panel');
     expect(menu).toBeInTheDocument();
     expect(menu).toHaveClass('fixed');
     expect(menu).toHaveClass('right-0');
     expect(menu).toHaveClass('top-16');
+    expect(menu).toHaveClass('animate-slide-in-right');
   });
 });

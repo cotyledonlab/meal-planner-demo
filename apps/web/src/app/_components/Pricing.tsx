@@ -79,16 +79,26 @@ export default function Pricing() {
             return (
               <div
                 key={tier.name}
-                className={`relative rounded-2xl p-8 transition-all duration-200 ease-out ${
+                className={`relative overflow-hidden rounded-3xl p-8 transition-all duration-300 ease-out ${
                   tier.highlighted
-                    ? 'bg-gradient-to-br from-emerald-50 to-emerald-100/50 ring-2 ring-emerald-600 shadow-xl hover:shadow-2xl hover:-translate-y-1 hover:scale-[1.01]'
-                    : 'bg-white shadow-md ring-1 ring-gray-200 hover:shadow-lg hover:-translate-y-1 hover:scale-[1.01]'
+                    ? 'bg-gradient-to-br from-emerald-600/10 via-emerald-50 to-emerald-50 ring-2 ring-emerald-500 shadow-2xl shadow-emerald-200/80 hover:-translate-y-1.5 hover:shadow-emerald-300/80 lg:scale-[1.03]'
+                    : 'bg-white shadow-md ring-1 ring-gray-200 hover:-translate-y-1 hover:shadow-lg'
                 }`}
               >
                 {tier.highlighted && (
-                  <span className="absolute right-8 top-0 -translate-y-1/2 rounded-full bg-gradient-to-r from-emerald-600 to-emerald-500 px-4 py-1 text-sm font-semibold text-white shadow-md">
-                    Most Popular
-                  </span>
+                  <>
+                    <span className="absolute right-8 top-0 -translate-y-1/2 rounded-full bg-gradient-to-r from-emerald-600 to-emerald-500 px-4 py-1 text-sm font-semibold text-white shadow-lg shadow-emerald-300/60">
+                      Most Popular
+                    </span>
+                    <div
+                      className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-emerald-200/50 blur-3xl"
+                      aria-hidden="true"
+                    />
+                    <div
+                      className="pointer-events-none absolute -left-10 bottom-0 h-32 w-32 rounded-full bg-amber-100/70 blur-3xl"
+                      aria-hidden="true"
+                    />
+                  </>
                 )}
                 <h3 className="text-2xl font-bold text-gray-900">{tier.name}</h3>
                 <p className="mt-2 text-base text-gray-600">{tier.description}</p>
@@ -135,9 +145,18 @@ export default function Pricing() {
 
                 <ul className="mt-8 space-y-4">
                   {tier.features.map((feature) => (
-                    <li key={feature} className="flex items-start gap-3">
+                    <li
+                      key={feature}
+                      className={`flex items-start gap-3 rounded-xl px-2 py-1 transition-all duration-200 ${
+                        tier.highlighted ? 'hover:bg-white/70' : 'hover:bg-gray-50'
+                      }`}
+                    >
                       <span
-                        className={`mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full ${tier.highlighted ? 'bg-emerald-600 text-white' : 'bg-emerald-100 text-emerald-600'}`}
+                        className={`mt-0.5 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full ${
+                          tier.highlighted
+                            ? 'bg-gradient-to-br from-emerald-600 to-emerald-500 text-white shadow-sm shadow-emerald-400/50'
+                            : 'bg-emerald-100 text-emerald-700'
+                        }`}
                       >
                         ✓
                       </span>
@@ -148,9 +167,9 @@ export default function Pricing() {
 
                 <Link
                   href={tier.href}
-                  className={`mt-8 flex min-h-[48px] w-full items-center justify-center rounded-full py-3.5 text-center text-base font-semibold shadow-md transition-all duration-150 ease-out hover:scale-[1.02] hover:shadow-lg active:scale-[0.98] active:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${
+                  className={`mt-8 flex min-h-[52px] w-full items-center justify-center rounded-full py-3.5 text-center text-base font-semibold shadow-md transition-all duration-200 ease-out hover:scale-[1.02] hover:shadow-lg active:scale-[0.98] active:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${
                     tier.highlighted
-                      ? 'bg-gradient-to-r from-emerald-600 to-emerald-500 text-white hover:from-emerald-500 hover:to-emerald-400 focus-visible:outline-emerald-600'
+                      ? 'bg-gradient-to-r from-emerald-600 via-emerald-500 to-emerald-400 text-white shadow-emerald-300/70 hover:from-emerald-500 hover:to-emerald-400 focus-visible:outline-emerald-600'
                       : 'bg-white text-emerald-700 ring-2 ring-emerald-600 hover:bg-emerald-50 focus-visible:outline-emerald-600'
                   }`}
                 >
