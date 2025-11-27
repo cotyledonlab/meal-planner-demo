@@ -140,11 +140,11 @@ export default function PlannerPage() {
 
       {/* Error State */}
       {generatePlan.isError && (
-        <div className="flex min-h-screen items-center justify-center bg-gray-50 px-6">
-          <div className="max-w-md rounded-xl bg-white p-8 text-center shadow-lg ring-1 ring-gray-200">
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
+        <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-amber-50 via-white to-emerald-50 px-6">
+          <div className="max-w-md rounded-xl bg-white/90 p-8 text-center shadow-xl ring-1 ring-amber-200">
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-amber-100">
               <svg
-                className="h-6 w-6 text-red-600"
+                className="h-6 w-6 text-amber-700"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -158,15 +158,16 @@ export default function PlannerPage() {
               </svg>
             </div>
             <h2 className="mt-4 text-lg font-semibold text-gray-900">
-              Failed to generate meal plan
+              We hit a snag generating your plan
             </h2>
             <p className="mt-2 text-sm text-gray-600">
-              {generatePlan.error?.message || 'An unexpected error occurred. Please try again.'}
+              {generatePlan.error?.message ||
+                'This is usually temporary. Check your connection and try again in a moment.'}
             </p>
             <div className="mt-6 flex justify-center gap-3">
               <button
                 onClick={() => router.push('/dashboard')}
-                className="rounded-full border border-gray-300 bg-white px-6 py-2 text-sm font-semibold text-gray-900 hover:bg-gray-50"
+                className="rounded-full border border-gray-200 bg-white px-6 py-2 text-sm font-semibold text-gray-900 transition hover:bg-gray-50"
               >
                 Go Back
               </button>
@@ -175,7 +176,7 @@ export default function PlannerPage() {
                   generatePlan.reset();
                   setShowWizard(true);
                 }}
-                className="rounded-full bg-emerald-600 px-6 py-2 text-sm font-semibold text-white hover:bg-emerald-700"
+                className="rounded-full bg-emerald-600 px-6 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700 hover:shadow-md"
               >
                 Try Again
               </button>

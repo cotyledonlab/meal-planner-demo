@@ -7,6 +7,7 @@ import { useState, useEffect } from 'react';
 export function Header() {
   const { data: session } = useSession();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [touchStartX, setTouchStartX] = useState<number | null>(null);
 
   // Prevent body scroll when mobile menu is open
   useEffect(() => {
@@ -22,9 +23,41 @@ export function Header() {
     };
   }, [mobileMenuOpen]);
 
+  // Close on escape for accessibility
+  useEffect(() => {
+    if (!mobileMenuOpen) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setMobileMenuOpen(false);
+      }
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [mobileMenuOpen]);
+
   const handleSignOut = async () => {
     const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
     await signOut({ callbackUrl: `${basePath}/` });
+  };
+
+  const navItems = [
+    {
+      href: '/dashboard',
+      label: 'Dashboard',
+    },
+  ];
+
+  const handleTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
+    setTouchStartX(event.touches[0]?.clientX ?? null);
+  };
+
+  const handleTouchMove = (event: React.TouchEvent<HTMLDivElement>) => {
+    if (!mobileMenuOpen || touchStartX === null) return;
+    const deltaX = event.touches[0]?.clientX - touchStartX;
+    if (deltaX > 60) {
+      setMobileMenuOpen(false);
+      setTouchStartX(null);
+    }
   };
 
   return (
@@ -45,12 +78,15 @@ export function Header() {
           {/* Desktop Navigation */}
           {session?.user && (
             <div className="hidden items-center gap-6 md:flex">
-              <Link
-                href="/dashboard"
-                className="inline-flex min-h-[44px] items-center rounded px-3 py-2.5 text-sm font-medium text-gray-700 transition-colors duration-150 hover:bg-gray-50 hover:text-gray-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
-              >
-                Dashboard
-              </Link>
+              {navItems.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="inline-flex min-h-[44px] items-center rounded px-3 py-2.5 text-sm font-medium text-gray-700 transition-colors duration-200 hover:bg-gray-50 hover:text-gray-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
+                >
+                  {item.label}
+                </Link>
+              ))}
               <span className="text-sm text-gray-700">{session.user.email}</span>
               <button
                 onClick={handleSignOut}
@@ -95,37 +131,76 @@ export function Header() {
         </div>
 
         {/* Mobile Menu with Backdrop */}
-        {session?.user && mobileMenuOpen && (
+        {session?.user && (
           <>
             {/* Backdrop Overlay */}
             <div
-              className="animate-backdrop-fade-in fixed inset-x-0 bottom-0 top-16 z-40 bg-black/50 md:hidden"
+              data-testid="mobile-menu-backdrop"
+              className={`fixed inset-x-0 bottom-0 top-16 z-40 bg-black/40 backdrop-blur-sm transition-opacity duration-300 md:hidden ${
+                mobileMenuOpen ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0'
+              }`}
               onClick={() => setMobileMenuOpen(false)}
               aria-hidden="true"
             />
 
             {/* Mobile Dropdown Menu */}
-            <div className="animate-slide-in-right fixed right-0 top-16 z-50 h-[calc(100vh-4rem)] w-64 border-l border-gray-200 bg-white shadow-2xl md:hidden">
-              <div className="space-y-2 p-4">
-                <Link
-                  href="/dashboard"
-                  className="flex min-h-[44px] items-center rounded-md px-4 py-3 text-base font-medium text-gray-700 transition-colors duration-150 hover:bg-gray-50 hover:text-gray-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Dashboard
-                </Link>
-                <div className="rounded-md bg-gray-50 px-4 py-3 text-sm text-gray-700 break-words">
-                  {session.user.email}
+            <div
+              data-testid="mobile-menu-panel"
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              className={`animate-slide-in-right fixed right-0 top-16 z-50 h-[calc(100vh-4rem)] w-72 transform border-l border-gray-200 bg-white/90 shadow-xl backdrop-blur-md transition-transform duration-300 ease-out md:hidden ${
+                mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
+              }`}
+              aria-hidden={!mobileMenuOpen}
+              role="dialog"
+              aria-label="Mobile navigation"
+            >
+              <div className="relative h-full overflow-y-auto p-5">
+                <div
+                  className="absolute inset-0 bg-gradient-to-b from-white/70 to-emerald-50/40"
+                  aria-hidden="true"
+                />
+                <div className="relative space-y-3">
+                  {navItems.map((item, index) => (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => setMobileMenuOpen(false)}
+                      style={{ transitionDelay: mobileMenuOpen ? `${index * 50}ms` : '0ms' }}
+                      className={`flex min-h-[48px] items-center rounded-md px-4 py-3 text-base font-semibold text-gray-800 transition-all duration-200 ease-out ${
+                        mobileMenuOpen
+                          ? 'translate-x-0 opacity-100 shadow-sm hover:translate-x-1 hover:bg-emerald-50'
+                          : 'translate-x-2 opacity-0'
+                      } focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600`}
+                    >
+                      {item.label}
+                    </Link>
+                  ))}
+                  <div
+                    className={`rounded-md border border-emerald-100 bg-emerald-50/80 px-4 py-3 text-sm text-emerald-900 transition-all duration-200 ${
+                      mobileMenuOpen ? 'opacity-100' : 'opacity-0'
+                    }`}
+                  >
+                    <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">
+                      Signed in as
+                    </p>
+                    <p className="break-words text-base font-semibold">{session.user.email}</p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      void handleSignOut();
+                    }}
+                    style={{ transitionDelay: mobileMenuOpen ? '120ms' : '0ms' }}
+                    className={`flex min-h-[48px] w-full items-center justify-center rounded-md bg-gray-900 px-4 py-3 text-base font-semibold text-white transition-all duration-200 hover:bg-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 ${
+                      mobileMenuOpen
+                        ? 'translate-y-0 opacity-100 shadow-lg'
+                        : 'translate-y-2 opacity-0'
+                    }`}
+                  >
+                    Sign out
+                  </button>
                 </div>
-                <button
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    void handleSignOut();
-                  }}
-                  className="flex min-h-[44px] w-full items-center rounded-md px-4 py-3 text-left text-base font-medium text-gray-700 transition-all duration-150 hover:bg-gray-50 hover:text-gray-900 active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
-                >
-                  Sign out
-                </button>
               </div>
             </div>
           </>
