@@ -54,25 +54,23 @@ describe('Header - Mobile Menu', () => {
       update: vi.fn(),
     });
 
-    const { getByTestId } = render(<Header />);
+    const { queryByTestId } = render(<Header />);
     const button = screen.getByLabelText('Toggle menu');
 
-    const menu = getByTestId('mobile-menu-panel');
-
     // Menu should be hidden initially
-    expect(menu).toHaveClass('translate-x-full');
+    expect(queryByTestId('mobile-menu-panel')).not.toBeInTheDocument();
 
     // Click to open
     fireEvent.click(button);
 
     // Menu should be visible
-    expect(menu).toHaveClass('translate-x-0');
+    expect(queryByTestId('mobile-menu-panel')).toBeInTheDocument();
 
     // Click to close
     fireEvent.click(button);
 
     // Menu should be hidden
-    expect(menu).toHaveClass('translate-x-full');
+    expect(queryByTestId('mobile-menu-panel')).not.toBeInTheDocument();
   });
 
   it('changes button styling when menu is open', () => {
@@ -149,6 +147,7 @@ describe('Header - Mobile Menu', () => {
     // Backdrop should be visible
     expect(backdrop).toHaveClass('pointer-events-auto');
     expect(backdrop).toHaveClass('bg-black/40');
+    expect(getByTestId('mobile-menu-panel')).toBeInTheDocument();
   });
 
   it('closes menu when backdrop is clicked', () => {
@@ -161,20 +160,19 @@ describe('Header - Mobile Menu', () => {
       update: vi.fn(),
     });
 
-    const { getByTestId } = render(<Header />);
+    const { queryByTestId, getByTestId } = render(<Header />);
     const button = screen.getByLabelText('Toggle menu');
 
     // Open menu
     fireEvent.click(button);
-    const menu = getByTestId('mobile-menu-panel');
-    expect(menu).toHaveClass('translate-x-0');
+    expect(getByTestId('mobile-menu-panel')).toBeInTheDocument();
 
     // Click backdrop
     const backdrop = getByTestId('mobile-menu-backdrop');
     fireEvent.click(backdrop);
 
     // Menu should be closed
-    expect(menu).toHaveClass('translate-x-full');
+    expect(queryByTestId('mobile-menu-panel')).not.toBeInTheDocument();
   });
 
   it('applies correct animation classes to menu', () => {
@@ -199,5 +197,69 @@ describe('Header - Mobile Menu', () => {
     expect(menu).toHaveClass('right-0');
     expect(menu).toHaveClass('top-16');
     expect(menu).toHaveClass('animate-slide-in-right');
+  });
+
+  it('closes the menu when Escape is pressed', () => {
+    vi.mocked(useSession).mockReturnValue({
+      data: {
+        user: { id: 'test-id', email: 'test@example.com' },
+        expires: new Date(Date.now() + 86400000).toISOString(),
+      },
+      status: 'authenticated',
+      update: vi.fn(),
+    });
+
+    const { queryByTestId } = render(<Header />);
+    const button = screen.getByLabelText('Toggle menu');
+
+    fireEvent.click(button);
+    expect(queryByTestId('mobile-menu-panel')).toBeInTheDocument();
+
+    fireEvent.keyDown(document, { key: 'Escape' });
+    expect(queryByTestId('mobile-menu-panel')).not.toBeInTheDocument();
+  });
+
+  it('closes the menu on a right swipe over 60px', () => {
+    vi.mocked(useSession).mockReturnValue({
+      data: {
+        user: { id: 'test-id', email: 'test@example.com' },
+        expires: new Date(Date.now() + 86400000).toISOString(),
+      },
+      status: 'authenticated',
+      update: vi.fn(),
+    });
+
+    const { queryByTestId, getByTestId } = render(<Header />);
+    const button = screen.getByLabelText('Toggle menu');
+
+    fireEvent.click(button);
+    const menu = getByTestId('mobile-menu-panel');
+
+    fireEvent.touchStart(menu, { touches: [{ clientX: 0 }] });
+    fireEvent.touchMove(menu, { touches: [{ clientX: 80 }] });
+
+    expect(queryByTestId('mobile-menu-panel')).not.toBeInTheDocument();
+  });
+
+  it('keeps the menu open on a small swipe', () => {
+    vi.mocked(useSession).mockReturnValue({
+      data: {
+        user: { id: 'test-id', email: 'test@example.com' },
+        expires: new Date(Date.now() + 86400000).toISOString(),
+      },
+      status: 'authenticated',
+      update: vi.fn(),
+    });
+
+    const { queryByTestId, getByTestId } = render(<Header />);
+    const button = screen.getByLabelText('Toggle menu');
+
+    fireEvent.click(button);
+    const menu = getByTestId('mobile-menu-panel');
+
+    fireEvent.touchStart(menu, { touches: [{ clientX: 20 }] });
+    fireEvent.touchMove(menu, { touches: [{ clientX: 60 }] });
+
+    expect(queryByTestId('mobile-menu-panel')).toBeInTheDocument();
   });
 });
