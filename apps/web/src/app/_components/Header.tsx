@@ -146,65 +146,52 @@ export function Header() {
             />
 
             {/* Mobile Dropdown Menu */}
-            <div
-              data-testid="mobile-menu-panel"
-              onTouchStart={handleTouchStart}
-              onTouchMove={handleTouchMove}
-              className={`animate-slide-in-right fixed right-0 top-16 z-50 h-[calc(100vh-4rem)] w-72 transform border-l border-gray-200 bg-white/90 shadow-xl backdrop-blur-md transition-transform duration-300 ease-out md:hidden ${
-                mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
-              }`}
-              aria-hidden={!mobileMenuOpen}
-              role="dialog"
-              aria-label="Mobile navigation"
-            >
-              <div className="relative h-full overflow-y-auto p-5">
-                <div
-                  className="absolute inset-0 bg-gradient-to-b from-white/70 to-emerald-50/40"
-                  aria-hidden="true"
-                />
-                <div className="relative space-y-3">
-                  {navItems.map((item, index) => (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      onClick={() => setMobileMenuOpen(false)}
-                      style={{ transitionDelay: mobileMenuOpen ? `${index * 50}ms` : '0ms' }}
-                      className={`flex min-h-[48px] items-center rounded-md px-4 py-3 text-base font-semibold text-gray-800 transition-all duration-200 ease-out ${
-                        mobileMenuOpen
-                          ? 'translate-x-0 opacity-100 shadow-sm hover:translate-x-1 hover:bg-emerald-50'
-                          : 'translate-x-2 opacity-0'
-                      } focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600`}
-                    >
-                      {item.label}
-                    </Link>
-                  ))}
+            {mobileMenuOpen && (
+              <div
+                data-testid="mobile-menu-panel"
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                className="animate-slide-in-right fixed right-0 top-16 z-50 h-[calc(100vh-4rem)] w-72 transform border-l border-gray-200 bg-white/90 shadow-xl backdrop-blur-md transition-transform duration-300 ease-out md:hidden"
+                role="dialog"
+                aria-label="Mobile navigation"
+              >
+                <div className="relative h-full overflow-y-auto p-5">
                   <div
-                    className={`rounded-md border border-emerald-100 bg-emerald-50/80 px-4 py-3 text-sm text-emerald-900 transition-all duration-200 ${
-                      mobileMenuOpen ? 'opacity-100' : 'opacity-0'
-                    }`}
-                  >
-                    <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">
-                      Signed in as
-                    </p>
-                    <p className="break-words text-base font-semibold">{session.user.email}</p>
+                    className="absolute inset-0 bg-gradient-to-b from-white/70 to-emerald-50/40"
+                    aria-hidden="true"
+                  />
+                  <div className="relative space-y-3">
+                    {navItems.map((item, index) => (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        onClick={() => setMobileMenuOpen(false)}
+                        style={{ transitionDelay: `${index * 50}ms` }}
+                        className="flex min-h-[48px] items-center rounded-md px-4 py-3 text-base font-semibold text-gray-800 transition-all duration-200 ease-out translate-x-0 opacity-100 shadow-sm hover:translate-x-1 hover:bg-emerald-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
+                      >
+                        {item.label}
+                      </Link>
+                    ))}
+                    <div className="rounded-md border border-emerald-100 bg-emerald-50/80 px-4 py-3 text-sm text-emerald-900 transition-all duration-200 opacity-100">
+                      <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">
+                        Signed in as
+                      </p>
+                      <p className="break-words text-base font-semibold">{session.user?.email}</p>
+                    </div>
+                    <button
+                      onClick={() => {
+                        setMobileMenuOpen(false);
+                        void handleSignOut();
+                      }}
+                      style={{ transitionDelay: '120ms' }}
+                      className="flex min-h-[48px] w-full items-center justify-center rounded-md bg-gray-900 px-4 py-3 text-base font-semibold text-white transition-all duration-200 hover:bg-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 translate-y-0 opacity-100 shadow-lg"
+                    >
+                      Sign out
+                    </button>
                   </div>
-                  <button
-                    onClick={() => {
-                      setMobileMenuOpen(false);
-                      void handleSignOut();
-                    }}
-                    style={{ transitionDelay: mobileMenuOpen ? '120ms' : '0ms' }}
-                    className={`flex min-h-[48px] w-full items-center justify-center rounded-md bg-gray-900 px-4 py-3 text-base font-semibold text-white transition-all duration-200 hover:bg-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 ${
-                      mobileMenuOpen
-                        ? 'translate-y-0 opacity-100 shadow-lg'
-                        : 'translate-y-2 opacity-0'
-                    }`}
-                  >
-                    Sign out
-                  </button>
                 </div>
               </div>
-            </div>
+            )}
           </>
         )}
       </div>
