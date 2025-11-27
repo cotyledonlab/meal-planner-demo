@@ -32,14 +32,14 @@ const resolveMockSrc = (source: ImageProps['src']) => {
 
 // Mock next/image while stripping non-standard DOM props
 vi.mock('next/image', () => ({
-  default: ({ alt, src, className, ...props }: ImageProps) => {
-    const {
-      fill: _fill,
-      priority: _priority,
-      placeholder: _placeholder,
-      blurDataURL: _blurDataURL,
-      ...imgProps
-    } = props;
+  default: ({ alt, src, className, ...imageProps }: ImageProps) => {
+    const { fill, priority, placeholder, blurDataURL, ...imgProps } = imageProps;
+
+    // Explicitly acknowledge ignored Next.js-only props to satisfy ESLint
+    void fill;
+    void priority;
+    void placeholder;
+    void blurDataURL;
 
     return (
       // eslint-disable-next-line @next/next/no-img-element

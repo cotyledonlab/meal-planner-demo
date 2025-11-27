@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { type TRPCError } from '@trpc/server';
+import type * as PlanGeneratorModule from '../../services/planGenerator';
 
 import { createMockContext, mockPrismaClient } from '~/test/mocks';
 
@@ -14,7 +15,7 @@ vi.mock('~/server/db', () => ({
 const mockGeneratePlan = vi.fn();
 const mockBuildAndStoreForPlan = vi.fn();
 
-const planModulePromise = vi.importActual<typeof import('../../services/planGenerator')>(
+const planModulePromise = vi.importActual<typeof PlanGeneratorModule>(
   '../../services/planGenerator'
 );
 
