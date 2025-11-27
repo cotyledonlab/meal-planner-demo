@@ -53,7 +53,9 @@ export function Header() {
 
   const handleTouchMove = (event: React.TouchEvent<HTMLDivElement>) => {
     if (!mobileMenuOpen || touchStartX === null) return;
-    const deltaX = event.touches[0]?.clientX - touchStartX;
+    const currentX = event.touches[0]?.clientX;
+    if (currentX === undefined) return;
+    const deltaX = currentX - touchStartX;
     if (deltaX > 60) {
       setMobileMenuOpen(false);
       setTouchStartX(null);
@@ -87,7 +89,7 @@ export function Header() {
                   {item.label}
                 </Link>
               ))}
-              <span className="text-sm text-gray-700">{session.user.email}</span>
+              <span className="text-sm text-gray-700">{session.user?.email}</span>
               <button
                 onClick={handleSignOut}
                 className="inline-flex min-h-[44px] items-center justify-center rounded-md bg-white px-4 py-2.5 text-sm font-medium text-gray-700 ring-1 ring-inset ring-gray-300 transition-all duration-150 hover:bg-gray-50 active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
