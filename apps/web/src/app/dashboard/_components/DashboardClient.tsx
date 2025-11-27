@@ -90,16 +90,11 @@ interface DashboardClientProps {
 }
 
 function getFirstName(user: DashboardUser): string | null {
-  if (user.name) {
-    const name = user.name.trim();
-    const first = name.split(' ')[0]?.trim();
-    if (first && first.length) return first;
-  }
+  const nameFirst = user.name?.trim().split(' ')[0]?.trim();
+  if (nameFirst) return nameFirst;
 
-  if (user.email) {
-    const emailLocalPart = user.email.split('@')[0]?.trim();
-    if (emailLocalPart && emailLocalPart.length) return emailLocalPart;
-  }
+  const emailLocalPart = user.email?.split('@')[0]?.trim();
+  if (emailLocalPart) return emailLocalPart;
 
   return null;
 }
