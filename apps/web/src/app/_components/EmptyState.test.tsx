@@ -17,7 +17,11 @@ describe('EmptyState', () => {
   describe('basic rendering', () => {
     it('renders icon, title, and description', () => {
       render(
-        <EmptyState icon={<TestIcon />} title="No Items Found" description="Add some items to get started." />
+        <EmptyState
+          icon={<TestIcon />}
+          title="No Items Found"
+          description="Add some items to get started."
+        />
       );
 
       expect(screen.getByTestId('test-icon')).toBeInTheDocument();
@@ -295,9 +299,7 @@ describe('EmptyState', () => {
 
   describe('accessibility', () => {
     it('renders title as h3 heading', () => {
-      render(
-        <EmptyState icon={<TestIcon />} title="Accessible Title" description="Test" />
-      );
+      render(<EmptyState icon={<TestIcon />} title="Accessible Title" description="Test" />);
 
       const heading = screen.getByRole('heading', { level: 3 });
       expect(heading).toHaveTextContent('Accessible Title');
