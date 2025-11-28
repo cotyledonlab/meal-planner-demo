@@ -1,29 +1,37 @@
-// Hero section with headline, subtext, CTAs, and background image
-// Image source: Unsplash – "home cooking": https://unsplash.com/photos/QJ6x9wy_Ol4
-import Image from 'next/image';
+// Hero section with headline, subtext, CTAs, and background illustration
+// Custom SVG illustration showing a family enjoying a home-cooked meal together
+// Designed to convey warmth, human connection, and the joy of shared meals
 import Link from 'next/link';
 
-const BLUR_DATA_URL =
-  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAADCAIAAAA7ljmRAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAMElEQVR4nGO49+7Jt/+f61tL8ivSGeQ0NCLTkgsq82cuns7AzcygryeVVhiXnh4OAHsJD/ki5q1xAAAAAElFTkSuQmCC';
+// Get basePath for static assets - matches the default from next.config.js
+// The basePath is needed because Next.js doesn't automatically prepend it for CSS background-images
+const BASE_PATH =
+  typeof process !== 'undefined'
+    ? (process.env.NEXT_PUBLIC_BASE_PATH?.replace(/\/$/, '') ?? '/demos/meal-planner')
+    : '/demos/meal-planner';
 
 export default function Hero() {
+  // Inline style is necessary here because the basePath is a runtime value
+  // that CSS classes cannot access - this is the standard pattern in this codebase
+  const heroBackgroundStyle = {
+    backgroundImage: `url(${BASE_PATH}/images/hero-family-meal.svg)`,
+  };
+
   return (
     <section className="relative isolate overflow-hidden bg-gradient-to-br from-emerald-950 via-emerald-900 to-emerald-800 text-white">
-      {/* Background image */}
+      {/* Background illustration - family enjoying meal together */}
       <div className="absolute inset-0 -z-10">
-        <Image
-          src="/images/hero-cooking.jpg"
-          alt="Fresh ingredients for home cooking in an Irish kitchen"
-          fill
-          sizes="100vw"
-          className="object-cover opacity-70"
-          priority
-          placeholder="blur"
-          blurDataURL={BLUR_DATA_URL}
+        {/* SVG illustration as CSS background for proper basePath handling */}
+        <div
+          className="h-full w-full bg-cover bg-center opacity-80"
+          style={heroBackgroundStyle}
+          role="img"
+          aria-label="Heartwarming illustration of a diverse family sharing a home-cooked meal together around the dinner table, with subtle meal planning artifacts visible"
         />
+        {/* Emerald overlay to maintain brand colors while preserving warm illustration tones */}
         <div
           aria-hidden="true"
-          className="absolute inset-0 bg-gradient-to-br from-emerald-950/70 via-emerald-900/60 to-emerald-800/40"
+          className="absolute inset-0 bg-gradient-to-br from-emerald-950/60 via-emerald-900/50 to-emerald-800/30"
         />
       </div>
 
