@@ -3,10 +3,20 @@
 // Designed to convey warmth, human connection, and the joy of shared meals
 import Link from 'next/link';
 
-// Get basePath for static assets
-const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? '/demos/meal-planner';
+// Get basePath for static assets - matches the default from next.config.js
+// The basePath is needed because Next.js doesn't automatically prepend it for CSS background-images
+const BASE_PATH =
+  typeof process !== 'undefined'
+    ? (process.env.NEXT_PUBLIC_BASE_PATH?.replace(/\/$/, '') ?? '/demos/meal-planner')
+    : '/demos/meal-planner';
 
 export default function Hero() {
+  // Inline style is necessary here because the basePath is a runtime value
+  // that CSS classes cannot access - this is the standard pattern in this codebase
+  const heroBackgroundStyle = {
+    backgroundImage: `url(${BASE_PATH}/images/hero-family-meal.svg)`,
+  };
+
   return (
     <section className="relative isolate overflow-hidden bg-gradient-to-br from-emerald-950 via-emerald-900 to-emerald-800 text-white">
       {/* Background illustration - family enjoying meal together */}
@@ -14,7 +24,7 @@ export default function Hero() {
         {/* SVG illustration as CSS background for proper basePath handling */}
         <div
           className="h-full w-full bg-cover bg-center opacity-80"
-          style={{ backgroundImage: `url(${BASE_PATH}/images/hero-family-meal.svg)` }}
+          style={heroBackgroundStyle}
           role="img"
           aria-label="Heartwarming illustration of a diverse family sharing a home-cooked meal together around the dinner table, with subtle meal planning artifacts visible"
         />
