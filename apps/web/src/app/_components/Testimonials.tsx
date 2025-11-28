@@ -15,7 +15,6 @@ export default function Testimonials() {
         'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=240&q=80',
       proof: 'Reduced weekly shop by €20 and cooks 2 extra home meals/week',
       rating: 5,
-      color: 'emerald',
     },
     {
       quote:
@@ -28,7 +27,6 @@ export default function Testimonials() {
         'https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=240&q=80',
       proof: 'Replaced meal kits, saving €45/month and 2 hours weekly',
       rating: 5,
-      color: 'blue',
     },
     {
       quote:
@@ -41,15 +39,8 @@ export default function Testimonials() {
         'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=240&q=80',
       proof: 'Uses batch-cook flow to prep lunches; cut takeaway by 30%',
       rating: 5,
-      color: 'purple',
     },
   ];
-
-  const avatarColors = {
-    emerald: 'bg-gradient-to-br from-emerald-500 to-emerald-600',
-    blue: 'bg-gradient-to-br from-blue-500 to-blue-600',
-    purple: 'bg-gradient-to-br from-purple-500 to-purple-600',
-  };
 
   return (
     <section className="bg-gradient-to-b from-emerald-50 via-emerald-50/50 to-white py-16 sm:py-20 lg:py-24">
@@ -85,9 +76,7 @@ export default function Testimonials() {
                 </p>
               </blockquote>
               <figcaption className="relative mt-6 flex items-center gap-3">
-                <div
-                  className={`flex h-12 w-12 items-center justify-center overflow-hidden rounded-full text-base font-bold text-white shadow-md ring-2 ring-white ${avatarColors[testimonial.color as keyof typeof avatarColors]}`}
-                >
+                <div className="h-12 w-12 overflow-hidden rounded-full shadow-md ring-2 ring-white">
                   <Image
                     src={testimonial.avatar}
                     alt={`${testimonial.author} avatar`}
