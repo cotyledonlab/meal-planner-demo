@@ -1,0 +1,297 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <!-- Warm gradient background -->
+    <linearGradient id="warmBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f59e0b;stop-opacity:0.3" />
+      <stop offset="50%" style="stop-color:#f97316;stop-opacity:0.2" />
+      <stop offset="100%" style="stop-color:#ea580c;stop-opacity:0.15" />
+    </linearGradient>
+    
+    <!-- Table wood grain -->
+    <pattern id="woodGrain" patternUnits="userSpaceOnUse" width="100" height="100">
+      <rect width="100" height="100" fill="#92400e"/>
+      <path d="M0,20 Q25,18 50,22 T100,20" stroke="#7c2d12" stroke-width="1" fill="none" opacity="0.3"/>
+      <path d="M0,50 Q30,48 60,52 T100,50" stroke="#7c2d12" stroke-width="1" fill="none" opacity="0.3"/>
+      <path d="M0,80 Q35,78 70,82 T100,80" stroke="#7c2d12" stroke-width="1" fill="none" opacity="0.3"/>
+    </pattern>
+    
+    <!-- Soft lighting effect -->
+    <radialGradient id="lighting" cx="50%" cy="30%" r="70%" fx="50%" fy="30%">
+      <stop offset="0%" style="stop-color:#fffbeb;stop-opacity:0.4" />
+      <stop offset="70%" style="stop-color:#fef3c7;stop-opacity:0.1" />
+      <stop offset="100%" style="stop-color:#fde68a;stop-opacity:0" />
+    </radialGradient>
+    
+    <!-- Skin tones -->
+    <linearGradient id="skin1" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#fcd5b8" />
+      <stop offset="100%" style="stop-color:#f5c9ab" />
+    </linearGradient>
+    <linearGradient id="skin2" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#d4a574" />
+      <stop offset="100%" style="stop-color:#c4956a" />
+    </linearGradient>
+    <linearGradient id="skin3" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#8b5e3c" />
+      <stop offset="100%" style="stop-color:#7a5235" />
+    </linearGradient>
+    
+    <!-- Food plate gradient -->
+    <radialGradient id="plateGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#ffffff" />
+      <stop offset="80%" style="stop-color:#f5f5f4" />
+      <stop offset="100%" style="stop-color:#e7e5e4" />
+    </radialGradient>
+    
+    <!-- Steam effect -->
+    <filter id="steam" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="3" />
+    </filter>
+  </defs>
+  
+  <!-- Kitchen background -->
+  <rect width="1920" height="1080" fill="#fef7ed"/>
+  
+  <!-- Warm ambient lighting -->
+  <rect width="1920" height="1080" fill="url(#lighting)"/>
+  
+  <!-- Kitchen wall with subtle texture -->
+  <rect x="0" y="0" width="1920" height="400" fill="#fef3c7" opacity="0.5"/>
+  
+  <!-- Dining table (wooden) -->
+  <ellipse cx="960" cy="750" rx="700" ry="200" fill="url(#woodGrain)"/>
+  <ellipse cx="960" cy="750" rx="700" ry="200" fill="url(#warmBg)"/>
+  
+  <!-- === FAMILY MEMBERS AROUND TABLE === -->
+  
+  <!-- Person 1: Adult (left side) - wearing cozy sweater -->
+  <g transform="translate(350, 400)">
+    <!-- Body/Sweater -->
+    <ellipse cx="0" cy="180" rx="80" ry="100" fill="#059669"/>
+    <ellipse cx="0" cy="180" rx="80" ry="100" fill="url(#warmBg)" opacity="0.3"/>
+    <!-- Neck -->
+    <rect x="-20" y="80" width="40" height="30" fill="url(#skin1)"/>
+    <!-- Head -->
+    <ellipse cx="0" cy="50" rx="50" ry="55" fill="url(#skin1)"/>
+    <!-- Hair -->
+    <ellipse cx="0" cy="20" rx="52" ry="40" fill="#78350f"/>
+    <!-- Happy expression - eyes -->
+    <ellipse cx="-15" cy="45" rx="6" ry="3" fill="#1c1917"/>
+    <ellipse cx="15" cy="45" rx="6" ry="3" fill="#1c1917"/>
+    <!-- Smile -->
+    <path d="M-18,65 Q0,82 18,65" stroke="#1c1917" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <!-- Arms reaching toward plate -->
+    <ellipse cx="-70" cy="200" rx="25" ry="50" fill="#059669" transform="rotate(-20)"/>
+    <ellipse cx="70" cy="200" rx="25" ry="50" fill="#059669" transform="rotate(20)"/>
+  </g>
+  
+  <!-- Person 2: Child (center-left) - excited kid -->
+  <g transform="translate(600, 450)">
+    <!-- Body/T-shirt -->
+    <ellipse cx="0" cy="140" rx="55" ry="70" fill="#f97316"/>
+    <!-- Neck -->
+    <rect x="-15" y="60" width="30" height="20" fill="url(#skin2)"/>
+    <!-- Head -->
+    <ellipse cx="0" cy="35" rx="40" ry="45" fill="url(#skin2)"/>
+    <!-- Curly hair -->
+    <ellipse cx="0" cy="10" rx="42" ry="32" fill="#1c1917"/>
+    <circle cx="-25" cy="5" r="12" fill="#1c1917"/>
+    <circle cx="25" cy="5" r="12" fill="#1c1917"/>
+    <circle cx="0" cy="-5" r="10" fill="#1c1917"/>
+    <!-- Big happy eyes -->
+    <circle cx="-12" cy="30" r="8" fill="white"/>
+    <circle cx="12" cy="30" r="8" fill="white"/>
+    <circle cx="-10" cy="32" r="4" fill="#1c1917"/>
+    <circle cx="14" cy="32" r="4" fill="#1c1917"/>
+    <!-- Big smile -->
+    <path d="M-15,50 Q0,70 15,50" stroke="#1c1917" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <!-- Raised arms (excitement) -->
+    <ellipse cx="-50" cy="120" rx="18" ry="35" fill="#f97316" transform="rotate(-30)"/>
+    <ellipse cx="50" cy="120" rx="18" ry="35" fill="#f97316" transform="rotate(30)"/>
+  </g>
+  
+  <!-- Person 3: Adult (right side) - serving food -->
+  <g transform="translate(1320, 380)">
+    <!-- Body/Cardigan -->
+    <ellipse cx="0" cy="190" rx="85" ry="110" fill="#7c3aed"/>
+    <ellipse cx="0" cy="190" rx="85" ry="110" fill="url(#warmBg)" opacity="0.2"/>
+    <!-- Neck -->
+    <rect x="-22" y="80" width="44" height="30" fill="url(#skin3)"/>
+    <!-- Head -->
+    <ellipse cx="0" cy="50" rx="52" ry="58" fill="url(#skin3)"/>
+    <!-- Hair in bun -->
+    <ellipse cx="0" cy="15" rx="50" ry="35" fill="#1c1917"/>
+    <circle cx="0" cy="-15" r="25" fill="#1c1917"/>
+    <!-- Warm smile - eyes -->
+    <ellipse cx="-15" cy="45" rx="6" ry="3" fill="#1c1917"/>
+    <ellipse cx="15" cy="45" rx="6" ry="3" fill="#1c1917"/>
+    <!-- Smile -->
+    <path d="M-20,68 Q0,85 20,68" stroke="#1c1917" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <!-- Arms - one extended (serving) -->
+    <ellipse cx="-90" cy="180" rx="28" ry="55" fill="#7c3aed" transform="rotate(-35)"/>
+    <ellipse cx="60" cy="210" rx="28" ry="55" fill="#7c3aed" transform="rotate(10)"/>
+    <!-- Hand holding serving spoon -->
+    <circle cx="-130" cy="210" r="20" fill="url(#skin3)"/>
+  </g>
+  
+  <!-- Person 4: Elderly grandparent (back center) -->
+  <g transform="translate(960, 350)">
+    <!-- Body/Comfy shirt -->
+    <ellipse cx="0" cy="200" rx="90" ry="100" fill="#0891b2"/>
+    <!-- Neck -->
+    <rect x="-20" y="100" width="40" height="25" fill="url(#skin1)"/>
+    <!-- Head -->
+    <ellipse cx="0" cy="65" rx="48" ry="52" fill="url(#skin1)"/>
+    <!-- Gray hair -->
+    <ellipse cx="0" cy="35" rx="50" ry="38" fill="#a8a29e"/>
+    <!-- Glasses -->
+    <circle cx="-15" cy="60" r="14" fill="none" stroke="#78716c" stroke-width="3"/>
+    <circle cx="18" cy="60" r="14" fill="none" stroke="#78716c" stroke-width="3"/>
+    <line x1="4" y1="60" x2="4" y2="60" stroke="#78716c" stroke-width="3"/>
+    <!-- Kind eyes -->
+    <ellipse cx="-15" cy="60" rx="4" ry="2" fill="#1c1917"/>
+    <ellipse cx="18" cy="60" rx="4" ry="2" fill="#1c1917"/>
+    <!-- Gentle smile -->
+    <path d="M-12,80 Q0,92 12,80" stroke="#1c1917" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <!-- Arms resting -->
+    <ellipse cx="-80" cy="220" rx="25" ry="45" fill="#0891b2" transform="rotate(-15)"/>
+    <ellipse cx="80" cy="220" rx="25" ry="45" fill="#0891b2" transform="rotate(15)"/>
+  </g>
+  
+  <!-- Person 5: Teen/Young adult (right front) -->
+  <g transform="translate(1100, 480)">
+    <!-- Body/Hoodie -->
+    <ellipse cx="0" cy="130" rx="60" ry="75" fill="#dc2626"/>
+    <!-- Hood detail -->
+    <path d="M-40,80 Q0,60 40,80" fill="#dc2626"/>
+    <!-- Neck -->
+    <rect x="-16" y="50" width="32" height="25" fill="url(#skin2)"/>
+    <!-- Head -->
+    <ellipse cx="0" cy="25" rx="42" ry="48" fill="url(#skin2)"/>
+    <!-- Hair (styled) -->
+    <ellipse cx="0" cy="0" rx="44" ry="30" fill="#292524"/>
+    <path d="M-30,-10 Q-15,-25 0,-10 Q15,-25 30,-10" fill="#292524"/>
+    <!-- Eyes looking at food -->
+    <ellipse cx="-12" cy="25" rx="5" ry="4" fill="#1c1917"/>
+    <ellipse cx="12" cy="25" rx="5" ry="4" fill="#1c1917"/>
+    <!-- Slight smile -->
+    <path d="M-10,42 Q0,52 10,42" stroke="#1c1917" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  </g>
+  
+  <!-- === FOOD ON TABLE === -->
+  
+  <!-- Main dish (center) - large serving platter -->
+  <g transform="translate(960, 680)">
+    <ellipse cx="0" cy="0" rx="180" ry="70" fill="url(#plateGrad)"/>
+    <ellipse cx="0" cy="0" rx="160" ry="60" fill="#fef3c7"/>
+    <!-- Roasted chicken/meat -->
+    <ellipse cx="0" cy="0" rx="100" ry="40" fill="#b45309"/>
+    <ellipse cx="0" cy="-10" rx="80" ry="30" fill="#d97706"/>
+    <!-- Garnish -->
+    <ellipse cx="-70" cy="10" rx="25" ry="12" fill="#22c55e"/>
+    <ellipse cx="70" cy="10" rx="25" ry="12" fill="#22c55e"/>
+    <ellipse cx="-50" cy="20" rx="15" ry="8" fill="#16a34a"/>
+    <ellipse cx="50" cy="20" rx="15" ry="8" fill="#16a34a"/>
+    <!-- Steam rising -->
+    <g filter="url(#steam)" opacity="0.6">
+      <path d="M-20,-50 Q-30,-80 -15,-110" stroke="white" stroke-width="8" fill="none"/>
+      <path d="M10,-50 Q25,-85 5,-115" stroke="white" stroke-width="8" fill="none"/>
+      <path d="M40,-45 Q55,-75 35,-100" stroke="white" stroke-width="6" fill="none"/>
+    </g>
+  </g>
+  
+  <!-- Side dish 1 (left) - salad bowl -->
+  <g transform="translate(550, 700)">
+    <ellipse cx="0" cy="0" rx="100" ry="40" fill="url(#plateGrad)"/>
+    <ellipse cx="0" cy="-5" rx="85" ry="32" fill="#22c55e"/>
+    <ellipse cx="-20" cy="-8" rx="20" ry="10" fill="#16a34a"/>
+    <ellipse cx="25" cy="-5" rx="18" ry="9" fill="#15803d"/>
+    <!-- Cherry tomatoes -->
+    <circle cx="-35" cy="-5" r="12" fill="#ef4444"/>
+    <circle cx="40" cy="-8" r="10" fill="#dc2626"/>
+    <circle cx="5" cy="-12" r="8" fill="#ef4444"/>
+  </g>
+  
+  <!-- Side dish 2 (right) - bread basket -->
+  <g transform="translate(1350, 690)">
+    <ellipse cx="0" cy="0" rx="90" ry="35" fill="#a16207"/>
+    <ellipse cx="0" cy="-5" rx="80" ry="28" fill="#ca8a04"/>
+    <!-- Bread rolls -->
+    <ellipse cx="-25" cy="-15" rx="30" ry="18" fill="#d97706"/>
+    <ellipse cx="20" cy="-12" rx="28" ry="16" fill="#f59e0b"/>
+    <ellipse cx="-5" cy="-20" rx="25" ry="14" fill="#fbbf24"/>
+  </g>
+  
+  <!-- Individual plates -->
+  <g transform="translate(400, 750)">
+    <ellipse cx="0" cy="0" rx="70" ry="28" fill="url(#plateGrad)"/>
+    <ellipse cx="0" cy="-3" rx="55" ry="20" fill="#fef3c7"/>
+  </g>
+  
+  <g transform="translate(700, 770)">
+    <ellipse cx="0" cy="0" rx="70" ry="28" fill="url(#plateGrad)"/>
+    <ellipse cx="0" cy="-3" rx="55" ry="20" fill="#fef3c7"/>
+  </g>
+  
+  <g transform="translate(1200, 760)">
+    <ellipse cx="0" cy="0" rx="70" ry="28" fill="url(#plateGrad)"/>
+    <ellipse cx="0" cy="-3" rx="55" ry="20" fill="#fef3c7"/>
+  </g>
+  
+  <g transform="translate(1500, 740)">
+    <ellipse cx="0" cy="0" rx="70" ry="28" fill="url(#plateGrad)"/>
+    <ellipse cx="0" cy="-3" rx="55" ry="20" fill="#fef3c7"/>
+  </g>
+  
+  <!-- Glasses/drinks -->
+  <g transform="translate(480, 620)">
+    <rect x="-15" y="-40" width="30" height="50" rx="5" fill="#fef3c7" opacity="0.7"/>
+    <rect x="-12" y="-35" width="24" height="40" rx="3" fill="#fde047" opacity="0.5"/>
+  </g>
+  
+  <g transform="translate(750, 640)">
+    <rect x="-12" y="-35" width="24" height="45" rx="4" fill="#fef3c7" opacity="0.7"/>
+    <rect x="-9" y="-30" width="18" height="35" rx="2" fill="#f97316" opacity="0.4"/>
+  </g>
+  
+  <g transform="translate(1150, 630)">
+    <rect x="-15" y="-40" width="30" height="50" rx="5" fill="#fef3c7" opacity="0.7"/>
+    <rect x="-12" y="-35" width="24" height="40" rx="3" fill="#22c55e" opacity="0.4"/>
+  </g>
+  
+  <!-- === MEAL PLANNING ARTIFACTS (subtle) === -->
+  
+  <!-- Phone on table (showing meal plan app) -->
+  <g transform="translate(250, 700)">
+    <rect x="-25" y="-45" width="50" height="90" rx="8" fill="#1c1917"/>
+    <rect x="-22" y="-40" width="44" height="80" rx="5" fill="#10b981"/>
+    <!-- App screen content hint -->
+    <rect x="-18" y="-35" width="36" height="8" rx="2" fill="#34d399"/>
+    <rect x="-18" y="-22" width="28" height="5" rx="1" fill="#6ee7b7"/>
+    <rect x="-18" y="-12" width="32" height="5" rx="1" fill="#6ee7b7"/>
+    <rect x="-18" y="-2" width="25" height="5" rx="1" fill="#6ee7b7"/>
+  </g>
+  
+  <!-- Handwritten shopping list (paper) -->
+  <g transform="translate(1550, 720)">
+    <rect x="-35" y="-50" width="70" height="90" rx="3" fill="#fefce8" transform="rotate(5)"/>
+    <!-- Handwritten lines -->
+    <line x1="-25" y1="-35" x2="20" y2="-35" stroke="#78716c" stroke-width="1.5" transform="rotate(5)"/>
+    <line x1="-25" y1="-20" x2="15" y2="-20" stroke="#78716c" stroke-width="1.5" transform="rotate(5)"/>
+    <line x1="-25" y1="-5" x2="25" y2="-5" stroke="#78716c" stroke-width="1.5" transform="rotate(5)"/>
+    <line x1="-25" y1="10" x2="10" y2="10" stroke="#78716c" stroke-width="1.5" transform="rotate(5)"/>
+    <!-- Checkmarks -->
+    <path d="M-30,-38 l3,3 l6,-6" stroke="#22c55e" stroke-width="2" fill="none" transform="rotate(5)"/>
+    <path d="M-30,-23 l3,3 l6,-6" stroke="#22c55e" stroke-width="2" fill="none" transform="rotate(5)"/>
+  </g>
+  
+  <!-- Warm ambient glow overlay -->
+  <rect width="1920" height="1080" fill="url(#warmBg)" opacity="0.15"/>
+  
+  <!-- Soft vignette for focus -->
+  <radialGradient id="vignette" cx="50%" cy="50%" r="70%">
+    <stop offset="60%" style="stop-color:#000000;stop-opacity:0" />
+    <stop offset="100%" style="stop-color:#000000;stop-opacity:0.15" />
+  </radialGradient>
+  <rect width="1920" height="1080" fill="url(#vignette)"/>
+</svg>
