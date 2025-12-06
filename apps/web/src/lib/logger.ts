@@ -12,30 +12,34 @@ import pino from 'pino';
  * - Writes to stderr (prevents HTTP response corruption)
  * - Sets appropriate log level
  */
-export const logger = pino({
-  level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
+const isProd = process.env.NODE_ENV === 'production';
 
-  // In production, write to stderr to avoid corrupting HTTP responses
+type DevLogger = {
+  info: (...args: unknown[]) => void;
+  error: (...args: unknown[]) => void;
+  warn: (...args: unknown[]) => void;
+  debug: (...args: unknown[]) => void;
+  child: () => DevLogger;
+};
+
+const devLogger: DevLogger = {
+  info: (...args) => console.log('[info]', ...args),
+  error: (...args) => console.error('[error]', ...args),
+  warn: (...args) => console.warn('[warn]', ...args),
+  debug: (...args) => console.debug('[debug]', ...args),
+  child: () => devLogger,
+};
+
+const prodLogger = pino({
+  level: 'info',
   browser: {
     asObject: true,
   },
-
-  ...(process.env.NODE_ENV !== 'production' && {
-    transport: {
-      target: 'pino-pretty',
-      options: {
-        colorize: true,
-        translateTime: 'HH:MM:ss',
-        ignore: 'pid,hostname',
-      },
-    },
-  }),
-
-  // Always write to stderr in production
-  ...(process.env.NODE_ENV === 'production' && {
-    destination: 2, // stderr
-  }),
 });
+
+type LoggerInstance = typeof prodLogger | DevLogger;
+
+export const logger: LoggerInstance = isProd ? prodLogger : devLogger;
 
 /**
  * Create a child logger with a specific name/context
@@ -45,5 +49,8 @@ export const logger = pino({
  * log.info({ path: 'plan.generate', duration: 123 }, 'Request completed');
  */
 export function createLogger(name: string) {
-  return logger.child({ name });
+  if (isProd) {
+    return prodLogger.child({ name });
+  }
+  return devLogger;
 }

@@ -5,6 +5,7 @@ import { planRouter } from '~/server/api/routers/plan';
 import { shoppingListRouter } from '~/server/api/routers/shoppingList';
 import { passwordResetRouter } from '~/server/api/routers/passwordReset';
 import { createCallerFactory, createTRPCRouter } from '~/server/api/trpc';
+import { adminImageRouter } from '~/server/api/routers/adminImage';
 
 /**
  * This is the primary router for your server.
@@ -18,6 +19,7 @@ export const appRouter = createTRPCRouter({
   plan: planRouter,
   shoppingList: shoppingListRouter,
   passwordReset: passwordResetRouter,
+  adminImage: adminImageRouter,
 });
 
 // export type definition of API

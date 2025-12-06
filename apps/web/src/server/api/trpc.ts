@@ -15,7 +15,7 @@ import { createLogger } from '~/lib/logger';
 import { auth } from '~/server/auth';
 import { db } from '~/server/db';
 
-const log = createLogger('trpc');
+const log = process.env.NODE_ENV === 'production' ? createLogger('trpc') : null;
 
 /**
  * 1. CONTEXT
@@ -90,7 +90,6 @@ const timingMiddleware = t.middleware(async ({ next, path }) => {
   const start = Date.now();
 
   if (t._config.isDev) {
-    // artificial delay in dev
     const waitMs = Math.floor(Math.random() * 400) + 100;
     await new Promise((resolve) => setTimeout(resolve, waitMs));
   }
@@ -100,8 +99,7 @@ const timingMiddleware = t.middleware(async ({ next, path }) => {
   const end = Date.now();
   const duration = end - start;
 
-  // Only log in development to avoid corrupting HTTP responses in production
-  if (t._config.isDev) {
+  if (t._config.isDev && log) {
     log.info({ path, duration }, 'tRPC procedure completed');
   }
 
@@ -158,6 +156,26 @@ export const premiumProcedure = t.procedure.use(timingMiddleware).use(({ ctx, ne
   return next({
     ctx: {
       // infers the `session` as non-nullable with premium user
+      session: { ...ctx.session, user: ctx.session.user },
+    },
+  });
+});
+
+/**
+ * Admin (authenticated + admin role) procedure
+ */
+export const adminProcedure = t.procedure.use(timingMiddleware).use(({ ctx, next }) => {
+  if (!ctx.session?.user) {
+    throw new TRPCError({ code: 'UNAUTHORIZED' });
+  }
+  if (ctx.session.user.role !== 'admin') {
+    throw new TRPCError({
+      code: 'FORBIDDEN',
+      message: 'Admin privileges required',
+    });
+  }
+  return next({
+    ctx: {
       session: { ...ctx.session, user: ctx.session.user },
     },
   });
