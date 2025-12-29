@@ -8,6 +8,9 @@ export default defineConfig({
     environment: 'happy-dom',
     globals: true,
     setupFiles: ['./src/test/setup.ts'],
+    env: {
+      SKIP_ENV_VALIDATION: 'true',
+    },
     pool: 'threads',
     maxWorkers: 1,
     coverage: {
