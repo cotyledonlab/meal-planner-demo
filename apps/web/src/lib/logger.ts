@@ -1,32 +1,34 @@
-import pino from 'pino';
+import pino, { type Logger } from 'pino';
 
 /**
  * Logger configuration for the application.
  *
  * In development:
- * - Uses pino-pretty for human-readable output
- * - Logs to stdout with colorized output
+ * - Uses console methods for human-readable output
+ * - Colorized output in terminal
  *
  * In production:
- * - Uses JSON output for structured logging
+ * - Uses pino for JSON structured logging
  * - Writes to stderr (prevents HTTP response corruption)
  * - Sets appropriate log level
  */
 const isProd = process.env.NODE_ENV === 'production';
 
-type DevLogger = {
-  info: (...args: unknown[]) => void;
-  error: (...args: unknown[]) => void;
-  warn: (...args: unknown[]) => void;
-  debug: (...args: unknown[]) => void;
-  child: () => DevLogger;
+/**
+ * Subset of pino Logger interface used in this application.
+ * Using Pick ensures type compatibility with pino while allowing
+ * a simpler console-based implementation in development.
+ */
+type LogMethods = 'info' | 'error' | 'warn' | 'debug';
+type DevLogger = Pick<Logger, LogMethods> & {
+  child: (bindings?: Record<string, unknown>) => DevLogger;
 };
 
 const devLogger: DevLogger = {
-  info: (...args) => console.log('[info]', ...args),
-  error: (...args) => console.error('[error]', ...args),
-  warn: (...args) => console.warn('[warn]', ...args),
-  debug: (...args) => console.debug('[debug]', ...args),
+  info: (...args: unknown[]) => console.log('[info]', ...args),
+  error: (...args: unknown[]) => console.error('[error]', ...args),
+  warn: (...args: unknown[]) => console.warn('[warn]', ...args),
+  debug: (...args: unknown[]) => console.debug('[debug]', ...args),
   child: () => devLogger,
 };
 
@@ -37,7 +39,7 @@ const prodLogger = pino({
   },
 });
 
-type LoggerInstance = typeof prodLogger | DevLogger;
+type LoggerInstance = Logger | DevLogger;
 
 export const logger: LoggerInstance = isProd ? prodLogger : devLogger;
 
