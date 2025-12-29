@@ -5,7 +5,7 @@ import { createLogger } from '~/lib/logger';
 
 const log = createLogger('gemini-image');
 
-const DEFAULT_MODEL = 'gemini-2.0-flash-exp';
+const DEFAULT_MODEL = 'gemini-2.5-flash-image';
 const DEFAULT_VERTEX_LOCATION = 'us-central1';
 
 type AspectRatio = '1:1' | '16:9' | '4:5';
@@ -71,7 +71,7 @@ export class GeminiImageClient {
     this.model = options?.model ?? env.GEMINI_IMAGE_MODEL ?? DEFAULT_MODEL;
 
     // Smart fallback: if model is explicitly set by user, disable fallback
-    const defaultFallback = env.GEMINI_IMAGE_FALLBACK_MODEL ?? 'gemini-2.0-flash-exp';
+    const defaultFallback = env.GEMINI_IMAGE_FALLBACK_MODEL ?? 'gemini-2.5-flash-image';
     if (options?.disableFallback) {
       // User explicitly selected a model, don't fallback
       this.fallbackModel = this.model;

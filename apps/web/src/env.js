@@ -27,8 +27,8 @@ export const env = createEnv({
     GOOGLE_CLOUD_PROJECT: z.string().optional(),
     GOOGLE_CLOUD_LOCATION: z.string().optional().default('us-central1'),
     GEMINI_API_KEY: z.string().optional(),
-    GEMINI_IMAGE_MODEL: z.string().optional().default('gemini-2.0-flash-exp'),
-    GEMINI_IMAGE_FALLBACK_MODEL: z.string().optional().default('gemini-2.0-flash-exp'),
+    GEMINI_IMAGE_MODEL: z.string().optional().default('gemini-2.5-flash-image'),
+    GEMINI_IMAGE_FALLBACK_MODEL: z.string().optional().default('gemini-2.5-flash-image'),
   },
 
   /**
