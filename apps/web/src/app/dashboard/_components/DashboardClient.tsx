@@ -7,6 +7,7 @@ import {
   BuildingStorefrontIcon,
   CalendarDaysIcon,
   ChartBarIcon,
+  PhotoIcon,
   ShoppingBagIcon,
   SparklesIcon,
 } from '@heroicons/react/24/outline';
@@ -124,10 +125,29 @@ export default function DashboardClient({ user, hasMealPlan }: DashboardClientPr
   const [showPremiumModal, setShowPremiumModal] = useState(false);
 
   const isPremiumUser = user.role === 'premium';
+  const isAdminUser = user.role === 'admin';
 
   const firstName = useMemo(() => getFirstName(user), [user]);
 
   const { greeting, displayName } = useMemo(() => getGreetingParts(firstName), [firstName]);
+
+  const quickActions = useMemo(() => {
+    if (!isAdminUser) {
+      return QUICK_ACTIONS;
+    }
+    return [
+      ...QUICK_ACTIONS,
+      {
+        id: 'admin-images',
+        title: 'Gemini image pipeline',
+        description: 'Generate marketing-ready imagery with Gemini Nano Banana.',
+        href: '/dashboard/admin/images',
+        Icon: PhotoIcon,
+        iconGradientClass: 'bg-gradient-to-br from-fuchsia-500 to-purple-600 text-white',
+        outlineClass: 'focus-visible:outline-purple-600',
+      },
+    ];
+  }, [isAdminUser]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
@@ -170,7 +190,7 @@ export default function DashboardClient({ user, hasMealPlan }: DashboardClientPr
         <div className="mb-12">
           <h2 className="mb-6 text-2xl font-bold text-gray-900">Quick Actions</h2>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {QUICK_ACTIONS.map((action) => (
+            {quickActions.map((action) => (
               <Link
                 key={action.id}
                 href={action.href}

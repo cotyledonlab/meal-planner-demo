@@ -70,6 +70,7 @@ model User {
     preferences         UserPreferences?
     mealPlans           MealPlan[]
     pantryItems         PantryItem[]
+    generatedImages     GeneratedImage[]
     createdAt           DateTime              @default(now())
     updatedAt           DateTime              @updatedAt
 }
@@ -251,4 +252,21 @@ model PriceBaseline {
 
     @@unique([ingredientCategory, store])
     @@index([ingredientCategory])
+}
+
+model GeneratedImage {
+    id          String   @id @default(cuid())
+    prompt      String
+    model       String
+    mimeType    String
+    filePath    String
+    fileSize    Int
+    width       Int?
+    height      Int?
+    createdAt   DateTime @default(now())
+    createdBy   User?    @relation(fields: [createdById], references: [id], onDelete: SetNull)
+    createdById String?
+
+    @@index([createdAt])
+    @@index([createdById])
 }

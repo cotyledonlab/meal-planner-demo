@@ -20,12 +20,12 @@ This document centralizes the current state of the monorepo so other docs (READM
 
 ## Environment & Data
 
-1. Copy environment files: `cp .env.example .env && cp .env apps/web/.env` and fill required secrets (e.g., `AUTH_SECRET`).
+1. Copy environment files: `cp .env.example .env && cp .env apps/web/.env` and fill required secrets (e.g., `AUTH_SECRET`). Set `GEMINI_API_KEY` if you want to use the admin-only Gemini 2.5 Flash Image pipeline; otherwise that UI stays disabled.
 2. Start a database:
    - Postgres only: `docker compose up -d postgres` or `./start-database.sh`
    - Full local stack (web + Postgres + Mailpit): `pnpm docker:dev` / tear down with `pnpm docker:dev:down`
 3. Apply schema: `pnpm db:push`
-4. Seed demo data: `pnpm db:seed` (creates premium/basic users and recipes)
+4. Seed demo data: `pnpm db:seed` (creates admin/premium/basic users plus recipes; password `P@ssw0rd!`)
 5. Run the app: `pnpm dev` (http://localhost:3000)
 
 ## Common Commands (run from repo root)
@@ -45,6 +45,10 @@ This document centralizes the current state of the monorepo so other docs (READM
 - Auth flows and dashboard UX: `docs/AUTH.md`, `docs/AUTH_DASHBOARD_UI_PLAN.md`
 - Database configuration and fixes: `docs/DATABASE_CONFIGURATION.md`, `docs/DATABASE_FIXES_SUMMARY.md`
 - Meal planning feature notes: `docs/MEAL_PLANNING_FEATURE.md`
+
+## Admin Tools
+
+- Gemini image pipeline: `/dashboard/admin/images` (requires admin role). Uses Google's Gemini 2.5 Flash Image endpoint through env-configured credentials. Generated files are written to `apps/web/public/generated-images/` for now; swap in blob/object storage later.
 
 ## Agent & Contributor Notes
 

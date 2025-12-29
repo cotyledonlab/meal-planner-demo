@@ -117,9 +117,23 @@ async function main() {
     },
   });
 
+  const adminUser = await prisma.user.create({
+    data: {
+      email: 'admin@example.com',
+      name: 'Admin User',
+      role: 'admin',
+      password: {
+        create: {
+          hash: passwordHash,
+        },
+      },
+    },
+  });
+
   console.log(`✅ Created premium user: ${premiumUser.email}`);
   console.log(`✅ Created basic user: ${basicUser.email}`);
-  console.log(`🔑 Password for both: P@ssw0rd!`);
+  console.log(`✅ Created admin user: ${adminUser.email}`);
+  console.log(`🔑 Password for all users: P@ssw0rd!`);
 
   // Create ingredients
   console.log('🥕 Creating ingredients...');

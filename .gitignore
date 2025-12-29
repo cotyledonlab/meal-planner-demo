@@ -55,3 +55,6 @@ apps/web/prisma/dev.db
 
 # claude code local settings
 .claude/settings.local.json
+
+# locally generated admin assets
+apps/web/public/generated-images/
