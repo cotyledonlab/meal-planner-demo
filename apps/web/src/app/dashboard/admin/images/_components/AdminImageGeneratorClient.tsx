@@ -20,8 +20,8 @@ const ASPECT_OPTIONS = [
 ] as const;
 
 const MODEL_OPTIONS = [
-  { label: 'Gemini 3 Pro Image', value: 'gemini-3-pro-image-preview' },
-  { label: 'Gemini 2.5 Flash Image', value: 'gemini-2.5-flash-image' },
+  { label: 'Nano Banana Pro', value: 'gemini-3-pro-image-preview' },
+  { label: 'Nano Banana', value: 'gemini-2.5-flash-image' },
 ] as const;
 
 interface AdminImageGeneratorClientProps {
@@ -60,7 +60,7 @@ export default function AdminImageGeneratorClient({
     if (!isConfigured) {
       return 'Add GEMINI_API_KEY to your environment to unlock this workflow.';
     }
-    return 'Use Gemini Nano Banana to prototype recipe artwork and marketing assets.';
+    return 'Use Nano Banana Pro to prototype recipe artwork and marketing assets.';
   }, [isConfigured]);
 
   return (
@@ -73,7 +73,7 @@ export default function AdminImageGeneratorClient({
           </span>
           <span className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-sm font-semibold text-emerald-800">
             <SparklesIcon className="h-4 w-4" />
-            Gemini Nano Banana
+            Nano Banana Pro
           </span>
         </div>
         <h1 className="text-3xl font-bold text-gray-900">Image generation pipeline</h1>
