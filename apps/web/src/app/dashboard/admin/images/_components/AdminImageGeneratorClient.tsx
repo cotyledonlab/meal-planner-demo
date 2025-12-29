@@ -19,10 +19,7 @@ const ASPECT_OPTIONS = [
   { label: 'Portrait (4:5)', value: '4:5' },
 ] as const;
 
-const MODEL_OPTIONS = [
-  { label: 'Nano Banana Pro', value: 'gemini-3-pro-image-preview' },
-  { label: 'Nano Banana', value: 'gemini-2.5-flash-image' },
-] as const;
+const MODEL_OPTIONS = [{ label: 'Gemini 2.0 Flash', value: 'gemini-2.0-flash-exp' }] as const;
 
 interface AdminImageGeneratorClientProps {
   initialImages: GeneratedImage[];
@@ -35,9 +32,8 @@ export default function AdminImageGeneratorClient({
 }: AdminImageGeneratorClientProps) {
   const [prompt, setPrompt] = useState('');
   const [aspectRatio, setAspectRatio] = useState<(typeof ASPECT_OPTIONS)[number]['value']>('1:1');
-  const [model, setModel] = useState<(typeof MODEL_OPTIONS)[number]['value']>(
-    'gemini-3-pro-image-preview'
-  );
+  const [model, setModel] =
+    useState<(typeof MODEL_OPTIONS)[number]['value']>('gemini-2.0-flash-exp');
   const [images, setImages] = useState(initialImages);
   const [formError, setFormError] = useState<string | null>(null);
 

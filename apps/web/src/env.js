@@ -22,16 +22,13 @@ export const env = createEnv({
     SMTP_PASS: z.string().optional(),
     SMTP_FROM: z.string().optional(),
     NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
-    GEMINI_API_KEY: z
-      .string()
-      .min(1, 'GEMINI_API_KEY is required for Gemini generation')
-      .optional(),
-    GEMINI_IMAGE_MODEL: z.string().optional().default('gemini-3-pro-image-preview'),
-    GEMINI_IMAGE_FALLBACK_MODEL: z.string().optional().default('gemini-2.5-flash-image'),
-    GEMINI_API_BASE_URL: z
-      .string()
-      .url()
-      .default('https://generativelanguage.googleapis.com/v1beta'),
+    // Gemini / Vertex AI configuration
+    GEMINI_USE_VERTEX_AI: z.enum(['true', 'false']).optional().default('false'),
+    GOOGLE_CLOUD_PROJECT: z.string().optional(),
+    GOOGLE_CLOUD_LOCATION: z.string().optional().default('us-central1'),
+    GEMINI_API_KEY: z.string().optional(),
+    GEMINI_IMAGE_MODEL: z.string().optional().default('gemini-2.0-flash-exp'),
+    GEMINI_IMAGE_FALLBACK_MODEL: z.string().optional().default('gemini-2.0-flash-exp'),
   },
 
   /**
@@ -59,10 +56,12 @@ export const env = createEnv({
     SMTP_FROM: process.env.SMTP_FROM,
     NODE_ENV: process.env.NODE_ENV,
     NEXT_PUBLIC_BASE_PATH: process.env.BASE_PATH,
+    GEMINI_USE_VERTEX_AI: process.env.GEMINI_USE_VERTEX_AI,
+    GOOGLE_CLOUD_PROJECT: process.env.GOOGLE_CLOUD_PROJECT,
+    GOOGLE_CLOUD_LOCATION: process.env.GOOGLE_CLOUD_LOCATION,
     GEMINI_API_KEY: process.env.GEMINI_API_KEY,
     GEMINI_IMAGE_MODEL: process.env.GEMINI_IMAGE_MODEL,
     GEMINI_IMAGE_FALLBACK_MODEL: process.env.GEMINI_IMAGE_FALLBACK_MODEL,
-    GEMINI_API_BASE_URL: process.env.GEMINI_API_BASE_URL,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

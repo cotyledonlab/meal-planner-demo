@@ -5,11 +5,8 @@ import { createLogger } from '~/lib/logger';
 
 const log = createLogger('gemini-image');
 
-const DEFAULT_MODEL = 'gemini-3-pro-image-preview';
-const DEFAULT_BASE_URL = 'https://generativelanguage.googleapis.com/v1beta';
-const DEFAULT_API_VERSION = 'v1beta';
-const DEFAULT_ENDPOINT = 'https://generativelanguage.googleapis.com';
-const VERSION_SUFFIX = /\/(v[\w-]+)$/i;
+const DEFAULT_MODEL = 'gemini-2.0-flash-exp';
+const DEFAULT_VERTEX_LOCATION = 'us-central1';
 
 type AspectRatio = '1:1' | '16:9' | '4:5';
 
@@ -45,53 +42,62 @@ class GeminiImageError extends Error {
 }
 
 export class GeminiImageClient {
+  private readonly useVertexAI: boolean;
   private readonly apiKey?: string;
+  private readonly vertexProject?: string;
+  private readonly vertexLocation: string;
   private readonly model: string;
   private readonly fallbackModel: string;
-  private readonly baseUrl: string;
-  private readonly apiVersion: string;
 
   constructor(options?: {
     apiKey?: string;
     model?: string;
     fallbackModel?: string;
     disableFallback?: boolean;
-    baseUrl?: string;
-    apiVersion?: string;
+    useVertexAI?: boolean;
+    vertexProject?: string;
+    vertexLocation?: string;
   }) {
+    // Vertex AI configuration
+    this.useVertexAI = options?.useVertexAI ?? env.GEMINI_USE_VERTEX_AI === 'true';
+    this.vertexProject = options?.vertexProject ?? env.GOOGLE_CLOUD_PROJECT;
+    this.vertexLocation =
+      options?.vertexLocation ?? env.GOOGLE_CLOUD_LOCATION ?? DEFAULT_VERTEX_LOCATION;
+
+    // API key (only used for non-Vertex AI)
     this.apiKey = options?.apiKey ?? env.GEMINI_API_KEY;
+
+    // Model configuration
     this.model = options?.model ?? env.GEMINI_IMAGE_MODEL ?? DEFAULT_MODEL;
 
     // Smart fallback: if model is explicitly set by user, disable fallback
-    const defaultFallback = env.GEMINI_IMAGE_FALLBACK_MODEL ?? 'gemini-2.5-flash-image';
+    const defaultFallback = env.GEMINI_IMAGE_FALLBACK_MODEL ?? 'gemini-2.0-flash-exp';
     if (options?.disableFallback) {
       // User explicitly selected a model, don't fallback
       this.fallbackModel = this.model;
     } else if (options?.fallbackModel) {
       this.fallbackModel = options.fallbackModel;
-    } else if (options?.model) {
-      // User selected a specific model, fallback to the other one
-      this.fallbackModel =
-        options.model === 'gemini-3-pro-image-preview'
-          ? 'gemini-2.5-flash-image'
-          : 'gemini-3-pro-image-preview';
     } else {
       this.fallbackModel = defaultFallback;
     }
-
-    const baseCandidate = options?.baseUrl ?? env.GEMINI_API_BASE_URL ?? DEFAULT_BASE_URL;
-    const { baseEndpoint, apiVersion } = normalizeEndpoint(baseCandidate, options?.apiVersion);
-    this.baseUrl = baseEndpoint;
-    this.apiVersion = apiVersion ?? DEFAULT_API_VERSION;
   }
 
   async generateImage({
     prompt,
     aspectRatio = '1:1',
   }: GeminiImageRequest): Promise<GeminiImageResponse> {
-    if (!this.apiKey) {
-      throw new GeminiImageError('Gemini API key is not configured');
+    // Validate configuration
+    if (this.useVertexAI) {
+      if (!this.vertexProject) {
+        throw new GeminiImageError('GOOGLE_CLOUD_PROJECT is required for Vertex AI');
+      }
+      log.info({ project: this.vertexProject, location: this.vertexLocation }, 'Using Vertex AI');
+    } else {
+      if (!this.apiKey) {
+        throw new GeminiImageError('Gemini API key is not configured');
+      }
     }
+
     if (!prompt?.trim()) {
       throw new GeminiImageError('Prompt is required');
     }
@@ -156,13 +162,16 @@ export class GeminiImageClient {
     hintedPrompt: string,
     dimensions?: { width: number; height: number }
   ): Promise<GeminiImageResponse> {
-    const ai = new GoogleGenAI({
-      apiKey: this.apiKey!,
-      httpOptions: {
-        baseUrl: this.baseUrl,
-        apiVersion: this.apiVersion,
-      },
-    });
+    // Create client based on authentication mode
+    const ai = this.useVertexAI
+      ? new GoogleGenAI({
+          vertexai: true,
+          project: this.vertexProject!,
+          location: this.vertexLocation,
+        })
+      : new GoogleGenAI({
+          apiKey: this.apiKey!,
+        });
 
     const response = await ai.models.generateContent({
       model: modelName,
@@ -172,6 +181,9 @@ export class GeminiImageClient {
           parts: [{ text: hintedPrompt }],
         },
       ],
+      config: {
+        responseModalities: ['Text', 'Image'],
+      },
     });
 
     const candidates = response.candidates ?? [];
@@ -201,27 +213,10 @@ export class GeminiImageClient {
 }
 
 export function isGeminiConfigured() {
+  // Check for Vertex AI configuration
+  if (env.GEMINI_USE_VERTEX_AI === 'true') {
+    return Boolean(env.GOOGLE_CLOUD_PROJECT);
+  }
+  // Check for API key configuration
   return Boolean(env.GEMINI_API_KEY);
-}
-
-function normalizeEndpoint(rawBaseUrl: string, explicitVersion?: string) {
-  const normalized = rawBaseUrl.replace(/\/+$/, '') || DEFAULT_BASE_URL;
-  if (explicitVersion) {
-    return {
-      baseEndpoint: normalized,
-      apiVersion: explicitVersion,
-    };
-  }
-  const match = VERSION_SUFFIX.exec(normalized);
-  if (match) {
-    const endpoint = normalized.slice(0, -match[0].length) || DEFAULT_ENDPOINT;
-    return {
-      baseEndpoint: endpoint,
-      apiVersion: match[1],
-    };
-  }
-  return {
-    baseEndpoint: normalized || DEFAULT_ENDPOINT,
-    apiVersion: DEFAULT_API_VERSION,
-  };
 }
