@@ -5,6 +5,7 @@ import { createTRPCRouter, adminProcedure } from '~/server/api/trpc';
 import { GeminiImageClient, isGeminiConfigured } from '~/server/services/geminiImage';
 import { saveGeneratedImage } from '~/server/services/imageStorage';
 import { createLogger } from '~/lib/logger';
+import { env } from '~/env';
 
 const log = createLogger('admin-image-router');
 
@@ -31,7 +32,7 @@ export const adminImageRouter = createTRPCRouter({
         take: limit,
       });
 
-      const basePath = process.env.BASE_PATH ?? '';
+      const basePath = env.NEXT_PUBLIC_BASE_PATH ?? '';
 
       return images.map((image) => ({
         ...image,
@@ -89,7 +90,7 @@ export const adminImageRouter = createTRPCRouter({
           },
         });
 
-        const basePath = process.env.BASE_PATH ?? '';
+        const basePath = env.NEXT_PUBLIC_BASE_PATH ?? '';
 
         return {
           ...record,

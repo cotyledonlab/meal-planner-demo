@@ -24,6 +24,12 @@ const MODEL_OPTIONS = [
   { label: 'Nano Banana', value: 'gemini-2.5-flash-image' },
 ] as const;
 
+/** Truncate text for accessible alt attributes (max 125 chars) */
+function truncateAltText(text: string, maxLength = 125): string {
+  if (text.length <= maxLength) return text;
+  return text.slice(0, maxLength - 1).trim() + '…';
+}
+
 interface AdminImageGeneratorClientProps {
   initialImages: GeneratedImage[];
   isConfigured: boolean;
@@ -201,7 +207,7 @@ export default function AdminImageGeneratorClient({
                 <div className="relative aspect-square overflow-hidden rounded-3xl bg-gray-100">
                   <Image
                     src={image.publicUrl}
-                    alt={image.prompt}
+                    alt={truncateAltText(image.prompt)}
                     fill
                     sizes="(max-width: 768px) 100vw, 50vw"
                     className="object-cover"

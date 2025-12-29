@@ -24,13 +24,21 @@ type DevLogger = Pick<Logger, LogMethods> & {
   child: (bindings?: Record<string, unknown>) => DevLogger;
 };
 
-const devLogger: DevLogger = {
-  info: (...args: unknown[]) => console.log('[info]', ...args),
-  error: (...args: unknown[]) => console.error('[error]', ...args),
-  warn: (...args: unknown[]) => console.warn('[warn]', ...args),
-  debug: (...args: unknown[]) => console.debug('[debug]', ...args),
-  child: () => devLogger,
-};
+function createDevLogger(name?: string): DevLogger {
+  const prefix = name ? `[${name}]` : '';
+  return {
+    info: (...args: unknown[]) => console.log('[info]', prefix, ...args),
+    error: (...args: unknown[]) => console.error('[error]', prefix, ...args),
+    warn: (...args: unknown[]) => console.warn('[warn]', prefix, ...args),
+    debug: (...args: unknown[]) => console.debug('[debug]', prefix, ...args),
+    child: (bindings?: Record<string, unknown>) => {
+      const childName = bindings?.name as string | undefined;
+      return createDevLogger(childName ?? name);
+    },
+  };
+}
+
+const devLogger = createDevLogger();
 
 const prodLogger = pino({
   level: 'info',
@@ -54,5 +62,5 @@ export function createLogger(name: string) {
   if (isProd) {
     return prodLogger.child({ name });
   }
-  return devLogger;
+  return createDevLogger(name);
 }
