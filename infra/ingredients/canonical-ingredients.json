@@ -1,0 +1,725 @@
+{
+  "$schema": "./canonical-ingredients.schema.json",
+  "version": "1.0.0",
+  "description": "Canonical ingredient dictionary with allergen and dietary metadata",
+  "ingredients": [
+    {
+      "name": "chicken breast",
+      "category": "protein",
+      "subcategory": "poultry",
+      "isVegan": false,
+      "isVegetarian": false,
+      "aliases": [
+        "chicken",
+        "boneless chicken",
+        "chicken fillet",
+        "skinless chicken breast"
+      ]
+    },
+    {
+      "name": "chicken thighs",
+      "category": "protein",
+      "subcategory": "poultry",
+      "isVegan": false,
+      "isVegetarian": false,
+      "aliases": ["chicken thigh", "bone-in chicken"]
+    },
+    {
+      "name": "ground beef",
+      "category": "protein",
+      "subcategory": "beef",
+      "isVegan": false,
+      "isVegetarian": false,
+      "aliases": ["minced beef", "beef mince", "hamburger meat"]
+    },
+    {
+      "name": "salmon fillet",
+      "category": "protein",
+      "subcategory": "fish",
+      "isVegan": false,
+      "isVegetarian": false,
+      "containsFish": true,
+      "aliases": ["salmon", "fresh salmon", "atlantic salmon"]
+    },
+    {
+      "name": "tuna",
+      "category": "protein",
+      "subcategory": "fish",
+      "isVegan": false,
+      "isVegetarian": false,
+      "containsFish": true,
+      "aliases": ["tinned tuna", "canned tuna", "tuna fish"]
+    },
+    {
+      "name": "eggs",
+      "category": "protein",
+      "subcategory": "eggs",
+      "isVegan": false,
+      "isVegetarian": true,
+      "containsEggs": true,
+      "aliases": ["egg", "whole eggs", "fresh eggs", "large eggs"]
+    },
+    {
+      "name": "tofu",
+      "category": "protein",
+      "subcategory": "legumes",
+      "isVegan": true,
+      "isVegetarian": true,
+      "containsSoy": true,
+      "aliases": ["bean curd", "firm tofu", "silken tofu"]
+    },
+    {
+      "name": "chickpeas",
+      "category": "protein",
+      "subcategory": "legumes",
+      "isVegan": true,
+      "isVegetarian": true,
+      "aliases": ["garbanzo beans", "tinned chickpeas", "canned chickpeas"]
+    },
+    {
+      "name": "lentils",
+      "category": "protein",
+      "subcategory": "legumes",
+      "isVegan": true,
+      "isVegetarian": true,
+      "aliases": [
+        "red lentils",
+        "green lentils",
+        "brown lentils",
+        "puy lentils"
+      ]
+    },
+    {
+      "name": "kidney beans",
+      "category": "protein",
+      "subcategory": "legumes",
+      "isVegan": true,
+      "isVegetarian": true,
+      "aliases": [
+        "red kidney beans",
+        "tinned kidney beans",
+        "canned kidney beans"
+      ]
+    },
+    {
+      "name": "bacon",
+      "category": "protein",
+      "subcategory": "pork",
+      "isVegan": false,
+      "isVegetarian": false,
+      "aliases": ["streaky bacon", "back bacon", "rashers"]
+    },
+    {
+      "name": "sausages",
+      "category": "protein",
+      "subcategory": "pork",
+      "isVegan": false,
+      "isVegetarian": false,
+      "aliases": ["pork sausages", "breakfast sausages", "bangers"]
+    },
+    {
+      "name": "pork chops",
+      "category": "protein",
+      "subcategory": "pork",
+      "isVegan": false,
+      "isVegetarian": false,
+      "aliases": ["pork loin chops", "bone-in pork chops"]
+    },
+    {
+      "name": "bell peppers",
+      "category": "vegetables",
+      "subcategory": "peppers",
+      "isVegan": true,
+      "isVegetarian": true,
+      "aliases": [
+        "peppers",
+        "capsicum",
+        "sweet peppers",
+        "red pepper",
+        "green pepper",
+        "yellow pepper"
+      ]
+    },
+    {
+      "name": "broccoli",
+      "category": "vegetables",
+      "subcategory": "cruciferous",
+      "isVegan": true,
+      "isVegetarian": true,
+      "aliases": ["broccoli florets", "fresh broccoli"]
+    },
+    {
+      "name": "carrots",
+      "category": "vegetables",
+      "subcategory": "root",
+      "isVegan": true,
+      "isVegetarian": true,
+      "aliases": ["carrot", "diced carrots", "sliced carrots"]
+    },
+    {
+      "name": "onions",
+      "category": "vegetables",
+      "subcategory": "allium",
+      "isVegan": true,
+      "isVegetarian": true,
+      "aliases": [
+        "onion",
+        "white onion",
+        "yellow onion",
+        "brown onion",
+        "red onion"
+      ]
+    },
+    {
+      "name": "garlic",
+      "category": "vegetables",
+      "subcategory": "allium",
+      "isVegan": true,
+      "isVegetarian": true,
+      "aliases": ["garlic cloves", "minced garlic", "fresh garlic"]
+    },
+    {
+      "name": "tomatoes",
+      "category": "vegetables",
+      "subcategory": "nightshade",
+      "isVegan": true,
+      "isVegetarian": true,
+      "aliases": [
+        "tomato",
+        "fresh tomatoes",
+        "cherry tomatoes",
+        "vine tomatoes"
+      ]
+    },
+    {
+      "name": "spinach",
+      "category": "vegetables",
+      "subcategory": "leafy greens",
+      "isVegan": true,
+      "isVegetarian": true,
+      "aliases": ["baby spinach", "fresh spinach", "spinach leaves"]
+    },
+    {
+      "name": "potatoes",
+      "category": "vegetables",
+      "subcategory": "root",
+      "isVegan": true,
+      "isVegetarian": true,
+      "aliases": [
+        "potato",
+        "white potatoes",
+        "roasting potatoes",
+        "mashing potatoes"
+      ]
+    },
+    {
+      "name": "mushrooms",
+      "category": "vegetables",
+      "subcategory": "fungi",
+      "isVegan": true,
+      "isVegetarian": true,
+      "aliases": [
+        "button mushrooms",
+        "cremini mushrooms",
+        "chestnut mushrooms",
+        "portobello mushrooms"
+      ]
+    },
+    {
+      "name": "courgette",
+      "category": "vegetables",
+      "subcategory": "squash",
+      "isVegan": true,
+      "isVegetarian": true,
+      "aliases": ["zucchini", "green courgette"]
+    },
+    {
+      "name": "leek",
+      "category": "vegetables",
+      "subcategory": "allium",
+      "isVegan": true,
+      "isVegetarian": true,
+      "aliases": ["leeks", "sliced leek"]
+    },
+    {
+      "name": "cabbage",
+      "category": "vegetables",
+      "subcategory": "cruciferous",
+      "isVegan": true,
+      "isVegetarian": true,
+      "aliases": ["green cabbage", "white cabbage", "savoy cabbage"]
+    },
+    {
+      "name": "peas",
+      "category": "vegetables",
+      "subcategory": "legumes",
+      "isVegan": true,
+      "isVegetarian": true,
+      "aliases": ["garden peas", "frozen peas", "petit pois"]
+    },
+    {
+      "name": "sweetcorn",
+      "category": "vegetables",
+      "subcategory": "grains",
+      "isVegan": true,
+      "isVegetarian": true,
+      "aliases": ["corn", "tinned sweetcorn", "corn kernels"]
+    },
+    {
+      "name": "celery",
+      "category": "vegetables",
+      "subcategory": "stalks",
+      "isVegan": true,
+      "isVegetarian": true,
+      "containsCelery": true,
+      "aliases": ["celery stalks", "celery sticks", "diced celery"]
+    },
+    {
+      "name": "parsnips",
+      "category": "vegetables",
+      "subcategory": "root",
+      "isVegan": true,
+      "isVegetarian": true,
+      "aliases": ["parsnip", "roasted parsnips"]
+    },
+    {
+      "name": "berries",
+      "category": "fruits",
+      "subcategory": "berries",
+      "isVegan": true,
+      "isVegetarian": true,
+      "aliases": ["mixed berries", "fresh berries", "frozen berries"]
+    },
+    {
+      "name": "banana",
+      "category": "fruits",
+      "subcategory": "tropical",
+      "isVegan": true,
+      "isVegetarian": true,
+      "aliases": ["bananas", "ripe banana", "frozen banana"]
+    },
+    {
+      "name": "avocado",
+      "category": "fruits",
+      "subcategory": "tropical",
+      "isVegan": true,
+      "isVegetarian": true,
+      "aliases": ["avocados", "ripe avocado", "hass avocado"]
+    },
+    {
+      "name": "lemon juice",
+      "category": "fruits",
+      "subcategory": "citrus",
+      "isVegan": true,
+      "isVegetarian": true,
+      "aliases": ["lemon", "fresh lemon juice", "squeezed lemon"]
+    },
+    {
+      "name": "milk",
+      "category": "dairy",
+      "subcategory": "liquid dairy",
+      "isVegan": false,
+      "isVegetarian": true,
+      "containsDairy": true,
+      "isDairyFree": false,
+      "aliases": [
+        "whole milk",
+        "semi-skimmed milk",
+        "skimmed milk",
+        "full-fat milk"
+      ]
+    },
+    {
+      "name": "cheese",
+      "category": "dairy",
+      "subcategory": "cheese",
+      "isVegan": false,
+      "isVegetarian": true,
+      "containsDairy": true,
+      "isDairyFree": false,
+      "aliases": ["grated cheese", "hard cheese", "melting cheese"]
+    },
+    {
+      "name": "cheddar cheese",
+      "category": "dairy",
+      "subcategory": "cheese",
+      "isVegan": false,
+      "isVegetarian": true,
+      "containsDairy": true,
+      "isDairyFree": false,
+      "aliases": ["cheddar", "mature cheddar", "mild cheddar", "grated cheddar"]
+    },
+    {
+      "name": "butter",
+      "category": "dairy",
+      "subcategory": "fats",
+      "isVegan": false,
+      "isVegetarian": true,
+      "containsDairy": true,
+      "isDairyFree": false,
+      "aliases": ["unsalted butter", "salted butter", "melted butter"]
+    },
+    {
+      "name": "yogurt",
+      "category": "dairy",
+      "subcategory": "cultured dairy",
+      "isVegan": false,
+      "isVegetarian": true,
+      "containsDairy": true,
+      "isDairyFree": false,
+      "aliases": ["plain yogurt", "natural yogurt"]
+    },
+    {
+      "name": "greek yogurt",
+      "category": "dairy",
+      "subcategory": "cultured dairy",
+      "isVegan": false,
+      "isVegetarian": true,
+      "containsDairy": true,
+      "isDairyFree": false,
+      "aliases": ["greek style yogurt", "thick yogurt", "strained yogurt"]
+    },
+    {
+      "name": "cream",
+      "category": "dairy",
+      "subcategory": "liquid dairy",
+      "isVegan": false,
+      "isVegetarian": true,
+      "containsDairy": true,
+      "isDairyFree": false,
+      "aliases": [
+        "double cream",
+        "single cream",
+        "heavy cream",
+        "whipping cream",
+        "pouring cream"
+      ]
+    },
+    {
+      "name": "buttermilk",
+      "category": "dairy",
+      "subcategory": "cultured dairy",
+      "isVegan": false,
+      "isVegetarian": true,
+      "containsDairy": true,
+      "isDairyFree": false,
+      "aliases": ["cultured buttermilk"]
+    },
+    {
+      "name": "almond milk",
+      "category": "dairy",
+      "subcategory": "plant milk",
+      "isVegan": true,
+      "isVegetarian": true,
+      "containsNuts": true,
+      "isDairyFree": true,
+      "aliases": ["unsweetened almond milk", "almond beverage"]
+    },
+    {
+      "name": "rice",
+      "category": "grains",
+      "subcategory": "rice",
+      "isVegan": true,
+      "isVegetarian": true,
+      "isGlutenFree": true,
+      "aliases": [
+        "white rice",
+        "basmati rice",
+        "jasmine rice",
+        "long grain rice"
+      ]
+    },
+    {
+      "name": "pasta",
+      "category": "grains",
+      "subcategory": "pasta",
+      "isVegan": true,
+      "isVegetarian": true,
+      "containsGluten": true,
+      "isGlutenFree": false,
+      "aliases": ["dried pasta", "penne", "spaghetti", "fusilli", "macaroni"]
+    },
+    {
+      "name": "bread",
+      "category": "grains",
+      "subcategory": "bread",
+      "isVegan": true,
+      "isVegetarian": true,
+      "containsGluten": true,
+      "isGlutenFree": false,
+      "aliases": ["sliced bread", "white bread", "wholemeal bread", "toast"]
+    },
+    {
+      "name": "flour",
+      "category": "grains",
+      "subcategory": "flour",
+      "isVegan": true,
+      "isVegetarian": true,
+      "containsGluten": true,
+      "isGlutenFree": false,
+      "aliases": [
+        "plain flour",
+        "all-purpose flour",
+        "self-raising flour",
+        "wheat flour"
+      ]
+    },
+    {
+      "name": "oats",
+      "category": "grains",
+      "subcategory": "cereals",
+      "isVegan": true,
+      "isVegetarian": true,
+      "containsGluten": true,
+      "isGlutenFree": false,
+      "aliases": ["rolled oats", "porridge oats", "oatmeal", "jumbo oats"]
+    },
+    {
+      "name": "tortillas",
+      "category": "grains",
+      "subcategory": "flatbread",
+      "isVegan": true,
+      "isVegetarian": true,
+      "containsGluten": true,
+      "isGlutenFree": false,
+      "aliases": ["flour tortillas", "wheat tortillas", "wraps"]
+    },
+    {
+      "name": "noodles",
+      "category": "grains",
+      "subcategory": "noodles",
+      "isVegan": true,
+      "isVegetarian": true,
+      "containsGluten": true,
+      "isGlutenFree": false,
+      "aliases": ["egg noodles", "rice noodles", "stir-fry noodles"]
+    },
+    {
+      "name": "olive oil",
+      "category": "pantry",
+      "subcategory": "oils",
+      "isVegan": true,
+      "isVegetarian": true,
+      "aliases": [
+        "extra virgin olive oil",
+        "light olive oil",
+        "cooking olive oil"
+      ]
+    },
+    {
+      "name": "vegetable oil",
+      "category": "pantry",
+      "subcategory": "oils",
+      "isVegan": true,
+      "isVegetarian": true,
+      "aliases": ["cooking oil", "rapeseed oil", "sunflower oil"]
+    },
+    {
+      "name": "soy sauce",
+      "category": "pantry",
+      "subcategory": "sauces",
+      "isVegan": true,
+      "isVegetarian": true,
+      "containsSoy": true,
+      "containsGluten": true,
+      "isGlutenFree": false,
+      "aliases": ["light soy sauce", "dark soy sauce", "shoyu"]
+    },
+    {
+      "name": "coconut milk",
+      "category": "pantry",
+      "subcategory": "canned goods",
+      "isVegan": true,
+      "isVegetarian": true,
+      "aliases": [
+        "tinned coconut milk",
+        "canned coconut milk",
+        "full-fat coconut milk"
+      ]
+    },
+    {
+      "name": "curry paste",
+      "category": "pantry",
+      "subcategory": "pastes",
+      "isVegan": true,
+      "isVegetarian": true,
+      "aliases": ["red curry paste", "green curry paste", "thai curry paste"]
+    },
+    {
+      "name": "tomato paste",
+      "category": "pantry",
+      "subcategory": "canned goods",
+      "isVegan": true,
+      "isVegetarian": true,
+      "aliases": ["tomato puree", "concentrated tomato", "tomato concentrate"]
+    },
+    {
+      "name": "tinned tomatoes",
+      "category": "pantry",
+      "subcategory": "canned goods",
+      "isVegan": true,
+      "isVegetarian": true,
+      "aliases": ["canned tomatoes", "chopped tomatoes", "peeled tomatoes"]
+    },
+    {
+      "name": "stock cube",
+      "category": "pantry",
+      "subcategory": "stocks",
+      "isVegan": false,
+      "isVegetarian": false,
+      "aliases": [
+        "bouillon cube",
+        "stock cubes",
+        "chicken stock cube",
+        "beef stock cube",
+        "vegetable stock cube"
+      ]
+    },
+    {
+      "name": "worcestershire sauce",
+      "category": "pantry",
+      "subcategory": "sauces",
+      "isVegan": false,
+      "isVegetarian": false,
+      "containsFish": true,
+      "aliases": ["worcester sauce", "lea and perrins"]
+    },
+    {
+      "name": "baked beans",
+      "category": "pantry",
+      "subcategory": "canned goods",
+      "isVegan": true,
+      "isVegetarian": true,
+      "aliases": ["tinned beans", "beans in tomato sauce"]
+    },
+    {
+      "name": "honey",
+      "category": "pantry",
+      "subcategory": "sweeteners",
+      "isVegan": false,
+      "isVegetarian": true,
+      "aliases": ["clear honey", "runny honey", "set honey"]
+    },
+    {
+      "name": "maple syrup",
+      "category": "pantry",
+      "subcategory": "sweeteners",
+      "isVegan": true,
+      "isVegetarian": true,
+      "aliases": ["pure maple syrup", "canadian maple syrup"]
+    },
+    {
+      "name": "sugar",
+      "category": "pantry",
+      "subcategory": "sweeteners",
+      "isVegan": true,
+      "isVegetarian": true,
+      "aliases": [
+        "caster sugar",
+        "granulated sugar",
+        "white sugar",
+        "brown sugar"
+      ]
+    },
+    {
+      "name": "baking powder",
+      "category": "pantry",
+      "subcategory": "baking",
+      "isVegan": true,
+      "isVegetarian": true,
+      "aliases": ["raising agent"]
+    },
+    {
+      "name": "vanilla extract",
+      "category": "pantry",
+      "subcategory": "baking",
+      "isVegan": true,
+      "isVegetarian": true,
+      "aliases": ["vanilla essence", "pure vanilla extract"]
+    },
+    {
+      "name": "chilli powder",
+      "category": "pantry",
+      "subcategory": "spices",
+      "isVegan": true,
+      "isVegetarian": true,
+      "aliases": ["chili powder", "ground chilli"]
+    },
+    {
+      "name": "chili flakes",
+      "category": "pantry",
+      "subcategory": "spices",
+      "isVegan": true,
+      "isVegetarian": true,
+      "aliases": ["crushed red pepper", "red pepper flakes", "chilli flakes"]
+    },
+    {
+      "name": "cumin",
+      "category": "pantry",
+      "subcategory": "spices",
+      "isVegan": true,
+      "isVegetarian": true,
+      "aliases": ["ground cumin", "cumin powder"]
+    },
+    {
+      "name": "paprika",
+      "category": "pantry",
+      "subcategory": "spices",
+      "isVegan": true,
+      "isVegetarian": true,
+      "aliases": ["smoked paprika", "sweet paprika", "hungarian paprika"]
+    },
+    {
+      "name": "cinnamon",
+      "category": "pantry",
+      "subcategory": "spices",
+      "isVegan": true,
+      "isVegetarian": true,
+      "aliases": ["ground cinnamon", "cinnamon powder"]
+    },
+    {
+      "name": "mixed herbs",
+      "category": "pantry",
+      "subcategory": "herbs",
+      "isVegan": true,
+      "isVegetarian": true,
+      "aliases": ["dried mixed herbs", "italian herbs", "herb blend"]
+    },
+    {
+      "name": "balsamic vinegar",
+      "category": "pantry",
+      "subcategory": "vinegars",
+      "isVegan": true,
+      "isVegetarian": true,
+      "aliases": ["balsamic", "aged balsamic"]
+    },
+    {
+      "name": "chia seeds",
+      "category": "pantry",
+      "subcategory": "seeds",
+      "isVegan": true,
+      "isVegetarian": true,
+      "aliases": ["chia"]
+    },
+    {
+      "name": "granola",
+      "category": "pantry",
+      "subcategory": "cereals",
+      "isVegan": false,
+      "isVegetarian": true,
+      "containsGluten": true,
+      "containsNuts": true,
+      "isGlutenFree": false,
+      "aliases": ["crunchy granola", "oat granola"]
+    },
+    {
+      "name": "nuts",
+      "category": "pantry",
+      "subcategory": "nuts",
+      "isVegan": true,
+      "isVegetarian": true,
+      "containsNuts": true,
+      "aliases": ["mixed nuts", "chopped nuts", "walnuts", "almonds", "cashews"]
+    }
+  ]
+}
