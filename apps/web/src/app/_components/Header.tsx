@@ -67,15 +67,29 @@ export function Header() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
-          <div className="flex items-center gap-3">
-            <span className="text-2xl">🍽️</span>
-            <Link
-              href="/dashboard"
-              className="rounded text-xl font-bold text-gray-900 transition-colors duration-150 hover:text-gray-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
-            >
-              MealMind AI
-            </Link>
-          </div>
+          <Link
+            href="/dashboard"
+            className="group flex items-center gap-2 rounded-lg px-2 py-1 transition-all duration-150 hover:bg-emerald-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
+          >
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-500 to-emerald-600 shadow-sm transition-transform duration-150 group-hover:scale-105">
+              <svg
+                className="h-5 w-5 text-white"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2" />
+                <path d="M7 2v20" />
+                <path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7" />
+              </svg>
+            </div>
+            <span className="text-xl font-bold text-gray-900 transition-colors duration-150 group-hover:text-emerald-700">
+              MealMind
+            </span>
+          </Link>
 
           {/* Desktop Navigation */}
           {session?.user && (

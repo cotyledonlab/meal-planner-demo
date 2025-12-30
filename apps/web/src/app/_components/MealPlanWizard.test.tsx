@@ -189,20 +189,21 @@ describe('MealPlanWizard', () => {
     expect(dairyFreeLabel?.classList.contains('active:scale-[0.98]')).toBe(true);
   });
 
-  it('should render persistent header with MealMind AI branding', () => {
+  it('should render persistent header with MealMind branding', () => {
     const mockOnComplete = vi.fn();
     const mockOnClose = vi.fn();
     const { container } = render(
       <MealPlanWizard onComplete={mockOnComplete} onClose={mockOnClose} />
     );
 
-    expect(screen.getByText('MealMind AI')).toBeInTheDocument();
+    expect(screen.getByText('MealMind')).toBeInTheDocument();
 
-    // Check for the header (sticky top-0) containing the emoji
+    // Check for the header (sticky top-0) containing the brand icon and name
     const header = container.querySelector('.sticky.top-0');
     expect(header).toBeInTheDocument();
-    expect(header?.textContent).toContain('🍽️');
-    expect(header?.textContent).toContain('MealMind AI');
+    expect(header?.textContent).toContain('MealMind');
+    // Check for the SVG icon in the header
+    expect(header?.querySelector('svg')).toBeInTheDocument();
   });
 
   it('should render progress indicator showing Step 1 of 1', () => {

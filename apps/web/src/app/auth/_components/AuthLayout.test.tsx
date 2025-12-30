@@ -69,14 +69,16 @@ describe('AuthLayout', () => {
   });
 
   it('always renders brand name and logo', () => {
-    const { rerender } = render(
+    const { rerender, container } = render(
       <AuthLayout title="Test Title" showMarketing={false}>
         <div>Test content</div>
       </AuthLayout>
     );
 
     // Check that brand name appears (there are multiple instances for mobile/desktop)
-    expect(screen.getAllByText('MealMind AI').length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText('MealMind').length).toBeGreaterThanOrEqual(1);
+    // Check that logo SVG is present
+    expect(container.querySelectorAll('svg').length).toBeGreaterThanOrEqual(1);
 
     rerender(
       <AuthLayout title="Test Title" showMarketing={true}>
@@ -85,7 +87,7 @@ describe('AuthLayout', () => {
     );
 
     // Brand name should still appear
-    expect(screen.getAllByText('MealMind AI').length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText('MealMind').length).toBeGreaterThanOrEqual(1);
   });
 
   it('renders children content', () => {
