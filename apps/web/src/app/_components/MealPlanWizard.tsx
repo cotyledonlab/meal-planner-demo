@@ -125,8 +125,22 @@ export default function MealPlanWizard({
             {/* Persistent header with branding */}
             <div className="sticky top-0 z-10 flex items-center justify-between border-b border-gray-200 bg-white px-4 py-3 sm:px-6 sm:rounded-t-2xl">
               <div className="flex items-center gap-2">
-                <span className="text-xl">🍽️</span>
-                <span className="text-base font-bold text-gray-900 sm:text-lg">MealMind AI</span>
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-500 to-emerald-600 shadow-sm">
+                  <svg
+                    className="h-5 w-5 text-white"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2" />
+                    <path d="M7 2v20" />
+                    <path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7" />
+                  </svg>
+                </div>
+                <span className="text-base font-bold text-gray-900 sm:text-lg">MealMind</span>
               </div>
               {onClose && (
                 <button

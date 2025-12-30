@@ -49,11 +49,12 @@ export default function PremiumFeatureCard({
         </div>
       )}
 
-      {/* Coming soon badge for premium users */}
+      {/* In development indicator for premium users - subtle and unobtrusive */}
       {isPremiumUser && (
         <div className="absolute right-4 top-4">
-          <span className="inline-flex items-center rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700">
-            Coming soon
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-600">
+            <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse" />
+            In development
           </span>
         </div>
       )}

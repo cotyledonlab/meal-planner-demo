@@ -35,17 +35,18 @@ describe('PremiumFeatureCard', () => {
     expect(lockContainer).toBeInTheDocument();
   });
 
-  it('shows "Coming soon" badge for premium users', () => {
+  it('shows "In development" indicator for premium users', () => {
     render(<PremiumFeatureCard {...defaultProps} isPremiumUser={true} />);
 
-    expect(screen.getByText('Coming soon')).toBeInTheDocument();
+    expect(screen.getByText('In development')).toBeInTheDocument();
   });
 
   it('does not show lock icon for premium users', () => {
     const { container } = render(<PremiumFeatureCard {...defaultProps} isPremiumUser={true} />);
 
-    // Lock icon should not be present for premium users
-    expect(container.querySelector('.bg-gray-100')).not.toBeInTheDocument();
+    // Lock icon should not be present for premium users - check for lock SVG path
+    const lockIcon = container.querySelector('path[d*="M12 15v2m-6 4h12"]');
+    expect(lockIcon).not.toBeInTheDocument();
   });
 
   describe('Preview button', () => {
