@@ -39,7 +39,6 @@ interface CanonicalIngredientData {
   containsShellfish?: boolean;
   containsFish?: boolean;
   containsSesame?: boolean;
-  containsCelery?: boolean;
   aliases?: string[];
 }
 
@@ -185,49 +184,72 @@ async function main() {
   console.log(`✅ Created admin user: ${adminUser.email}`);
   console.log(`🔑 Password for all users: P@ssw0rd!`);
 
-  // Create canonical ingredients
+  // Create canonical ingredients using batch operations for better performance
   console.log('📚 Creating canonical ingredients...');
   const canonicalIngredientMap = new Map<string, string>();
 
-  for (const canonical of canonicalIngredientsData.ingredients) {
-    const created = await prisma.canonicalIngredient.create({
-      data: {
-        name: canonical.name,
-        category: canonical.category,
-        subcategory: canonical.subcategory,
-        description: canonical.description,
-        isVegan: canonical.isVegan ?? false,
-        isVegetarian: canonical.isVegetarian ?? false,
-        isGlutenFree: canonical.isGlutenFree ?? true,
-        isDairyFree: canonical.isDairyFree ?? true,
-        containsGluten: canonical.containsGluten ?? false,
-        containsDairy: canonical.containsDairy ?? false,
-        containsEggs: canonical.containsEggs ?? false,
-        containsNuts: canonical.containsNuts ?? false,
-        containsPeanuts: canonical.containsPeanuts ?? false,
-        containsSoy: canonical.containsSoy ?? false,
-        containsShellfish: canonical.containsShellfish ?? false,
-        containsFish: canonical.containsFish ?? false,
-        containsSesame: canonical.containsSesame ?? false,
+  // Batch create canonical ingredients
+  const canonicalCreateData = canonicalIngredientsData.ingredients.map((canonical) => ({
+    name: canonical.name,
+    category: canonical.category,
+    subcategory: canonical.subcategory,
+    description: canonical.description,
+    isVegan: canonical.isVegan ?? false,
+    isVegetarian: canonical.isVegetarian ?? false,
+    isGlutenFree: canonical.isGlutenFree ?? true,
+    isDairyFree: canonical.isDairyFree ?? true,
+    containsGluten: canonical.containsGluten ?? false,
+    containsDairy: canonical.containsDairy ?? false,
+    containsEggs: canonical.containsEggs ?? false,
+    containsNuts: canonical.containsNuts ?? false,
+    containsPeanuts: canonical.containsPeanuts ?? false,
+    containsSoy: canonical.containsSoy ?? false,
+    containsShellfish: canonical.containsShellfish ?? false,
+    containsFish: canonical.containsFish ?? false,
+    containsSesame: canonical.containsSesame ?? false,
+  }));
+
+  await prisma.canonicalIngredient.createMany({
+    data: canonicalCreateData,
+  });
+
+  // Re-fetch canonical ingredients to build the ID map
+  const createdCanonicalIngredients = await prisma.canonicalIngredient.findMany({
+    where: {
+      name: {
+        in: canonicalIngredientsData.ingredients.map((canonical) => canonical.name),
       },
-    });
+    },
+  });
 
-    // Map the canonical name
-    canonicalIngredientMap.set(canonical.name.toLowerCase(), created.id);
+  for (const canonical of createdCanonicalIngredients) {
+    canonicalIngredientMap.set(canonical.name.toLowerCase(), canonical.id);
+  }
 
-    // Create aliases
-    if (canonical.aliases && canonical.aliases.length > 0) {
-      for (const alias of canonical.aliases) {
-        await prisma.ingredientAlias.create({
-          data: {
-            alias: alias.toLowerCase(),
-            canonicalIngredientId: created.id,
-          },
-        });
-        // Also add alias to the map for quick lookup
-        canonicalIngredientMap.set(alias.toLowerCase(), created.id);
-      }
+  // Batch create aliases
+  const aliasCreateData: { alias: string; canonicalIngredientId: string }[] = [];
+
+  for (const canonical of canonicalIngredientsData.ingredients) {
+    const canonicalId = canonicalIngredientMap.get(canonical.name.toLowerCase());
+    if (!canonicalId || !canonical.aliases || canonical.aliases.length === 0) {
+      continue;
     }
+
+    for (const alias of canonical.aliases) {
+      const normalizedAlias = alias.toLowerCase();
+      aliasCreateData.push({
+        alias: normalizedAlias,
+        canonicalIngredientId: canonicalId,
+      });
+      // Also add alias to the map for quick lookup
+      canonicalIngredientMap.set(normalizedAlias, canonicalId);
+    }
+  }
+
+  if (aliasCreateData.length > 0) {
+    await prisma.ingredientAlias.createMany({
+      data: aliasCreateData,
+    });
   }
 
   console.log(`✅ Created ${canonicalIngredientsData.ingredients.length} canonical ingredients`);

@@ -98,7 +98,7 @@ Set these to `true` if the ingredient contains the allergen:
 
 | Flag                | Allergen                           |
 | ------------------- | ---------------------------------- |
-| `containsGluten`    | Wheat, barley, rye, oats           |
+| `containsGluten`    | Gluten from wheat, barley, or rye  |
 | `containsDairy`     | Milk, cheese, butter, cream        |
 | `containsEggs`      | Eggs or egg products               |
 | `containsNuts`      | Tree nuts (almonds, walnuts, etc.) |
@@ -107,6 +107,8 @@ Set these to `true` if the ingredient contains the allergen:
 | `containsShellfish` | Shrimp, crab, lobster, etc.        |
 | `containsFish`      | Fish                               |
 | `containsSesame`    | Sesame seeds                       |
+
+**Note on oats**: Pure, uncontaminated oats are naturally gluten-free. However, many commercial oat products are processed in facilities that also handle wheat, barley, or rye and may contain gluten due to cross-contamination. When modeling oat-based ingredients, set `containsGluten` to `true` if the product is not certified gluten-free or is likely to be cross-contaminated.
 
 ## Database Schema
 
