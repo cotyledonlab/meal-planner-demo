@@ -1,6 +1,8 @@
 import { type PrismaClient } from '@prisma/client';
 import { SUSPICIOUS_BREAKFAST_KEYWORDS } from '@meal-planner-demo/constants';
 import { createLogger } from '~/lib/logger';
+import { RecipeRepository, filterRecipesByDislikes, parseDislikes } from '~/server/repositories';
+import type { RecipeForPlanning, MealType } from '@meal-planner-demo/types';
 
 export type PlanGenerationErrorCode =
   | 'NO_RECIPES_AVAILABLE'
@@ -42,8 +44,11 @@ interface MealPlanOutput {
 
 export class PlanGenerator {
   private log = createLogger('PlanGenerator');
+  private recipeRepository: RecipeRepository;
 
-  constructor(private prisma: PrismaClient) {}
+  constructor(private prisma: PrismaClient) {
+    this.recipeRepository = new RecipeRepository(prisma);
+  }
 
   async generatePlan(input: GeneratePlanInput): Promise<MealPlanOutput> {
     const {
@@ -79,21 +84,13 @@ export class PlanGenerator {
 
     // Determine which meal types to include based on mealsPerDay
     const mealTypes = this.getMealTypesForCount(mealsPerDay);
-    const dislikeTerms = this.parseDislikes(dislikes);
+    const dislikeTerms = parseDislikes(dislikes);
 
-    // Get available recipes with dietary filters
-    const recipesMatchingDiet = await this.prisma.recipe.findMany({
-      where: {
-        ...(isVegetarian && { isVegetarian: true }),
-        ...(isDairyFree && { isDairyFree: true }),
-      },
-      include: {
-        ingredients: {
-          include: {
-            ingredient: true,
-          },
-        },
-      },
+    // Get available recipes with dietary filters using repository
+    const recipesMatchingDiet = await this.recipeRepository.findForPlanning({
+      status: 'APPROVED',
+      isVegetarian: isVegetarian || undefined,
+      isDairyFree: isDairyFree || undefined,
     });
 
     if (recipesMatchingDiet.length === 0) {
@@ -103,12 +100,8 @@ export class PlanGenerator {
       );
     }
 
-    const eligibleRecipes =
-      dislikeTerms.length === 0
-        ? recipesMatchingDiet
-        : recipesMatchingDiet.filter((recipe) =>
-            this.recipePassesDislikes(recipe.ingredients, dislikeTerms)
-          );
+    // Filter out recipes containing disliked ingredients using repository helper
+    const eligibleRecipes = filterRecipesByDislikes(recipesMatchingDiet, dislikeTerms);
 
     if (eligibleRecipes.length === 0) {
       throw new PlanGenerationError(
@@ -128,11 +121,9 @@ export class PlanGenerator {
     for (let dayIndex = 0; dayIndex < days; dayIndex++) {
       for (const mealType of mealTypes) {
         // Filter recipes that are appropriate for this meal type
-        const appropriateRecipes = eligibleRecipes.filter((recipe) => {
-          const mealTypesArray = Array.isArray(recipe.mealTypes)
-            ? recipe.mealTypes.filter((type): type is string => typeof type === 'string')
-            : [];
-          return mealTypesArray.includes(mealType);
+        const appropriateRecipes = eligibleRecipes.filter((recipe: RecipeForPlanning) => {
+          // Recipe mealTypes from RecipeForPlanning are already typed as MealType[]
+          return recipe.mealTypes.includes(mealType as MealType);
         });
 
         this.log.debug(
@@ -388,28 +379,5 @@ export class PlanGenerator {
     }
 
     return ['breakfast', 'lunch', 'dinner'];
-  }
-
-  private parseDislikes(dislikes: string | null | undefined): string[] {
-    if (!dislikes) return [];
-    return dislikes
-      .split(',')
-      .map((entry) => entry.trim().toLowerCase())
-      .filter((entry) => entry.length > 0);
-  }
-
-  private recipePassesDislikes(
-    ingredients: Array<{ ingredient: { name: string | null } }>,
-    dislikeTerms: string[]
-  ): boolean {
-    if (dislikeTerms.length === 0) return true;
-
-    const ingredientNames = ingredients
-      .map((ri) => ri.ingredient?.name?.toLowerCase() ?? null)
-      .filter((name): name is string => Boolean(name));
-
-    if (ingredientNames.length === 0) return true;
-
-    return !dislikeTerms.some((term) => ingredientNames.some((name) => name.includes(term)));
   }
 }
