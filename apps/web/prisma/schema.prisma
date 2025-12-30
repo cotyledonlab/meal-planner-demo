@@ -193,16 +193,77 @@ model Recipe {
 }
 
 model Ingredient {
-  id                String             @id @default(cuid())
-  name              String             @unique
-  category          String // e.g., "protein", "vegetables", "dairy", "grains"
-  recipes           RecipeIngredient[]
-  pantryItems       PantryItem[]
-  shoppingListItems ShoppingListItem[]
-  createdAt         DateTime           @default(now())
-  updatedAt         DateTime           @updatedAt
+  id                    String              @id @default(cuid())
+  name                  String              @unique
+  category              String // e.g., "protein", "vegetables", "dairy", "grains"
+  canonicalIngredientId String? // Link to canonical ingredient for metadata
+  canonicalIngredient   CanonicalIngredient? @relation(fields: [canonicalIngredientId], references: [id])
+  recipes               RecipeIngredient[]
+  pantryItems           PantryItem[]
+  shoppingListItems     ShoppingListItem[]
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
 
   @@index([category])
+  @@index([canonicalIngredientId])
+}
+
+// Canonical ingredient with allergen and dietary metadata
+model CanonicalIngredient {
+  id               String                          @id @default(cuid())
+  name             String                          @unique // Canonical name (e.g., "chicken breast")
+  category         String // Primary category: protein, vegetables, dairy, grains, pantry, fruits
+  subcategory      String? // Optional subcategory: poultry, leafy greens, etc.
+  description      String?                         @db.Text
+  // Dietary flags
+  isVegan          Boolean                         @default(false)
+  isVegetarian     Boolean                         @default(false)
+  isGlutenFree     Boolean                         @default(true)
+  isDairyFree      Boolean                         @default(true)
+  // Allergen flags (common allergens)
+  containsGluten   Boolean                         @default(false)
+  containsDairy    Boolean                         @default(false)
+  containsEggs     Boolean                         @default(false)
+  containsNuts     Boolean                         @default(false)
+  containsPeanuts  Boolean                         @default(false)
+  containsSoy      Boolean                         @default(false)
+  containsShellfish Boolean                        @default(false)
+  containsFish     Boolean                         @default(false)
+  containsSesame   Boolean                         @default(false)
+  // Relations
+  aliases          IngredientAlias[]
+  ingredients      Ingredient[] // Recipe ingredients linked to this canonical
+  allergenTags     CanonicalIngredientAllergen[]
+  createdAt        DateTime                        @default(now())
+  updatedAt        DateTime                        @updatedAt
+
+  @@index([category])
+  @@index([isVegetarian, isVegan])
+}
+
+// Alias names that map to a canonical ingredient
+model IngredientAlias {
+  id                    String              @id @default(cuid())
+  alias                 String              @unique // e.g., "chicken", "boneless chicken", "chicken fillet"
+  canonicalIngredientId String
+  canonicalIngredient   CanonicalIngredient @relation(fields: [canonicalIngredientId], references: [id], onDelete: Cascade)
+  createdAt             DateTime            @default(now())
+
+  @@index([canonicalIngredientId])
+}
+
+// Link between canonical ingredients and allergen tags
+model CanonicalIngredientAllergen {
+  id                    String              @id @default(cuid())
+  canonicalIngredientId String
+  canonicalIngredient   CanonicalIngredient @relation(fields: [canonicalIngredientId], references: [id], onDelete: Cascade)
+  allergenTagId         String
+  allergenTag           AllergenTag         @relation(fields: [allergenTagId], references: [id], onDelete: Cascade)
+  createdAt             DateTime            @default(now())
+
+  @@unique([canonicalIngredientId, allergenTagId])
+  @@index([canonicalIngredientId])
+  @@index([allergenTagId])
 }
 
 model RecipeIngredient {
@@ -373,12 +434,13 @@ model DietTag {
 }
 
 model AllergenTag {
-  id          String              @id @default(cuid())
-  name        String              @unique // e.g., "gluten", "dairy", "nuts"
-  description String?
-  severity    String? // Informational severity level
-  recipes     RecipeAllergenTag[]
-  createdAt   DateTime            @default(now())
+  id                    String                        @id @default(cuid())
+  name                  String                        @unique // e.g., "gluten", "dairy", "nuts"
+  description           String?
+  severity              String? // Informational severity level
+  recipes               RecipeAllergenTag[]
+  canonicalIngredients  CanonicalIngredientAllergen[]
+  createdAt             DateTime                      @default(now())
 
   @@index([name])
 }

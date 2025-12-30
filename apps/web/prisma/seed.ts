@@ -21,6 +21,33 @@ interface PriceBaselineData {
   >;
 }
 
+interface CanonicalIngredientData {
+  name: string;
+  category: string;
+  subcategory?: string;
+  description?: string;
+  isVegan?: boolean;
+  isVegetarian?: boolean;
+  isGlutenFree?: boolean;
+  isDairyFree?: boolean;
+  containsGluten?: boolean;
+  containsDairy?: boolean;
+  containsEggs?: boolean;
+  containsNuts?: boolean;
+  containsPeanuts?: boolean;
+  containsSoy?: boolean;
+  containsShellfish?: boolean;
+  containsFish?: boolean;
+  containsSesame?: boolean;
+  aliases?: string[];
+}
+
+interface CanonicalIngredientsFile {
+  version: string;
+  description: string;
+  ingredients: CanonicalIngredientData[];
+}
+
 type MealType = (typeof VALID_MEAL_TYPES)[number];
 
 export function validateMealTypes(mealTypes: unknown, recipeTitle: string): MealType[] {
@@ -53,6 +80,15 @@ async function main() {
     fs.readFileSync(priceBaselinesPath, 'utf-8')
   ) as PriceBaselineData[];
 
+  // Load canonical ingredients
+  const canonicalIngredientsPath = path.join(
+    __dirname,
+    '../../../infra/ingredients/canonical-ingredients.json'
+  );
+  const canonicalIngredientsData = JSON.parse(
+    fs.readFileSync(canonicalIngredientsPath, 'utf-8')
+  ) as CanonicalIngredientsFile;
+
   // Clear existing data in development
   if (process.env.NODE_ENV !== 'production') {
     console.log('🧹 Cleaning existing data...');
@@ -73,7 +109,11 @@ async function main() {
     await prisma.recipe.deleteMany();
     await prisma.allergenTag.deleteMany();
     await prisma.dietTag.deleteMany();
+    // Clean canonical ingredient tables
+    await prisma.ingredientAlias.deleteMany();
+    await prisma.canonicalIngredientAllergen.deleteMany();
     await prisma.ingredient.deleteMany();
+    await prisma.canonicalIngredient.deleteMany();
     await prisma.password.deleteMany();
     await prisma.post.deleteMany();
     await prisma.session.deleteMany();
@@ -143,6 +183,81 @@ async function main() {
   console.log(`✅ Created basic user: ${basicUser.email}`);
   console.log(`✅ Created admin user: ${adminUser.email}`);
   console.log(`🔑 Password for all users: P@ssw0rd!`);
+
+  // Create canonical ingredients using batch operations for better performance
+  console.log('📚 Creating canonical ingredients...');
+  const canonicalIngredientMap = new Map<string, string>();
+
+  // Batch create canonical ingredients
+  const canonicalCreateData = canonicalIngredientsData.ingredients.map((canonical) => ({
+    name: canonical.name,
+    category: canonical.category,
+    subcategory: canonical.subcategory,
+    description: canonical.description,
+    isVegan: canonical.isVegan ?? false,
+    isVegetarian: canonical.isVegetarian ?? false,
+    isGlutenFree: canonical.isGlutenFree ?? true,
+    isDairyFree: canonical.isDairyFree ?? true,
+    containsGluten: canonical.containsGluten ?? false,
+    containsDairy: canonical.containsDairy ?? false,
+    containsEggs: canonical.containsEggs ?? false,
+    containsNuts: canonical.containsNuts ?? false,
+    containsPeanuts: canonical.containsPeanuts ?? false,
+    containsSoy: canonical.containsSoy ?? false,
+    containsShellfish: canonical.containsShellfish ?? false,
+    containsFish: canonical.containsFish ?? false,
+    containsSesame: canonical.containsSesame ?? false,
+  }));
+
+  await prisma.canonicalIngredient.createMany({
+    data: canonicalCreateData,
+  });
+
+  // Re-fetch canonical ingredients to build the ID map
+  const createdCanonicalIngredients = await prisma.canonicalIngredient.findMany({
+    where: {
+      name: {
+        in: canonicalIngredientsData.ingredients.map((canonical) => canonical.name),
+      },
+    },
+  });
+
+  for (const canonical of createdCanonicalIngredients) {
+    canonicalIngredientMap.set(canonical.name.toLowerCase(), canonical.id);
+  }
+
+  // Batch create aliases
+  const aliasCreateData: { alias: string; canonicalIngredientId: string }[] = [];
+
+  for (const canonical of canonicalIngredientsData.ingredients) {
+    const canonicalId = canonicalIngredientMap.get(canonical.name.toLowerCase());
+    if (!canonicalId || !canonical.aliases || canonical.aliases.length === 0) {
+      continue;
+    }
+
+    for (const alias of canonical.aliases) {
+      const normalizedAlias = alias.toLowerCase();
+      aliasCreateData.push({
+        alias: normalizedAlias,
+        canonicalIngredientId: canonicalId,
+      });
+      // Also add alias to the map for quick lookup
+      canonicalIngredientMap.set(normalizedAlias, canonicalId);
+    }
+  }
+
+  if (aliasCreateData.length > 0) {
+    await prisma.ingredientAlias.createMany({
+      data: aliasCreateData,
+    });
+  }
+
+  console.log(`✅ Created ${canonicalIngredientsData.ingredients.length} canonical ingredients`);
+
+  // Helper function to find canonical ingredient ID by name
+  function findCanonicalIngredientId(name: string): string | undefined {
+    return canonicalIngredientMap.get(name.toLowerCase());
+  }
 
   // Create ingredients
   console.log('🥕 Creating ingredients...');
@@ -230,7 +345,14 @@ async function main() {
   ];
 
   const createdIngredients = await Promise.all(
-    ingredients.map((ing) => prisma.ingredient.create({ data: ing }))
+    ingredients.map((ing) =>
+      prisma.ingredient.create({
+        data: {
+          ...ing,
+          canonicalIngredientId: findCanonicalIngredientId(ing.name),
+        },
+      })
+    )
   );
 
   const ingredientMap = new Map(createdIngredients.map((ing) => [ing.name, ing.id]));
