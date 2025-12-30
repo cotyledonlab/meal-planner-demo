@@ -62,8 +62,17 @@ async function main() {
     await prisma.mealPlanItem.deleteMany();
     await prisma.mealPlan.deleteMany();
     await prisma.pantryItem.deleteMany();
+    // Clean normalized recipe tables
+    await prisma.recipeStatusHistory.deleteMany();
+    await prisma.recipeImage.deleteMany();
+    await prisma.recipeAllergenTag.deleteMany();
+    await prisma.recipeDietTag.deleteMany();
+    await prisma.recipeNutrition.deleteMany();
+    await prisma.recipeStep.deleteMany();
     await prisma.recipeIngredient.deleteMany();
     await prisma.recipe.deleteMany();
+    await prisma.allergenTag.deleteMany();
+    await prisma.dietTag.deleteMany();
     await prisma.ingredient.deleteMany();
     await prisma.password.deleteMany();
     await prisma.post.deleteMany();
@@ -225,6 +234,58 @@ async function main() {
   );
 
   const ingredientMap = new Map(createdIngredients.map((ing) => [ing.name, ing.id]));
+
+  // Create diet tags
+  console.log('🏷️ Creating diet tags...');
+  const dietTagNames = [
+    'vegetarian',
+    'vegan',
+    'pescatarian',
+    'keto',
+    'paleo',
+    'low-carb',
+    'gluten-free',
+    'dairy-free',
+    'halal',
+    'kosher',
+  ];
+
+  const createdDietTags = await Promise.all(
+    dietTagNames.map((name) =>
+      prisma.dietTag.create({
+        data: { name },
+      })
+    )
+  );
+
+  const dietTagMap = new Map(createdDietTags.map((tag) => [tag.name, tag.id]));
+
+  // Create allergen tags
+  console.log('⚠️ Creating allergen tags...');
+  const allergenTagNames = [
+    'gluten',
+    'dairy',
+    'eggs',
+    'nuts',
+    'peanuts',
+    'soy',
+    'shellfish',
+    'fish',
+    'sesame',
+    'mustard',
+    'celery',
+    'sulphites',
+  ];
+
+  const createdAllergenTags = await Promise.all(
+    allergenTagNames.map((name) =>
+      prisma.allergenTag.create({
+        data: { name },
+      })
+    )
+  );
+
+  const allergenTagMap = new Map(createdAllergenTags.map((tag) => [tag.name, tag.id]));
 
   // Create recipes
   console.log('🍽️ Creating recipes...');
@@ -1337,6 +1398,136 @@ async function main() {
     },
   ];
 
+  // Helper: Parse instructionsMd into steps
+  function parseInstructionsToSteps(instructionsMd: string): Array<{
+    stepNumber: number;
+    stepType: 'PREP' | 'COOK' | 'REST' | 'ASSEMBLE';
+    instruction: string;
+  }> {
+    const steps: Array<{
+      stepNumber: number;
+      stepType: 'PREP' | 'COOK' | 'REST' | 'ASSEMBLE';
+      instruction: string;
+    }> = [];
+
+    // Find the Instructions section
+    const instructionsMatch = instructionsMd.match(/## Instructions\n([\s\S]*?)(?=\n## |$)/);
+    if (!instructionsMatch?.[1]) return steps;
+
+    const instructionsText = instructionsMatch[1];
+    const lines = instructionsText.split('\n').filter((line: string) => line.match(/^\d+\./));
+
+    lines.forEach((line, index) => {
+      const instruction = line.replace(/^\d+\.\s*/, '').trim();
+      if (!instruction) return;
+
+      // Determine step type based on keywords
+      let stepType: 'PREP' | 'COOK' | 'REST' | 'ASSEMBLE' = 'COOK';
+      const lowerInstruction = instruction.toLowerCase();
+
+      if (
+        lowerInstruction.includes('cut') ||
+        lowerInstruction.includes('chop') ||
+        lowerInstruction.includes('slice') ||
+        lowerInstruction.includes('dice') ||
+        lowerInstruction.includes('peel') ||
+        lowerInstruction.includes('mix') ||
+        lowerInstruction.includes('beat') ||
+        lowerInstruction.includes('preheat') ||
+        lowerInstruction.includes('wash')
+      ) {
+        stepType = 'PREP';
+      } else if (
+        lowerInstruction.includes('rest') ||
+        lowerInstruction.includes('cool') ||
+        lowerInstruction.includes('chill') ||
+        lowerInstruction.includes('let stand')
+      ) {
+        stepType = 'REST';
+      } else if (
+        lowerInstruction.includes('serve') ||
+        lowerInstruction.includes('layer') ||
+        lowerInstruction.includes('top with') ||
+        lowerInstruction.includes('garnish')
+      ) {
+        stepType = 'ASSEMBLE';
+      }
+
+      steps.push({
+        stepNumber: index + 1,
+        stepType,
+        instruction,
+      });
+    });
+
+    return steps;
+  }
+
+  // Helper: Determine allergens from ingredients
+  function getAllergensFromIngredients(recipeIngredients: Array<{ name: string }>): string[] {
+    const allergens: Set<string> = new Set();
+
+    for (const ing of recipeIngredients) {
+      const name = ing.name.toLowerCase();
+
+      // Dairy
+      if (
+        name.includes('milk') ||
+        name.includes('cheese') ||
+        name.includes('butter') ||
+        name.includes('cream') ||
+        name.includes('yogurt') ||
+        name.includes('buttermilk')
+      ) {
+        allergens.add('dairy');
+      }
+
+      // Eggs
+      if (name.includes('egg')) {
+        allergens.add('eggs');
+      }
+
+      // Gluten
+      if (
+        name.includes('flour') ||
+        name.includes('bread') ||
+        name.includes('pasta') ||
+        name.includes('noodles') ||
+        name.includes('tortilla') ||
+        name.includes('oats')
+      ) {
+        allergens.add('gluten');
+      }
+
+      // Nuts
+      if (
+        name.includes('nut') ||
+        name.includes('almond') ||
+        name.includes('cashew') ||
+        name.includes('walnut')
+      ) {
+        allergens.add('nuts');
+      }
+
+      // Fish
+      if (name.includes('salmon') || name.includes('tuna') || name.includes('fish')) {
+        allergens.add('fish');
+      }
+
+      // Soy
+      if (name.includes('soy') || name.includes('tofu')) {
+        allergens.add('soy');
+      }
+
+      // Celery
+      if (name.includes('celery')) {
+        allergens.add('celery');
+      }
+    }
+
+    return Array.from(allergens);
+  }
+
   for (const recipeData of recipes) {
     const { ingredients: recipeIngredients, ...recipeInfo } = recipeData;
 
@@ -1347,6 +1538,13 @@ async function main() {
       data: {
         ...recipeInfo,
         mealTypes: validatedMealTypes,
+        status: 'APPROVED',
+        difficulty:
+          recipeInfo.minutes <= 15 ? 'EASY' : recipeInfo.minutes <= 35 ? 'MEDIUM' : 'HARD',
+        prepTimeMinutes: Math.floor(recipeInfo.minutes * 0.3),
+        cookTimeMinutes: Math.floor(recipeInfo.minutes * 0.7),
+        totalTimeMinutes: recipeInfo.minutes,
+        publishedAt: new Date(),
       },
     });
 
@@ -1369,6 +1567,81 @@ async function main() {
         });
       })
     );
+
+    // Create recipe nutrition
+    await prisma.recipeNutrition.create({
+      data: {
+        recipeId: recipe.id,
+        calories: recipeInfo.calories,
+        protein: Math.round((recipeInfo.calories * 0.15) / 4), // ~15% from protein
+        carbohydrates: Math.round((recipeInfo.calories * 0.5) / 4), // ~50% from carbs
+        fat: Math.round((recipeInfo.calories * 0.35) / 9), // ~35% from fat
+      },
+    });
+
+    // Create recipe steps
+    const steps = parseInstructionsToSteps(recipeInfo.instructionsMd);
+    if (steps.length > 0) {
+      await Promise.all(
+        steps.map((step) =>
+          prisma.recipeStep.create({
+            data: {
+              recipeId: recipe.id,
+              stepNumber: step.stepNumber,
+              stepType: step.stepType,
+              instruction: step.instruction,
+            },
+          })
+        )
+      );
+    }
+
+    // Create diet tags
+    const dietTagsToLink: string[] = [];
+    if (recipeInfo.isVegetarian) {
+      dietTagsToLink.push('vegetarian');
+    }
+    if (recipeInfo.isDairyFree) {
+      dietTagsToLink.push('dairy-free');
+    }
+
+    for (const tagName of dietTagsToLink) {
+      const tagId = dietTagMap.get(tagName);
+      if (tagId) {
+        await prisma.recipeDietTag.create({
+          data: {
+            recipeId: recipe.id,
+            dietTagId: tagId,
+          },
+        });
+      }
+    }
+
+    // Create allergen tags
+    const allergens = getAllergensFromIngredients(recipeIngredients);
+    for (const allergenName of allergens) {
+      const tagId = allergenTagMap.get(allergenName);
+      if (tagId) {
+        await prisma.recipeAllergenTag.create({
+          data: {
+            recipeId: recipe.id,
+            allergenTagId: tagId,
+          },
+        });
+      }
+    }
+
+    // Create recipe image
+    if (recipeInfo.imageUrl) {
+      await prisma.recipeImage.create({
+        data: {
+          recipeId: recipe.id,
+          url: recipeInfo.imageUrl,
+          isPrimary: true,
+          altText: recipeInfo.title,
+        },
+      });
+    }
   }
 
   // Create price baselines

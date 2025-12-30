@@ -8,5 +8,8 @@ export interface DatabaseConfig {
   poolSize?: number;
 }
 
+// Recipe domain types
+export * from "./recipe";
+
 // Export placeholder to ensure this package can be imported
 export const VERSION = "0.1.0";
