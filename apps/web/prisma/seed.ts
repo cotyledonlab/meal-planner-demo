@@ -4,6 +4,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { hash } from '@node-rs/argon2';
 import { VALID_MEAL_TYPES } from '@meal-planner-demo/constants';
+import { deriveRecipeTags, type IngredientWithCanonical } from '../src/lib/ingredients/derivation';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -257,6 +258,23 @@ async function main() {
   // Helper function to find canonical ingredient ID by name
   function findCanonicalIngredientId(name: string): string | undefined {
     return canonicalIngredientMap.get(name.toLowerCase());
+  }
+
+  // Build a map of ingredient name -> canonical data for tag derivation
+  const canonicalDataMap = new Map<string, CanonicalIngredientData>();
+  for (const canonical of canonicalIngredientsData.ingredients) {
+    canonicalDataMap.set(canonical.name.toLowerCase(), canonical);
+    // Also map aliases
+    if (canonical.aliases) {
+      for (const alias of canonical.aliases) {
+        canonicalDataMap.set(alias.toLowerCase(), canonical);
+      }
+    }
+  }
+
+  // Helper function to get canonical ingredient data by name
+  function getCanonicalIngredientData(name: string): CanonicalIngredientData | undefined {
+    return canonicalDataMap.get(name.toLowerCase());
   }
 
   // Create ingredients
@@ -1533,11 +1551,11 @@ async function main() {
     }> = [];
 
     // Find the Instructions section
-    const instructionsMatch = instructionsMd.match(/## Instructions\n([\s\S]*?)(?=\n## |$)/);
+    const instructionsMatch = /## Instructions\n([\s\S]*?)(?=\n## |$)/.exec(instructionsMd);
     if (!instructionsMatch?.[1]) return steps;
 
     const instructionsText = instructionsMatch[1];
-    const lines = instructionsText.split('\n').filter((line: string) => line.match(/^\d+\./));
+    const lines = instructionsText.split('\n').filter((line: string) => /^\d+\./.exec(line));
 
     lines.forEach((line, index) => {
       const instruction = line.replace(/^\d+\.\s*/, '').trim();
@@ -1583,71 +1601,6 @@ async function main() {
     });
 
     return steps;
-  }
-
-  // Helper: Determine allergens from ingredients
-  function getAllergensFromIngredients(recipeIngredients: Array<{ name: string }>): string[] {
-    const allergens: Set<string> = new Set();
-
-    for (const ing of recipeIngredients) {
-      const name = ing.name.toLowerCase();
-
-      // Dairy
-      if (
-        name.includes('milk') ||
-        name.includes('cheese') ||
-        name.includes('butter') ||
-        name.includes('cream') ||
-        name.includes('yogurt') ||
-        name.includes('buttermilk')
-      ) {
-        allergens.add('dairy');
-      }
-
-      // Eggs
-      if (name.includes('egg')) {
-        allergens.add('eggs');
-      }
-
-      // Gluten
-      if (
-        name.includes('flour') ||
-        name.includes('bread') ||
-        name.includes('pasta') ||
-        name.includes('noodles') ||
-        name.includes('tortilla') ||
-        name.includes('oats')
-      ) {
-        allergens.add('gluten');
-      }
-
-      // Nuts
-      if (
-        name.includes('nut') ||
-        name.includes('almond') ||
-        name.includes('cashew') ||
-        name.includes('walnut')
-      ) {
-        allergens.add('nuts');
-      }
-
-      // Fish
-      if (name.includes('salmon') || name.includes('tuna') || name.includes('fish')) {
-        allergens.add('fish');
-      }
-
-      // Soy
-      if (name.includes('soy') || name.includes('tofu')) {
-        allergens.add('soy');
-      }
-
-      // Celery
-      if (name.includes('celery')) {
-        allergens.add('celery');
-      }
-    }
-
-    return Array.from(allergens);
   }
 
   for (const recipeData of recipes) {
@@ -1718,16 +1671,25 @@ async function main() {
       );
     }
 
-    // Create diet tags
-    const dietTagsToLink: string[] = [];
-    if (recipeInfo.isVegetarian) {
-      dietTagsToLink.push('vegetarian');
-    }
-    if (recipeInfo.isDairyFree) {
-      dietTagsToLink.push('dairy-free');
-    }
+    // Derive diet and allergen tags using canonical ingredient data
+    const ingredientsWithCanonical: IngredientWithCanonical[] = recipeIngredients.map((ing) => ({
+      name: ing.name,
+      canonicalIngredient: getCanonicalIngredientData(ing.name) ?? null,
+    }));
 
-    for (const tagName of dietTagsToLink) {
+    const derivedTags = deriveRecipeTags(ingredientsWithCanonical);
+
+    // Update recipe with derived boolean flags
+    await prisma.recipe.update({
+      where: { id: recipe.id },
+      data: {
+        isVegetarian: derivedTags.isVegetarian,
+        isDairyFree: derivedTags.isDairyFree,
+      },
+    });
+
+    // Create diet tags
+    for (const tagName of derivedTags.dietTags) {
       const tagId = dietTagMap.get(tagName);
       if (tagId) {
         await prisma.recipeDietTag.create({
@@ -1740,8 +1702,7 @@ async function main() {
     }
 
     // Create allergen tags
-    const allergens = getAllergensFromIngredients(recipeIngredients);
-    for (const allergenName of allergens) {
+    for (const allergenName of derivedTags.allergenTags) {
       const tagId = allergenTagMap.get(allergenName);
       if (tagId) {
         await prisma.recipeAllergenTag.create({

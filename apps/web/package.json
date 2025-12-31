@@ -20,6 +20,7 @@
     "preview": "next build && next start",
     "start": "next start",
     "email:test": "tsx scripts/send-password-reset-test.ts",
+    "backfill:tags": "tsx src/scripts/backfillRecipeTags.ts",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
