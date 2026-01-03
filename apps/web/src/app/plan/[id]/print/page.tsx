@@ -4,10 +4,11 @@ import PrintAutoTrigger from '~/app/_components/PrintAutoTrigger';
 import {
   buildPlanDateMetadata,
   formatIngredientForExport,
+  getInstructionsFromRecipe,
   getMealTypeLabel,
   groupPlanByDay,
+  hasDietTagInExport,
   normalizeMealPlanForExport,
-  summarizeInstructions,
 } from '~/lib/export/plan';
 import { auth } from '~/server/auth';
 import { api } from '~/trpc/server';
@@ -104,7 +105,9 @@ export default async function PlanPrintPage({ params }: PageProps) {
                   const ingredientLines = recipe.ingredients.map((ingredient) =>
                     formatIngredientForExport(ingredient.quantity, ingredient.unit, ingredient.name)
                   );
-                  const instructionSteps = summarizeInstructions(recipe.instructionsMd, 8);
+                  const instructionSteps = getInstructionsFromRecipe(recipe, 8);
+                  const isVegetarian = hasDietTagInExport(recipe, 'vegetarian');
+                  const isDairyFree = hasDietTagInExport(recipe, 'dairy-free');
 
                   return (
                     <div key={item.id} className="rounded-xl border border-gray-200 p-4">
@@ -115,10 +118,10 @@ export default async function PlanPrintPage({ params }: PageProps) {
                         </p>
                       </div>
                       <div className="mt-2 flex flex-wrap gap-4 text-sm text-gray-600">
-                        <span>⏱️ {recipe.minutes} min</span>
+                        <span>⏱️ {recipe.totalTimeMinutes} min</span>
                         <span>🔥 {recipe.calories} kcal</span>
-                        {recipe.isVegetarian && <span>🌱 Vegetarian</span>}
-                        {recipe.isDairyFree && <span>🥛 Dairy-Free</span>}
+                        {isVegetarian && <span>🌱 Vegetarian</span>}
+                        {isDairyFree && <span>🥛 Dairy-Free</span>}
                       </div>
                       <div className="mt-4 grid gap-4 md:grid-cols-2">
                         <div>

@@ -101,7 +101,12 @@ export interface Recipe {
   prepTimeMinutes: number | null;
   cookTimeMinutes: number | null;
   totalTimeMinutes: number | null;
-  minutes: number; // deprecated
+
+  /**
+   * @deprecated Use totalTimeMinutes or (prepTimeMinutes + cookTimeMinutes) instead.
+   * Will be removed in a future release.
+   */
+  minutes?: number;
 
   // Nutrition (basic)
   calories: number;
@@ -115,11 +120,29 @@ export interface Recipe {
   sourceUrl: string | null;
   sourceAttribution: string | null;
 
-  // Legacy fields (deprecated)
-  isVegetarian: boolean;
-  isDairyFree: boolean;
-  instructionsMd: string;
-  imageUrl: string | null;
+  /**
+   * @deprecated Use dietTags relation with 'vegetarian' tag instead.
+   * Will be removed in a future release.
+   */
+  isVegetarian?: boolean;
+
+  /**
+   * @deprecated Use allergenTags relation (absence of 'dairy' allergen) instead.
+   * Will be removed in a future release.
+   */
+  isDairyFree?: boolean;
+
+  /**
+   * @deprecated Use steps relation (RecipeStep[]) instead.
+   * Will be removed in a future release.
+   */
+  instructionsMd?: string;
+
+  /**
+   * @deprecated Use images relation (RecipeImage[]) with isPrimary=true instead.
+   * Will be removed in a future release.
+   */
+  imageUrl?: string | null;
 
   // Timestamps
   createdAt: Date;
@@ -143,7 +166,13 @@ export interface RecipeForPlanning {
   mealTypes: MealType[];
   servingsDefault: number;
   calories: number;
+  /**
+   * @deprecated Use dietTags instead
+   */
   isVegetarian: boolean;
+  /**
+   * @deprecated Use allergenTags instead
+   */
   isDairyFree: boolean;
   ingredients: Array<{
     ingredient: {
@@ -154,6 +183,37 @@ export interface RecipeForPlanning {
     quantity: number;
     unit: string;
   }>;
+}
+
+// Helper function to compute total time from recipe
+export function getRecipeTotalTime(recipe: {
+  totalTimeMinutes?: number | null;
+  prepTimeMinutes?: number | null;
+  cookTimeMinutes?: number | null;
+  minutes?: number;
+}): number {
+  if (recipe.totalTimeMinutes != null) {
+    return recipe.totalTimeMinutes;
+  }
+  if (recipe.prepTimeMinutes != null || recipe.cookTimeMinutes != null) {
+    return (recipe.prepTimeMinutes ?? 0) + (recipe.cookTimeMinutes ?? 0);
+  }
+  return recipe.minutes ?? 0;
+}
+
+// Helper function to get primary image URL
+export function getPrimaryImageUrl(
+  recipe: { images?: RecipeImage[]; imageUrl?: string | null },
+  fallback?: string
+): string | null {
+  const images = recipe.images;
+  if (images) {
+    const primaryImage = images.find((img) => img.isPrimary);
+    if (primaryImage) return primaryImage.url;
+    if (images.length > 0) return images[0]!.url;
+  }
+  if (recipe.imageUrl) return recipe.imageUrl;
+  return fallback ?? null;
 }
 
 // Input types for creating/updating recipes

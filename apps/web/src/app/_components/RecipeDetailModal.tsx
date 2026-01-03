@@ -3,6 +3,12 @@
 import Image from 'next/image';
 import { useEffect } from 'react';
 import {
+  getRecipeTotalTime,
+  getPrimaryImageUrl,
+  type RecipeImage,
+  type RecipeStep,
+} from '@meal-planner-demo/types';
+import {
   calculateDifficulty,
   getDifficultyColor,
   RECIPE_PLACEHOLDER_IMAGE,
@@ -19,17 +25,72 @@ type RecipeIngredient = {
   };
 };
 
+type DietTagRelation = {
+  dietTag: {
+    id: string;
+    name: string;
+  };
+};
+
 type Recipe = {
   id: string;
   title: string;
-  imageUrl: string | null;
   calories: number;
+  ingredients: RecipeIngredient[];
+  // New fields
+  prepTimeMinutes?: number | null;
+  cookTimeMinutes?: number | null;
+  totalTimeMinutes?: number | null;
+  images?: RecipeImage[];
+  steps?: RecipeStep[];
+  dietTags?: DietTagRelation[];
+  // Legacy fields (kept for backward compatibility)
   minutes: number;
+  imageUrl: string | null;
   instructionsMd: string;
   isVegetarian: boolean;
   isDairyFree: boolean;
-  ingredients: RecipeIngredient[];
 };
+
+// Helper to check if recipe has a diet tag
+function hasDietTag(recipe: Recipe, tagName: string): boolean {
+  if (recipe.dietTags) {
+    return recipe.dietTags.some((dt) => dt.dietTag.name.toLowerCase() === tagName);
+  }
+  // Fallback to deprecated fields
+  if (tagName === 'vegetarian') return recipe.isVegetarian;
+  if (tagName === 'dairy-free') return recipe.isDairyFree;
+  return false;
+}
+
+// Get time breakdown - use actual values if available, otherwise estimate
+function getTimeSplit(recipe: Recipe): { prep: number; cook: number; total: number } {
+  const total = getRecipeTotalTime(recipe);
+
+  if (recipe.prepTimeMinutes != null || recipe.cookTimeMinutes != null) {
+    return {
+      prep: recipe.prepTimeMinutes ?? 0,
+      cook: recipe.cookTimeMinutes ?? 0,
+      total,
+    };
+  }
+
+  // Fallback: estimate 30% prep, 70% cook
+  const prep = Math.floor(total * 0.3);
+  return { prep, cook: total - prep, total };
+}
+
+// Get instructions - use steps relation if available, otherwise parse markdown
+function getInstructions(recipe: Recipe): string[] {
+  if (recipe.steps && recipe.steps.length > 0) {
+    return recipe.steps
+      .sort((a, b) => a.stepNumber - b.stepNumber)
+      .map((step) => step.instruction);
+  }
+
+  // Fallback to parsing instructionsMd
+  return parseInstructionsMd(recipe.instructionsMd);
+}
 
 type MealPlanItem = {
   id: string;
@@ -49,18 +110,9 @@ interface RecipeDetailModalProps {
 }
 
 /**
- * Estimate prep vs cook time (simplified - in real app would come from DB)
+ * Parse markdown instructions into steps (fallback for legacy data)
  */
-function estimateTimeSplit(totalMinutes: number): { prep: number; cook: number } {
-  const prep = Math.floor(totalMinutes * 0.3);
-  const cook = totalMinutes - prep;
-  return { prep, cook };
-}
-
-/**
- * Parse markdown instructions into steps
- */
-function parseInstructions(markdown: string): string[] {
+function parseInstructionsMd(markdown: string): string[] {
   if (!markdown) return ['No instructions available.'];
 
   const lines = markdown
@@ -142,9 +194,12 @@ export default function RecipeDetailModal({
 }: RecipeDetailModalProps) {
   const { recipe, mealType, servings } = item;
 
-  const difficulty = calculateDifficulty(recipe.minutes, recipe.ingredients.length);
-  const timeSplit = estimateTimeSplit(recipe.minutes);
-  const instructions = parseInstructions(recipe.instructionsMd);
+  const timeSplit = getTimeSplit(recipe);
+  const difficulty = calculateDifficulty(timeSplit.total, recipe.ingredients.length);
+  const instructions = getInstructions(recipe);
+  const imageUrl = getPrimaryImageUrl(recipe, RECIPE_PLACEHOLDER_IMAGE);
+  const isVegetarian = hasDietTag(recipe, 'vegetarian');
+  const isDairyFree = hasDietTag(recipe, 'dairy-free');
 
   // Close modal on Escape key
   useEffect(() => {
@@ -192,7 +247,7 @@ export default function RecipeDetailModal({
           {/* Hero Image */}
           <div className="relative h-56 w-full overflow-hidden bg-gray-200 sm:h-64 sm:rounded-t-2xl">
             <Image
-              src={recipe.imageUrl ?? RECIPE_PLACEHOLDER_IMAGE}
+              src={imageUrl ?? RECIPE_PLACEHOLDER_IMAGE}
               alt={recipe.title}
               fill
               className="object-cover"
@@ -219,12 +274,12 @@ export default function RecipeDetailModal({
 
               {/* Dietary tags */}
               <div className="mt-3 flex flex-wrap gap-2">
-                {recipe.isVegetarian && (
+                {isVegetarian && (
                   <span className="inline-flex items-center rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-800">
                     🌱 Vegetarian
                   </span>
                 )}
-                {recipe.isDairyFree && (
+                {isDairyFree && (
                   <span className="inline-flex items-center rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-800">
                     🥛 Dairy-Free
                   </span>
@@ -235,7 +290,7 @@ export default function RecipeDetailModal({
               <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-4">
                 <div className="rounded-lg bg-gray-50 p-3 text-center">
                   <div className="text-2xl">⏱️</div>
-                  <div className="mt-1 text-sm font-medium text-gray-900">{recipe.minutes} min</div>
+                  <div className="mt-1 text-sm font-medium text-gray-900">{timeSplit.total} min</div>
                   <div className="text-xs text-gray-600">Total Time</div>
                 </div>
                 <div className="rounded-lg bg-gray-50 p-3 text-center">

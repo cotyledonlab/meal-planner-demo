@@ -2,9 +2,10 @@ import { Document, Page, StyleSheet, Text, View, renderToBuffer } from '@react-p
 import {
   buildPlanDateMetadata,
   createPlanFilename,
+  getInstructionsFromRecipe,
   getMealTypeLabel,
   groupPlanByDay,
-  summarizeInstructions,
+  hasDietTagInExport,
 } from '~/lib/export/plan';
 import type { ExportMealPlan } from '~/lib/export/plan';
 import { formatIngredientForExport } from '~/lib/export/plan';
@@ -145,7 +146,9 @@ function MealPlanPdfDocument({ plan, userName }: MealPlanPdfDocumentProps) {
               const ingredientLines = recipe.ingredients.map((ingredient) =>
                 formatIngredientForExport(ingredient.quantity, ingredient.unit, ingredient.name)
               );
-              const instructionSteps = summarizeInstructions(recipe.instructionsMd, 6);
+              const instructionSteps = getInstructionsFromRecipe(recipe, 6);
+              const isVegetarian = hasDietTagInExport(recipe, 'vegetarian');
+              const isDairyFree = hasDietTagInExport(recipe, 'dairy-free');
 
               return (
                 <View key={item.id} style={styles.recipeCard}>
@@ -157,10 +160,10 @@ function MealPlanPdfDocument({ plan, userName }: MealPlanPdfDocumentProps) {
                   </View>
 
                   <View style={styles.recipeBadges}>
-                    <Text style={styles.badge}>{recipe.minutes} min</Text>
+                    <Text style={styles.badge}>{recipe.totalTimeMinutes} min</Text>
                     <Text style={styles.badge}>{recipe.calories} kcal</Text>
-                    {recipe.isVegetarian && <Text style={styles.badge}>Vegetarian</Text>}
-                    {recipe.isDairyFree && <Text style={styles.badge}>Dairy-Free</Text>}
+                    {isVegetarian && <Text style={styles.badge}>Vegetarian</Text>}
+                    {isDairyFree && <Text style={styles.badge}>Dairy-Free</Text>}
                   </View>
 
                   <View style={styles.sectionHeading}>

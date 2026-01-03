@@ -3,6 +3,11 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import {
+  getRecipeTotalTime,
+  getPrimaryImageUrl,
+  type RecipeImage,
+} from '@meal-planner-demo/types';
+import {
   calculateDifficulty,
   getDifficultyColor,
   RECIPE_PLACEHOLDER_IMAGE,
@@ -19,17 +24,42 @@ type RecipeIngredient = {
   };
 };
 
+type DietTagRelation = {
+  dietTag: {
+    id: string;
+    name: string;
+  };
+};
+
 type Recipe = {
   id: string;
   title: string;
-  imageUrl: string | null;
   calories: number;
+  ingredients: RecipeIngredient[];
+  // New fields (optional for backward compatibility)
+  prepTimeMinutes?: number | null;
+  cookTimeMinutes?: number | null;
+  totalTimeMinutes?: number | null;
+  images?: RecipeImage[];
+  dietTags?: DietTagRelation[];
+  // Legacy fields (kept for backward compatibility with existing data)
   minutes: number;
-  instructionsMd: string;
+  imageUrl: string | null;
   isVegetarian: boolean;
   isDairyFree: boolean;
-  ingredients: RecipeIngredient[];
+  instructionsMd: string;
 };
+
+// Helper to check if recipe has a diet tag
+function hasDietTag(recipe: Recipe, tagName: string): boolean {
+  if (recipe.dietTags) {
+    return recipe.dietTags.some((dt) => dt.dietTag.name.toLowerCase() === tagName);
+  }
+  // Fallback to deprecated fields
+  if (tagName === 'vegetarian') return recipe.isVegetarian ?? false;
+  if (tagName === 'dairy-free') return recipe.isDairyFree ?? false;
+  return false;
+}
 
 type MealPlanItem = {
   id: string;
@@ -60,8 +90,12 @@ export default function RecipeCard({ item, onOpenDetail }: RecipeCardProps) {
   const [isActive, setIsActive] = useState(false);
   const { recipe, mealType, servings } = item;
 
-  const difficulty = calculateDifficulty(recipe.minutes, recipe.ingredients.length);
+  const totalTime = getRecipeTotalTime(recipe);
+  const difficulty = calculateDifficulty(totalTime, recipe.ingredients.length);
   const ingredientPreview = getIngredientPreview(recipe.ingredients);
+  const imageUrl = getPrimaryImageUrl(recipe, RECIPE_PLACEHOLDER_IMAGE);
+  const isVegetarian = hasDietTag(recipe, 'vegetarian');
+  const isDairyFree = hasDietTag(recipe, 'dairy-free');
 
   return (
     <button
@@ -78,7 +112,7 @@ export default function RecipeCard({ item, onOpenDetail }: RecipeCardProps) {
         {/* Recipe image - larger and more prominent */}
         <div className="relative h-48 w-full overflow-hidden rounded-2xl bg-gray-200 sm:h-40 sm:w-40 sm:flex-shrink-0 sm:rounded-lg">
           <Image
-            src={recipe.imageUrl ?? RECIPE_PLACEHOLDER_IMAGE}
+            src={imageUrl ?? RECIPE_PLACEHOLDER_IMAGE}
             alt={recipe.title}
             fill
             className="object-cover transition-transform duration-300 group-hover:scale-110"
@@ -105,12 +139,12 @@ export default function RecipeCard({ item, onOpenDetail }: RecipeCardProps) {
 
               {/* Dietary tags */}
               <div className="mt-2 flex flex-wrap gap-1">
-                {recipe.isVegetarian && (
+                {isVegetarian && (
                   <span className="inline-flex items-center rounded-full bg-green-50 px-2 py-0.5 text-xs font-medium text-green-700">
                     🌱 Vegetarian
                   </span>
                 )}
-                {recipe.isDairyFree && (
+                {isDairyFree && (
                   <span className="inline-flex items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700">
                     🥛 Dairy-Free
                   </span>
@@ -135,7 +169,7 @@ export default function RecipeCard({ item, onOpenDetail }: RecipeCardProps) {
           <div className="mt-4 grid grid-cols-2 gap-3 text-sm text-gray-600 sm:flex sm:flex-wrap sm:items-center sm:gap-4">
             <span className="flex items-center gap-1">
               <span>⏱️</span>
-              <span>{recipe.minutes} min</span>
+              <span>{totalTime} min</span>
             </span>
             <span className="flex items-center gap-1">
               <span>🔥</span>

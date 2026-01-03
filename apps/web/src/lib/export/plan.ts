@@ -1,3 +1,8 @@
+import {
+  getRecipeTotalTime,
+  type RecipeStep,
+  type StepType,
+} from '@meal-planner-demo/types';
 import { convertToNormalizedUnit, formatQuantity } from '~/lib/unitConverter';
 
 export type ExportIngredient = {
@@ -8,16 +13,48 @@ export type ExportIngredient = {
   unit: string;
 };
 
+export type ExportRecipeStep = {
+  stepNumber: number;
+  stepType: StepType;
+  instruction: string;
+  durationMinutes: number | null;
+  tips: string | null;
+};
+
+export type ExportDietTag = {
+  name: string;
+};
+
 export type ExportRecipe = {
   id: string;
   title: string;
-  minutes: number;
   calories: number;
-  instructionsMd: string;
-  isVegetarian: boolean;
-  isDairyFree: boolean;
   servingsDefault: number;
   ingredients: ExportIngredient[];
+
+  // New normalized fields
+  prepTimeMinutes: number | null;
+  cookTimeMinutes: number | null;
+  totalTimeMinutes: number;
+  steps: ExportRecipeStep[];
+  dietTags: ExportDietTag[];
+
+  /**
+   * @deprecated Use totalTimeMinutes instead
+   */
+  minutes: number;
+  /**
+   * @deprecated Use steps instead
+   */
+  instructionsMd: string;
+  /**
+   * @deprecated Use dietTags instead
+   */
+  isVegetarian: boolean;
+  /**
+   * @deprecated Use dietTags instead
+   */
+  isDairyFree: boolean;
 };
 
 export type ExportMealPlanItem = {
@@ -55,6 +92,41 @@ const DEFAULT_MEAL_TYPE_LABELS: Record<string, string> = {
   snack: 'Snack',
 };
 
+// Raw recipe type from database with both old and new fields
+type RawRecipeForExport = {
+  id: string;
+  title: string;
+  calories: number;
+  servingsDefault: number;
+  ingredients: Array<{
+    id: string;
+    quantity: number;
+    unit: string;
+    ingredient: {
+      id: string;
+      name: string;
+      category: string;
+    };
+  }>;
+  // New fields (optional for backward compatibility)
+  prepTimeMinutes?: number | null;
+  cookTimeMinutes?: number | null;
+  totalTimeMinutes?: number | null;
+  steps?: Array<{
+    stepNumber: number;
+    stepType: StepType;
+    instruction: string;
+    durationMinutes: number | null;
+    tips: string | null;
+  }>;
+  dietTags?: Array<{ dietTag: { name: string } }>;
+  // Legacy fields
+  minutes?: number;
+  instructionsMd?: string;
+  isVegetarian?: boolean;
+  isDairyFree?: boolean;
+};
+
 /**
  * Normalize a meal plan fetched from the database or API into a structure that
  * is safe to use in server-only contexts (e.g. PDF generation or CSV export).
@@ -68,26 +140,7 @@ export function normalizeMealPlanForExport(rawPlan: {
     dayIndex: number;
     mealType: string;
     servings: number;
-    recipe: {
-      id: string;
-      title: string;
-      minutes: number;
-      calories: number;
-      instructionsMd: string;
-      isVegetarian: boolean;
-      isDairyFree: boolean;
-      servingsDefault: number;
-      ingredients: Array<{
-        id: string;
-        quantity: number;
-        unit: string;
-        ingredient: {
-          id: string;
-          name: string;
-          category: string;
-        };
-      }>;
-    };
+    recipe: RawRecipeForExport;
   }>;
 }): ExportMealPlan {
   const startDate =
@@ -97,30 +150,106 @@ export function normalizeMealPlanForExport(rawPlan: {
     id: rawPlan.id,
     startDate,
     days: rawPlan.days,
-    items: rawPlan.items.map((item) => ({
-      id: item.id,
-      dayIndex: item.dayIndex,
-      mealType: item.mealType,
-      servings: item.servings,
-      recipe: {
-        id: item.recipe.id,
-        title: item.recipe.title,
-        minutes: item.recipe.minutes,
-        calories: item.recipe.calories,
-        instructionsMd: item.recipe.instructionsMd,
-        isVegetarian: item.recipe.isVegetarian,
-        isDairyFree: item.recipe.isDairyFree,
-        servingsDefault: item.recipe.servingsDefault,
-        ingredients: item.recipe.ingredients.map((ingredient) => ({
-          id: ingredient.id,
-          name: ingredient.ingredient.name,
-          category: ingredient.ingredient.category,
-          quantity: ingredient.quantity,
-          unit: ingredient.unit,
-        })),
-      },
-    })),
+    items: rawPlan.items.map((item) => {
+      const recipe = item.recipe;
+      const totalTime = getRecipeTotalTime(recipe);
+
+      // Convert steps from relation or parse from markdown
+      const steps: ExportRecipeStep[] =
+        recipe.steps && recipe.steps.length > 0
+          ? recipe.steps.map((s) => ({
+              stepNumber: s.stepNumber,
+              stepType: s.stepType,
+              instruction: s.instruction,
+              durationMinutes: s.durationMinutes,
+              tips: s.tips,
+            }))
+          : parseInstructionsToSteps(recipe.instructionsMd ?? '');
+
+      // Extract diet tags from relation or compute from legacy fields
+      const dietTags: ExportDietTag[] = recipe.dietTags
+        ? recipe.dietTags.map((dt) => ({ name: dt.dietTag.name }))
+        : computeLegacyDietTags(recipe);
+
+      // Check diet properties using new tags or legacy fields
+      const isVegetarian = dietTags.some((t) => t.name.toLowerCase() === 'vegetarian') ||
+        recipe.isVegetarian === true;
+      const isDairyFree = dietTags.some((t) => t.name.toLowerCase() === 'dairy-free') ||
+        recipe.isDairyFree === true;
+
+      return {
+        id: item.id,
+        dayIndex: item.dayIndex,
+        mealType: item.mealType,
+        servings: item.servings,
+        recipe: {
+          id: recipe.id,
+          title: recipe.title,
+          calories: recipe.calories,
+          servingsDefault: recipe.servingsDefault,
+          ingredients: recipe.ingredients.map((ingredient) => ({
+            id: ingredient.id,
+            name: ingredient.ingredient.name,
+            category: ingredient.ingredient.category,
+            quantity: ingredient.quantity,
+            unit: ingredient.unit,
+          })),
+          // New fields
+          prepTimeMinutes: recipe.prepTimeMinutes ?? null,
+          cookTimeMinutes: recipe.cookTimeMinutes ?? null,
+          totalTimeMinutes: totalTime,
+          steps,
+          dietTags,
+          // Legacy fields (for backward compatibility)
+          minutes: totalTime,
+          instructionsMd: recipe.instructionsMd ?? stepsToMarkdown(steps),
+          isVegetarian,
+          isDairyFree,
+        },
+      };
+    }),
   };
+}
+
+/**
+ * Parse markdown instructions into step objects (fallback for legacy data)
+ */
+function parseInstructionsToSteps(markdown: string): ExportRecipeStep[] {
+  if (!markdown) return [];
+
+  const lines = markdown
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line) => line.replace(/^[-*]\s+/, '').replace(/^\d+[\.).]\s+/, ''));
+
+  return lines.map((instruction, index) => ({
+    stepNumber: index + 1,
+    stepType: 'PREP' as StepType,
+    instruction,
+    durationMinutes: null,
+    tips: null,
+  }));
+}
+
+/**
+ * Convert steps back to markdown (for legacy field compatibility)
+ */
+function stepsToMarkdown(steps: ExportRecipeStep[]): string {
+  return steps
+    .sort((a, b) => a.stepNumber - b.stepNumber)
+    .map((step) => `${step.stepNumber}. ${step.instruction}`)
+    .join('\n');
+}
+
+/**
+ * Compute diet tags from legacy boolean fields
+ */
+function computeLegacyDietTags(recipe: RawRecipeForExport): ExportDietTag[] {
+  const tags: ExportDietTag[] = [];
+  if (recipe.isVegetarian) tags.push({ name: 'vegetarian' });
+  if (recipe.isDairyFree) tags.push({ name: 'dairy-free' });
+  return tags;
 }
 
 /**
@@ -199,7 +328,27 @@ export function createPlanFilename(
 }
 
 /**
+ * Get instructions from recipe (prefers steps array, falls back to markdown)
+ */
+export function getInstructionsFromRecipe(
+  recipe: { steps?: ExportRecipeStep[]; instructionsMd?: string },
+  maxSteps = 6
+): string[] {
+  // Prefer structured steps
+  if (recipe.steps && recipe.steps.length > 0) {
+    return recipe.steps
+      .sort((a, b) => a.stepNumber - b.stepNumber)
+      .slice(0, maxSteps)
+      .map((step) => step.instruction);
+  }
+
+  // Fall back to parsing markdown
+  return summarizeInstructions(recipe.instructionsMd ?? '', maxSteps);
+}
+
+/**
  * Convert markdown instructions into a condensed list of steps.
+ * @deprecated Use getInstructionsFromRecipe instead
  */
 export function summarizeInstructions(markdown: string, maxSteps = 6): string[] {
   const lines = markdown
@@ -216,6 +365,13 @@ export function summarizeInstructions(markdown: string, maxSteps = 6): string[] 
   }
 
   return deduped;
+}
+
+/**
+ * Check if recipe has a specific diet tag
+ */
+export function hasDietTagInExport(recipe: ExportRecipe, tagName: string): boolean {
+  return recipe.dietTags.some((t) => t.name.toLowerCase() === tagName.toLowerCase());
 }
 
 /**

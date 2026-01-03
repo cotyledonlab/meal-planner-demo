@@ -155,7 +155,7 @@ model Recipe {
   prepTimeMinutes  Int? // Preparation time
   cookTimeMinutes  Int? // Cooking time
   totalTimeMinutes Int? // Total time (can be computed or override)
-  minutes          Int // @deprecated: use prepTimeMinutes + cookTimeMinutes
+  minutes          Int? // @deprecated: use totalTimeMinutes or (prepTimeMinutes + cookTimeMinutes)
 
   // Nutrition (basic - detailed in RecipeNutrition)
   calories Int
@@ -172,8 +172,8 @@ model Recipe {
   // Legacy fields - @deprecated, will be removed after migration
   isVegetarian   Boolean @default(false)
   isDairyFree    Boolean @default(false)
-  instructionsMd String  @db.Text
-  imageUrl       String?
+  instructionsMd String? @db.Text // @deprecated: use steps relation
+  imageUrl       String? // @deprecated: use images relation
 
   // Relations
   ingredients   RecipeIngredient[]

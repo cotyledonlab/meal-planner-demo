@@ -29,6 +29,16 @@ export const env = createEnv({
     GEMINI_API_KEY: z.string().optional(),
     GEMINI_IMAGE_MODEL: z.string().optional().default('gemini-2.5-flash-image'),
     GEMINI_IMAGE_FALLBACK_MODEL: z.string().optional().default('gemini-2.5-flash-image'),
+    // Storage provider configuration
+    STORAGE_PROVIDER: z.enum(['local', 's3']).optional().default('local'),
+    // S3-compatible storage configuration (required when STORAGE_PROVIDER=s3)
+    S3_BUCKET: z.string().optional(),
+    S3_REGION: z.string().optional().default('us-east-1'),
+    S3_ACCESS_KEY_ID: z.string().optional(),
+    S3_SECRET_ACCESS_KEY: z.string().optional(),
+    S3_ENDPOINT: z.string().url().optional(), // For S3-compatible services (MinIO, DigitalOcean Spaces, etc.)
+    S3_FORCE_PATH_STYLE: z.enum(['true', 'false']).optional().default('false'),
+    S3_PUBLIC_URL_PREFIX: z.string().url().optional(), // Custom CDN or public URL prefix
   },
 
   /**
@@ -62,6 +72,14 @@ export const env = createEnv({
     GEMINI_API_KEY: process.env.GEMINI_API_KEY,
     GEMINI_IMAGE_MODEL: process.env.GEMINI_IMAGE_MODEL,
     GEMINI_IMAGE_FALLBACK_MODEL: process.env.GEMINI_IMAGE_FALLBACK_MODEL,
+    STORAGE_PROVIDER: process.env.STORAGE_PROVIDER,
+    S3_BUCKET: process.env.S3_BUCKET,
+    S3_REGION: process.env.S3_REGION,
+    S3_ACCESS_KEY_ID: process.env.S3_ACCESS_KEY_ID,
+    S3_SECRET_ACCESS_KEY: process.env.S3_SECRET_ACCESS_KEY,
+    S3_ENDPOINT: process.env.S3_ENDPOINT,
+    S3_FORCE_PATH_STYLE: process.env.S3_FORCE_PATH_STYLE,
+    S3_PUBLIC_URL_PREFIX: process.env.S3_PUBLIC_URL_PREFIX,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

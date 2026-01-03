@@ -1,9 +1,6 @@
-import { existsSync } from 'fs';
-import { mkdir, writeFile } from 'fs/promises';
-import path from 'path';
 import crypto from 'crypto';
+import { getStorageProvider } from './storage';
 
-const GENERATED_DIR = path.join(resolvePublicDir(), 'generated-images');
 const MIME_EXTENSION: Record<string, string> = {
   'image/png': 'png',
   'image/jpeg': 'jpg',
@@ -11,23 +8,21 @@ const MIME_EXTENSION: Record<string, string> = {
   'image/webp': 'webp',
 };
 
-let ensureDirPromise: Promise<void> | null = null;
-
-async function ensureDir() {
-  ensureDirPromise ??= (async () => {
-    try {
-      await mkdir(GENERATED_DIR, { recursive: true });
-    } catch (error) {
-      ensureDirPromise = null;
-      throw error;
-    }
-  })();
-
-  await ensureDirPromise;
+function getExtension(mimeType: string): string {
+  return MIME_EXTENSION[mimeType] ?? 'png';
 }
 
-function getExtension(mimeType: string) {
-  return MIME_EXTENSION[mimeType] ?? 'png';
+/**
+ * Generate a storage key for an image based on prompt and MIME type.
+ */
+function generateImageKey(prompt: string, mimeType: string): string {
+  const extension = getExtension(mimeType);
+  const slug = prompt
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 32);
+  return `${slug || 'image'}-${Date.now()}-${crypto.randomUUID()}.${extension}`;
 }
 
 export interface SaveGeneratedImageInput {
@@ -43,41 +38,28 @@ export interface SaveGeneratedImageResult {
   fileSize: number;
 }
 
+/**
+ * Save a generated image using the configured storage provider.
+ * Maintains backward compatibility with the original interface.
+ */
 export async function saveGeneratedImage({
   data,
   mimeType,
   prompt,
 }: SaveGeneratedImageInput): Promise<SaveGeneratedImageResult> {
-  if (!data?.length) {
-    throw new Error('Cannot save empty image buffer');
-  }
+  const storage = getStorageProvider();
+  const key = generateImageKey(prompt, mimeType);
 
-  await ensureDir();
-
-  const extension = getExtension(mimeType);
-  const slug = prompt
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
-    .slice(0, 32);
-  const fileName = `${slug || 'image'}-${Date.now()}-${crypto.randomUUID()}.${extension}`;
-  const absolutePath = path.join(GENERATED_DIR, fileName);
-  const relativePath = path.posix.join('/generated-images', fileName);
-
-  await writeFile(absolutePath, data);
+  const result = await storage.save({
+    data,
+    mimeType,
+    key,
+  });
 
   return {
-    fileName,
-    absolutePath,
-    relativePath,
-    fileSize: data.length,
+    fileName: key,
+    absolutePath: result.absolutePath ?? result.url,
+    relativePath: result.url,
+    fileSize: result.fileSize,
   };
-}
-function resolvePublicDir() {
-  const cwd = process.cwd();
-  const directPublic = path.join(cwd, 'public');
-  if (existsSync(directPublic)) {
-    return directPublic;
-  }
-  return path.join(cwd, 'apps', 'web', 'public');
 }
