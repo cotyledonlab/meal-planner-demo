@@ -27,6 +27,13 @@ type DietTagRelation = {
   };
 };
 
+type AllergenTagRelation = {
+  allergenTag: {
+    id: string;
+    name: string;
+  };
+};
+
 type Recipe = {
   id: string;
   title: string;
@@ -36,14 +43,16 @@ type Recipe = {
   prepTimeMinutes?: number | null;
   cookTimeMinutes?: number | null;
   totalTimeMinutes?: number | null;
+  difficulty?: 'EASY' | 'MEDIUM' | 'HARD';
   images?: RecipeImage[];
   dietTags?: DietTagRelation[];
+  allergenTags?: AllergenTagRelation[];
   // Legacy fields (kept for backward compatibility with existing data)
-  minutes: number;
+  minutes: number | null;
   imageUrl: string | null;
   isVegetarian: boolean;
   isDairyFree: boolean;
-  instructionsMd: string;
+  instructionsMd: string | null;
 };
 
 // Helper to check if recipe has a diet tag
@@ -82,16 +91,60 @@ function getIngredientPreview(ingredients: RecipeIngredient[]): string {
   return ingredients.length > 3 ? `${topIngredients}...` : topIngredients;
 }
 
+// Normalize database difficulty (uppercase) to display format (title case)
+function normalizeDifficulty(
+  difficulty: 'EASY' | 'MEDIUM' | 'HARD' | undefined
+): 'Easy' | 'Medium' | 'Hard' | undefined {
+  if (!difficulty) return undefined;
+  const map: Record<'EASY' | 'MEDIUM' | 'HARD', 'Easy' | 'Medium' | 'Hard'> = {
+    EASY: 'Easy',
+    MEDIUM: 'Medium',
+    HARD: 'Hard',
+  };
+  return map[difficulty];
+}
+
+// Get diet tags to display (beyond vegetarian/dairy-free)
+function getDisplayDietTags(recipe: Recipe): string[] {
+  if (!recipe.dietTags) return [];
+  return recipe.dietTags
+    .map((dt) => dt.dietTag.name)
+    .filter((name) => !['vegetarian', 'dairy-free'].includes(name.toLowerCase()));
+}
+
+// Get allergen tags for display
+function getAllergenTags(recipe: Recipe): string[] {
+  if (!recipe.allergenTags) return [];
+  return recipe.allergenTags.map((at) => at.allergenTag.name);
+}
+
+// Format time display with prep/cook breakdown
+function formatTimeDisplay(recipe: Recipe): { total: number; breakdown: string | null } {
+  const total = getRecipeTotalTime(recipe);
+  const prep = recipe.prepTimeMinutes;
+  const cook = recipe.cookTimeMinutes;
+
+  if (prep && cook) {
+    return { total, breakdown: `${prep}m prep + ${cook}m cook` };
+  }
+  return { total, breakdown: null };
+}
+
 export default function RecipeCard({ item, onOpenDetail }: RecipeCardProps) {
   const [isActive, setIsActive] = useState(false);
   const { recipe, mealType, servings } = item;
 
-  const totalTime = getRecipeTotalTime(recipe);
-  const difficulty = calculateDifficulty(totalTime, recipe.ingredients.length);
+  const timeInfo = formatTimeDisplay(recipe);
+  // Use database difficulty if available, otherwise calculate
+  const difficulty =
+    normalizeDifficulty(recipe.difficulty) ??
+    calculateDifficulty(timeInfo.total, recipe.ingredients.length);
   const ingredientPreview = getIngredientPreview(recipe.ingredients);
   const imageUrl = getPrimaryImageUrl(recipe, RECIPE_PLACEHOLDER_IMAGE);
   const isVegetarian = hasDietTag(recipe, 'vegetarian');
   const isDairyFree = hasDietTag(recipe, 'dairy-free');
+  const otherDietTags = getDisplayDietTags(recipe);
+  const allergenTags = getAllergenTags(recipe);
 
   return (
     <button
@@ -145,6 +198,20 @@ export default function RecipeCard({ item, onOpenDetail }: RecipeCardProps) {
                     🥛 Dairy-Free
                   </span>
                 )}
+                {otherDietTags.slice(0, 2).map((tag) => (
+                  <span
+                    key={tag}
+                    className="inline-flex items-center rounded-full bg-purple-50 px-2 py-0.5 text-xs font-medium text-purple-700 capitalize"
+                  >
+                    {tag}
+                  </span>
+                ))}
+                {allergenTags.length > 0 && (
+                  <span className="inline-flex items-center rounded-full bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700">
+                    ⚠️ Contains: {allergenTags.slice(0, 2).join(', ')}
+                    {allergenTags.length > 2 && ` +${allergenTags.length - 2}`}
+                  </span>
+                )}
               </div>
             </div>
           </div>
@@ -163,9 +230,16 @@ export default function RecipeCard({ item, onOpenDetail }: RecipeCardProps) {
 
           {/* Stats row */}
           <div className="mt-4 grid grid-cols-2 gap-3 text-sm text-gray-600 sm:flex sm:flex-wrap sm:items-center sm:gap-4">
-            <span className="flex items-center gap-1">
+            <span className="flex items-center gap-1" title={timeInfo.breakdown ?? undefined}>
               <span>⏱️</span>
-              <span>{totalTime} min</span>
+              <span>
+                {timeInfo.total} min
+                {timeInfo.breakdown && (
+                  <span className="hidden sm:inline text-xs text-gray-400 ml-1">
+                    ({timeInfo.breakdown})
+                  </span>
+                )}
+              </span>
             </span>
             <span className="flex items-center gap-1">
               <span>🔥</span>

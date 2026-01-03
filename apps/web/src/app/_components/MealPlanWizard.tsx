@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { ChevronDownIcon } from '@heroicons/react/24/outline';
+import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
 
 interface MealPlanWizardProps {
   onComplete: (preferences: MealPreferences) => void;
@@ -16,7 +16,34 @@ export interface MealPreferences {
   isVegetarian: boolean;
   isDairyFree: boolean;
   dislikes: string;
+  // Advanced filters
+  difficulty?: 'EASY' | 'MEDIUM' | 'HARD' | null;
+  maxTotalTime?: number | null;
+  excludeAllergens?: string[];
 }
+
+// Allergen options for exclusion
+const ALLERGEN_OPTIONS = [
+  { id: 'gluten', label: 'Gluten', emoji: '🌾' },
+  { id: 'dairy', label: 'Dairy', emoji: '🧀' },
+  { id: 'eggs', label: 'Eggs', emoji: '🥚' },
+  { id: 'nuts', label: 'Tree Nuts', emoji: '🥜' },
+  { id: 'peanuts', label: 'Peanuts', emoji: '🥜' },
+  { id: 'soy', label: 'Soy', emoji: '🫘' },
+  { id: 'shellfish', label: 'Shellfish', emoji: '🦐' },
+  { id: 'fish', label: 'Fish', emoji: '🐟' },
+  { id: 'sesame', label: 'Sesame', emoji: '🌱' },
+] as const;
+
+// Max cooking time options
+const MAX_TIME_OPTIONS = [
+  { value: null, label: 'Any time' },
+  { value: 15, label: '15 minutes or less' },
+  { value: 30, label: '30 minutes or less' },
+  { value: 45, label: '45 minutes or less' },
+  { value: 60, label: '1 hour or less' },
+  { value: 90, label: '90 minutes or less' },
+] as const;
 
 // Animation timing constants
 const ICON_ANIMATION_DELAY_MS = 50;
@@ -35,6 +62,11 @@ export default function MealPlanWizard({
   const [dislikes, setDislikes] = useState('');
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [justChanged, setJustChanged] = useState<string | null>(null);
+  // Advanced filters
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+  const [difficulty, setDifficulty] = useState<'EASY' | 'MEDIUM' | 'HARD' | null>(null);
+  const [maxTotalTime, setMaxTotalTime] = useState<number | null>(null);
+  const [excludeAllergens, setExcludeAllergens] = useState<string[]>([]);
 
   // Check if form has any user input (different from defaults)
   const hasUserInput =
@@ -43,7 +75,10 @@ export default function MealPlanWizard({
     days !== (isPremium ? 7 : 3) ||
     isVegetarian ||
     isDairyFree ||
-    dislikes.trim().length > 0;
+    dislikes.trim().length > 0 ||
+    difficulty !== null ||
+    maxTotalTime !== null ||
+    excludeAllergens.length > 0;
 
   const handleClose = useCallback(() => {
     if (hasUserInput) {
@@ -76,7 +111,24 @@ export default function MealPlanWizard({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onComplete({ householdSize, mealsPerDay, days, isVegetarian, isDairyFree, dislikes });
+    onComplete({
+      householdSize,
+      mealsPerDay,
+      days,
+      isVegetarian,
+      isDairyFree,
+      dislikes,
+      difficulty,
+      maxTotalTime,
+      excludeAllergens,
+    });
+  };
+
+  // Toggle allergen exclusion
+  const toggleAllergen = (allergenId: string) => {
+    setExcludeAllergens((prev) =>
+      prev.includes(allergenId) ? prev.filter((a) => a !== allergenId) : [...prev, allergenId]
+    );
   };
 
   // Track changes for animations
@@ -480,6 +532,159 @@ export default function MealPlanWizard({
                   <p className="mt-2 text-xs text-gray-700">
                     💬 Separate multiple items with commas
                   </p>
+                </div>
+
+                {/* Advanced Options (Collapsible) */}
+                <div className="rounded-2xl border-2 border-gray-200 bg-white shadow-sm overflow-hidden">
+                  <button
+                    type="button"
+                    onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
+                    className="flex w-full items-center justify-between px-4 py-3 text-left transition hover:bg-gray-50"
+                    aria-expanded={showAdvancedFilters}
+                  >
+                    <span className="flex items-center gap-2 text-sm font-semibold text-gray-900">
+                      <span>⚙️</span>
+                      <span>Advanced Options</span>
+                      {(difficulty !== null ||
+                        maxTotalTime !== null ||
+                        excludeAllergens.length > 0) && (
+                        <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700">
+                          {[
+                            difficulty && '1',
+                            maxTotalTime && '1',
+                            excludeAllergens.length > 0 && excludeAllergens.length.toString(),
+                          ]
+                            .filter(Boolean)
+                            .reduce((a, b) => String(Number(a) + Number(b)), '0')}{' '}
+                          active
+                        </span>
+                      )}
+                    </span>
+                    {showAdvancedFilters ? (
+                      <ChevronUpIcon className="h-5 w-5 text-gray-500" />
+                    ) : (
+                      <ChevronDownIcon className="h-5 w-5 text-gray-500" />
+                    )}
+                  </button>
+
+                  {showAdvancedFilters && (
+                    <div className="border-t border-gray-200 px-4 py-4 space-y-5">
+                      {/* Difficulty */}
+                      <div className="group">
+                        <label
+                          htmlFor="difficulty"
+                          className="flex items-center gap-2 text-sm font-semibold text-gray-900"
+                        >
+                          <span>Recipe difficulty</span>
+                          <span
+                            className="text-sm leading-none sm:text-base"
+                            role="img"
+                            aria-label="difficulty"
+                          >
+                            📊
+                          </span>
+                        </label>
+                        <div className="relative mt-2">
+                          <select
+                            id="difficulty"
+                            value={difficulty ?? ''}
+                            onChange={(e) =>
+                              setDifficulty(
+                                e.target.value === ''
+                                  ? null
+                                  : (e.target.value as 'EASY' | 'MEDIUM' | 'HARD')
+                              )
+                            }
+                            className="block w-full appearance-none rounded-xl border-2 border-gray-200 bg-white px-4 py-3 pr-12 text-base text-gray-900 shadow-sm transition hover:border-emerald-300 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                          >
+                            <option value="">Any difficulty</option>
+                            <option value="EASY">Easy - Quick & simple</option>
+                            <option value="MEDIUM">Medium - Some skill needed</option>
+                            <option value="HARD">Hard - For experienced cooks</option>
+                          </select>
+                          <ChevronDownIcon
+                            className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-600"
+                            aria-hidden="true"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Max Cooking Time */}
+                      <div className="group">
+                        <label
+                          htmlFor="maxTotalTime"
+                          className="flex items-center gap-2 text-sm font-semibold text-gray-900"
+                        >
+                          <span>Maximum cooking time</span>
+                          <span
+                            className="text-sm leading-none sm:text-base"
+                            role="img"
+                            aria-label="time"
+                          >
+                            ⏱️
+                          </span>
+                        </label>
+                        <div className="relative mt-2">
+                          <select
+                            id="maxTotalTime"
+                            value={maxTotalTime ?? ''}
+                            onChange={(e) =>
+                              setMaxTotalTime(e.target.value === '' ? null : Number(e.target.value))
+                            }
+                            className="block w-full appearance-none rounded-xl border-2 border-gray-200 bg-white px-4 py-3 pr-12 text-base text-gray-900 shadow-sm transition hover:border-emerald-300 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                          >
+                            {MAX_TIME_OPTIONS.map((option) => (
+                              <option key={option.label} value={option.value ?? ''}>
+                                {option.label}
+                              </option>
+                            ))}
+                          </select>
+                          <ChevronDownIcon
+                            className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-600"
+                            aria-hidden="true"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Allergen Exclusions */}
+                      <div className="group">
+                        <span className="flex items-center gap-2 text-sm font-semibold text-gray-900">
+                          <span>Exclude allergens</span>
+                          <span
+                            className="text-sm leading-none sm:text-base"
+                            role="img"
+                            aria-label="allergens"
+                          >
+                            ⚠️
+                          </span>
+                        </span>
+                        <p className="mt-1 text-xs text-gray-600">
+                          Select any allergens to exclude from your meal plan
+                        </p>
+                        <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
+                          {ALLERGEN_OPTIONS.map((allergen) => (
+                            <label
+                              key={allergen.id}
+                              className={`flex cursor-pointer items-center gap-2 rounded-lg border-2 px-3 py-2 text-sm transition ${
+                                excludeAllergens.includes(allergen.id)
+                                  ? 'border-red-400 bg-red-50 text-red-700'
+                                  : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300'
+                              }`}
+                            >
+                              <input
+                                type="checkbox"
+                                checked={excludeAllergens.includes(allergen.id)}
+                                onChange={() => toggleAllergen(allergen.id)}
+                                className="sr-only"
+                              />
+                              <span>{allergen.emoji}</span>
+                              <span>{allergen.label}</span>
+                            </label>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Submit button */}

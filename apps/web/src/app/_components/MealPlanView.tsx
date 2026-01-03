@@ -20,16 +20,37 @@ type RecipeIngredient = {
   };
 };
 
+type DietTagRelation = {
+  dietTag: {
+    id: string;
+    name: string;
+  };
+};
+
+type AllergenTagRelation = {
+  allergenTag: {
+    id: string;
+    name: string;
+  };
+};
+
 type Recipe = {
   id: string;
   title: string;
   imageUrl: string | null;
   calories: number;
-  minutes: number;
-  instructionsMd: string;
+  minutes: number | null;
+  instructionsMd: string | null;
   isVegetarian: boolean;
   isDairyFree: boolean;
   ingredients: RecipeIngredient[];
+  // Optional new fields from enhanced API
+  prepTimeMinutes?: number | null;
+  cookTimeMinutes?: number | null;
+  totalTimeMinutes?: number | null;
+  difficulty?: 'EASY' | 'MEDIUM' | 'HARD';
+  dietTags?: DietTagRelation[];
+  allergenTags?: AllergenTagRelation[];
 };
 
 type MealPlanItem = {

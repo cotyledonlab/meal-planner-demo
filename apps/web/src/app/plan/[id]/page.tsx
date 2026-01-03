@@ -2,7 +2,7 @@ import { notFound, redirect } from 'next/navigation';
 import Link from 'next/link';
 import { auth } from '~/server/auth';
 import { api, HydrateClient } from '~/trpc/server';
-import MealPlanView from '~/app/_components/MealPlanView';
+import PlanPageClient from '~/app/_components/PlanPageClient';
 import ExportButtons from '~/app/_components/ExportButtons';
 import ShoppingList from '~/app/_components/ShoppingList';
 
@@ -79,9 +79,13 @@ export default async function PlanPage({ params }: PageProps) {
         </div>
 
         <div className="grid gap-8 lg:grid-cols-3">
-          {/* Meal Plan */}
+          {/* Meal Plan with Filter Panel */}
           <div className="lg:col-span-2">
-            <MealPlanView plan={plan} shoppingListAnchorId={shoppingListAnchorId} />
+            <PlanPageClient
+              planId={id}
+              initialPlan={plan}
+              shoppingListAnchorId={shoppingListAnchorId}
+            />
           </div>
 
           {/* Shopping List */}

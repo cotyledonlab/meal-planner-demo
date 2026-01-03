@@ -45,9 +45,9 @@ type Recipe = {
   steps?: RecipeStep[];
   dietTags?: DietTagRelation[];
   // Legacy fields (kept for backward compatibility)
-  minutes: number;
+  minutes: number | null;
   imageUrl: string | null;
-  instructionsMd: string;
+  instructionsMd: string | null;
   isVegetarian: boolean;
   isDairyFree: boolean;
 };
@@ -87,6 +87,9 @@ function getInstructions(recipe: Recipe): string[] {
   }
 
   // Fallback to parsing instructionsMd
+  if (!recipe.instructionsMd) {
+    return [];
+  }
   return parseInstructionsMd(recipe.instructionsMd);
 }
 

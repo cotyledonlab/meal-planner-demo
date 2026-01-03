@@ -32,6 +32,11 @@ interface GeneratePlanInput {
   isVegetarian?: boolean;
   isDairyFree?: boolean;
   dislikes?: string | null;
+  // Advanced filters
+  difficulty?: 'EASY' | 'MEDIUM' | 'HARD';
+  maxTotalTime?: number;
+  dietTagIds?: string[];
+  excludeAllergenTagIds?: string[];
 }
 
 interface MealPlanOutput {
@@ -60,6 +65,11 @@ export class PlanGenerator {
       isVegetarian = false,
       isDairyFree = false,
       dislikes = null,
+      // Advanced filters
+      difficulty,
+      maxTotalTime,
+      dietTagIds,
+      excludeAllergenTagIds,
     } = input;
 
     // Get user to check their role/plan limits
@@ -91,6 +101,11 @@ export class PlanGenerator {
       status: 'APPROVED',
       isVegetarian: isVegetarian || undefined,
       isDairyFree: isDairyFree || undefined,
+      // Advanced filters
+      difficulty,
+      maxTotalTime,
+      dietTagIds,
+      excludeAllergenTagIds,
     });
 
     if (recipesMatchingDiet.length === 0) {

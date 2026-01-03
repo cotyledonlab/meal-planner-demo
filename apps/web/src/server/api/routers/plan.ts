@@ -27,6 +27,11 @@ export const planRouter = createTRPCRouter({
         isVegetarian: z.boolean().optional(),
         isDairyFree: z.boolean().optional(),
         dislikes: z.string().optional(),
+        // Advanced filters
+        difficulty: z.enum(['EASY', 'MEDIUM', 'HARD']).optional().nullable(),
+        maxTotalTime: z.number().min(1).optional().nullable(),
+        dietTagIds: z.array(z.string()).optional(),
+        excludeAllergenTagIds: z.array(z.string()).optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -41,6 +46,11 @@ export const planRouter = createTRPCRouter({
           isVegetarian: input.isVegetarian,
           isDairyFree: input.isDairyFree,
           dislikes: input.dislikes,
+          // Advanced filters
+          difficulty: input.difficulty ?? undefined,
+          maxTotalTime: input.maxTotalTime ?? undefined,
+          dietTagIds: input.dietTagIds,
+          excludeAllergenTagIds: input.excludeAllergenTagIds,
         });
 
         // Validate plan object before returning
@@ -114,6 +124,16 @@ export const planRouter = createTRPCRouter({
                       ingredient: true,
                     },
                   },
+                  dietTags: {
+                    include: {
+                      dietTag: true,
+                    },
+                  },
+                  allergenTags: {
+                    include: {
+                      allergenTag: true,
+                    },
+                  },
                 },
               },
             },
@@ -146,6 +166,16 @@ export const planRouter = createTRPCRouter({
                 ingredients: {
                   include: {
                     ingredient: true,
+                  },
+                },
+                dietTags: {
+                  include: {
+                    dietTag: true,
+                  },
+                },
+                allergenTags: {
+                  include: {
+                    allergenTag: true,
                   },
                 },
               },
@@ -338,5 +368,151 @@ export const planRouter = createTRPCRouter({
       });
 
       return updatedPlan;
+    }),
+
+  regenerate: protectedProcedure
+    .input(
+      z.object({
+        planId: z.string(),
+        // Filter overrides (optional)
+        difficulty: z.enum(['EASY', 'MEDIUM', 'HARD']).optional().nullable(),
+        maxTotalTime: z.number().min(1).optional().nullable(),
+        dietTagIds: z.array(z.string()).optional(),
+        excludeAllergenTagIds: z.array(z.string()).optional(),
+        isVegetarian: z.boolean().optional(),
+        isDairyFree: z.boolean().optional(),
+        dislikes: z.string().optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { planId, ...filterOverrides } = input;
+
+      // Fetch existing plan to get base parameters
+      const existingPlan = await ctx.db.mealPlan.findUnique({
+        where: { id: planId },
+        include: {
+          items: true,
+          user: {
+            include: {
+              preferences: true,
+            },
+          },
+        },
+      });
+
+      if (!existingPlan) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Meal plan not found',
+        });
+      }
+
+      if (existingPlan.userId !== ctx.session.user.id) {
+        throw new TRPCError({
+          code: 'FORBIDDEN',
+          message: 'Unauthorized to modify this meal plan',
+        });
+      }
+
+      // Determine meal types from existing items
+      const mealTypes = [...new Set(existingPlan.items.map((item) => item.mealType))];
+      const mealsPerDay = mealTypes.length;
+
+      // Get user preferences as base, override with input
+      const preferences = existingPlan.user.preferences;
+
+      try {
+        // Delete existing items
+        await ctx.db.mealPlanItem.deleteMany({
+          where: { planId },
+        });
+
+        // Delete existing shopping list if any
+        await ctx.db.shoppingList.deleteMany({
+          where: { planId },
+        });
+
+        // Generate new plan items using the PlanGenerator
+        const generator = new PlanGenerator(ctx.db);
+        const newPlan = await generator.generatePlan({
+          userId: ctx.session.user.id,
+          startDate: existingPlan.startDate,
+          days: existingPlan.days,
+          mealsPerDay,
+          householdSize: existingPlan.items[0]?.servings ?? preferences?.householdSize ?? 2,
+          isVegetarian: filterOverrides.isVegetarian ?? preferences?.isVegetarian ?? false,
+          isDairyFree: filterOverrides.isDairyFree ?? preferences?.isDairyFree ?? false,
+          dislikes: filterOverrides.dislikes ?? preferences?.dislikes ?? null,
+          difficulty: filterOverrides.difficulty ?? undefined,
+          maxTotalTime: filterOverrides.maxTotalTime ?? undefined,
+          dietTagIds: filterOverrides.dietTagIds,
+          excludeAllergenTagIds: filterOverrides.excludeAllergenTagIds,
+        });
+
+        // The generator creates a new plan, but we want to keep the same plan ID
+        // Move items from new plan to existing plan
+        await ctx.db.mealPlanItem.updateMany({
+          where: { planId: newPlan.id },
+          data: { planId },
+        });
+
+        // Delete the newly created plan shell
+        await ctx.db.mealPlan.delete({
+          where: { id: newPlan.id },
+        });
+
+        // Rebuild shopping list
+        const shoppingListService = new ShoppingListService(ctx.db);
+        try {
+          await shoppingListService.buildAndStoreForPlan(planId);
+        } catch (error) {
+          log.error({ error, planId }, 'Failed to rebuild shopping list after regeneration');
+        }
+
+        // Return the updated plan
+        const updatedPlan = await ctx.db.mealPlan.findUnique({
+          where: { id: planId },
+          include: {
+            items: {
+              include: {
+                recipe: {
+                  include: {
+                    ingredients: {
+                      include: {
+                        ingredient: true,
+                      },
+                    },
+                    dietTags: {
+                      include: {
+                        dietTag: true,
+                      },
+                    },
+                    allergenTags: {
+                      include: {
+                        allergenTag: true,
+                      },
+                    },
+                  },
+                },
+              },
+              orderBy: [{ dayIndex: 'asc' }, { mealType: 'asc' }],
+            },
+          },
+        });
+
+        return updatedPlan;
+      } catch (error) {
+        log.error({ error, planId }, 'Failed to regenerate meal plan');
+
+        if (error instanceof TRPCError) {
+          throw error;
+        }
+
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: error instanceof Error ? error.message : 'Failed to regenerate meal plan',
+          cause: error,
+        });
+      }
     }),
 });

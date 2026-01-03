@@ -63,6 +63,10 @@ export default function PlannerPage() {
       isVegetarian: preferences.isVegetarian,
       isDairyFree: preferences.isDairyFree,
       dislikes: preferences.dislikes,
+      // Advanced filters
+      difficulty: preferences.difficulty,
+      maxTotalTime: preferences.maxTotalTime,
+      excludeAllergenTagIds: preferences.excludeAllergens,
     });
   };
 

@@ -71,6 +71,10 @@ describe('MealPlanWizard', () => {
       isVegetarian: true,
       isDairyFree: false,
       dislikes: '',
+      // Advanced filters (defaults)
+      difficulty: null,
+      maxTotalTime: null,
+      excludeAllergens: [],
     });
   });
 
