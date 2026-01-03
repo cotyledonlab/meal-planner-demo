@@ -190,7 +190,7 @@ export function getRecipeTotalTime(recipe: {
   totalTimeMinutes?: number | null;
   prepTimeMinutes?: number | null;
   cookTimeMinutes?: number | null;
-  minutes?: number;
+  minutes?: number | null;
 }): number {
   if (recipe.totalTimeMinutes != null) {
     return recipe.totalTimeMinutes;
@@ -204,13 +204,14 @@ export function getRecipeTotalTime(recipe: {
 // Helper function to get primary image URL
 export function getPrimaryImageUrl(
   recipe: { images?: RecipeImage[]; imageUrl?: string | null },
-  fallback?: string
+  fallback?: string,
 ): string | null {
   const images = recipe.images;
   if (images) {
     const primaryImage = images.find((img) => img.isPrimary);
     if (primaryImage) return primaryImage.url;
-    if (images.length > 0) return images[0]!.url;
+    const firstImage = images[0];
+    if (firstImage) return firstImage.url;
   }
   if (recipe.imageUrl) return recipe.imageUrl;
   return fallback ?? null;

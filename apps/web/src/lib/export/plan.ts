@@ -1,8 +1,4 @@
-import {
-  getRecipeTotalTime,
-  type RecipeStep,
-  type StepType,
-} from '@meal-planner-demo/types';
+import { getRecipeTotalTime, type StepType } from '@meal-planner-demo/types';
 import { convertToNormalizedUnit, formatQuantity } from '~/lib/unitConverter';
 
 export type ExportIngredient = {
@@ -121,8 +117,8 @@ type RawRecipeForExport = {
   }>;
   dietTags?: Array<{ dietTag: { name: string } }>;
   // Legacy fields
-  minutes?: number;
-  instructionsMd?: string;
+  minutes?: number | null;
+  instructionsMd?: string | null;
   isVegetarian?: boolean;
   isDairyFree?: boolean;
 };
@@ -172,10 +168,10 @@ export function normalizeMealPlanForExport(rawPlan: {
         : computeLegacyDietTags(recipe);
 
       // Check diet properties using new tags or legacy fields
-      const isVegetarian = dietTags.some((t) => t.name.toLowerCase() === 'vegetarian') ||
-        recipe.isVegetarian === true;
-      const isDairyFree = dietTags.some((t) => t.name.toLowerCase() === 'dairy-free') ||
-        recipe.isDairyFree === true;
+      const isVegetarian =
+        dietTags.some((t) => t.name.toLowerCase() === 'vegetarian') || recipe.isVegetarian === true;
+      const isDairyFree =
+        dietTags.some((t) => t.name.toLowerCase() === 'dairy-free') || recipe.isDairyFree === true;
 
       return {
         id: item.id,

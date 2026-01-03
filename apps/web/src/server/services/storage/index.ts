@@ -61,9 +61,7 @@ let storageProviderInstance: StorageProvider | null = null;
  * Creates a new instance on first call based on environment configuration.
  */
 export function getStorageProvider(): StorageProvider {
-  if (!storageProviderInstance) {
-    storageProviderInstance = createStorageProvider();
-  }
+  storageProviderInstance ??= createStorageProvider();
   return storageProviderInstance;
 }
 

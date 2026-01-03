@@ -5,12 +5,7 @@ import {
   GetObjectCommand,
 } from '@aws-sdk/client-s3';
 import { getSignedUrl as awsGetSignedUrl } from '@aws-sdk/s3-request-presigner';
-import type {
-  StorageProvider,
-  SaveImageInput,
-  SaveImageResult,
-  S3StorageConfig,
-} from './types';
+import type { StorageProvider, SaveImageInput, SaveImageResult, S3StorageConfig } from './types';
 
 /**
  * S3-compatible storage provider.
@@ -73,7 +68,7 @@ export class S3StorageProvider implements StorageProvider {
     }
   }
 
-  async getSignedUrl(key: string, expiresIn: number = 3600): Promise<string> {
+  async getSignedUrl(key: string, expiresIn = 3600): Promise<string> {
     const command = new GetObjectCommand({
       Bucket: this.config.bucket,
       Key: key,

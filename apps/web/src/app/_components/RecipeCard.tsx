@@ -2,11 +2,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import {
-  getRecipeTotalTime,
-  getPrimaryImageUrl,
-  type RecipeImage,
-} from '@meal-planner-demo/types';
+import { getRecipeTotalTime, getPrimaryImageUrl, type RecipeImage } from '@meal-planner-demo/types';
 import {
   calculateDifficulty,
   getDifficultyColor,

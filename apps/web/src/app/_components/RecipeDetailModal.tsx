@@ -83,9 +83,7 @@ function getTimeSplit(recipe: Recipe): { prep: number; cook: number; total: numb
 // Get instructions - use steps relation if available, otherwise parse markdown
 function getInstructions(recipe: Recipe): string[] {
   if (recipe.steps && recipe.steps.length > 0) {
-    return recipe.steps
-      .sort((a, b) => a.stepNumber - b.stepNumber)
-      .map((step) => step.instruction);
+    return recipe.steps.sort((a, b) => a.stepNumber - b.stepNumber).map((step) => step.instruction);
   }
 
   // Fallback to parsing instructionsMd
@@ -290,7 +288,9 @@ export default function RecipeDetailModal({
               <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-4">
                 <div className="rounded-lg bg-gray-50 p-3 text-center">
                   <div className="text-2xl">⏱️</div>
-                  <div className="mt-1 text-sm font-medium text-gray-900">{timeSplit.total} min</div>
+                  <div className="mt-1 text-sm font-medium text-gray-900">
+                    {timeSplit.total} min
+                  </div>
                   <div className="text-xs text-gray-600">Total Time</div>
                 </div>
                 <div className="rounded-lg bg-gray-50 p-3 text-center">

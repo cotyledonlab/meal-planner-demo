@@ -1,11 +1,6 @@
 import { mkdir, writeFile, unlink } from 'fs/promises';
 import path from 'path';
-import type {
-  StorageProvider,
-  SaveImageInput,
-  SaveImageResult,
-  LocalStorageConfig,
-} from './types';
+import type { StorageProvider, SaveImageInput, SaveImageResult, LocalStorageConfig } from './types';
 
 /**
  * Local filesystem storage provider.
