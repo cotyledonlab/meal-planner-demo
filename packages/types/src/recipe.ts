@@ -106,7 +106,7 @@ export interface Recipe {
    * @deprecated Use totalTimeMinutes or (prepTimeMinutes + cookTimeMinutes) instead.
    * Will be removed in a future release.
    */
-  minutes?: number;
+  minutes?: number | null;
 
   // Nutrition (basic)
   calories: number;
@@ -136,7 +136,7 @@ export interface Recipe {
    * @deprecated Use steps relation (RecipeStep[]) instead.
    * Will be removed in a future release.
    */
-  instructionsMd?: string;
+  instructionsMd?: string | null;
 
   /**
    * @deprecated Use images relation (RecipeImage[]) with isPrimary=true instead.
