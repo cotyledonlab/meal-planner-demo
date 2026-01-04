@@ -7,7 +7,7 @@ This document centralizes the current state of the monorepo so other docs (READM
 - Next.js 15 (App Router) with React Server Components where practical
 - TypeScript-first with strict settings; avoid `any`
 - tRPC v11 + React Query 5 for client/server contracts
-- Prisma 6 with PostgreSQL; seed users include `premium@example.com` and `basic@example.com` (password: `P@ssw0rd!`)
+- Prisma 6 with PostgreSQL; seed users include `admin@example.com`, `premium@example.com`, and `basic@example.com` (password: `P@ssw0rd!`)
 - Tailwind CSS 4 for styling, Prettier + ESLint for formatting and linting
 
 ## Monorepo Layout
@@ -20,7 +20,7 @@ This document centralizes the current state of the monorepo so other docs (READM
 
 ## Environment & Data
 
-1. Copy environment files: `cp .env.example .env && cp .env apps/web/.env` and fill required secrets (e.g., `AUTH_SECRET`). Set `GEMINI_API_KEY` if you want to use the admin-only Gemini 2.5 Flash Image pipeline; otherwise that UI stays disabled.
+1. Copy environment files: `cp .env.example .env && cp .env apps/web/.env` and fill required secrets (e.g., `AUTH_SECRET`). Set `GEMINI_API_KEY` if you want to use the admin-only Gemini image pipeline; otherwise that UI stays disabled.
 2. Start a database:
    - Postgres only: `docker compose up -d postgres` or `./start-database.sh`
    - Full local stack (web + Postgres + Mailpit): `pnpm docker:dev` / tear down with `pnpm docker:dev:down`
@@ -48,7 +48,7 @@ This document centralizes the current state of the monorepo so other docs (READM
 
 ## Admin Tools
 
-- Gemini image pipeline: `/dashboard/admin/images` (requires admin role). Uses Google's Gemini 2.5 Flash Image endpoint through env-configured credentials. Generated files are written to `apps/web/public/generated-images/` for now; swap in blob/object storage later.
+- Gemini image pipeline: `/dashboard/admin/images` (requires admin role). Supports two model options: "Nano Banana Pro" (`gemini-3-pro-image-preview`) and "Nano Banana" (`gemini-2.5-flash-image`). Configure via `GEMINI_API_KEY` env variable. Generated files are written to `apps/web/public/generated-images/` for now; swap in blob/object storage later.
 
 ## Agent & Contributor Notes
 

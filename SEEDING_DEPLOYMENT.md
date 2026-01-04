@@ -82,7 +82,8 @@ The seed script populates:
 
 - **12 recipes** (various cuisines, dietary preferences)
 - **29 ingredients** (categorized: protein, vegetables, dairy, grains, pantry)
-- **2 test users:**
+- **3 test users:**
+  - `admin@example.com` / `P@ssw0rd!` (admin access to image generation)
   - `premium@example.com` / `P@ssw0rd!` (7-day meal plans)
   - `basic@example.com` / `P@ssw0rd!` (3-day meal plans)
 - **Price baselines** for shopping list cost estimation
