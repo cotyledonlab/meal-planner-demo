@@ -23,11 +23,11 @@ export const env = createEnv({
     SMTP_FROM: z.string().optional(),
     NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
     // Gemini / Vertex AI configuration
-    GEMINI_USE_VERTEX_AI: z.enum(['true', 'false']).optional().default('false'),
+    GEMINI_USE_VERTEX_AI: z.enum(['true', 'false']).optional().default('true'),
     GOOGLE_CLOUD_PROJECT: z.string().optional(),
     GOOGLE_CLOUD_LOCATION: z.string().optional().default('us-central1'),
     GEMINI_API_KEY: z.string().optional(),
-    GEMINI_IMAGE_MODEL: z.string().optional().default('gemini-2.5-flash-image'),
+    GEMINI_IMAGE_MODEL: z.string().optional().default('gemini-3-pro-image-preview'),
     GEMINI_IMAGE_FALLBACK_MODEL: z.string().optional().default('gemini-2.5-flash-image'),
     // Storage provider configuration
     STORAGE_PROVIDER: z.enum(['local', 's3']).optional().default('local'),
