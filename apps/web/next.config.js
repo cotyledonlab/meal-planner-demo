@@ -9,7 +9,7 @@ const config = {
   output: 'standalone',
   // Base path for serving from subdirectory (e.g., /demos/meal-planner)
   // Set BASE_PATH environment variable to override, or leave empty for root deployment
-  basePath: process.env.BASE_PATH || '/demos/meal-planner',
+  basePath: process.env.BASE_PATH,
   images: {
     remotePatterns: [
       {

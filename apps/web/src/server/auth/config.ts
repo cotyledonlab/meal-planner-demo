@@ -161,7 +161,8 @@ export const authConfig = {
       options: {
         httpOnly: true,
         sameSite: 'lax',
-        path: process.env.BASE_PATH ?? '/',
+        // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing -- intentional: empty string should fallback to '/'
+        path: process.env.BASE_PATH || '/',
         secure: process.env.NODE_ENV === 'production',
       },
     },
