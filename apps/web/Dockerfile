@@ -143,6 +143,10 @@ COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/static ./apps/web/
 COPY --from=builder /app/apps/web/prisma ./prisma
 # Standalone output contains runtime deps already
 
+# Copy and setup entrypoint script for Google Cloud credentials
+COPY apps/web/docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
+
 USER nextjs
 
 EXPOSE 3000
@@ -150,4 +154,5 @@ EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
+ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["node", "apps/web/server.js"]
