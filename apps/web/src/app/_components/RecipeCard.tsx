@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { getRecipeTotalTime, getPrimaryImageUrl, type RecipeImage } from '@meal-planner-demo/types';
 import {
@@ -132,6 +132,7 @@ function formatTimeDisplay(recipe: Recipe): { total: number; breakdown: string |
 
 export default function RecipeCard({ item, onOpenDetail }: RecipeCardProps) {
   const [isActive, setIsActive] = useState(false);
+  const [imgError, setImgError] = useState(false);
   const { recipe, mealType, servings } = item;
 
   const timeInfo = formatTimeDisplay(recipe);
@@ -141,6 +142,11 @@ export default function RecipeCard({ item, onOpenDetail }: RecipeCardProps) {
     calculateDifficulty(timeInfo.total, recipe.ingredients.length);
   const ingredientPreview = getIngredientPreview(recipe.ingredients);
   const imageUrl = getPrimaryImageUrl(recipe, RECIPE_PLACEHOLDER_IMAGE);
+
+  // Reset error state when recipe image changes (e.g., after swap)
+  useEffect(() => {
+    setImgError(false);
+  }, [imageUrl]);
   const isVegetarian = hasDietTag(recipe, 'vegetarian');
   const isDairyFree = hasDietTag(recipe, 'dairy-free');
   const otherDietTags = getDisplayDietTags(recipe);
@@ -161,10 +167,16 @@ export default function RecipeCard({ item, onOpenDetail }: RecipeCardProps) {
         {/* Recipe image - larger and more prominent */}
         <div className="relative h-48 w-full overflow-hidden rounded-2xl bg-gray-200 sm:h-40 sm:w-40 sm:flex-shrink-0 sm:rounded-lg">
           <Image
-            src={imageUrl ?? RECIPE_PLACEHOLDER_IMAGE}
+            src={imgError ? RECIPE_PLACEHOLDER_IMAGE : (imageUrl ?? RECIPE_PLACEHOLDER_IMAGE)}
             alt={recipe.title}
             fill
             className="object-cover transition-transform duration-300 group-hover:scale-110"
+            onError={() => {
+              // Guard against infinite loop if placeholder also fails
+              if (!imgError) {
+                setImgError(true);
+              }
+            }}
           />
 
           {/* Difficulty badge on image */}

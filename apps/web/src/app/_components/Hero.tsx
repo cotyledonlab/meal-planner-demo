@@ -1,26 +1,14 @@
 // Hero section with headline, subtext, CTAs, and background image
 // Image source: Unsplash – "home cooking": https://unsplash.com/photos/QJ6x9wy_Ol4
-import Image from 'next/image';
 import Link from 'next/link';
-
-const BLUR_DATA_URL =
-  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAADCAIAAAA7ljmRAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAMElEQVR4nGO49+7Jt/+f61tL8ivSGeQ0NCLTkgsq82cuns7AzcygryeVVhiXnh4OAHsJD/ki5q1xAAAAAElFTkSuQmCC';
+import HeroImage from './HeroImage';
 
 export default function Hero() {
   return (
     <section className="relative isolate overflow-hidden bg-gradient-to-br from-emerald-950 via-emerald-900 to-emerald-800 text-white">
       {/* Background image */}
       <div className="absolute inset-0 -z-10">
-        <Image
-          src="/images/hero-cooking.jpg"
-          alt="Fresh ingredients for home cooking in an Irish kitchen"
-          fill
-          sizes="100vw"
-          className="object-cover opacity-70"
-          priority
-          placeholder="blur"
-          blurDataURL={BLUR_DATA_URL}
-        />
+        <HeroImage />
         <div
           aria-hidden="true"
           className="absolute inset-0 bg-gradient-to-br from-emerald-950/70 via-emerald-900/60 to-emerald-800/40"
@@ -33,7 +21,7 @@ export default function Hero() {
             Your Family, Fed and Happy
           </h1>
           <p className="mt-6 text-base text-emerald-100 sm:text-lg">
-            {`Stop stressing about "What's for dinner?" Spend less time planning, less money shopping, 
+            {`Stop stressing about "What's for dinner?" Spend less time planning, less money shopping,
             and more time with the people who matter. Fresh, home-cooked meals made simple.`}
           </p>
           <div className="mt-10 flex flex-wrap items-center justify-center gap-4">

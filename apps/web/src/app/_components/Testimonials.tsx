@@ -58,20 +58,20 @@ export default function Testimonials() {
           {testimonials.map((testimonial) => (
             <figure
               key={testimonial.author}
-              className="relative overflow-hidden rounded-2xl bg-white/90 p-6 shadow-lg ring-1 ring-gray-100 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
+              className="relative flex h-full flex-col overflow-hidden rounded-2xl bg-white/90 p-6 shadow-lg ring-1 ring-gray-100 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
               aria-label={`Testimonial from ${testimonial.author} in ${testimonial.location}`}
             >
               <div
                 aria-hidden="true"
                 className="absolute inset-0 bg-gradient-to-br from-emerald-50/40 via-white to-amber-50/30"
               />
-              <div className="mb-4 flex gap-1">
+              <div className="relative mb-4 flex gap-1">
                 {Array.from({ length: testimonial.rating }).map((_, i) => (
                   <StarIcon key={i} className="h-5 w-5 text-amber-400" aria-hidden="true" />
                 ))}
               </div>
-              <blockquote>
-                <p className="text-base leading-relaxed text-gray-700">
+              <blockquote className="relative flex-1">
+                <p className="line-clamp-4 text-base leading-relaxed text-gray-700">
                   &ldquo;{testimonial.quote}&rdquo;
                 </p>
               </blockquote>

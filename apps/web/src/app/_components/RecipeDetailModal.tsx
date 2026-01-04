@@ -227,7 +227,7 @@ export default function RecipeDetailModal({
       <div className="fixed inset-0 bg-black bg-opacity-50 transition-opacity" onClick={onClose} />
 
       {/* Modal */}
-      <div className="flex min-h-screen items-center justify-center p-0 sm:p-4">
+      <div className="relative z-10 flex min-h-screen items-center justify-center p-0 sm:p-4">
         <div className="relative flex h-full w-full flex-col overflow-hidden rounded-none bg-white shadow-2xl sm:h-auto sm:max-h-[90vh] sm:max-w-4xl sm:rounded-2xl">
           {/* Close button */}
           <button
