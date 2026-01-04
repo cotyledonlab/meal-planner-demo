@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { getRecipeTotalTime, getPrimaryImageUrl, type RecipeImage } from '@meal-planner-demo/types';
 import {
@@ -142,6 +142,11 @@ export default function RecipeCard({ item, onOpenDetail }: RecipeCardProps) {
     calculateDifficulty(timeInfo.total, recipe.ingredients.length);
   const ingredientPreview = getIngredientPreview(recipe.ingredients);
   const imageUrl = getPrimaryImageUrl(recipe, RECIPE_PLACEHOLDER_IMAGE);
+
+  // Reset error state when recipe image changes (e.g., after swap)
+  useEffect(() => {
+    setImgError(false);
+  }, [imageUrl]);
   const isVegetarian = hasDietTag(recipe, 'vegetarian');
   const isDairyFree = hasDietTag(recipe, 'dairy-free');
   const otherDietTags = getDisplayDietTags(recipe);
@@ -166,7 +171,12 @@ export default function RecipeCard({ item, onOpenDetail }: RecipeCardProps) {
             alt={recipe.title}
             fill
             className="object-cover transition-transform duration-300 group-hover:scale-110"
-            onError={() => setImgError(true)}
+            onError={() => {
+              // Guard against infinite loop if placeholder also fails
+              if (!imgError) {
+                setImgError(true);
+              }
+            }}
           />
 
           {/* Difficulty badge on image */}
