@@ -88,6 +88,8 @@ services:
       - GEMINI_USE_VERTEX_AI=${GEMINI_USE_VERTEX_AI:-true}
       - GOOGLE_CLOUD_PROJECT=${GOOGLE_CLOUD_PROJECT:-}
       - GOOGLE_CLOUD_LOCATION=${GOOGLE_CLOUD_LOCATION:-us-central1}
+      # Base64-encoded Google Cloud credentials JSON (used by docker-entrypoint.sh)
+      - GOOGLE_CREDENTIALS_BASE64=${GOOGLE_CREDENTIALS_BASE64:-}
       - GEMINI_IMAGE_MODEL=${GEMINI_IMAGE_MODEL:-gemini-3-pro-image-preview}
       - GEMINI_IMAGE_FALLBACK_MODEL=${GEMINI_IMAGE_FALLBACK_MODEL:-gemini-2.5-flash-image}
       - SKIP_ENV_VALIDATION=1
