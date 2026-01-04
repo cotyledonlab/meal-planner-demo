@@ -4,7 +4,7 @@ import { auth } from '~/server/auth';
 import { api, HydrateClient } from '~/trpc/server';
 import PlanPageClient from '~/app/_components/PlanPageClient';
 import ExportButtons from '~/app/_components/ExportButtons';
-import ShoppingList from '~/app/_components/ShoppingList';
+import { ShoppingList } from '~/components/features/shopping/ShoppingList';
 
 interface PageProps {
   params: Promise<{ id: string }>;

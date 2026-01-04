@@ -3,18 +3,19 @@
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import {
-  AdjustmentsHorizontalIcon,
-  BuildingStorefrontIcon,
-  CalendarDaysIcon,
-  ChartBarIcon,
-  PhotoIcon,
-  ShoppingBagIcon,
-  SparklesIcon,
-} from '@heroicons/react/24/outline';
+  SlidersHorizontal,
+  Store,
+  CalendarDays,
+  BarChart3,
+  ImageIcon,
+  ShoppingBag,
+  Sparkles,
+  type LucideIcon,
+} from 'lucide-react';
 
 import PremiumFeatureCard from '~/app/_components/dashboard/PremiumFeatureCard';
 import PremiumPreviewModal from '~/app/_components/PremiumPreviewModal';
-import EmptyState from '~/app/_components/EmptyState';
+import { EmptyState } from '~/components/shared/EmptyState';
 
 type DashboardUser = {
   name?: string | null;
@@ -26,7 +27,7 @@ type PremiumFeature = {
   id: string;
   title: string;
   description: string;
-  Icon: React.ComponentType<React.ComponentProps<'svg'>>;
+  Icon: LucideIcon;
   color: 'blue' | 'amber' | 'purple' | 'emerald';
 };
 
@@ -35,7 +36,7 @@ type QuickAction = {
   title: string;
   description: string;
   href: string;
-  Icon: React.ComponentType<React.ComponentProps<'svg'>>;
+  Icon: LucideIcon;
   iconGradientClass: string;
   outlineClass: string;
 };
@@ -45,21 +46,21 @@ const PREMIUM_FEATURES: PremiumFeature[] = [
     id: 'nutrition',
     title: 'Tailored Nutritional Requirements',
     description: 'Macros and calories tuned to your goals; diabetic- and allergy-aware options.',
-    Icon: ChartBarIcon,
+    Icon: BarChart3,
     color: 'blue',
   },
   {
     id: 'price-comparison',
     title: 'Supermarket Price Comparison',
     description: 'See estimated totals across Aldi, Lidl, Tesco & Dunnes to save more.',
-    Icon: BuildingStorefrontIcon,
+    Icon: Store,
     color: 'amber',
   },
   {
     id: 'pantry',
     title: 'Pantry-Aware Substitutions',
     description: 'Auto-skip what you already have and suggest smart swaps.',
-    Icon: AdjustmentsHorizontalIcon,
+    Icon: SlidersHorizontal,
     color: 'purple',
   },
 ];
@@ -70,7 +71,7 @@ const QUICK_ACTIONS: QuickAction[] = [
     title: 'New Weekly Plan',
     description: 'Generate a fresh 7-day meal plan tailored to your preferences',
     href: '/planner',
-    Icon: SparklesIcon,
+    Icon: Sparkles,
     iconGradientClass: 'bg-gradient-to-br from-emerald-500 to-emerald-600 text-white',
     outlineClass: 'focus-visible:outline-emerald-600',
   },
@@ -79,7 +80,7 @@ const QUICK_ACTIONS: QuickAction[] = [
     title: 'Open Planner',
     description: 'View and edit your current meal plan and recipes',
     href: '/planner',
-    Icon: CalendarDaysIcon,
+    Icon: CalendarDays,
     iconGradientClass: 'bg-gradient-to-br from-blue-500 to-blue-600 text-white',
     outlineClass: 'focus-visible:outline-blue-600',
   },
@@ -142,7 +143,7 @@ export default function DashboardClient({ user, hasMealPlan }: DashboardClientPr
         title: 'Gemini image pipeline',
         description: 'Generate marketing-ready imagery with Gemini Nano Banana.',
         href: '/dashboard/admin/images',
-        Icon: PhotoIcon,
+        Icon: ImageIcon,
         iconGradientClass: 'bg-gradient-to-br from-fuchsia-500 to-purple-600 text-white',
         outlineClass: 'focus-visible:outline-purple-600',
       },
@@ -170,7 +171,7 @@ export default function DashboardClient({ user, hasMealPlan }: DashboardClientPr
                   href="/planner"
                   className="inline-flex w-full min-h-[48px] items-center justify-center gap-2 rounded-xl bg-white px-6 py-3 text-base font-semibold text-emerald-700 shadow-md transition-all duration-200 hover:scale-[1.02] hover:bg-emerald-50 hover:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:w-auto"
                 >
-                  <SparklesIcon className="h-5 w-5" />
+                  <Sparkles className="h-5 w-5" />
                   {hasMealPlan ? 'Plan meals' : 'Create your first plan'}
                 </Link>
                 {hasMealPlan && (
@@ -214,7 +215,7 @@ export default function DashboardClient({ user, hasMealPlan }: DashboardClientPr
 
             {!hasMealPlan ? (
               <EmptyState
-                icon={<ShoppingBagIcon className="h-8 w-8" />}
+                icon={<ShoppingBag className="h-8 w-8" />}
                 iconColor="blue"
                 title="Your shopping list awaits!"
                 description="Create your first meal plan to automatically generate a personalized shopping list with all the ingredients you need."
@@ -253,7 +254,7 @@ export default function DashboardClient({ user, hasMealPlan }: DashboardClientPr
               >
                 <div className="flex items-start gap-4">
                   <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-md transition-transform group-hover:scale-110">
-                    <ShoppingBagIcon className="h-6 w-6" />
+                    <ShoppingBag className="h-6 w-6" />
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900">Shopping List</h3>

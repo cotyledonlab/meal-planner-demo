@@ -2,71 +2,16 @@
 
 import { useCallback, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { SparklesIcon } from '@heroicons/react/24/outline';
-import type { MealPreferences } from './MealPlanWizard';
-import RecipeCard from './RecipeCard';
-import RecipeDetailModal from './RecipeDetailModal';
-import EmptyState from './EmptyState';
+import { Sparkles } from 'lucide-react';
+import { RecipeCard } from '~/components/features/recipe/RecipeCard';
+import { RecipeDetailModal } from '~/components/features/recipe/RecipeDetailModal';
+import { EmptyState } from '~/components/shared/EmptyState';
 import { api } from '~/trpc/react';
-
-type RecipeIngredient = {
-  id: string;
-  quantity: number;
-  unit: string;
-  ingredient: {
-    id: string;
-    name: string;
-    category: string;
-  };
-};
-
-type DietTagRelation = {
-  dietTag: {
-    id: string;
-    name: string;
-  };
-};
-
-type AllergenTagRelation = {
-  allergenTag: {
-    id: string;
-    name: string;
-  };
-};
-
-type Recipe = {
-  id: string;
-  title: string;
-  imageUrl: string | null;
-  calories: number;
-  minutes: number | null;
-  instructionsMd: string | null;
-  isVegetarian: boolean;
-  isDairyFree: boolean;
-  ingredients: RecipeIngredient[];
-  // Optional new fields from enhanced API
-  prepTimeMinutes?: number | null;
-  cookTimeMinutes?: number | null;
-  totalTimeMinutes?: number | null;
-  difficulty?: 'EASY' | 'MEDIUM' | 'HARD';
-  dietTags?: DietTagRelation[];
-  allergenTags?: AllergenTagRelation[];
-};
-
-type MealPlanItem = {
-  id: string;
-  dayIndex: number;
-  mealType: string;
-  servings: number;
-  recipe: Recipe;
-};
-
-type MealPlan = {
-  id: string;
-  startDate: Date | string;
-  days: number;
-  items: MealPlanItem[];
-};
+import type {
+  MealPreferences,
+  MealPlanItem,
+  MealPlan,
+} from '~/types/meal-plan';
 
 interface MealPlanViewProps {
   plan?: MealPlan;
@@ -120,7 +65,7 @@ export default function MealPlanView({
   if (!plan && !preferences) {
     return (
       <EmptyState
-        icon={<SparklesIcon className="h-8 w-8" />}
+        icon={<Sparkles className="h-8 w-8" />}
         iconColor="emerald"
         title="Let's create your first meal plan!"
         description="Start planning delicious, healthy meals for the week. Our AI will help you create a personalized plan based on your preferences."
