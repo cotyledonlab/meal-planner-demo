@@ -110,7 +110,7 @@ pnpm --filter @meal-planner-demo/types <command>
 - All schema changes via Prisma migrations
 - Include rollback scripts for migrations
 - Database can be started with Docker Compose or the `./start-database.sh` script
-- Seed data includes test users (premium@example.com, basic@example.com) and sample recipes
+- Seed data includes test users (admin@example.com, premium@example.com, basic@example.com) and sample recipes
 
 ### Quality Requirements
 
