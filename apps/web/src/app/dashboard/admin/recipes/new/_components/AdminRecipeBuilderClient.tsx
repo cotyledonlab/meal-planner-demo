@@ -199,6 +199,14 @@ type TrpcErrorLike = {
   data?: { zodError?: ZodErrorShape };
 };
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null;
+}
+
+function isZodIssue(value: unknown): value is ZodIssue {
+  return isRecord(value);
+}
+
 function normalizeImageUrl(rawUrl: string): string {
   const trimmed = rawUrl.trim();
   if (!trimmed) return trimmed;
@@ -211,12 +219,12 @@ function normalizeImageUrl(rawUrl: string): string {
 
 function parseZodIssues(message: string): ZodIssue[] | null {
   try {
-    const parsed = JSON.parse(message);
-    if (Array.isArray(parsed)) {
-      return parsed as ZodIssue[];
+    const parsed: unknown = JSON.parse(message);
+    if (Array.isArray(parsed) && parsed.every(isZodIssue)) {
+      return parsed;
     }
-    if (parsed && typeof parsed === 'object' && Array.isArray(parsed.issues)) {
-      return parsed.issues as ZodIssue[];
+    if (isRecord(parsed) && Array.isArray(parsed.issues) && parsed.issues.every(isZodIssue)) {
+      return parsed.issues;
     }
   } catch {
     return null;
