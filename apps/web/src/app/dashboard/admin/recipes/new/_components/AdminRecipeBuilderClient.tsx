@@ -196,7 +196,7 @@ type ZodErrorShape = {
 
 type TrpcErrorLike = {
   message?: string;
-  data?: { zodError?: ZodErrorShape };
+  data?: { zodError?: ZodErrorShape | null } | null;
 };
 
 function isRecord(value: unknown): value is Record<string, unknown> {
