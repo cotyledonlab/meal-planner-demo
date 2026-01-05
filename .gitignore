@@ -58,3 +58,6 @@ apps/web/prisma/dev.db
 
 # locally generated admin assets
 apps/web/public/generated-images/
+
+# local tools
+/.tools/

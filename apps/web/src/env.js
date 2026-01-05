@@ -29,6 +29,7 @@ export const env = createEnv({
     GEMINI_API_KEY: z.string().optional(),
     GEMINI_IMAGE_MODEL: z.string().optional().default('gemini-3-pro-image-preview'),
     GEMINI_IMAGE_FALLBACK_MODEL: z.string().optional().default('gemini-2.5-flash-image'),
+    GEMINI_TEXT_MODEL: z.string().optional().default('gemini-2.5-flash'),
     // Storage provider configuration
     STORAGE_PROVIDER: z.enum(['local', 's3']).optional().default('local'),
     // S3-compatible storage configuration (required when STORAGE_PROVIDER=s3)
@@ -72,6 +73,7 @@ export const env = createEnv({
     GEMINI_API_KEY: process.env.GEMINI_API_KEY,
     GEMINI_IMAGE_MODEL: process.env.GEMINI_IMAGE_MODEL,
     GEMINI_IMAGE_FALLBACK_MODEL: process.env.GEMINI_IMAGE_FALLBACK_MODEL,
+    GEMINI_TEXT_MODEL: process.env.GEMINI_TEXT_MODEL,
     STORAGE_PROVIDER: process.env.STORAGE_PROVIDER,
     S3_BUCKET: process.env.S3_BUCKET,
     S3_REGION: process.env.S3_REGION,

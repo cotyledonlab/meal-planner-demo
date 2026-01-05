@@ -48,7 +48,39 @@ This document centralizes the current state of the monorepo so other docs (READM
 
 ## Admin Tools
 
-- Gemini image pipeline: `/dashboard/admin/images` (requires admin role). Supports two model options: "Nano Banana Pro" (`gemini-3-pro-image-preview`) and "Nano Banana" (`gemini-2.5-flash-image`). Configure via `GEMINI_API_KEY` env variable. Generated files are written to `apps/web/public/generated-images/` for now; swap in blob/object storage later.
+- Gemini image pipeline: `/dashboard/admin/images` (requires admin role). Supports two model options: "Nano Banana Pro" (`gemini-3-pro-image-preview`) and "Nano Banana" (`gemini-2.5-flash-image`). Configure via `GEMINI_API_KEY` env variable. Generated files are written to `apps/web/public/generated-images/` by default; configure object storage to persist images in production.
+- Recipe builder: `/dashboard/admin/recipes` (requires admin role). Uses Gemini text generation when `GEMINI_API_KEY` (or Vertex AI) is configured; model can be overridden with `GEMINI_TEXT_MODEL`.
+
+## Object Storage (Images)
+
+The image pipeline already supports S3-compatible storage via `apps/web/src/server/services/storage/`.
+
+Required env vars:
+- `STORAGE_PROVIDER=s3`
+- `S3_BUCKET`
+- `S3_ACCESS_KEY_ID`
+- `S3_SECRET_ACCESS_KEY`
+- `S3_REGION`
+
+Optional env vars:
+- `S3_ENDPOINT` (required for non-AWS providers like R2, DO Spaces, B2, Hetzner Object Storage)
+- `S3_FORCE_PATH_STYLE=true` (only if your provider requires path-style URLs)
+- `S3_PUBLIC_URL_PREFIX` (CDN/custom domain prefix for public URLs)
+
+### Recommended Provider
+
+- Hetzner Object Storage (S3-compatible). For Irish users, use an EU West region and set `S3_ENDPOINT` to the Hetzner S3 endpoint shown in your project (example format: `https://<region-endpoint>`). Set `S3_PUBLIC_URL_PREFIX` if you want a custom domain or CDN in front.
+
+Example (Hetzner EU West / HEL1):
+
+```bash
+STORAGE_PROVIDER=s3
+S3_BUCKET=recipe-store
+S3_REGION=hel1
+S3_ENDPOINT=https://hel1.your-objectstorage.com
+S3_ACCESS_KEY_ID=...
+S3_SECRET_ACCESS_KEY=...
+```
 
 ## Agent & Contributor Notes
 

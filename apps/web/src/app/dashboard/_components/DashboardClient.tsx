@@ -11,6 +11,7 @@ import {
   ShoppingBag,
   Sparkles,
   History,
+  BookOpen,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -181,6 +182,15 @@ export default function DashboardClient({ user, hasMealPlan, recentPlans }: Dash
         Icon: ImageIcon,
         iconGradientClass: 'bg-gradient-to-br from-fuchsia-500 to-purple-600 text-white',
         outlineClass: 'focus-visible:outline-purple-600',
+      },
+      {
+        id: 'admin-recipes',
+        title: 'Recipe builder',
+        description: 'Draft, review, and publish AI-assisted recipes.',
+        href: '/dashboard/admin/recipes',
+        Icon: BookOpen,
+        iconGradientClass: 'bg-gradient-to-br from-amber-500 to-orange-600 text-white',
+        outlineClass: 'focus-visible:outline-amber-600',
       },
     ];
   }, [isAdminUser]);
