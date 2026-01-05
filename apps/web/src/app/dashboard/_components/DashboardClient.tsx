@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 
 import PremiumFeatureCard from '~/app/_components/dashboard/PremiumFeatureCard';
-import PremiumPreviewModal from '~/app/_components/PremiumPreviewModal';
+import { PremiumPreviewModal } from '~/components/features/dashboard/PremiumPreviewModal';
 import { EmptyState } from '~/components/shared/EmptyState';
 
 type DashboardUser = {
@@ -315,7 +315,7 @@ export default function DashboardClient({ user, hasMealPlan }: DashboardClientPr
       </main>
 
       {/* Premium Preview Modal */}
-      {showPremiumModal && <PremiumPreviewModal onClose={() => setShowPremiumModal(false)} />}
+      <PremiumPreviewModal open={showPremiumModal} onOpenChange={setShowPremiumModal} />
     </div>
   );
 }

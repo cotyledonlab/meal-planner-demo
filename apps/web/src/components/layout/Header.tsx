@@ -1,18 +1,12 @@
-"use client";
+'use client';
 
-import { useSession, signOut } from "next-auth/react";
-import Link from "next/link";
-import { useState } from "react";
-import { Menu, X } from "lucide-react";
-import { Button } from "~/components/ui/button";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "~/components/ui/sheet";
-import { cn } from "~/lib/utils";
+import { useSession, signOut } from 'next-auth/react';
+import Link from 'next/link';
+import { useState } from 'react';
+import { Menu, X } from 'lucide-react';
+import { Button } from '~/components/ui/button';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '~/components/ui/sheet';
+import { cn } from '~/lib/utils';
 
 function Logo() {
   return (
@@ -44,8 +38,8 @@ function Logo() {
 
 const navItems = [
   {
-    href: "/dashboard",
-    label: "Dashboard",
+    href: '/dashboard',
+    label: 'Dashboard',
   },
 ];
 
@@ -54,7 +48,7 @@ export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleSignOut = async () => {
-    const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+    const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
     await signOut({ callbackUrl: `${basePath}/` });
   };
 
@@ -77,9 +71,7 @@ export function Header() {
                   {item.label}
                 </Link>
               ))}
-              <span className="text-sm text-gray-700">
-                {session.user?.email}
-              </span>
+              <span className="text-sm text-gray-700">{session.user?.email}</span>
               <Button variant="outline" size="sm" onClick={handleSignOut}>
                 Sign out
               </Button>
@@ -95,16 +87,12 @@ export function Header() {
                     variant="ghost"
                     size="icon"
                     className={cn(
-                      "transition-colors",
-                      mobileMenuOpen && "bg-gray-900 text-white hover:bg-gray-800"
+                      'transition-colors',
+                      mobileMenuOpen && 'bg-gray-900 text-white hover:bg-gray-800'
                     )}
                     aria-label="Toggle menu"
                   >
-                    {mobileMenuOpen ? (
-                      <X className="h-6 w-6" />
-                    ) : (
-                      <Menu className="h-6 w-6" />
-                    )}
+                    {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
                   </Button>
                 </SheetTrigger>
                 <SheetContent side="right" className="w-72">

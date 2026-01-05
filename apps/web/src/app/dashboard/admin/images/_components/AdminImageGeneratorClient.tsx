@@ -2,12 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import Image from 'next/image';
-import {
-  ArrowPathIcon,
-  PhotoIcon,
-  ShieldCheckIcon,
-  SparklesIcon,
-} from '@heroicons/react/24/outline';
+import { ImageIcon, Loader2, ShieldCheck, Sparkles } from 'lucide-react';
 import type { RouterOutputs } from '~/trpc/react';
 import { api } from '~/trpc/react';
 
@@ -73,11 +68,11 @@ export default function AdminImageGeneratorClient({
       <div className="mb-8 rounded-3xl border border-emerald-100 bg-gradient-to-br from-white via-emerald-50 to-white p-8 shadow-xl">
         <div className="mb-6 flex flex-wrap items-center gap-3">
           <span className="inline-flex items-center gap-2 rounded-full bg-emerald-100 px-3 py-1 text-sm font-semibold text-emerald-800">
-            <ShieldCheckIcon className="h-4 w-4" />
+            <ShieldCheck className="h-4 w-4" />
             Admin only
           </span>
           <span className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-sm font-semibold text-emerald-800">
-            <SparklesIcon className="h-4 w-4" />
+            <Sparkles className="h-4 w-4" />
             Nano Banana Pro
           </span>
         </div>
@@ -171,12 +166,12 @@ export default function AdminImageGeneratorClient({
           >
             {generateMutation.isPending ? (
               <>
-                <ArrowPathIcon className="h-5 w-5 animate-spin" />
+                <Loader2 className="h-5 w-5 animate-spin" />
                 Generating...
               </>
             ) : (
               <>
-                <SparklesIcon className="h-5 w-5" />
+                <Sparkles className="h-5 w-5" />
                 Generate image
               </>
             )}
@@ -191,7 +186,7 @@ export default function AdminImageGeneratorClient({
         </div>
         {images.length === 0 ? (
           <div className="flex flex-col items-center rounded-3xl border border-dashed border-gray-300 bg-gray-50 px-6 py-16 text-center text-gray-600">
-            <PhotoIcon className="mb-4 h-12 w-12 text-gray-400" />
+            <ImageIcon className="mb-4 h-12 w-12 text-gray-400" />
             <p className="text-base font-semibold">No images yet</p>
             <p className="mt-1 text-sm text-gray-500">
               Generated artwork will appear here for auditing before we move to blob storage.

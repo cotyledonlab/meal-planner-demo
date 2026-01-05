@@ -1,25 +1,18 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import Image from "next/image";
-import {
-  getRecipeTotalTime,
-  getPrimaryImageUrl,
-  type RecipeImage,
-} from "@meal-planner-demo/types";
-import { Badge } from "~/components/ui/badge";
-import { Card } from "~/components/ui/card";
-import { cn } from "~/lib/utils";
-import {
-  calculateDifficulty,
-  RECIPE_PLACEHOLDER_IMAGE,
-} from "~/lib/recipeUtils";
+import { useEffect, useState } from 'react';
+import Image from 'next/image';
+import { getRecipeTotalTime, getPrimaryImageUrl, type RecipeImage } from '@meal-planner-demo/types';
+import { Badge } from '~/components/ui/badge';
+import { Card } from '~/components/ui/card';
+import { cn } from '~/lib/utils';
+import { calculateDifficulty, RECIPE_PLACEHOLDER_IMAGE } from '~/lib/recipeUtils';
 import {
   type MealPlanRecipe,
   type MealPlanItem,
   getDifficultyVariant,
   getDifficultyLabel,
-} from "~/types/meal-plan";
+} from '~/types/meal-plan';
 
 interface RecipeCardProps {
   item: MealPlanItem;
@@ -29,13 +22,11 @@ interface RecipeCardProps {
 /**
  * Get top 3 ingredients for preview
  */
-function getIngredientPreview(
-  ingredients: MealPlanRecipe["ingredients"]
-): string {
+function getIngredientPreview(ingredients: MealPlanRecipe['ingredients']): string {
   const topIngredients = ingredients
     .slice(0, 3)
     .map((ri) => ri.ingredient.name)
-    .join(", ");
+    .join(', ');
 
   return ingredients.length > 3 ? `${topIngredients}...` : topIngredients;
 }
@@ -45,13 +36,11 @@ function getIngredientPreview(
  */
 function hasDietTag(recipe: MealPlanRecipe, tagName: string): boolean {
   if (recipe.dietTags) {
-    return recipe.dietTags.some(
-      (dt) => dt.dietTag.name.toLowerCase() === tagName
-    );
+    return recipe.dietTags.some((dt) => dt.dietTag.name.toLowerCase() === tagName);
   }
   // Fallback to deprecated fields
-  if (tagName === "vegetarian") return recipe.isVegetarian ?? false;
-  if (tagName === "dairy-free") return recipe.isDairyFree ?? false;
+  if (tagName === 'vegetarian') return recipe.isVegetarian ?? false;
+  if (tagName === 'dairy-free') return recipe.isDairyFree ?? false;
   return false;
 }
 
@@ -62,7 +51,7 @@ function getDisplayDietTags(recipe: MealPlanRecipe): string[] {
   if (!recipe.dietTags) return [];
   return recipe.dietTags
     .map((dt) => dt.dietTag.name)
-    .filter((name) => !["vegetarian", "dairy-free"].includes(name.toLowerCase()));
+    .filter((name) => !['vegetarian', 'dairy-free'].includes(name.toLowerCase()));
 }
 
 /**
@@ -105,11 +94,11 @@ export function RecipeCard({ item, onOpenDetail }: RecipeCardProps) {
 
   const difficultyVariant = recipe.difficulty
     ? getDifficultyVariant(recipe.difficulty)
-    : difficulty === "Easy"
-      ? "easy"
-      : difficulty === "Medium"
-        ? "medium"
-        : "hard";
+    : difficulty === 'Easy'
+      ? 'easy'
+      : difficulty === 'Medium'
+        ? 'medium'
+        : 'hard';
 
   const ingredientPreview = getIngredientPreview(recipe.ingredients);
   const imageUrl = getPrimaryImageUrl(
@@ -122,8 +111,8 @@ export function RecipeCard({ item, onOpenDetail }: RecipeCardProps) {
     setImgError(false);
   }, [imageUrl]);
 
-  const isVegetarian = hasDietTag(recipe, "vegetarian");
-  const isDairyFree = hasDietTag(recipe, "dairy-free");
+  const isVegetarian = hasDietTag(recipe, 'vegetarian');
+  const isDairyFree = hasDietTag(recipe, 'dairy-free');
   const otherDietTags = getDisplayDietTags(recipe);
   const allergenTags = getAllergenTags(recipe);
 
@@ -146,11 +135,7 @@ export function RecipeCard({ item, onOpenDetail }: RecipeCardProps) {
           {/* Recipe image */}
           <div className="relative h-48 w-full overflow-hidden rounded-2xl bg-gray-200 sm:h-40 sm:w-40 sm:flex-shrink-0 sm:rounded-lg">
             <Image
-              src={
-                imgError
-                  ? RECIPE_PLACEHOLDER_IMAGE
-                  : (imageUrl ?? RECIPE_PLACEHOLDER_IMAGE)
-              }
+              src={imgError ? RECIPE_PLACEHOLDER_IMAGE : (imageUrl ?? RECIPE_PLACEHOLDER_IMAGE)}
               alt={recipe.title}
               fill
               className="object-cover transition-transform duration-300 group-hover:scale-110"
@@ -174,23 +159,17 @@ export function RecipeCard({ item, onOpenDetail }: RecipeCardProps) {
 
                 {/* Dietary tags */}
                 <div className="mt-2 flex flex-wrap gap-1">
-                  {isVegetarian && (
-                    <Badge variant="vegetarian">🌱 Vegetarian</Badge>
-                  )}
+                  {isVegetarian && <Badge variant="vegetarian">🌱 Vegetarian</Badge>}
                   {isDairyFree && <Badge variant="dairyFree">🥛 Dairy-Free</Badge>}
                   {otherDietTags.slice(0, 2).map((tag) => (
-                    <Badge
-                      key={tag}
-                      className="bg-purple-50 text-purple-700 capitalize"
-                    >
+                    <Badge key={tag} className="bg-purple-50 text-purple-700 capitalize">
                       {tag}
                     </Badge>
                   ))}
                   {allergenTags.length > 0 && (
                     <Badge className="bg-amber-50 text-amber-700">
-                      ⚠️ Contains: {allergenTags.slice(0, 2).join(", ")}
-                      {allergenTags.length > 2 &&
-                        ` +${allergenTags.length - 2}`}
+                      ⚠️ Contains: {allergenTags.slice(0, 2).join(', ')}
+                      {allergenTags.length > 2 && ` +${allergenTags.length - 2}`}
                     </Badge>
                   )}
                 </div>
@@ -205,17 +184,13 @@ export function RecipeCard({ item, onOpenDetail }: RecipeCardProps) {
             {/* Ingredient preview */}
             {ingredientPreview && (
               <p className="mt-1 text-sm text-gray-600">
-                <span className="font-medium">Ingredients:</span>{" "}
-                {ingredientPreview}
+                <span className="font-medium">Ingredients:</span> {ingredientPreview}
               </p>
             )}
 
             {/* Stats row */}
             <div className="mt-4 grid grid-cols-2 gap-3 text-sm text-gray-600 sm:flex sm:flex-wrap sm:items-center sm:gap-4">
-              <span
-                className="flex items-center gap-1"
-                title={timeInfo.breakdown ?? undefined}
-              >
+              <span className="flex items-center gap-1" title={timeInfo.breakdown ?? undefined}>
                 <span>⏱️</span>
                 <span>
                   {timeInfo.total} min
@@ -243,8 +218,8 @@ export function RecipeCard({ item, onOpenDetail }: RecipeCardProps) {
             {/* Hover preview hint */}
             <div
               className={cn(
-                "mt-3 text-sm text-emerald-600 transition-opacity duration-200",
-                isActive ? "opacity-100" : "opacity-0"
+                'mt-3 text-sm text-emerald-600 transition-opacity duration-200',
+                isActive ? 'opacity-100' : 'opacity-0'
               )}
             >
               View full recipe details →

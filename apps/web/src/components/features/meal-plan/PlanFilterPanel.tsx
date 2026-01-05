@@ -1,9 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
+import { ChevronDown, ChevronUp, RefreshCw, Loader2 } from 'lucide-react';
+import { Button } from '~/components/ui/button';
+import { Card } from '~/components/ui/card';
+import { Label } from '~/components/ui/label';
+import { cn } from '~/lib/utils';
 
-// Allergen options for exclusion
 const ALLERGEN_OPTIONS = [
   { id: 'gluten', label: 'Gluten', emoji: '🌾' },
   { id: 'dairy', label: 'Dairy', emoji: '🧀' },
@@ -16,7 +19,6 @@ const ALLERGEN_OPTIONS = [
   { id: 'sesame', label: 'Sesame', emoji: '🌱' },
 ] as const;
 
-// Max cooking time options
 const MAX_TIME_OPTIONS = [
   { value: null, label: 'Any time' },
   { value: 15, label: '15 min or less' },
@@ -41,7 +43,7 @@ interface PlanFilterPanelProps {
   isRegenerating: boolean;
 }
 
-export default function PlanFilterPanel({
+export function PlanFilterPanel({
   currentFilters,
   onFiltersChange,
   onRegenerate,
@@ -77,7 +79,7 @@ export default function PlanFilterPanel({
   ].filter(Boolean).length;
 
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden">
+    <Card className="overflow-hidden">
       {/* Header - Always visible */}
       <button
         type="button"
@@ -97,9 +99,9 @@ export default function PlanFilterPanel({
           </div>
         </div>
         {isOpen ? (
-          <ChevronUpIcon className="h-5 w-5 text-gray-500" />
+          <ChevronUp className="h-5 w-5 text-gray-500" />
         ) : (
-          <ChevronDownIcon className="h-5 w-5 text-gray-500" />
+          <ChevronDown className="h-5 w-5 text-gray-500" />
         )}
       </button>
 
@@ -108,14 +110,15 @@ export default function PlanFilterPanel({
         <div className="border-t border-gray-200 px-4 py-4 space-y-5">
           {/* Dietary preferences */}
           <div className="space-y-3">
-            <span className="text-sm font-semibold text-gray-900">Dietary Preferences</span>
+            <Label className="text-sm font-semibold text-gray-900">Dietary Preferences</Label>
             <div className="flex flex-wrap gap-2">
               <label
-                className={`flex cursor-pointer items-center gap-2 rounded-lg border-2 px-3 py-2 text-sm transition ${
+                className={cn(
+                  'flex cursor-pointer items-center gap-2 rounded-lg border-2 px-3 py-2 text-sm transition',
                   currentFilters.isVegetarian
                     ? 'border-emerald-400 bg-emerald-50 text-emerald-700'
                     : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300'
-                }`}
+                )}
               >
                 <input
                   type="checkbox"
@@ -128,11 +131,12 @@ export default function PlanFilterPanel({
                 <span>Vegetarian</span>
               </label>
               <label
-                className={`flex cursor-pointer items-center gap-2 rounded-lg border-2 px-3 py-2 text-sm transition ${
+                className={cn(
+                  'flex cursor-pointer items-center gap-2 rounded-lg border-2 px-3 py-2 text-sm transition',
                   currentFilters.isDairyFree
                     ? 'border-emerald-400 bg-emerald-50 text-emerald-700'
                     : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300'
-                }`}
+                )}
               >
                 <input
                   type="checkbox"
@@ -149,12 +153,12 @@ export default function PlanFilterPanel({
 
           {/* Difficulty */}
           <div>
-            <label
+            <Label
               htmlFor="filter-difficulty"
               className="block text-sm font-semibold text-gray-900 mb-2"
             >
               Recipe Difficulty
-            </label>
+            </Label>
             <div className="relative">
               <select
                 id="filter-difficulty"
@@ -173,18 +177,18 @@ export default function PlanFilterPanel({
                 <option value="MEDIUM">Medium</option>
                 <option value="HARD">Hard</option>
               </select>
-              <ChevronDownIcon className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
+              <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
             </div>
           </div>
 
           {/* Max cooking time */}
           <div>
-            <label
+            <Label
               htmlFor="filter-maxTime"
               className="block text-sm font-semibold text-gray-900 mb-2"
             >
               Maximum Cooking Time
-            </label>
+            </Label>
             <div className="relative">
               <select
                 id="filter-maxTime"
@@ -204,25 +208,27 @@ export default function PlanFilterPanel({
                   </option>
                 ))}
               </select>
-              <ChevronDownIcon className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
+              <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
             </div>
           </div>
 
           {/* Allergen exclusions */}
           <div>
-            <span className="block text-sm font-semibold text-gray-900 mb-1">
+            <Label className="block text-sm font-semibold text-gray-900 mb-1">
               Exclude Allergens
-            </span>
+            </Label>
             <p className="text-xs text-gray-500 mb-3">Select allergens to exclude from recipes</p>
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
               {ALLERGEN_OPTIONS.map((allergen) => (
                 <label
                   key={allergen.id}
-                  className={`flex cursor-pointer items-center gap-2 rounded-lg border-2 px-3 py-2 text-sm transition ${
+                  className={cn(
+                    'flex cursor-pointer items-center gap-2 rounded-lg border-2 px-3 py-2 text-sm transition',
                     currentFilters.excludeAllergenTagIds.includes(allergen.id)
                       ? 'border-red-400 bg-red-50 text-red-700'
-                      : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300'
-                  } ${isRegenerating ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300',
+                    isRegenerating && 'opacity-50 cursor-not-allowed'
+                  )}
                 >
                   <input
                     type="checkbox"
@@ -239,40 +245,29 @@ export default function PlanFilterPanel({
           </div>
 
           {/* Regenerate button */}
-          <button
+          <Button
             type="button"
             onClick={onRegenerate}
             disabled={isRegenerating}
-            className="w-full rounded-lg bg-gradient-to-r from-emerald-600 to-emerald-700 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:from-emerald-700 hover:to-emerald-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed"
+            variant="premium"
+            className="w-full"
           >
             {isRegenerating ? (
-              <span className="flex items-center justify-center gap-2">
-                <svg className="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  />
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  />
-                </svg>
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
                 <span>Regenerating Plan...</span>
-              </span>
+              </>
             ) : (
-              <span className="flex items-center justify-center gap-2">
-                <span>🔄</span>
+              <>
+                <RefreshCw className="h-4 w-4" />
                 <span>Regenerate Plan</span>
-              </span>
+              </>
             )}
-          </button>
+          </Button>
         </div>
       )}
-    </div>
+    </Card>
   );
 }
+
+export default PlanFilterPanel;

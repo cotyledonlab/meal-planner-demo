@@ -1,25 +1,21 @@
-"use client";
+'use client';
 
-import { useSession } from "next-auth/react";
-import { useEffect, useMemo, useRef } from "react";
-import { ShoppingBag, ChevronDown, Check } from "lucide-react";
-import { isPremiumUser } from "~/lib/auth";
-import {
-  CATEGORY_ORDER,
-  CATEGORY_EMOJI,
-  CATEGORY_LABELS,
-} from "~/lib/categoryConfig";
-import { api } from "~/trpc/react";
-import { Button } from "~/components/ui/button";
-import { Card } from "~/components/ui/card";
+import { useSession } from 'next-auth/react';
+import { useEffect, useMemo, useRef } from 'react';
+import { ShoppingBag, ChevronDown, Check } from 'lucide-react';
+import { isPremiumUser } from '~/lib/auth';
+import { CATEGORY_ORDER, CATEGORY_EMOJI, CATEGORY_LABELS } from '~/lib/categoryConfig';
+import { api } from '~/trpc/react';
+import { Button } from '~/components/ui/button';
+import { Card } from '~/components/ui/card';
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "~/components/ui/accordion";
-import { EmptyState } from "~/components/shared/EmptyState";
-import { cn } from "~/lib/utils";
+} from '~/components/ui/accordion';
+import { EmptyState } from '~/components/shared/EmptyState';
+import { cn } from '~/lib/utils';
 
 interface ShoppingListItem {
   id: string;
@@ -39,7 +35,7 @@ interface ShoppingListProps {
 export function ShoppingList({ planId, onComparePrices }: ShoppingListProps) {
   const { data: session, status } = useSession();
   const isPremium = isPremiumUser(session?.user);
-  const isLoading = status === "loading";
+  const isLoading = status === 'loading';
   const utils = api.useUtils();
 
   // Fetch shopping list data
@@ -48,10 +44,7 @@ export function ShoppingList({ planId, onComparePrices }: ShoppingListProps) {
     { enabled: !!planId }
   );
 
-  const items = useMemo(
-    () => shoppingList?.items ?? [],
-    [shoppingList?.items]
-  );
+  const items = useMemo(() => shoppingList?.items ?? [], [shoppingList?.items]);
   const shoppingListId = shoppingList?.id;
   const itemsRef = useRef(items);
 
@@ -72,9 +65,7 @@ export function ShoppingList({ planId, onComparePrices }: ShoppingListProps) {
         return {
           ...old,
           items: old.items.map((item) =>
-            item.id === variables.itemId
-              ? { ...item, checked: !item.checked }
-              : item
+            item.id === variables.itemId ? { ...item, checked: !item.checked } : item
           ),
         };
       });
@@ -91,41 +82,35 @@ export function ShoppingList({ planId, onComparePrices }: ShoppingListProps) {
     },
   });
 
-  const updateCategoryMutation =
-    api.shoppingList.updateCategoryChecked.useMutation({
-      async onMutate(variables) {
-        if (!variables?.category) return { previousItems: itemsRef.current };
-        await utils.shoppingList.getForPlan.cancel({ planId }).catch(() => undefined);
+  const updateCategoryMutation = api.shoppingList.updateCategoryChecked.useMutation({
+    async onMutate(variables) {
+      if (!variables?.category) return { previousItems: itemsRef.current };
+      await utils.shoppingList.getForPlan.cancel({ planId }).catch(() => undefined);
 
-        const previousItems = itemsRef.current;
-        const previousData = utils.shoppingList.getForPlan.getData({ planId });
+      const previousItems = itemsRef.current;
+      const previousData = utils.shoppingList.getForPlan.getData({ planId });
 
-        utils.shoppingList.getForPlan.setData({ planId }, (old) => {
-          if (!old) return old;
-          return {
-            ...old,
-            items: old.items.map((item) =>
-              item.category === variables.category
-                ? { ...item, checked: variables.checked }
-                : item
-            ),
-          };
-        });
+      utils.shoppingList.getForPlan.setData({ planId }, (old) => {
+        if (!old) return old;
+        return {
+          ...old,
+          items: old.items.map((item) =>
+            item.category === variables.category ? { ...item, checked: variables.checked } : item
+          ),
+        };
+      });
 
-        return { previousItems, previousData };
-      },
-      onError: (_error, _variables, context) => {
-        if (context?.previousData) {
-          utils.shoppingList.getForPlan.setData(
-            { planId },
-            context.previousData
-          );
-        }
-      },
-      onSuccess: () => {
-        void utils.shoppingList.getForPlan.invalidate({ planId });
-      },
-    });
+      return { previousItems, previousData };
+    },
+    onError: (_error, _variables, context) => {
+      if (context?.previousData) {
+        utils.shoppingList.getForPlan.setData({ planId }, context.previousData);
+      }
+    },
+    onSuccess: () => {
+      void utils.shoppingList.getForPlan.invalidate({ planId });
+    },
+  });
 
   // Group items by category
   const groupedItems = useMemo(() => {
@@ -134,7 +119,7 @@ export function ShoppingList({ planId, onComparePrices }: ShoppingListProps) {
     const groups = new Map<string, ShoppingListItem[]>();
 
     for (const item of items) {
-      const category = item.category || "other";
+      const category = item.category || 'other';
       if (!groups.has(category)) {
         groups.set(category, []);
       }
@@ -202,127 +187,115 @@ export function ShoppingList({ planId, onComparePrices }: ShoppingListProps) {
 
       {/* Grouped Shopping List */}
       <Accordion type="multiple" className="space-y-4">
-        {Array.from(groupedItems.entries()).map(
-          ([category, categoryItems]) => {
-            const categoryCheckedCount = categoryItems.filter(
-              (item) => item.checked
-            ).length;
-            const categoryTotal = categoryItems.length;
-            const allChecked = categoryCheckedCount === categoryTotal;
+        {Array.from(groupedItems.entries()).map(([category, categoryItems]) => {
+          const categoryCheckedCount = categoryItems.filter((item) => item.checked).length;
+          const categoryTotal = categoryItems.length;
+          const allChecked = categoryCheckedCount === categoryTotal;
 
-            return (
-              <AccordionItem
-                key={category}
-                value={category}
-                className="rounded-2xl bg-white shadow-sm ring-1 ring-gray-200 border-0 sm:rounded-xl"
-              >
-                <AccordionTrigger className="flex w-full items-center justify-between gap-3 rounded-2xl px-4 py-4 text-left transition hover:bg-gray-50 hover:no-underline sm:rounded-lg sm:px-5 sm:py-4 min-h-[60px]">
-                  <div className="flex items-center gap-3">
-                    <span className="text-2xl">
-                      {CATEGORY_EMOJI[category] ?? "📦"}
-                    </span>
-                    <div>
-                      <h3 className="font-semibold text-gray-900">
-                        {CATEGORY_LABELS[category] ?? category}
-                      </h3>
-                      <p className="text-sm text-gray-600">
-                        {categoryCheckedCount} of {categoryTotal} checked
-                      </p>
-                    </div>
+          return (
+            <AccordionItem
+              key={category}
+              value={category}
+              className="rounded-2xl bg-white shadow-sm ring-1 ring-gray-200 border-0 sm:rounded-xl"
+            >
+              <AccordionTrigger className="flex w-full items-center justify-between gap-3 rounded-2xl px-4 py-4 text-left transition hover:bg-gray-50 hover:no-underline sm:rounded-lg sm:px-5 sm:py-4 min-h-[60px]">
+                <div className="flex items-center gap-3">
+                  <span className="text-2xl">{CATEGORY_EMOJI[category] ?? '📦'}</span>
+                  <div>
+                    <h3 className="font-semibold text-gray-900">
+                      {CATEGORY_LABELS[category] ?? category}
+                    </h3>
+                    <p className="text-sm text-gray-600">
+                      {categoryCheckedCount} of {categoryTotal} checked
+                    </p>
                   </div>
-                </AccordionTrigger>
+                </div>
+              </AccordionTrigger>
 
-                <AccordionContent className="border-t border-gray-200 p-4 sm:p-5 pt-4">
-                  {/* Category actions */}
-                  <div className="mb-4 flex flex-wrap gap-2 sm:gap-3">
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      onClick={() => toggleCategory(category, true)}
-                      disabled={allChecked}
-                      className="flex-1 sm:flex-initial"
-                    >
-                      Check All
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => toggleCategory(category, false)}
-                      disabled={categoryCheckedCount === 0}
-                      className="flex-1 sm:flex-initial"
-                    >
-                      Uncheck All
-                    </Button>
-                  </div>
+              <AccordionContent className="border-t border-gray-200 p-4 sm:p-5 pt-4">
+                {/* Category actions */}
+                <div className="mb-4 flex flex-wrap gap-2 sm:gap-3">
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => toggleCategory(category, true)}
+                    disabled={allChecked}
+                    className="flex-1 sm:flex-initial"
+                  >
+                    Check All
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => toggleCategory(category, false)}
+                    disabled={categoryCheckedCount === 0}
+                    className="flex-1 sm:flex-initial"
+                  >
+                    Uncheck All
+                  </Button>
+                </div>
 
-                  {/* Items list */}
-                  <ul className="space-y-3 sm:space-y-2">
-                    {categoryItems.map((item) => {
-                      const isChecked = item.checked;
-                      return (
-                        <li key={item.id}>
-                          <button
-                            type="button"
-                            onClick={() => toggleItem(item.id)}
+                {/* Items list */}
+                <ul className="space-y-3 sm:space-y-2">
+                  {categoryItems.map((item) => {
+                    const isChecked = item.checked;
+                    return (
+                      <li key={item.id}>
+                        <button
+                          type="button"
+                          onClick={() => toggleItem(item.id)}
+                          className={cn(
+                            'flex w-full items-center gap-4 rounded-3xl border border-gray-200 bg-gray-50 px-4 py-4 text-left transition hover:border-emerald-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 sm:rounded-xl sm:px-5',
+                            isChecked && 'border-emerald-500 bg-emerald-50'
+                          )}
+                          aria-label={`Toggle ${item.name}`}
+                          aria-pressed={isChecked}
+                        >
+                          <span
                             className={cn(
-                              "flex w-full items-center gap-4 rounded-3xl border border-gray-200 bg-gray-50 px-4 py-4 text-left transition hover:border-emerald-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 sm:rounded-xl sm:px-5",
-                              isChecked && "border-emerald-500 bg-emerald-50"
+                              'flex h-12 w-12 min-h-[52px] min-w-[52px] items-center justify-center rounded-2xl border-2 transition sm:h-11 sm:w-11 sm:min-h-[48px] sm:min-w-[48px]',
+                              isChecked
+                                ? 'border-emerald-600 bg-emerald-100 text-emerald-600'
+                                : 'border-gray-300 bg-white text-transparent'
                             )}
-                            aria-label={`Toggle ${item.name}`}
-                            aria-pressed={isChecked}
+                            aria-hidden="true"
                           >
-                            <span
-                              className={cn(
-                                "flex h-12 w-12 min-h-[52px] min-w-[52px] items-center justify-center rounded-2xl border-2 transition sm:h-11 sm:w-11 sm:min-h-[48px] sm:min-w-[48px]",
-                                isChecked
-                                  ? "border-emerald-600 bg-emerald-100 text-emerald-600"
-                                  : "border-gray-300 bg-white text-transparent"
-                              )}
-                              aria-hidden="true"
-                            >
-                              <Check className="h-6 w-6" strokeWidth={3} />
-                            </span>
-                            <span
-                              className={cn(
-                                "flex-1 text-base leading-6",
-                                isChecked
-                                  ? "text-gray-600 line-through"
-                                  : "text-gray-700"
-                              )}
-                            >
-                              {item.quantity > 0 && (
-                                <span className="font-semibold">
-                                  {item.quantity} {item.unit}{" "}
-                                </span>
-                              )}
-                              {item.name}
-                            </span>
-                          </button>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </AccordionContent>
-              </AccordionItem>
-            );
-          }
-        )}
+                            <Check className="h-6 w-6" strokeWidth={3} />
+                          </span>
+                          <span
+                            className={cn(
+                              'flex-1 text-base leading-6',
+                              isChecked ? 'text-gray-600 line-through' : 'text-gray-700'
+                            )}
+                          >
+                            {item.quantity > 0 && (
+                              <span className="font-semibold">
+                                {item.quantity} {item.unit}{' '}
+                              </span>
+                            )}
+                            {item.name}
+                          </span>
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </AccordionContent>
+            </AccordionItem>
+          );
+        })}
       </Accordion>
 
       {/* CTA button */}
       {onComparePrices && (
         <div className="text-center">
-          <Button
-            onClick={onComparePrices}
-            disabled={isLoading}
-            className="w-full sm:w-auto"
-          >
-            {isPremium ? "Compare Prices" : "Compare Prices (Premium Preview)"}
+          <Button onClick={onComparePrices} disabled={isLoading} className="w-full sm:w-auto">
+            {isPremium ? 'Compare Prices' : 'Compare Prices (Premium Preview)'}
           </Button>
           <p className="mt-3 text-sm text-gray-700">
             {isPremium
-              ? "See real-time price comparisons across stores"
-              : "See how much you could save at different stores"}
+              ? 'See real-time price comparisons across stores'
+              : 'See how much you could save at different stores'}
           </p>
         </div>
       )}

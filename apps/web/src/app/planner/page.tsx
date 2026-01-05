@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { api } from '~/trpc/react';
-import MealPlanWizard, { type MealPreferences } from '~/app/_components/MealPlanWizard';
+import { MealPlanWizard, type MealPreferences } from '~/components/features/meal-plan';
 import { isPremiumUser } from '~/lib/auth';
 
 const LOADING_MESSAGES = [

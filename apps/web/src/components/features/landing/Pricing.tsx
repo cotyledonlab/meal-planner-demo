@@ -1,10 +1,13 @@
-// Pricing tiers comparison section
 'use client';
+
 import Link from 'next/link';
 import { useState } from 'react';
+import { Check } from 'lucide-react';
 import { PRICING } from '@meal-planner-demo/constants';
+import { Button } from '~/components/ui/button';
+import { cn } from '~/lib/utils';
 
-export default function Pricing() {
+export function Pricing() {
   const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'annual'>('monthly');
 
   const tiers = [
@@ -38,29 +41,25 @@ export default function Pricing() {
 
           {/* Billing period toggle */}
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-            <button
+            <Button
               onClick={() => setBillingPeriod('monthly')}
-              className={`inline-flex min-h-[44px] items-center justify-center rounded-full px-6 py-2.5 text-sm font-semibold transition-all duration-150 ease-out ${
-                billingPeriod === 'monthly'
-                  ? 'bg-emerald-600 text-white shadow-md'
-                  : 'bg-white text-gray-700 hover:bg-gray-50 active:scale-[0.98]'
-              }`}
+              variant={billingPeriod === 'monthly' ? 'default' : 'ghost'}
+              size="sm"
+              className={cn(billingPeriod !== 'monthly' && 'bg-white hover:bg-gray-50')}
             >
               Monthly
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={() => setBillingPeriod('annual')}
-              className={`relative inline-flex min-h-[44px] items-center justify-center rounded-full px-6 py-2.5 text-sm font-semibold transition-all duration-150 ease-out ${
-                billingPeriod === 'annual'
-                  ? 'bg-emerald-600 text-white shadow-md'
-                  : 'bg-white text-gray-700 hover:bg-gray-50 active:scale-[0.98]'
-              }`}
+              variant={billingPeriod === 'annual' ? 'default' : 'ghost'}
+              size="sm"
+              className={cn('relative', billingPeriod !== 'annual' && 'bg-white hover:bg-gray-50')}
             >
               Annual
               <span className="ml-2 rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-bold text-emerald-700">
                 Save {PRICING.PREMIUM.annualSavings}
               </span>
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -79,11 +78,12 @@ export default function Pricing() {
             return (
               <div
                 key={tier.name}
-                className={`relative overflow-hidden rounded-3xl p-8 transition-all duration-300 ease-out ${
+                className={cn(
+                  'relative overflow-hidden rounded-3xl p-8 transition-all duration-300 ease-out',
                   tier.highlighted
                     ? 'bg-gradient-to-br from-emerald-600/10 via-emerald-50 to-emerald-50 ring-2 ring-emerald-500 shadow-2xl shadow-emerald-200/80 hover:-translate-y-1.5 hover:shadow-emerald-300/80 lg:scale-[1.03]'
                     : 'bg-white shadow-md ring-1 ring-gray-200 hover:-translate-y-1 hover:shadow-lg'
-                }`}
+                )}
               >
                 {tier.highlighted && (
                   <>
@@ -147,42 +147,45 @@ export default function Pricing() {
                   {tier.features.map((feature) => (
                     <li
                       key={feature}
-                      className={`flex items-start gap-3 rounded-xl px-2 py-1 transition-all duration-200 ${
+                      className={cn(
+                        'flex items-start gap-3 rounded-xl px-2 py-1 transition-all duration-200',
                         tier.highlighted ? 'hover:bg-white/70' : 'hover:bg-gray-50'
-                      }`}
+                      )}
                     >
                       <span
-                        className={`mt-0.5 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full ${
+                        className={cn(
+                          'mt-0.5 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full',
                           tier.highlighted
                             ? 'bg-gradient-to-br from-emerald-600 to-emerald-500 text-white shadow-sm shadow-emerald-400/50'
                             : 'bg-emerald-100 text-emerald-700'
-                        }`}
+                        )}
                       >
-                        ✓
+                        <Check className="h-4 w-4" />
                       </span>
                       <span className="text-base text-gray-700">{feature}</span>
                     </li>
                   ))}
                 </ul>
 
-                <Link
-                  href={tier.href}
-                  className={`mt-8 flex min-h-[52px] w-full items-center justify-center rounded-full py-3.5 text-center text-base font-semibold shadow-md transition-all duration-200 ease-out hover:scale-[1.02] hover:shadow-lg active:scale-[0.98] active:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${
-                    tier.highlighted
-                      ? 'bg-gradient-to-r from-emerald-600 via-emerald-500 to-emerald-400 text-white shadow-emerald-300/70 hover:from-emerald-500 hover:to-emerald-400 focus-visible:outline-emerald-600'
-                      : 'bg-white text-emerald-700 ring-2 ring-emerald-600 hover:bg-emerald-50 focus-visible:outline-emerald-600'
-                  }`}
+                <Button
+                  asChild
+                  variant={tier.highlighted ? 'premium' : 'secondary'}
+                  className="mt-8 w-full"
                 >
-                  {tier.cta}
-                </Link>
+                  <Link href={tier.href}>{tier.cta}</Link>
+                </Button>
 
                 {/* Trust signals for premium */}
                 {isPremium && (
                   <div className="mt-4 space-y-1 text-center">
                     <p className="text-xs text-gray-600">
-                      ✓ {PRICING.TRUST_SIGNALS.moneyBackGuarantee}
+                      <Check className="inline h-3 w-3 mr-1" />
+                      {PRICING.TRUST_SIGNALS.moneyBackGuarantee}
                     </p>
-                    <p className="text-xs text-gray-600">✓ {PRICING.TRUST_SIGNALS.cancelAnytime}</p>
+                    <p className="text-xs text-gray-600">
+                      <Check className="inline h-3 w-3 mr-1" />
+                      {PRICING.TRUST_SIGNALS.cancelAnytime}
+                    </p>
                   </div>
                 )}
               </div>
@@ -202,3 +205,5 @@ export default function Pricing() {
     </section>
   );
 }
+
+export default Pricing;

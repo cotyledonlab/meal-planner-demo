@@ -1,7 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { ImageProps } from 'next/image';
-import RecipeCard from './RecipeCard';
+import RecipeCard from '~/components/features/recipe/RecipeCard';
 
 // Track onError callbacks for testing
 let capturedOnError: (() => void) | undefined;

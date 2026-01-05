@@ -1,6 +1,9 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import { FileText, Download, Printer } from 'lucide-react';
+import { Button } from '~/components/ui/button';
+import { cn } from '~/lib/utils';
 
 interface ExportButtonsProps {
   planId: string;
@@ -56,7 +59,7 @@ async function downloadBlob(url: string, filename: string) {
   window.URL.revokeObjectURL(objectUrl);
 }
 
-export default function ExportButtons({ planId, planStartDateIso, planDays }: ExportButtonsProps) {
+export function ExportButtons({ planId, planStartDateIso, planDays }: ExportButtonsProps) {
   const [isPdfLoading, setIsPdfLoading] = useState(false);
   const [isCsvLoading, setIsCsvLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -113,29 +116,37 @@ export default function ExportButtons({ planId, planStartDateIso, planDays }: Ex
         </p>
       </div>
       <div className="flex flex-wrap gap-2 sm:flex-nowrap">
-        <button
+        <Button
           type="button"
           onClick={() => handleExport('pdf')}
           disabled={isPdfLoading}
-          className="inline-flex min-w-[140px] items-center justify-center gap-2 rounded-full bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-emerald-400"
+          size="sm"
+          className="min-w-[140px]"
         >
+          <FileText className="h-4 w-4" />
           {isPdfLoading ? 'Generating…' : 'Export PDF'}
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
           onClick={() => handleExport('csv')}
           disabled={isCsvLoading}
-          className="inline-flex min-w-[150px] items-center justify-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-emerald-700 shadow-sm ring-1 ring-emerald-200 transition hover:bg-emerald-50 disabled:cursor-not-allowed disabled:text-emerald-400"
+          variant="secondary"
+          size="sm"
+          className="min-w-[150px]"
         >
+          <Download className="h-4 w-4" />
           {isCsvLoading ? 'Preparing…' : 'Export CSV'}
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
           onClick={handlePrint}
-          className="inline-flex min-w-[120px] items-center justify-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm ring-1 ring-gray-200 transition hover:bg-gray-50"
+          variant="outline"
+          size="sm"
+          className="min-w-[120px]"
         >
+          <Printer className="h-4 w-4" />
           Print
-        </button>
+        </Button>
       </div>
       {errorMessage && (
         <p className="mt-2 w-full text-sm text-red-600 sm:mt-0 sm:text-right">{errorMessage}</p>
@@ -143,3 +154,5 @@ export default function ExportButtons({ planId, planStartDateIso, planDays }: Ex
     </div>
   );
 }
+
+export default ExportButtons;

@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
-import FeatureCards from './FeatureCards';
+import FeatureCards from '~/components/features/landing/FeatureCards';
 
 describe('FeatureCards', () => {
   it('renders all feature cards with new emotional messaging', () => {

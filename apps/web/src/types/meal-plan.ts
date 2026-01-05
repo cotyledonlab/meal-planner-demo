@@ -22,19 +22,16 @@ export type {
   Ingredient,
   RecipeFilters,
   RecipeForPlanning,
-} from "@meal-planner-demo/types";
+} from '@meal-planner-demo/types';
 
 export {
   getRecipeTotalTime,
   getPrimaryImageUrl,
   DIET_TAGS,
   ALLERGEN_TAGS,
-} from "@meal-planner-demo/types";
+} from '@meal-planner-demo/types';
 
-export type {
-  DietTagName,
-  AllergenTagName,
-} from "@meal-planner-demo/types";
+export type { DietTagName, AllergenTagName } from '@meal-planner-demo/types';
 
 // App-specific types
 
@@ -49,7 +46,7 @@ export interface MealPreferences {
   isDairyFree: boolean;
   dislikes: string;
   // Advanced filters
-  difficulty?: "EASY" | "MEDIUM" | "HARD" | null;
+  difficulty?: 'EASY' | 'MEDIUM' | 'HARD' | null;
   maxTotalTime?: number | null;
   excludeAllergens?: string[];
 }
@@ -75,27 +72,27 @@ export interface MaxTimeOption {
  * Constants for allergen options in the wizard
  */
 export const ALLERGEN_OPTIONS: readonly AllergenOption[] = [
-  { id: "gluten", label: "Gluten", emoji: "🌾" },
-  { id: "dairy", label: "Dairy", emoji: "🧀" },
-  { id: "eggs", label: "Eggs", emoji: "🥚" },
-  { id: "nuts", label: "Tree Nuts", emoji: "🥜" },
-  { id: "peanuts", label: "Peanuts", emoji: "🥜" },
-  { id: "soy", label: "Soy", emoji: "🫘" },
-  { id: "shellfish", label: "Shellfish", emoji: "🦐" },
-  { id: "fish", label: "Fish", emoji: "🐟" },
-  { id: "sesame", label: "Sesame", emoji: "🌱" },
+  { id: 'gluten', label: 'Gluten', emoji: '🌾' },
+  { id: 'dairy', label: 'Dairy', emoji: '🧀' },
+  { id: 'eggs', label: 'Eggs', emoji: '🥚' },
+  { id: 'nuts', label: 'Tree Nuts', emoji: '🥜' },
+  { id: 'peanuts', label: 'Peanuts', emoji: '🥜' },
+  { id: 'soy', label: 'Soy', emoji: '🫘' },
+  { id: 'shellfish', label: 'Shellfish', emoji: '🦐' },
+  { id: 'fish', label: 'Fish', emoji: '🐟' },
+  { id: 'sesame', label: 'Sesame', emoji: '🌱' },
 ] as const;
 
 /**
  * Constants for max cooking time options
  */
 export const MAX_TIME_OPTIONS: readonly MaxTimeOption[] = [
-  { value: null, label: "Any time" },
-  { value: 15, label: "15 minutes or less" },
-  { value: 30, label: "30 minutes or less" },
-  { value: 45, label: "45 minutes or less" },
-  { value: 60, label: "1 hour or less" },
-  { value: 90, label: "90 minutes or less" },
+  { value: null, label: 'Any time' },
+  { value: 15, label: '15 minutes or less' },
+  { value: 30, label: '30 minutes or less' },
+  { value: 45, label: '45 minutes or less' },
+  { value: 60, label: '1 hour or less' },
+  { value: 90, label: '90 minutes or less' },
 ] as const;
 
 /**
@@ -157,7 +154,7 @@ export interface MealPlanRecipe {
   prepTimeMinutes?: number | null;
   cookTimeMinutes?: number | null;
   totalTimeMinutes?: number | null;
-  difficulty?: "EASY" | "MEDIUM" | "HARD";
+  difficulty?: 'EASY' | 'MEDIUM' | 'HARD';
   dietTags?: DietTagRelation[];
   allergenTags?: AllergenTagRelation[];
   images?: Array<{
@@ -257,34 +254,32 @@ export function formatTime(minutes: number): string {
  * Get difficulty badge variant
  */
 export function getDifficultyVariant(
-  difficulty?: "EASY" | "MEDIUM" | "HARD" | null
-): "easy" | "medium" | "hard" {
+  difficulty?: 'EASY' | 'MEDIUM' | 'HARD' | null
+): 'easy' | 'medium' | 'hard' {
   switch (difficulty) {
-    case "EASY":
-      return "easy";
-    case "MEDIUM":
-      return "medium";
-    case "HARD":
-      return "hard";
+    case 'EASY':
+      return 'easy';
+    case 'MEDIUM':
+      return 'medium';
+    case 'HARD':
+      return 'hard';
     default:
-      return "easy";
+      return 'easy';
   }
 }
 
 /**
  * Get difficulty display label
  */
-export function getDifficultyLabel(
-  difficulty?: "EASY" | "MEDIUM" | "HARD" | null
-): string {
+export function getDifficultyLabel(difficulty?: 'EASY' | 'MEDIUM' | 'HARD' | null): string {
   switch (difficulty) {
-    case "EASY":
-      return "Easy";
-    case "MEDIUM":
-      return "Medium";
-    case "HARD":
-      return "Hard";
+    case 'EASY':
+      return 'Easy';
+    case 'MEDIUM':
+      return 'Medium';
+    case 'HARD':
+      return 'Hard';
     default:
-      return "Easy";
+      return 'Easy';
   }
 }

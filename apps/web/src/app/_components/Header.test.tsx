@@ -1,7 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { useSession } from 'next-auth/react';
-import { Header } from './Header';
+import { Header } from '~/components/layout/Header';
 
 // Mock next-auth
 vi.mock('next-auth/react', () => ({
@@ -54,23 +54,14 @@ describe('Header - Mobile Menu', () => {
       update: vi.fn(),
     });
 
-    const { queryByTestId } = render(<Header />);
+    render(<Header />);
     const button = screen.getByLabelText('Toggle menu');
 
-    // Menu should be hidden initially
-    expect(queryByTestId('mobile-menu-panel')).not.toBeInTheDocument();
-
-    // Click to open
+    // Click to open - Sheet renders content in a portal
     fireEvent.click(button);
 
-    // Menu should be visible
-    expect(queryByTestId('mobile-menu-panel')).toBeInTheDocument();
-
-    // Click to close
-    fireEvent.click(button);
-
-    // Menu should be hidden
-    expect(queryByTestId('mobile-menu-panel')).not.toBeInTheDocument();
+    // Menu should be visible (Sheet renders Navigation menu title)
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
   });
 
   it('changes button styling when menu is open', () => {
@@ -123,7 +114,7 @@ describe('Header - Mobile Menu', () => {
     expect(button).toHaveAttribute('aria-expanded', 'false');
   });
 
-  it('renders backdrop overlay when menu is open', () => {
+  it('renders sheet overlay when menu is open', () => {
     vi.mocked(useSession).mockReturnValue({
       data: {
         user: { id: 'test-id', email: 'test@example.com' },
@@ -133,24 +124,17 @@ describe('Header - Mobile Menu', () => {
       update: vi.fn(),
     });
 
-    const { getByTestId } = render(<Header />);
+    render(<Header />);
     const button = screen.getByLabelText('Toggle menu');
-
-    const backdrop = getByTestId('mobile-menu-backdrop');
-
-    // Backdrop should be hidden initially
-    expect(backdrop).toHaveClass('pointer-events-none');
 
     // Open menu
     fireEvent.click(button);
 
-    // Backdrop should be visible
-    expect(backdrop).toHaveClass('pointer-events-auto');
-    expect(backdrop).toHaveClass('bg-black/40');
-    expect(getByTestId('mobile-menu-panel')).toBeInTheDocument();
+    // Sheet dialog should be visible
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
   });
 
-  it('closes menu when backdrop is clicked', () => {
+  it('closes menu when close button is clicked', () => {
     vi.mocked(useSession).mockReturnValue({
       data: {
         user: { id: 'test-id', email: 'test@example.com' },
@@ -160,22 +144,23 @@ describe('Header - Mobile Menu', () => {
       update: vi.fn(),
     });
 
-    const { queryByTestId, getByTestId } = render(<Header />);
+    render(<Header />);
     const button = screen.getByLabelText('Toggle menu');
 
     // Open menu
     fireEvent.click(button);
-    expect(getByTestId('mobile-menu-panel')).toBeInTheDocument();
+    const dialog = screen.getByRole('dialog');
+    expect(dialog).toHaveAttribute('data-state', 'open');
 
-    // Click backdrop
-    const backdrop = getByTestId('mobile-menu-backdrop');
-    fireEvent.click(backdrop);
+    // Click close button (Sheet provides one)
+    const closeButton = screen.getByRole('button', { name: /close/i });
+    fireEvent.click(closeButton);
 
-    // Menu should be closed
-    expect(queryByTestId('mobile-menu-panel')).not.toBeInTheDocument();
+    // Dialog should be closed (data-state changes to closed)
+    expect(dialog).toHaveAttribute('data-state', 'closed');
   });
 
-  it('applies correct animation classes to menu', () => {
+  it('renders navigation links when sheet is open', () => {
     vi.mocked(useSession).mockReturnValue({
       data: {
         user: { id: 'test-id', email: 'test@example.com' },
@@ -185,18 +170,16 @@ describe('Header - Mobile Menu', () => {
       update: vi.fn(),
     });
 
-    const { getByTestId } = render(<Header />);
+    render(<Header />);
     const button = screen.getByLabelText('Toggle menu');
 
     // Open menu
     fireEvent.click(button);
 
-    const menu = getByTestId('mobile-menu-panel');
-    expect(menu).toBeInTheDocument();
-    expect(menu).toHaveClass('fixed');
-    expect(menu).toHaveClass('right-0');
-    expect(menu).toHaveClass('top-16');
-    expect(menu).toHaveClass('animate-slide-in-right');
+    // Should show navigation links - use getAllByText since Dashboard appears in desktop nav too
+    const dialog = screen.getByRole('dialog');
+    expect(dialog).toHaveAttribute('data-state', 'open');
+    expect(screen.getAllByText('Dashboard').length).toBeGreaterThan(0);
   });
 
   it('closes the menu when Escape is pressed', () => {
@@ -209,57 +192,15 @@ describe('Header - Mobile Menu', () => {
       update: vi.fn(),
     });
 
-    const { queryByTestId } = render(<Header />);
+    render(<Header />);
     const button = screen.getByLabelText('Toggle menu');
 
     fireEvent.click(button);
-    expect(queryByTestId('mobile-menu-panel')).toBeInTheDocument();
+    const dialog = screen.getByRole('dialog');
+    expect(dialog).toHaveAttribute('data-state', 'open');
 
     fireEvent.keyDown(document, { key: 'Escape' });
-    expect(queryByTestId('mobile-menu-panel')).not.toBeInTheDocument();
-  });
-
-  it('closes the menu on a right swipe over 60px', () => {
-    vi.mocked(useSession).mockReturnValue({
-      data: {
-        user: { id: 'test-id', email: 'test@example.com' },
-        expires: new Date(Date.now() + 86400000).toISOString(),
-      },
-      status: 'authenticated',
-      update: vi.fn(),
-    });
-
-    const { queryByTestId, getByTestId } = render(<Header />);
-    const button = screen.getByLabelText('Toggle menu');
-
-    fireEvent.click(button);
-    const menu = getByTestId('mobile-menu-panel');
-
-    fireEvent.touchStart(menu, { touches: [{ clientX: 0 }] });
-    fireEvent.touchMove(menu, { touches: [{ clientX: 80 }] });
-
-    expect(queryByTestId('mobile-menu-panel')).not.toBeInTheDocument();
-  });
-
-  it('keeps the menu open on a small swipe', () => {
-    vi.mocked(useSession).mockReturnValue({
-      data: {
-        user: { id: 'test-id', email: 'test@example.com' },
-        expires: new Date(Date.now() + 86400000).toISOString(),
-      },
-      status: 'authenticated',
-      update: vi.fn(),
-    });
-
-    const { queryByTestId, getByTestId } = render(<Header />);
-    const button = screen.getByLabelText('Toggle menu');
-
-    fireEvent.click(button);
-    const menu = getByTestId('mobile-menu-panel');
-
-    fireEvent.touchStart(menu, { touches: [{ clientX: 20 }] });
-    fireEvent.touchMove(menu, { touches: [{ clientX: 60 }] });
-
-    expect(queryByTestId('mobile-menu-panel')).toBeInTheDocument();
+    // Sheet uses data-state to track open/closed state
+    expect(dialog).toHaveAttribute('data-state', 'closed');
   });
 });

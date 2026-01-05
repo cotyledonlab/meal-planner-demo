@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 
 interface MealPlanWizardProps {
   onComplete: (preferences: MealPreferences) => void;
@@ -49,11 +49,7 @@ const MAX_TIME_OPTIONS = [
 const ICON_ANIMATION_DELAY_MS = 50;
 const ENCOURAGEMENT_DISPLAY_DURATION_MS = 600;
 
-export default function MealPlanWizard({
-  onComplete,
-  onClose,
-  isPremium = false,
-}: MealPlanWizardProps) {
+export function MealPlanWizard({ onComplete, onClose, isPremium = false }: MealPlanWizardProps) {
   const [householdSize, setHouseholdSize] = useState(2);
   const [mealsPerDay, setMealsPerDay] = useState(1);
   const [days, setDays] = useState(isPremium ? 7 : 3);
@@ -365,7 +361,7 @@ export default function MealPlanWizard({
                         </option>
                       ))}
                     </select>
-                    <ChevronDownIcon
+                    <ChevronDown
                       className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-600"
                       aria-hidden="true"
                     />
@@ -401,7 +397,7 @@ export default function MealPlanWizard({
                       <option value={2}>2 meals (Lunch & Dinner)</option>
                       <option value={3}>3 meals (All meals)</option>
                     </select>
-                    <ChevronDownIcon
+                    <ChevronDown
                       className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-600"
                       aria-hidden="true"
                     />
@@ -442,7 +438,7 @@ export default function MealPlanWizard({
                         );
                       })}
                     </select>
-                    <ChevronDownIcon
+                    <ChevronDown
                       className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-600"
                       aria-hidden="true"
                     />
@@ -561,9 +557,9 @@ export default function MealPlanWizard({
                       )}
                     </span>
                     {showAdvancedFilters ? (
-                      <ChevronUpIcon className="h-5 w-5 text-gray-500" />
+                      <ChevronUp className="h-5 w-5 text-gray-500" />
                     ) : (
-                      <ChevronDownIcon className="h-5 w-5 text-gray-500" />
+                      <ChevronDown className="h-5 w-5 text-gray-500" />
                     )}
                   </button>
 
@@ -602,7 +598,7 @@ export default function MealPlanWizard({
                             <option value="MEDIUM">Medium - Some skill needed</option>
                             <option value="HARD">Hard - For experienced cooks</option>
                           </select>
-                          <ChevronDownIcon
+                          <ChevronDown
                             className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-600"
                             aria-hidden="true"
                           />
@@ -639,7 +635,7 @@ export default function MealPlanWizard({
                               </option>
                             ))}
                           </select>
-                          <ChevronDownIcon
+                          <ChevronDown
                             className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-600"
                             aria-hidden="true"
                           />
@@ -743,3 +739,6 @@ export default function MealPlanWizard({
     </>
   );
 }
+
+// Default export for backward compatibility
+export default MealPlanWizard;

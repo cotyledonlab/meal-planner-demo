@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, it, expect, vi } from 'vitest';
 import type { ImageProps } from 'next/image';
-import HeroImage from './HeroImage';
+import HeroImage from '~/components/features/landing/HeroImage';
 
 // Track onError callbacks for testing
 let capturedOnError: (() => void) | undefined;

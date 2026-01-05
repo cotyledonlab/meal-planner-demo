@@ -7,11 +7,7 @@ import { RecipeCard } from '~/components/features/recipe/RecipeCard';
 import { RecipeDetailModal } from '~/components/features/recipe/RecipeDetailModal';
 import { EmptyState } from '~/components/shared/EmptyState';
 import { api } from '~/trpc/react';
-import type {
-  MealPreferences,
-  MealPlanItem,
-  MealPlan,
-} from '~/types/meal-plan';
+import type { MealPreferences, MealPlanItem, MealPlan } from '~/types/meal-plan';
 
 interface MealPlanViewProps {
   plan?: MealPlan;

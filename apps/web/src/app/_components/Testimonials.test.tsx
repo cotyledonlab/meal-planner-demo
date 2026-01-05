@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import type { ImageProps } from 'next/image';
-import Testimonials from './Testimonials';
+import Testimonials from '~/components/features/landing/Testimonials';
 
 // Mock next/image to strip Next.js-specific props
 vi.mock('next/image', () => ({
@@ -23,12 +23,7 @@ vi.mock('next/image', () => ({
   },
 }));
 
-// Mock heroicons
-vi.mock('@heroicons/react/24/solid', () => ({
-  StarIcon: ({ className }: { className?: string }) => (
-    <svg data-testid="star-icon" className={className} />
-  ),
-}));
+// No need to mock Lucide icons - they render as standard SVG elements
 
 describe('Testimonials Component', () => {
   it('renders the section heading', () => {
@@ -64,10 +59,11 @@ describe('Testimonials Component', () => {
   });
 
   it('renders star ratings for each testimonial', () => {
-    render(<Testimonials />);
+    const { container } = render(<Testimonials />);
 
     // Each testimonial has 5 stars, so 15 total
-    const stars = screen.getAllByTestId('star-icon');
+    // Lucide icons render as SVG with class containing 'lucide-star'
+    const stars = container.querySelectorAll('svg.lucide-star');
     expect(stars).toHaveLength(15);
   });
 

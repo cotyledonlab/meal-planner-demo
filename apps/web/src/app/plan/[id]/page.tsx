@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { auth } from '~/server/auth';
 import { api, HydrateClient } from '~/trpc/server';
 import PlanPageClient from '~/app/_components/PlanPageClient';
-import ExportButtons from '~/app/_components/ExportButtons';
+import { ExportButtons } from '~/components/features/plan/ExportButtons';
 import { ShoppingList } from '~/components/features/shopping/ShoppingList';
 
 interface PageProps {

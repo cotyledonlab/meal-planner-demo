@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import MealPlanWizard from './MealPlanWizard';
+import MealPlanWizard from '~/components/features/meal-plan/MealPlanWizard';
 
 describe('MealPlanWizard', () => {
   it('should render all form fields', () => {

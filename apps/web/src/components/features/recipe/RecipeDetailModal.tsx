@@ -1,31 +1,26 @@
-"use client";
+'use client';
 
-import Image from "next/image";
+import Image from 'next/image';
 import {
   getRecipeTotalTime,
   getPrimaryImageUrl,
   type RecipeImage,
   type RecipeStep,
-} from "@meal-planner-demo/types";
-import { Printer, Share2, RefreshCw, AlertCircle } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "~/components/ui/dialog";
-import { Button } from "~/components/ui/button";
-import { Badge } from "~/components/ui/badge";
-import { Alert, AlertTitle, AlertDescription } from "~/components/ui/alert";
-import { Card } from "~/components/ui/card";
-import { cn } from "~/lib/utils";
-import { calculateDifficulty, RECIPE_PLACEHOLDER_IMAGE } from "~/lib/recipeUtils";
+} from '@meal-planner-demo/types';
+import { Printer, Share2, RefreshCw, AlertCircle } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '~/components/ui/dialog';
+import { Button } from '~/components/ui/button';
+import { Badge } from '~/components/ui/badge';
+import { Alert, AlertTitle, AlertDescription } from '~/components/ui/alert';
+import { Card } from '~/components/ui/card';
+import { cn } from '~/lib/utils';
+import { calculateDifficulty, RECIPE_PLACEHOLDER_IMAGE } from '~/lib/recipeUtils';
 import {
   type MealPlanRecipe,
   type MealPlanItem,
   getDifficultyVariant,
   getDifficultyLabel,
-} from "~/types/meal-plan";
+} from '~/types/meal-plan';
 
 interface RecipeDetailModalProps {
   item: MealPlanItem;
@@ -41,12 +36,10 @@ interface RecipeDetailModalProps {
  */
 function hasDietTag(recipe: MealPlanRecipe, tagName: string): boolean {
   if (recipe.dietTags) {
-    return recipe.dietTags.some(
-      (dt) => dt.dietTag.name.toLowerCase() === tagName
-    );
+    return recipe.dietTags.some((dt) => dt.dietTag.name.toLowerCase() === tagName);
   }
-  if (tagName === "vegetarian") return recipe.isVegetarian;
-  if (tagName === "dairy-free") return recipe.isDairyFree;
+  if (tagName === 'vegetarian') return recipe.isVegetarian;
+  if (tagName === 'dairy-free') return recipe.isDairyFree;
   return false;
 }
 
@@ -77,9 +70,7 @@ function getTimeSplit(recipe: MealPlanRecipe): {
  */
 function getInstructions(recipe: MealPlanRecipe): string[] {
   if (recipe.steps && recipe.steps.length > 0) {
-    return recipe.steps
-      .sort((a, b) => a.stepNumber - b.stepNumber)
-      .map((step) => step.instruction);
+    return recipe.steps.sort((a, b) => a.stepNumber - b.stepNumber).map((step) => step.instruction);
   }
 
   if (!recipe.instructionsMd) return [];
@@ -90,7 +81,7 @@ function getInstructions(recipe: MealPlanRecipe): string[] {
  * Parse markdown instructions
  */
 function parseInstructionsMd(markdown: string): string[] {
-  if (!markdown) return ["No instructions available."];
+  if (!markdown) return ['No instructions available.'];
 
   const lines = markdown
     .split(/\r?\n/)
@@ -111,15 +102,15 @@ function parseInstructionsMd(markdown: string): string[] {
     if (skipRemaining) continue;
 
     const normalized = line
-      .replace(/^[\d]+[.)]\s*/, "")
-      .replace(/^[-*]\s*/, "")
+      .replace(/^[\d]+[.)]\s*/, '')
+      .replace(/^[-*]\s*/, '')
       .trim();
 
     if (normalized.length === 0) continue;
     steps.push(normalized);
   }
 
-  return steps.length > 0 ? steps : ["No instructions available."];
+  return steps.length > 0 ? steps : ['No instructions available.'];
 }
 
 function handlePrint() {
@@ -145,9 +136,9 @@ async function handleShare(recipe: MealPlanRecipe) {
 async function copyLink() {
   try {
     await navigator.clipboard.writeText(window.location.href);
-    alert("Recipe link copied to clipboard!");
+    alert('Recipe link copied to clipboard!');
   } catch (error) {
-    console.error("Failed to copy link:", error);
+    console.error('Failed to copy link:', error);
   }
 }
 
@@ -168,19 +159,19 @@ export function RecipeDetailModal({
     : calculateDifficulty(totalTime, recipe.ingredients.length);
   const difficultyVariant = recipe.difficulty
     ? getDifficultyVariant(recipe.difficulty)
-    : difficulty === "Easy"
-      ? "easy"
-      : difficulty === "Medium"
-        ? "medium"
-        : "hard";
+    : difficulty === 'Easy'
+      ? 'easy'
+      : difficulty === 'Medium'
+        ? 'medium'
+        : 'hard';
 
   const instructions = getInstructions(recipe);
   const imageUrl = getPrimaryImageUrl(
     recipe as { images?: RecipeImage[]; imageUrl?: string | null },
     RECIPE_PLACEHOLDER_IMAGE
   );
-  const isVegetarian = hasDietTag(recipe, "vegetarian");
-  const isDairyFree = hasDietTag(recipe, "dairy-free");
+  const isVegetarian = hasDietTag(recipe, 'vegetarian');
+  const isDairyFree = hasDietTag(recipe, 'dairy-free');
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
@@ -208,9 +199,7 @@ export function RecipeDetailModal({
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-6 sm:p-8">
           <DialogHeader className="p-0 mb-6">
-            <DialogTitle className="text-3xl font-bold text-gray-900">
-              {recipe.title}
-            </DialogTitle>
+            <DialogTitle className="text-3xl font-bold text-gray-900">{recipe.title}</DialogTitle>
 
             {/* Dietary tags */}
             <div className="mt-3 flex flex-wrap gap-2">
@@ -230,16 +219,14 @@ export function RecipeDetailModal({
           {/* Stats grid */}
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 mb-4">
             {[
-              { emoji: "⏱️", value: `${timeSplit.total} min`, label: "Total Time" },
-              { emoji: "🔥", value: `${recipe.calories} kcal`, label: "Calories" },
-              { emoji: "👥", value: servings, label: "Servings" },
-              { emoji: "🥘", value: recipe.ingredients.length, label: "Ingredients" },
+              { emoji: '⏱️', value: `${timeSplit.total} min`, label: 'Total Time' },
+              { emoji: '🔥', value: `${recipe.calories} kcal`, label: 'Calories' },
+              { emoji: '👥', value: servings, label: 'Servings' },
+              { emoji: '🥘', value: recipe.ingredients.length, label: 'Ingredients' },
             ].map((stat) => (
               <Card key={stat.label} className="p-3 text-center border-0 bg-gray-50">
                 <div className="text-2xl">{stat.emoji}</div>
-                <div className="mt-1 text-sm font-medium text-gray-900">
-                  {stat.value}
-                </div>
+                <div className="mt-1 text-sm font-medium text-gray-900">{stat.value}</div>
                 <div className="text-xs text-gray-600">{stat.label}</div>
               </Card>
             ))}
@@ -263,25 +250,14 @@ export function RecipeDetailModal({
               <Printer className="h-4 w-4" />
               Print Recipe
             </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => handleShare(recipe)}
-            >
+            <Button variant="ghost" size="sm" onClick={() => handleShare(recipe)}>
               <Share2 className="h-4 w-4" />
               Share Recipe
             </Button>
             {onSwapRecipe && (
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={onSwapRecipe}
-                disabled={isSwapping}
-              >
-                <RefreshCw
-                  className={cn("h-4 w-4", isSwapping && "animate-spin")}
-                />
-                {isSwapping ? "Swapping..." : "Swap Recipe"}
+              <Button variant="secondary" size="sm" onClick={onSwapRecipe} disabled={isSwapping}>
+                <RefreshCw className={cn('h-4 w-4', isSwapping && 'animate-spin')} />
+                {isSwapping ? 'Swapping...' : 'Swap Recipe'}
               </Button>
             )}
           </div>
@@ -297,22 +273,15 @@ export function RecipeDetailModal({
 
           {/* Ingredients section */}
           <div className="mb-8">
-            <h3 className="mb-4 text-xl font-semibold text-gray-900">
-              Ingredients
-            </h3>
+            <h3 className="mb-4 text-xl font-semibold text-gray-900">Ingredients</h3>
             <div className="space-y-2">
               {recipe.ingredients.map((ri) => (
-                <div
-                  key={ri.id}
-                  className="flex items-center gap-3 rounded-lg bg-gray-50 p-3"
-                >
+                <div key={ri.id} className="flex items-center gap-3 rounded-lg bg-gray-50 p-3">
                   <div className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-100 text-xs font-semibold text-emerald-700">
                     ✓
                   </div>
                   <div className="flex-1">
-                    <span className="font-medium text-gray-900">
-                      {ri.ingredient.name}
-                    </span>
+                    <span className="font-medium text-gray-900">{ri.ingredient.name}</span>
                     <span className="ml-2 text-sm text-gray-600">
                       {ri.quantity} {ri.unit}
                     </span>
@@ -327,9 +296,7 @@ export function RecipeDetailModal({
 
           {/* Instructions section */}
           <div className="mb-8">
-            <h3 className="mb-4 text-xl font-semibold text-gray-900">
-              Instructions
-            </h3>
+            <h3 className="mb-4 text-xl font-semibold text-gray-900">Instructions</h3>
             <div className="space-y-4">
               {instructions.map((step, index) => (
                 <div key={index} className="flex gap-4">
@@ -349,8 +316,8 @@ export function RecipeDetailModal({
               <p>Per serving: {recipe.calories} kcal</p>
               <p>Total for this meal: {recipe.calories * servings} kcal</p>
               <p className="mt-1 text-xs opacity-75">
-                Note: Nutritional values are approximate and may vary based on
-                specific ingredients used.
+                Note: Nutritional values are approximate and may vary based on specific ingredients
+                used.
               </p>
             </AlertDescription>
           </Alert>

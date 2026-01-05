@@ -3,7 +3,7 @@
 import { useState, useCallback } from 'react';
 import { api, type RouterOutputs } from '~/trpc/react';
 import MealPlanView from './MealPlanView';
-import PlanFilterPanel, { type PlanFilters } from './PlanFilterPanel';
+import { PlanFilterPanel, type PlanFilters } from '~/components/features/meal-plan/PlanFilterPanel';
 
 // Use the actual type returned by the API
 type PlanData = NonNullable<RouterOutputs['plan']['getById']>;

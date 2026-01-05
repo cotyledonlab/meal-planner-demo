@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
-import EmptyState from './EmptyState';
+import EmptyState from '~/components/shared/EmptyState';
 
 // Mock next/link
 vi.mock('next/link', () => ({
@@ -305,7 +305,7 @@ describe('EmptyState', () => {
       expect(heading).toHaveTextContent('Accessible Title');
     });
 
-    it('action button has focus-visible outline', () => {
+    it('action button has focus-visible ring', () => {
       const handleClick = vi.fn();
       render(
         <EmptyState
@@ -318,12 +318,11 @@ describe('EmptyState', () => {
       );
 
       const button = screen.getByRole('button', { name: 'Focusable Button' });
-      expect(button).toHaveClass('focus-visible:outline');
-      expect(button).toHaveClass('focus-visible:outline-2');
-      expect(button).toHaveClass('focus-visible:outline-offset-2');
+      // shadcn/ui Button uses ring styles for focus
+      expect(button).toHaveClass('focus-visible:ring-2');
     });
 
-    it('secondary action button has focus-visible outline', () => {
+    it('secondary action button has focus-visible ring', () => {
       const handleClick = vi.fn();
       render(
         <EmptyState
@@ -335,9 +334,8 @@ describe('EmptyState', () => {
       );
 
       const button = screen.getByRole('button', { name: 'Secondary Focus' });
-      expect(button).toHaveClass('focus-visible:outline');
-      expect(button).toHaveClass('focus-visible:outline-2');
-      expect(button).toHaveClass('focus-visible:outline-offset-2');
+      // shadcn/ui Button uses ring styles for focus
+      expect(button).toHaveClass('focus-visible:ring-2');
     });
 
     it('action link renders with accessible href', () => {

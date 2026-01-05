@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import type { ImageProps } from 'next/image';
-import Hero from './Hero';
+import Hero from '~/components/features/landing/Hero';
 
 const resolveMockSrc = (source: ImageProps['src']) => {
   if (typeof source === 'string') return source;

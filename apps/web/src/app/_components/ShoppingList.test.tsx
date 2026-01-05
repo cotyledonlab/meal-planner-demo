@@ -134,7 +134,7 @@ vi.mock('~/trpc/react', () => ({
   },
 }));
 
-import ShoppingList from './ShoppingList';
+import ShoppingList from '~/components/features/shopping/ShoppingList';
 
 const renderComponent = (items: TestShoppingListItem[] = baseItems) => {
   mockShoppingListData = {

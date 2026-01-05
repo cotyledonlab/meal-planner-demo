@@ -1,7 +1,7 @@
-// Final call-to-action and footer section
 import Link from 'next/link';
+import { Button } from '~/components/ui/button';
 
-export default function CTA() {
+export function CTA() {
   return (
     <section className="bg-gradient-to-b from-gray-50 to-white">
       {/* CTA Section */}
@@ -19,14 +19,14 @@ export default function CTA() {
               credit card needed.
             </p>
             <div className="mt-8">
-              <Link
-                href="/auth/signup"
-                className="inline-flex min-h-[48px] items-center justify-center rounded-full bg-white px-8 py-3.5 text-base font-semibold text-emerald-700 shadow-lg transition-all duration-150 ease-out hover:scale-[1.02] hover:bg-emerald-50 hover:shadow-xl active:scale-[0.98] active:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+              <Button
+                asChild
+                className="bg-white text-emerald-700 shadow-lg hover:bg-emerald-50 hover:shadow-xl"
               >
-                Start Planning Free
-              </Link>
+                <Link href="/auth/signup">Start Planning Free</Link>
+              </Button>
             </div>
-            <p className="mt-6 text-sm text-emerald-100">Made with ❤️ for Irish families</p>
+            <p className="mt-6 text-sm text-emerald-100">Made with love for Irish families</p>
           </div>
         </div>
       </div>
@@ -62,3 +62,5 @@ export default function CTA() {
     </section>
   );
 }
+
+export default CTA;
