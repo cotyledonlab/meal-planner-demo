@@ -190,7 +190,7 @@ type ZodIssue = {
 
 type ZodErrorShape = {
   issues?: ZodIssue[];
-  fieldErrors?: Record<string, string[]>;
+  fieldErrors?: Record<string, string[] | undefined>;
   formErrors?: string[];
 };
 
