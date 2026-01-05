@@ -8,6 +8,7 @@ import {
   type RecipeStep,
 } from '@meal-planner-demo/types';
 import { Printer, Share2, RefreshCw, AlertCircle } from 'lucide-react';
+import { toast } from 'sonner';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '~/components/ui/dialog';
 import { Button } from '~/components/ui/button';
 import { Badge } from '~/components/ui/badge';
@@ -136,9 +137,10 @@ async function handleShare(recipe: MealPlanRecipe) {
 async function copyLink() {
   try {
     await navigator.clipboard.writeText(window.location.href);
-    alert('Recipe link copied to clipboard!');
+    toast.success('Recipe link copied to clipboard!');
   } catch (error) {
     console.error('Failed to copy link:', error);
+    toast.error('Failed to copy link to clipboard');
   }
 }
 
@@ -182,6 +184,7 @@ export function RecipeDetailModal({
             src={imageUrl ?? RECIPE_PLACEHOLDER_IMAGE}
             alt={recipe.title}
             fill
+            sizes="(min-width: 896px) 896px, 100vw"
             className="object-cover"
           />
 
@@ -273,24 +276,37 @@ export function RecipeDetailModal({
 
           {/* Ingredients section */}
           <div className="mb-8">
-            <h3 className="mb-4 text-xl font-semibold text-gray-900">Ingredients</h3>
+            <h3 className="mb-4 text-xl font-semibold text-gray-900">
+              Ingredients
+              {servings !== recipe.servingsDefault && recipe.servingsDefault > 0 && (
+                <span className="ml-2 text-sm font-normal text-gray-500">
+                  (scaled for {servings} servings, original: {recipe.servingsDefault})
+                </span>
+              )}
+            </h3>
             <div className="space-y-2">
-              {recipe.ingredients.map((ri) => (
-                <div key={ri.id} className="flex items-center gap-3 rounded-lg bg-gray-50 p-3">
-                  <div className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-100 text-xs font-semibold text-emerald-700">
-                    ✓
+              {recipe.ingredients.map((ri) => {
+                // Scale ingredient quantity based on servings vs recipe default
+                const scaleFactor =
+                  recipe.servingsDefault > 0 ? servings / recipe.servingsDefault : 1;
+                const scaledQuantity = Math.round(ri.quantity * scaleFactor * 10) / 10;
+                return (
+                  <div key={ri.id} className="flex items-center gap-3 rounded-lg bg-gray-50 p-3">
+                    <div className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-100 text-xs font-semibold text-emerald-700">
+                      ✓
+                    </div>
+                    <div className="flex-1">
+                      <span className="font-medium text-gray-900">{ri.ingredient.name}</span>
+                      <span className="ml-2 text-sm text-gray-600">
+                        {scaledQuantity} {ri.unit}
+                      </span>
+                    </div>
+                    <Badge variant="outline" className="text-xs">
+                      {ri.ingredient.category}
+                    </Badge>
                   </div>
-                  <div className="flex-1">
-                    <span className="font-medium text-gray-900">{ri.ingredient.name}</span>
-                    <span className="ml-2 text-sm text-gray-600">
-                      {ri.quantity} {ri.unit}
-                    </span>
-                  </div>
-                  <Badge variant="outline" className="text-xs">
-                    {ri.ingredient.category}
-                  </Badge>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
 

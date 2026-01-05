@@ -1,0 +1,256 @@
+{
+  "meta": {
+    "project": "meal-planner-demo",
+    "version": "1.0.0",
+    "description": "Bug fixes identified during exploratory testing",
+    "created": "2026-01-05",
+    "source": "bugs-found.md from Ralph Wiggum exploratory testing",
+    "total_bugs": 14
+  },
+  "bugs": [
+    {
+      "id": "BUG-012",
+      "severity": "critical",
+      "title": "Premium Features Not Enforced at API Level (Tier Access Bypass)",
+      "locations": [
+        "apps/web/src/server/api/trpc.ts",
+        "apps/web/src/server/api/routers/shoppingList.ts"
+      ],
+      "description": "The premiumProcedure middleware is defined but never used. All premium feature protection is frontend-only. Free users can access premium price comparison data via direct API calls.",
+      "fix_approach": "Use premiumProcedure for price comparison endpoints OR conditionally return data based on user role in existing endpoints",
+      "acceptance_criteria": [
+        "premiumProcedure is imported and used in shoppingList router",
+        "getForMealPlan returns storePrices only for premium users",
+        "Free users calling API directly receive null/undefined for premium data",
+        "Existing tests pass",
+        "Add new test verifying tier enforcement"
+      ],
+      "fixed": true
+    },
+    {
+      "id": "BUG-011",
+      "severity": "critical",
+      "title": "Open Redirect Vulnerability in Sign-In Page",
+      "locations": ["apps/web/src/app/auth/signin/page.tsx"],
+      "description": "The sign-in page reads callbackUrl from URL query parameters and passes it directly to router.push() without validating it's an internal URL. Attackers can redirect users to phishing sites after login.",
+      "fix_approach": "Add isInternalUrl validation function that only allows relative paths starting with / (not //)",
+      "acceptance_criteria": [
+        "callbackUrl is validated before use",
+        "External URLs are rejected and default to /dashboard",
+        "Protocol-relative URLs (//evil.com) are rejected",
+        "Valid internal paths (/dashboard, /planner) work correctly",
+        "Add test for redirect validation"
+      ],
+      "fixed": true
+    },
+    {
+      "id": "BUG-010",
+      "severity": "critical",
+      "title": "Shopping List Items Lack Authorization - Cross-User Data Modification (IDOR)",
+      "locations": [
+        "apps/web/src/server/api/routers/shoppingList.ts",
+        "apps/web/src/server/services/shoppingList.ts"
+      ],
+      "description": "toggleItemChecked and updateCategoryChecked mutations do not verify user owns the shopping list item. Attackers can modify other users' shopping lists by guessing item IDs.",
+      "fix_approach": "Add ownership verification chain: ShoppingListItem → ShoppingList → MealPlan → userId === session.user.id",
+      "acceptance_criteria": [
+        "toggleItemChecked verifies item ownership before modifying",
+        "updateCategoryChecked verifies shopping list ownership",
+        "Unauthorized access returns FORBIDDEN error",
+        "Existing functionality works for legitimate owners",
+        "Add test for authorization check"
+      ],
+      "fixed": true
+    },
+    {
+      "id": "BUG-003",
+      "severity": "critical",
+      "title": "Allergen Exclusion Filter Completely Non-Functional",
+      "locations": [
+        "apps/web/src/components/features/meal-plan/MealPlanWizard.tsx",
+        "apps/web/src/server/services/planGenerator.ts",
+        "apps/web/src/server/repositories/recipes.ts"
+      ],
+      "description": "Frontend passes allergen names ('gluten', 'dairy') but backend expects database CUIDs. Filter silently ignored - users receive recipes containing allergens they tried to exclude. SAFETY ISSUE.",
+      "fix_approach": "Modify buildWhereClause to filter by allergenTag.name instead of allergenTagId, OR lookup allergen tag IDs by name in planGenerator",
+      "acceptance_criteria": [
+        "Selecting 'Gluten' exclusion filters out gluten-containing recipes",
+        "Selecting 'Dairy' exclusion filters out dairy-containing recipes",
+        "Multiple allergen exclusions work together",
+        "Add test verifying allergen filtering works",
+        "Verify with actual database query"
+      ],
+      "fixed": true
+    },
+    {
+      "id": "BUG-013",
+      "severity": "high",
+      "title": "User Preferences Not Loaded or Saved - Backend Unused",
+      "locations": [
+        "apps/web/src/components/features/meal-plan/MealPlanWizard.tsx",
+        "apps/web/src/app/planner/page.tsx"
+      ],
+      "description": "Backend preferences API is complete but frontend never calls it. Users must re-enter preferences every time. Especially frustrating for users with dietary restrictions.",
+      "fix_approach": "Fetch preferences on planner page load, pass to wizard, save after plan generation",
+      "acceptance_criteria": [
+        "MealPlanWizard accepts initialPreferences prop",
+        "Planner page fetches preferences via api.preferences.get",
+        "Wizard pre-fills with saved preferences",
+        "After plan generation, preferences are saved",
+        "Returning users see their previous settings"
+      ],
+      "fixed": true
+    },
+    {
+      "id": "BUG-005",
+      "severity": "high",
+      "title": "Price Comparison Feature Completely Disconnected from UI",
+      "locations": [
+        "apps/web/src/app/plan/[id]/page.tsx",
+        "apps/web/src/components/features/shopping/ShoppingList.tsx"
+      ],
+      "description": "Premium price comparison feature is advertised but non-functional. Backend calculates prices correctly but frontend never displays them. Premium users see same broken experience as free users.",
+      "fix_approach": "Pass onComparePrices callback to ShoppingList, create PriceComparisonModal that fetches real data for premium users",
+      "acceptance_criteria": [
+        "Compare Prices button appears for premium users",
+        "Clicking button opens modal with real price data",
+        "Free users see sample data teaser",
+        "Modal shows Aldi, Lidl, Tesco, Dunnes prices",
+        "Cheapest store is highlighted"
+      ],
+      "fixed": true
+    },
+    {
+      "id": "BUG-002",
+      "severity": "high",
+      "title": "/planner Page Lacks Authentication Redirect",
+      "locations": ["apps/web/src/app/planner/page.tsx"],
+      "description": "Unauthenticated users can fill out entire meal plan wizard before getting an error. Should redirect to signin before showing wizard.",
+      "fix_approach": "Add server component wrapper with auth check, or layout.tsx with server-side auth redirect",
+      "acceptance_criteria": [
+        "Unauthenticated users are redirected to /auth/signin",
+        "Redirect includes callbackUrl=/planner",
+        "Authenticated users see wizard normally",
+        "No flash of wizard content for unauth users"
+      ],
+      "fixed": true
+    },
+    {
+      "id": "BUG-014",
+      "severity": "high",
+      "title": "Meal Plan History Inaccessible - No History UI",
+      "locations": ["apps/web/src/app/dashboard/page.tsx"],
+      "description": "Backend plan.list API works but is never called. Dashboard only shows boolean hasMealPlan flag. Users cannot access previous meal plans without knowing UUID.",
+      "fix_approach": "Call plan.list on dashboard, display list of recent plans with links",
+      "acceptance_criteria": [
+        "Dashboard shows list of recent meal plans",
+        "Each plan shows date and summary info",
+        "Clicking a plan navigates to /plan/[id]",
+        "View last plan button links to /planner/last",
+        "Empty state shown when no plans exist"
+      ],
+      "fixed": true
+    },
+    {
+      "id": "BUG-004",
+      "severity": "medium",
+      "title": "Recipe Ingredient Quantities Not Scaled for Servings",
+      "locations": [
+        "apps/web/src/components/features/recipe/RecipeDetailModal.tsx"
+      ],
+      "description": "Recipe detail modal shows original quantities regardless of household size. Shopping list correctly scales quantities but recipe view does not.",
+      "fix_approach": "Add scaleFactor = servings / recipe.servingsDefault and apply to displayed quantities",
+      "acceptance_criteria": [
+        "Ingredient quantities are scaled by servings/servingsDefault",
+        "Display shows '(for X servings)' context",
+        "Scaling matches shopping list calculations",
+        "Original recipe default still accessible"
+      ],
+      "fixed": true
+    },
+    {
+      "id": "BUG-006",
+      "severity": "low",
+      "title": "Navigation Header Visible in Print View",
+      "locations": [
+        "apps/web/src/app/_components/ConditionalHeader.tsx",
+        "apps/web/src/components/layout/Header.tsx"
+      ],
+      "description": "Print view at /plan/[id]/print shows navigation header which prints on every page. Should hide header for print routes.",
+      "fix_approach": "Add print routes to ConditionalHeader hideHeader check OR add no-print CSS class to Header",
+      "acceptance_criteria": [
+        "Header is not visible on /plan/[id]/print pages",
+        "Print output contains only meal plan content",
+        "Header still visible on non-print plan pages"
+      ],
+      "fixed": true
+    },
+    {
+      "id": "BUG-001",
+      "severity": "low",
+      "title": "Missing Password Confirmation Field on Signup",
+      "locations": ["apps/web/src/app/auth/signup/page.tsx"],
+      "description": "Signup form lacks confirm password field. Users could typo their password and be locked out.",
+      "fix_approach": "Add confirmPassword field with matching validation, OR document that password visibility toggle is sufficient",
+      "acceptance_criteria": [
+        "Either: confirmPassword field added with Zod refinement",
+        "Or: Test case updated to accept current design with visibility toggle",
+        "Form validation prevents submission with mismatched passwords (if added)"
+      ],
+      "fixed": true
+    },
+    {
+      "id": "BUG-008",
+      "severity": "low",
+      "title": "Recipe Images Missing sizes Attribute - Performance Impact",
+      "locations": [
+        "apps/web/src/components/features/recipe/RecipeCard.tsx",
+        "apps/web/src/components/features/recipe/RecipeDetailModal.tsx"
+      ],
+      "description": "Next.js Image components with fill prop are missing sizes attribute. Browsers download unnecessarily large images.",
+      "fix_approach": "Add appropriate sizes attributes based on container dimensions",
+      "acceptance_criteria": [
+        "RecipeCard has sizes='(min-width: 640px) 160px, 100vw'",
+        "RecipeDetailModal has sizes='(min-width: 896px) 896px, 100vw'",
+        "No Next.js console warnings about missing sizes"
+      ],
+      "fixed": true
+    },
+    {
+      "id": "BUG-009",
+      "severity": "accessibility",
+      "title": "Star Ratings Invisible to Screen Readers",
+      "locations": [
+        "apps/web/src/components/features/landing/Testimonials.tsx"
+      ],
+      "description": "Testimonial star ratings use aria-hidden on icons but provide no accessible alternative. Screen reader users cannot perceive ratings.",
+      "fix_approach": "Add sr-only span with rating text: '{rating} out of 5 stars'",
+      "acceptance_criteria": [
+        "Screen readers announce rating value",
+        "Visual presentation unchanged",
+        "sr-only span added to rating container"
+      ],
+      "fixed": true
+    },
+    {
+      "id": "BUG-007",
+      "severity": "polish",
+      "title": "No Toast Notification System - Uses Browser alert()",
+      "locations": [
+        "apps/web/src/components/features/recipe/RecipeDetailModal.tsx",
+        "apps/web/src/app/contact/ContactForm.tsx",
+        "apps/web/src/app/_components/PlanPageClient.tsx"
+      ],
+      "description": "App uses browser alert() for feedback which is blocking and outdated. No consistent toast notification system.",
+      "fix_approach": "Install sonner, add Toaster to root layout, replace alert() with toast.success()/toast.error()",
+      "acceptance_criteria": [
+        "sonner package installed",
+        "Toaster component in root layout",
+        "All alert() calls replaced with toast()",
+        "Success toasts for: copy link, export, save",
+        "Error toasts for transient failures"
+      ],
+      "fixed": true
+    }
+  ]
+}

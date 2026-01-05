@@ -335,6 +335,48 @@ describe('RecipeRepository', () => {
         },
       });
     });
+
+    it('applies excludeAllergenNames filter by allergen tag name (BUG-003 fix)', async () => {
+      mockPrisma.recipe.findMany.mockResolvedValue([mockRecipe]);
+
+      const repo = new RecipeRepository(mockPrisma as unknown as PrismaClient);
+      await repo.findForPlanning({ excludeAllergenNames: ['gluten', 'dairy'] });
+
+      expect(mockPrisma.recipe.findMany).toHaveBeenCalledWith({
+        where: {
+          allergenTags: {
+            none: {
+              allergenTag: {
+                name: { in: ['gluten', 'dairy'], mode: 'insensitive' },
+              },
+            },
+          },
+        },
+        include: {
+          ingredients: { include: { ingredient: true } },
+        },
+      });
+    });
+
+    it('applies excludeAllergenTagIds filter by allergen tag ID', async () => {
+      mockPrisma.recipe.findMany.mockResolvedValue([mockRecipe]);
+
+      const repo = new RecipeRepository(mockPrisma as unknown as PrismaClient);
+      await repo.findForPlanning({ excludeAllergenTagIds: ['tag-id-1', 'tag-id-2'] });
+
+      expect(mockPrisma.recipe.findMany).toHaveBeenCalledWith({
+        where: {
+          allergenTags: {
+            none: {
+              allergenTagId: { in: ['tag-id-1', 'tag-id-2'] },
+            },
+          },
+        },
+        include: {
+          ingredients: { include: { ingredient: true } },
+        },
+      });
+    });
   });
 
   describe('findByMealType', () => {

@@ -10,6 +10,7 @@ import {
   ImageIcon,
   ShoppingBag,
   Sparkles,
+  History,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -21,6 +22,13 @@ type DashboardUser = {
   name?: string | null;
   email?: string | null;
   role?: string | null;
+};
+
+type RecentPlan = {
+  id: string;
+  startDate: Date;
+  days: number;
+  createdAt: Date;
 };
 
 type PremiumFeature = {
@@ -89,6 +97,7 @@ const QUICK_ACTIONS: QuickAction[] = [
 interface DashboardClientProps {
   user: DashboardUser;
   hasMealPlan: boolean;
+  recentPlans: RecentPlan[];
 }
 
 function getFirstName(user: DashboardUser): string | null {
@@ -122,7 +131,33 @@ function getGreetingParts(firstName: string | null, now: Date = new Date()) {
   };
 }
 
-export default function DashboardClient({ user, hasMealPlan }: DashboardClientProps) {
+function getRelativeTimeString(date: Date): string {
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffSeconds = Math.floor(diffMs / 1000);
+  const diffMinutes = Math.floor(diffSeconds / 60);
+  const diffHours = Math.floor(diffMinutes / 60);
+  const diffDays = Math.floor(diffHours / 24);
+
+  if (diffDays > 7) {
+    return new Intl.DateTimeFormat('en-IE', {
+      month: 'short',
+      day: 'numeric',
+    }).format(date);
+  }
+  if (diffDays > 0) {
+    return diffDays === 1 ? 'yesterday' : `${diffDays} days ago`;
+  }
+  if (diffHours > 0) {
+    return diffHours === 1 ? '1 hour ago' : `${diffHours} hours ago`;
+  }
+  if (diffMinutes > 0) {
+    return diffMinutes === 1 ? '1 minute ago' : `${diffMinutes} minutes ago`;
+  }
+  return 'just now';
+}
+
+export default function DashboardClient({ user, hasMealPlan, recentPlans }: DashboardClientProps) {
   const [showPremiumModal, setShowPremiumModal] = useState(false);
 
   const isPremiumUser = user.role === 'premium';
@@ -174,9 +209,9 @@ export default function DashboardClient({ user, hasMealPlan }: DashboardClientPr
                   <Sparkles className="h-5 w-5" />
                   {hasMealPlan ? 'Plan meals' : 'Create your first plan'}
                 </Link>
-                {hasMealPlan && (
+                {recentPlans.length > 0 && (
                   <Link
-                    href="/planner"
+                    href={`/plan/${recentPlans[0]!.id}`}
                     className="inline-flex w-full min-h-[48px] items-center justify-center gap-2 rounded-xl border-2 border-white/30 bg-white/10 px-6 py-3 text-base font-semibold text-white backdrop-blur-sm transition-all duration-200 hover:scale-[1.02] hover:bg-white/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:w-auto"
                   >
                     View last plan
@@ -266,6 +301,63 @@ export default function DashboardClient({ user, hasMealPlan }: DashboardClientPr
               </Link>
             )}
           </div>
+        </div>
+
+        {/* Recent Plans Section */}
+        <div className="mb-12">
+          <h2 className="mb-6 text-2xl font-bold text-gray-900">Recent Meal Plans</h2>
+          {recentPlans.length === 0 ? (
+            <div className="rounded-2xl border border-gray-200 bg-white p-8 text-center shadow-md">
+              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-gray-100">
+                <History className="h-6 w-6 text-gray-400" />
+              </div>
+              <h3 className="mt-4 text-lg font-semibold text-gray-900">No meal plans yet</h3>
+              <p className="mt-2 text-sm text-gray-600">
+                Create your first meal plan to see it here
+              </p>
+              <Link
+                href="/planner"
+                className="mt-4 inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700"
+              >
+                <Sparkles className="h-4 w-4" />
+                Create plan
+              </Link>
+            </div>
+          ) : (
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {recentPlans.map((plan) => {
+                const startDate = new Date(plan.startDate);
+                const endDate = new Date(startDate);
+                endDate.setDate(endDate.getDate() + plan.days - 1);
+                const dateFormatter = new Intl.DateTimeFormat('en-IE', {
+                  month: 'short',
+                  day: 'numeric',
+                });
+                const dateRange = `${dateFormatter.format(startDate)} - ${dateFormatter.format(endDate)}`;
+                const createdAgo = getRelativeTimeString(new Date(plan.createdAt));
+
+                return (
+                  <Link
+                    key={plan.id}
+                    href={`/plan/${plan.id}`}
+                    className="group rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-500 to-emerald-600 text-white shadow-sm transition-transform group-hover:scale-105">
+                        <CalendarDays className="h-5 w-5" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <h3 className="text-base font-semibold text-gray-900">{dateRange}</h3>
+                        <p className="mt-0.5 text-sm text-gray-500">
+                          {plan.days} day{plan.days !== 1 ? 's' : ''} • Created {createdAgo}
+                        </p>
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          )}
         </div>
 
         {/* Premium Features Section */}

@@ -6,6 +6,7 @@ const basePayload = {
   name: 'John Doe',
   email: 'john@example.com',
   password: 'Password123',
+  confirmPassword: 'Password123',
 };
 
 describe('Sign Up Schema Validation', () => {
@@ -85,7 +86,58 @@ describe('Sign Up Schema Validation', () => {
     });
 
     it('rejects password shorter than 8 characters', () => {
-      const result = signUpSchema.safeParse({ ...basePayload, password: 'Pass1', tier: 'basic' });
+      const result = signUpSchema.safeParse({
+        ...basePayload,
+        password: 'Pass1',
+        confirmPassword: 'Pass1',
+        tier: 'basic',
+      });
+      expect(result.success).toBe(false);
+    });
+  });
+
+  describe('password confirmation validation', () => {
+    it('accepts matching passwords', () => {
+      const result = signUpSchema.safeParse({
+        ...basePayload,
+        password: 'Password123',
+        confirmPassword: 'Password123',
+        tier: 'basic',
+      });
+      expect(result.success).toBe(true);
+    });
+
+    it('rejects mismatched passwords', () => {
+      const result = signUpSchema.safeParse({
+        ...basePayload,
+        password: 'Password123',
+        confirmPassword: 'DifferentPass1',
+        tier: 'basic',
+      });
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.issues[0]?.message).toBe('Passwords do not match');
+      }
+    });
+
+    it('rejects empty confirm password', () => {
+      const result = signUpSchema.safeParse({
+        ...basePayload,
+        confirmPassword: '',
+        tier: 'basic',
+      });
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.issues[0]?.message).toBe('Please confirm your password');
+      }
+    });
+
+    it('rejects missing confirm password', () => {
+      const { confirmPassword: _, ...payloadWithoutConfirm } = basePayload;
+      const result = signUpSchema.safeParse({
+        ...payloadWithoutConfirm,
+        tier: 'basic',
+      });
       expect(result.success).toBe(false);
     });
   });

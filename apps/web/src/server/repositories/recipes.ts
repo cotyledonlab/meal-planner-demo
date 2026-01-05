@@ -382,6 +382,17 @@ export class RecipeRepository {
       };
     }
 
+    if (filters.excludeAllergenNames && filters.excludeAllergenNames.length > 0) {
+      where.allergenTags = {
+        ...where.allergenTags,
+        none: {
+          allergenTag: {
+            name: { in: filters.excludeAllergenNames, mode: 'insensitive' },
+          },
+        },
+      };
+    }
+
     if (filters.excludeIngredientNames && filters.excludeIngredientNames.length > 0) {
       where.ingredients = {
         none: {

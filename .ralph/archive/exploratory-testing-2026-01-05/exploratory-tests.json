@@ -1,0 +1,570 @@
+{
+  "meta": {
+    "project": "meal-planner-demo",
+    "version": "1.0.0",
+    "description": "Exploratory testing plan for production readiness",
+    "created": "2026-01-05",
+    "total_tests": 42
+  },
+  "tests": [
+    {
+      "id": "AUTH-001",
+      "category": "authentication",
+      "description": "Email/password signup flow creates account successfully",
+      "steps": [
+        "Navigate to /auth/signup",
+        "Select a pricing tier (free or premium)",
+        "Fill in valid email, password, and confirm password",
+        "Submit the signup form",
+        "Verify user is redirected to dashboard",
+        "Verify user session is created",
+        "Check database for new user record"
+      ],
+      "passes": true
+    },
+    {
+      "id": "AUTH-002",
+      "category": "authentication",
+      "description": "Signup validation rejects invalid inputs",
+      "steps": [
+        "Navigate to /auth/signup",
+        "Submit with invalid email format",
+        "Verify error message is displayed",
+        "Submit with password less than 8 characters",
+        "Verify password strength error is shown",
+        "Submit with mismatched password confirmation",
+        "Verify mismatch error is shown"
+      ],
+      "passes": false
+    },
+    {
+      "id": "AUTH-003",
+      "category": "authentication",
+      "description": "Sign in with valid credentials grants access",
+      "steps": [
+        "Navigate to /auth/signin",
+        "Enter valid email and password",
+        "Submit the form",
+        "Verify redirect to dashboard",
+        "Verify session cookie is set",
+        "Verify user info is displayed correctly"
+      ],
+      "passes": true
+    },
+    {
+      "id": "AUTH-004",
+      "category": "authentication",
+      "description": "Sign in rejects invalid credentials with helpful error",
+      "steps": [
+        "Navigate to /auth/signin",
+        "Enter incorrect password for valid email",
+        "Verify generic error message (no credential enumeration)",
+        "Enter non-existent email",
+        "Verify same generic error message"
+      ],
+      "passes": true
+    },
+    {
+      "id": "AUTH-005",
+      "category": "authentication",
+      "description": "Password reset flow works end-to-end",
+      "steps": [
+        "Navigate to /auth/forgot-password",
+        "Enter registered email address",
+        "Submit the form",
+        "Verify success message is shown",
+        "Check that reset token is created in database",
+        "Navigate to reset link with token",
+        "Enter new password",
+        "Verify password is updated",
+        "Sign in with new password succeeds"
+      ],
+      "passes": true
+    },
+    {
+      "id": "AUTH-006",
+      "category": "authentication",
+      "description": "Protected routes redirect unauthenticated users",
+      "steps": [
+        "Clear all session cookies",
+        "Navigate to /dashboard",
+        "Verify redirect to /auth/signin",
+        "Navigate to /planner",
+        "Verify redirect to /auth/signin",
+        "Navigate to /plan/123",
+        "Verify redirect to /auth/signin"
+      ],
+      "passes": false
+    },
+    {
+      "id": "AUTH-007",
+      "category": "authentication",
+      "description": "Sign out clears session and redirects appropriately",
+      "steps": [
+        "Sign in with valid credentials",
+        "Click sign out button",
+        "Verify session cookie is cleared",
+        "Verify redirect to home or signin page",
+        "Attempt to access /dashboard",
+        "Verify redirect to signin"
+      ],
+      "passes": true
+    },
+    {
+      "id": "PLAN-001",
+      "category": "meal-planning",
+      "description": "Basic meal plan generation creates valid 7-day plan",
+      "steps": [
+        "Sign in as authenticated user",
+        "Navigate to /planner",
+        "Select 7 days, 3 meals per day, household size 2",
+        "Leave dietary restrictions unchecked",
+        "Generate the meal plan",
+        "Verify plan contains 21 meals (7 days x 3 meals)",
+        "Verify each day has breakfast, lunch, and dinner",
+        "Verify redirect to plan view page"
+      ],
+      "passes": true
+    },
+    {
+      "id": "PLAN-002",
+      "category": "meal-planning",
+      "description": "Vegetarian filter excludes meat-based recipes",
+      "steps": [
+        "Sign in as authenticated user",
+        "Navigate to /planner",
+        "Enable vegetarian dietary restriction",
+        "Generate a 3-day meal plan",
+        "Verify all recipes in plan are vegetarian-tagged",
+        "Verify no meat-containing recipes appear"
+      ],
+      "passes": true
+    },
+    {
+      "id": "PLAN-003",
+      "category": "meal-planning",
+      "description": "Dairy-free filter excludes dairy-containing recipes",
+      "steps": [
+        "Sign in as authenticated user",
+        "Navigate to /planner",
+        "Enable dairy-free dietary restriction",
+        "Generate a 3-day meal plan",
+        "Verify all recipes in plan are dairy-free",
+        "Check recipe ingredients for dairy products"
+      ],
+      "passes": true
+    },
+    {
+      "id": "PLAN-004",
+      "category": "meal-planning",
+      "description": "Disliked ingredients are excluded from plan",
+      "steps": [
+        "Sign in and set up user preferences with disliked ingredients",
+        "Navigate to /planner",
+        "Generate a meal plan",
+        "Verify no recipes contain disliked ingredients",
+        "Check multiple recipes to confirm exclusion"
+      ],
+      "passes": true
+    },
+    {
+      "id": "PLAN-005",
+      "category": "meal-planning",
+      "description": "Advanced filters work correctly (difficulty, cook time)",
+      "steps": [
+        "Navigate to /planner",
+        "Set difficulty filter to EASY only",
+        "Set max cook time to 30 minutes",
+        "Generate meal plan",
+        "Verify all recipes are EASY difficulty",
+        "Verify all recipes have total time <= 30 minutes"
+      ],
+      "passes": true
+    },
+    {
+      "id": "PLAN-006",
+      "category": "meal-planning",
+      "description": "Allergen exclusion filters work correctly",
+      "steps": [
+        "Navigate to /planner",
+        "Select allergen exclusions (e.g., nuts, gluten)",
+        "Generate meal plan",
+        "Verify no recipes contain excluded allergens",
+        "Check ingredient lists for allergen ingredients"
+      ],
+      "passes": false
+    },
+    {
+      "id": "PLAN-007",
+      "category": "meal-planning",
+      "description": "Edge case: No matching recipes shows helpful error",
+      "steps": [
+        "Navigate to /planner",
+        "Enable all dietary restrictions",
+        "Select all allergen exclusions",
+        "Set maximum cook time very low",
+        "Attempt to generate plan",
+        "Verify helpful error message about no matching recipes",
+        "Verify suggestions to relax filters"
+      ],
+      "passes": false
+    },
+    {
+      "id": "PLAN-008",
+      "category": "meal-planning",
+      "description": "Servings adjustment scales ingredient quantities",
+      "steps": [
+        "Generate meal plan with household size 2",
+        "View a recipe in the plan",
+        "Verify ingredient quantities are for 2 servings",
+        "Generate another plan with household size 4",
+        "Verify same recipe shows doubled quantities"
+      ],
+      "passes": false
+    },
+    {
+      "id": "SHOP-001",
+      "category": "shopping-list",
+      "description": "Shopping list generates correctly from meal plan",
+      "steps": [
+        "Generate a meal plan",
+        "Navigate to shopping list view",
+        "Verify all ingredients from plan recipes appear",
+        "Verify quantities are aggregated correctly",
+        "Verify units are normalized (g, ml, pcs)"
+      ],
+      "passes": true
+    },
+    {
+      "id": "SHOP-002",
+      "category": "shopping-list",
+      "description": "Ingredient aggregation combines same ingredients",
+      "steps": [
+        "Generate plan where multiple recipes use same ingredient",
+        "View shopping list",
+        "Verify ingredient appears only once",
+        "Verify quantity is sum of all recipe usages",
+        "Verify unit conversion is handled correctly"
+      ],
+      "passes": true
+    },
+    {
+      "id": "SHOP-003",
+      "category": "shopping-list",
+      "description": "CSV export downloads valid file",
+      "steps": [
+        "Generate meal plan with shopping list",
+        "Click CSV export button",
+        "Verify file downloads",
+        "Open CSV file",
+        "Verify columns: ingredient, quantity, unit",
+        "Verify all items from list are in CSV"
+      ],
+      "passes": true
+    },
+    {
+      "id": "SHOP-004",
+      "category": "shopping-list",
+      "description": "Price comparison shows supermarket prices (premium)",
+      "steps": [
+        "Sign in as premium user",
+        "Generate meal plan",
+        "View shopping list",
+        "Verify price comparison data is displayed",
+        "Verify Aldi, Lidl, Tesco, Dunnes prices shown",
+        "Verify cheapest option is highlighted"
+      ],
+      "passes": false
+    },
+    {
+      "id": "EXPORT-001",
+      "category": "export",
+      "description": "PDF export generates downloadable meal plan",
+      "steps": [
+        "Generate a meal plan",
+        "Click PDF export/download button",
+        "Verify PDF file downloads",
+        "Open PDF and verify content",
+        "Verify all 7 days and meals are included",
+        "Verify recipe details are readable"
+      ],
+      "passes": true
+    },
+    {
+      "id": "EXPORT-002",
+      "category": "export",
+      "description": "Print view renders correctly",
+      "steps": [
+        "Generate a meal plan",
+        "Navigate to print view (/plan/[id]/print)",
+        "Verify layout is print-optimized",
+        "Verify page breaks are sensible",
+        "Verify no navigation/UI elements in print view"
+      ],
+      "passes": false
+    },
+    {
+      "id": "UI-001",
+      "category": "ui-polish",
+      "description": "Landing page renders all sections correctly",
+      "steps": [
+        "Navigate to / (home)",
+        "Verify hero section with CTA",
+        "Verify features section displays all features",
+        "Verify pricing section shows both tiers",
+        "Verify testimonials section",
+        "Verify footer with links"
+      ],
+      "passes": true
+    },
+    {
+      "id": "UI-002",
+      "category": "ui-polish",
+      "description": "Mobile responsive design works on all pages",
+      "steps": [
+        "Set viewport to mobile size (375px)",
+        "Navigate through all main pages",
+        "Verify no horizontal scrolling",
+        "Verify touch targets are adequate size",
+        "Verify text is readable without zooming",
+        "Verify navigation works on mobile"
+      ],
+      "passes": true
+    },
+    {
+      "id": "UI-003",
+      "category": "ui-polish",
+      "description": "Loading states are shown during async operations",
+      "steps": [
+        "Generate a meal plan",
+        "Verify loading indicator appears during generation",
+        "Navigate to dashboard",
+        "Verify loading state while data fetches",
+        "Check all form submissions show loading state"
+      ],
+      "passes": true
+    },
+    {
+      "id": "UI-004",
+      "category": "ui-polish",
+      "description": "Error states display helpful messages",
+      "steps": [
+        "Trigger network error (disconnect)",
+        "Verify error message is user-friendly",
+        "Trigger validation errors on forms",
+        "Verify field-level error messages",
+        "Trigger server error",
+        "Verify generic error is shown without stack trace"
+      ],
+      "passes": true
+    },
+    {
+      "id": "UI-005",
+      "category": "ui-polish",
+      "description": "Toast notifications appear for user actions",
+      "steps": [
+        "Complete successful actions (save, generate, etc.)",
+        "Verify success toasts appear",
+        "Verify toasts auto-dismiss",
+        "Trigger error condition",
+        "Verify error toast appears with helpful message"
+      ],
+      "passes": false
+    },
+    {
+      "id": "UI-006",
+      "category": "ui-polish",
+      "description": "Navigation is consistent and intuitive",
+      "steps": [
+        "Check all navigation links work correctly",
+        "Verify active state on current page",
+        "Verify back button behavior is sensible",
+        "Verify breadcrumbs (if present) are accurate",
+        "Check logo links to home"
+      ],
+      "passes": false
+    },
+    {
+      "id": "PERF-001",
+      "category": "performance",
+      "description": "Initial page load is under 3 seconds",
+      "steps": [
+        "Clear browser cache",
+        "Measure landing page load time",
+        "Verify Time to First Contentful Paint < 1.5s",
+        "Verify Time to Interactive < 3s",
+        "Check for render-blocking resources"
+      ],
+      "passes": true
+    },
+    {
+      "id": "PERF-002",
+      "category": "performance",
+      "description": "Meal plan generation completes within reasonable time",
+      "steps": [
+        "Generate 7-day meal plan",
+        "Measure time from submit to plan display",
+        "Verify generation completes in < 10 seconds",
+        "Verify progress indicator during generation"
+      ],
+      "passes": true
+    },
+    {
+      "id": "PERF-003",
+      "category": "performance",
+      "description": "Images are optimized and lazy-loaded",
+      "steps": [
+        "Inspect network requests for images",
+        "Verify images use Next.js Image optimization",
+        "Verify images below fold are lazy-loaded",
+        "Check image formats (WebP/AVIF preferred)",
+        "Verify appropriate image sizes for viewport"
+      ],
+      "passes": false
+    },
+    {
+      "id": "A11Y-001",
+      "category": "accessibility",
+      "description": "Keyboard navigation works throughout app",
+      "steps": [
+        "Navigate entire app using only keyboard",
+        "Verify all interactive elements are focusable",
+        "Verify focus order is logical",
+        "Verify focus indicators are visible",
+        "Verify no keyboard traps"
+      ],
+      "passes": true
+    },
+    {
+      "id": "A11Y-002",
+      "category": "accessibility",
+      "description": "Screen reader announces content correctly",
+      "steps": [
+        "Use screen reader (VoiceOver/NVDA)",
+        "Navigate through main pages",
+        "Verify images have alt text",
+        "Verify form labels are associated",
+        "Verify heading hierarchy is correct",
+        "Verify ARIA labels on icon buttons"
+      ],
+      "passes": false
+    },
+    {
+      "id": "A11Y-003",
+      "category": "accessibility",
+      "description": "Color contrast meets WCAG AA standards",
+      "steps": [
+        "Run contrast checker on all pages",
+        "Verify text contrast ratio >= 4.5:1",
+        "Verify large text contrast >= 3:1",
+        "Check error states have sufficient contrast",
+        "Verify links are distinguishable from text"
+      ],
+      "passes": false
+    },
+    {
+      "id": "SEC-001",
+      "category": "security",
+      "description": "Authentication tokens are secure",
+      "steps": [
+        "Inspect session cookies",
+        "Verify HttpOnly flag is set",
+        "Verify Secure flag is set (in production)",
+        "Verify SameSite attribute is set",
+        "Verify token expiration is reasonable"
+      ],
+      "passes": true
+    },
+    {
+      "id": "SEC-002",
+      "category": "security",
+      "description": "API endpoints validate authentication",
+      "steps": [
+        "Attempt to access tRPC endpoints without auth",
+        "Verify 401/403 responses",
+        "Attempt to access other users' meal plans",
+        "Verify authorization check prevents access",
+        "Verify admin endpoints require admin role"
+      ],
+      "passes": false
+    },
+    {
+      "id": "SEC-003",
+      "category": "security",
+      "description": "Input validation prevents XSS and injection",
+      "steps": [
+        "Attempt XSS payload in form inputs",
+        "Verify output is escaped/sanitized",
+        "Attempt SQL-like payloads in search",
+        "Verify no SQL errors exposed",
+        "Check that error messages don't leak system info"
+      ],
+      "passes": false
+    },
+    {
+      "id": "TIER-001",
+      "category": "tier-access",
+      "description": "Free tier users cannot access premium features",
+      "steps": [
+        "Sign in as free tier user",
+        "Attempt to access price comparison",
+        "Verify premium upsell is shown",
+        "Attempt to use advanced customization",
+        "Verify feature is restricted with upgrade prompt"
+      ],
+      "passes": false
+    },
+    {
+      "id": "TIER-002",
+      "category": "tier-access",
+      "description": "Premium tier users have full access",
+      "steps": [
+        "Sign in as premium user",
+        "Access price comparison feature",
+        "Verify full data is displayed",
+        "Access all advanced features",
+        "Verify no upgrade prompts for premium features"
+      ],
+      "passes": false
+    },
+    {
+      "id": "TIER-003",
+      "category": "tier-access",
+      "description": "Admin users can access admin features",
+      "steps": [
+        "Sign in as admin user",
+        "Navigate to /dashboard/admin/images",
+        "Verify admin page loads",
+        "Verify image generation controls work",
+        "Verify non-admin users cannot access this page"
+      ],
+      "passes": true
+    },
+    {
+      "id": "DATA-001",
+      "category": "data-integrity",
+      "description": "User preferences persist across sessions",
+      "steps": [
+        "Sign in and set preferences",
+        "Sign out",
+        "Sign back in",
+        "Verify preferences are restored",
+        "Verify preferences apply to new meal plans"
+      ],
+      "passes": false
+    },
+    {
+      "id": "DATA-002",
+      "category": "data-integrity",
+      "description": "Meal plan history is preserved",
+      "steps": [
+        "Generate multiple meal plans",
+        "Navigate to dashboard",
+        "Verify previous plans are accessible",
+        "Verify /planner/last shows most recent plan",
+        "Verify old plans can be viewed"
+      ],
+      "passes": false
+    }
+  ]
+}

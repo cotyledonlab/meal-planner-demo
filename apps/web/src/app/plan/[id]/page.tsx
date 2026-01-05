@@ -4,7 +4,7 @@ import { auth } from '~/server/auth';
 import { api, HydrateClient } from '~/trpc/server';
 import PlanPageClient from '~/app/_components/PlanPageClient';
 import { ExportButtons } from '~/components/features/plan/ExportButtons';
-import { ShoppingList } from '~/components/features/shopping/ShoppingList';
+import { ShoppingListWithPriceComparison } from '~/components/features/shopping/ShoppingListWithPriceComparison';
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -91,7 +91,7 @@ export default async function PlanPage({ params }: PageProps) {
           {/* Shopping List */}
           <div id={shoppingListAnchorId} className="scroll-mt-28 rounded-2xl lg:col-span-1">
             <HydrateClient>
-              <ShoppingList planId={id} />
+              <ShoppingListWithPriceComparison planId={id} />
             </HydrateClient>
           </div>
         </div>

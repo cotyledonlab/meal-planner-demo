@@ -80,6 +80,7 @@ export function Testimonials() {
                   className="absolute inset-0 bg-gradient-to-br from-emerald-50/40 via-white to-amber-50/30"
                 />
                 <div className="relative mb-4 flex gap-1">
+                  <span className="sr-only">{testimonial.rating} out of 5 stars</span>
                   {Array.from({ length: testimonial.rating }).map((_, i) => (
                     <Star
                       key={i}

@@ -7,6 +7,7 @@ import { Suspense, useState } from 'react';
 
 import AuthLayout from '../_components/AuthLayout';
 import PasswordInput from '../_components/PasswordInput';
+import { isInternalUrl } from '~/lib/url';
 
 function SignInForm() {
   const router = useRouter();
@@ -16,7 +17,9 @@ function SignInForm() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const callbackUrl = searchParams.get('callbackUrl') ?? '/dashboard';
+  const rawCallbackUrl = searchParams.get('callbackUrl');
+  const callbackUrl =
+    rawCallbackUrl && isInternalUrl(rawCallbackUrl) ? rawCallbackUrl : '/dashboard';
   const hasDiscordProvider = !!process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID;
 
   const handleSubmit = async (e: React.FormEvent) => {

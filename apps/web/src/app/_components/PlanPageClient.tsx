@@ -45,7 +45,7 @@ export default function PlanPageClient({
       planId,
       difficulty: filters.difficulty,
       maxTotalTime: filters.maxTotalTime,
-      excludeAllergenTagIds:
+      excludeAllergenNames:
         filters.excludeAllergenTagIds.length > 0 ? filters.excludeAllergenTagIds : undefined,
       isVegetarian: filters.isVegetarian || undefined,
       isDairyFree: filters.isDairyFree || undefined,

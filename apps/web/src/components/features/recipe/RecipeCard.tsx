@@ -138,6 +138,7 @@ export function RecipeCard({ item, onOpenDetail }: RecipeCardProps) {
               src={imgError ? RECIPE_PLACEHOLDER_IMAGE : (imageUrl ?? RECIPE_PLACEHOLDER_IMAGE)}
               alt={recipe.title}
               fill
+              sizes="(min-width: 640px) 160px, 100vw"
               className="object-cover transition-transform duration-300 group-hover:scale-110"
               onError={() => {
                 if (!imgError) setImgError(true);

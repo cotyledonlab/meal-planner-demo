@@ -27,6 +27,7 @@ function SignUpForm() {
     name: '',
     email: '',
     password: '',
+    confirmPassword: '',
   });
   const [error, setError] = useState('');
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
@@ -475,6 +476,30 @@ function SignUpForm() {
                   <p id="password-hint" className="mt-1 text-xs text-gray-700">
                     Must be at least 8 characters with one uppercase letter and one number
                   </p>
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="confirmPassword"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Confirm password
+                  </label>
+                  <PasswordInput
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    autoComplete="new-password"
+                    required
+                    className="mt-1 block w-full rounded-lg border border-gray-200 px-4 py-3 pr-12 text-base text-gray-900 shadow-sm transition placeholder:text-gray-600 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                    placeholder="Re-enter your password"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                  />
+                  {validationErrors.confirmPassword && (
+                    <p className="mt-1 text-sm text-red-600" role="alert">
+                      {validationErrors.confirmPassword}
+                    </p>
+                  )}
                 </div>
               </div>
             )}

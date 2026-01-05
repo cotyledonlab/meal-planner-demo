@@ -141,6 +141,8 @@ export interface MealPlanRecipe {
   title: string;
   imageUrl: string | null;
   calories: number;
+  /** Default servings for the recipe - used to scale ingredient quantities */
+  servingsDefault: number;
   /** @deprecated Use totalTimeMinutes or prepTimeMinutes + cookTimeMinutes */
   minutes: number | null;
   /** @deprecated Use steps relation instead */

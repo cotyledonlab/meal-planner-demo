@@ -1,6 +1,7 @@
 import '~/styles/globals.css';
 
 import { type Metadata } from 'next';
+import { Toaster } from 'sonner';
 
 import { TRPCReactProvider } from '~/trpc/react';
 import { SessionProvider } from '~/app/_components/SessionProvider';
@@ -23,6 +24,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <TRPCReactProvider>
             <PageTransition>{children}</PageTransition>
           </TRPCReactProvider>
+          <Toaster position="top-right" richColors closeButton />
         </SessionProvider>
       </body>
     </html>

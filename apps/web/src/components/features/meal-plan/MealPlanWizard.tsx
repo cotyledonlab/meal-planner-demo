@@ -3,10 +3,20 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 
+export interface InitialPreferences {
+  householdSize?: number;
+  mealsPerDay?: number;
+  days?: number;
+  isVegetarian?: boolean;
+  isDairyFree?: boolean;
+  dislikes?: string;
+}
+
 interface MealPlanWizardProps {
   onComplete: (preferences: MealPreferences) => void;
   onClose?: () => void;
   isPremium?: boolean;
+  initialPreferences?: InitialPreferences;
 }
 
 export interface MealPreferences {
@@ -49,13 +59,20 @@ const MAX_TIME_OPTIONS = [
 const ICON_ANIMATION_DELAY_MS = 50;
 const ENCOURAGEMENT_DISPLAY_DURATION_MS = 600;
 
-export function MealPlanWizard({ onComplete, onClose, isPremium = false }: MealPlanWizardProps) {
-  const [householdSize, setHouseholdSize] = useState(2);
-  const [mealsPerDay, setMealsPerDay] = useState(1);
-  const [days, setDays] = useState(isPremium ? 7 : 3);
-  const [isVegetarian, setIsVegetarian] = useState(false);
-  const [isDairyFree, setIsDairyFree] = useState(false);
-  const [dislikes, setDislikes] = useState('');
+export function MealPlanWizard({
+  onComplete,
+  onClose,
+  isPremium = false,
+  initialPreferences,
+}: MealPlanWizardProps) {
+  const [householdSize, setHouseholdSize] = useState(initialPreferences?.householdSize ?? 2);
+  const [mealsPerDay, setMealsPerDay] = useState(initialPreferences?.mealsPerDay ?? 1);
+  // For days: use initial preference, but clamp to max 3 for non-premium users
+  const defaultDays = initialPreferences?.days ?? (isPremium ? 7 : 3);
+  const [days, setDays] = useState(isPremium ? defaultDays : Math.min(defaultDays, 3));
+  const [isVegetarian, setIsVegetarian] = useState(initialPreferences?.isVegetarian ?? false);
+  const [isDairyFree, setIsDairyFree] = useState(initialPreferences?.isDairyFree ?? false);
+  const [dislikes, setDislikes] = useState(initialPreferences?.dislikes ?? '');
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [justChanged, setJustChanged] = useState<string | null>(null);
   // Advanced filters
@@ -64,14 +81,22 @@ export function MealPlanWizard({ onComplete, onClose, isPremium = false }: MealP
   const [maxTotalTime, setMaxTotalTime] = useState<number | null>(null);
   const [excludeAllergens, setExcludeAllergens] = useState<string[]>([]);
 
-  // Check if form has any user input (different from defaults)
+  // Check if form has any user input (different from initial/default values)
+  const initialHouseholdSize = initialPreferences?.householdSize ?? 2;
+  const initialMealsPerDay = initialPreferences?.mealsPerDay ?? 1;
+  const initialDaysDefault = initialPreferences?.days ?? (isPremium ? 7 : 3);
+  const initialDays = isPremium ? initialDaysDefault : Math.min(initialDaysDefault, 3);
+  const initialVegetarian = initialPreferences?.isVegetarian ?? false;
+  const initialDairyFree = initialPreferences?.isDairyFree ?? false;
+  const initialDislikes = initialPreferences?.dislikes ?? '';
+
   const hasUserInput =
-    householdSize !== 2 ||
-    mealsPerDay !== 1 ||
-    days !== (isPremium ? 7 : 3) ||
-    isVegetarian ||
-    isDairyFree ||
-    dislikes.trim().length > 0 ||
+    householdSize !== initialHouseholdSize ||
+    mealsPerDay !== initialMealsPerDay ||
+    days !== initialDays ||
+    isVegetarian !== initialVegetarian ||
+    isDairyFree !== initialDairyFree ||
+    dislikes.trim() !== initialDislikes.trim() ||
     difficulty !== null ||
     maxTotalTime !== null ||
     excludeAllergens.length > 0;

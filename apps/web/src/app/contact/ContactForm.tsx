@@ -1,5 +1,7 @@
 'use client';
 
+import { toast } from 'sonner';
+
 export function ContactForm() {
   return (
     <div className="rounded-2xl bg-gray-50 p-8">
@@ -68,7 +70,7 @@ export function ContactForm() {
           className="w-full min-h-[48px] rounded-full bg-emerald-600 px-6 py-3 text-base font-semibold text-white shadow-sm transition-all duration-150 ease-out hover:bg-emerald-700 hover:shadow-md active:scale-[0.98] active:shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
           onClick={(e) => {
             e.preventDefault();
-            alert('This is a demo form. In production, this would send your message.');
+            toast.success('This is a demo form. In production, this would send your message.');
           }}
         >
           Send Message →

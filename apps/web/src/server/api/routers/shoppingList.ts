@@ -179,12 +179,15 @@ export const shoppingListRouter = createTRPCRouter({
 
       const cheapestStore = storePrices[0];
 
+      // Only return price data for premium users - free users get null
+      const isPremium = ctx.session.user.role === 'premium';
+
       return {
         mealPlanId: input.mealPlanId,
         items: shoppingListItems,
         grouped,
-        storePrices,
-        cheapestStore,
+        storePrices: isPremium ? storePrices : null,
+        cheapestStore: isPremium ? cheapestStore : null,
         totalItems: shoppingListItems.length,
       };
     }),
@@ -193,6 +196,26 @@ export const shoppingListRouter = createTRPCRouter({
   toggleItemChecked: protectedProcedure
     .input(z.object({ itemId: z.string() }))
     .mutation(async ({ ctx, input }) => {
+      // Verify ownership: ShoppingListItem → ShoppingList → MealPlan → userId
+      const item = await ctx.db.shoppingListItem.findUnique({
+        where: { id: input.itemId },
+        include: {
+          shoppingList: {
+            include: {
+              plan: true,
+            },
+          },
+        },
+      });
+
+      if (!item) {
+        throw new Error('Shopping list item not found');
+      }
+
+      if (item.shoppingList.plan.userId !== ctx.session.user.id) {
+        throw new Error('Unauthorized');
+      }
+
       const service = new ShoppingListService(ctx.db);
       await service.toggleItemChecked(input.itemId);
       return { success: true };
@@ -208,6 +231,22 @@ export const shoppingListRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
+      // Verify ownership: ShoppingList → MealPlan → userId
+      const shoppingList = await ctx.db.shoppingList.findUnique({
+        where: { id: input.shoppingListId },
+        include: {
+          plan: true,
+        },
+      });
+
+      if (!shoppingList) {
+        throw new Error('Shopping list not found');
+      }
+
+      if (shoppingList.plan.userId !== ctx.session.user.id) {
+        throw new Error('Unauthorized');
+      }
+
       const service = new ShoppingListService(ctx.db);
       await service.updateCategoryChecked(input.shoppingListId, input.category, input.checked);
       return { success: true };

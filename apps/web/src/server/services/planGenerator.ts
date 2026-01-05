@@ -36,7 +36,7 @@ interface GeneratePlanInput {
   difficulty?: 'EASY' | 'MEDIUM' | 'HARD';
   maxTotalTime?: number;
   dietTagIds?: string[];
-  excludeAllergenTagIds?: string[];
+  excludeAllergenNames?: string[];
 }
 
 interface MealPlanOutput {
@@ -69,7 +69,7 @@ export class PlanGenerator {
       difficulty,
       maxTotalTime,
       dietTagIds,
-      excludeAllergenTagIds,
+      excludeAllergenNames,
     } = input;
 
     // Get user to check their role/plan limits
@@ -105,7 +105,7 @@ export class PlanGenerator {
       difficulty,
       maxTotalTime,
       dietTagIds,
-      excludeAllergenTagIds,
+      excludeAllergenNames,
     });
 
     if (recipesMatchingDiet.length === 0) {

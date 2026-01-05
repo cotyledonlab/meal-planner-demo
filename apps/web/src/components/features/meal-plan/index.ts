@@ -1,2 +1,2 @@
-export { MealPlanWizard, type MealPreferences } from './MealPlanWizard';
+export { MealPlanWizard, type MealPreferences, type InitialPreferences } from './MealPlanWizard';
 export { PlanFilterPanel } from './PlanFilterPanel';

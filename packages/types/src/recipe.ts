@@ -296,6 +296,7 @@ export interface RecipeFilters {
   mealTypes?: MealType[];
   dietTagIds?: string[];
   excludeAllergenTagIds?: string[];
+  excludeAllergenNames?: string[];
   excludeIngredientNames?: string[];
   difficulty?: RecipeDifficulty;
   maxPrepTime?: number;

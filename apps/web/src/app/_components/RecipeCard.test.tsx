@@ -43,6 +43,7 @@ const mockMealPlanItem = {
     title: 'Test Recipe',
     calories: 500,
     minutes: 30,
+    servingsDefault: 4,
     imageUrl: 'https://example.com/broken-image.jpg',
     isVegetarian: false,
     isDairyFree: false,

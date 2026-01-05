@@ -31,7 +31,7 @@ export const planRouter = createTRPCRouter({
         difficulty: z.enum(['EASY', 'MEDIUM', 'HARD']).optional().nullable(),
         maxTotalTime: z.number().min(1).optional().nullable(),
         dietTagIds: z.array(z.string()).optional(),
-        excludeAllergenTagIds: z.array(z.string()).optional(),
+        excludeAllergenNames: z.array(z.string()).optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -50,7 +50,7 @@ export const planRouter = createTRPCRouter({
           difficulty: input.difficulty ?? undefined,
           maxTotalTime: input.maxTotalTime ?? undefined,
           dietTagIds: input.dietTagIds,
-          excludeAllergenTagIds: input.excludeAllergenTagIds,
+          excludeAllergenNames: input.excludeAllergenNames,
         });
 
         // Validate plan object before returning
@@ -378,7 +378,7 @@ export const planRouter = createTRPCRouter({
         difficulty: z.enum(['EASY', 'MEDIUM', 'HARD']).optional().nullable(),
         maxTotalTime: z.number().min(1).optional().nullable(),
         dietTagIds: z.array(z.string()).optional(),
-        excludeAllergenTagIds: z.array(z.string()).optional(),
+        excludeAllergenNames: z.array(z.string()).optional(),
         isVegetarian: z.boolean().optional(),
         isDairyFree: z.boolean().optional(),
         dislikes: z.string().optional(),
@@ -446,7 +446,7 @@ export const planRouter = createTRPCRouter({
           difficulty: filterOverrides.difficulty ?? undefined,
           maxTotalTime: filterOverrides.maxTotalTime ?? undefined,
           dietTagIds: filterOverrides.dietTagIds,
-          excludeAllergenTagIds: filterOverrides.excludeAllergenTagIds,
+          excludeAllergenNames: filterOverrides.excludeAllergenNames,
         });
 
         // The generator creates a new plan, but we want to keep the same plan ID

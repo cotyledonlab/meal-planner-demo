@@ -11,7 +11,7 @@ export default async function DashboardPage() {
     redirect('/auth/signin?callbackUrl=/dashboard');
   }
 
-  const mealPlan = await api.mealPlan.getCurrent();
+  const [mealPlan, recentPlans] = await Promise.all([api.mealPlan.getCurrent(), api.plan.list()]);
 
   return (
     <DashboardClient
@@ -21,6 +21,7 @@ export default async function DashboardPage() {
         role: session.user.role,
       }}
       hasMealPlan={!!mealPlan}
+      recentPlans={recentPlans}
     />
   );
 }
