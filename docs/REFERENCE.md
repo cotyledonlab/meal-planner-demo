@@ -56,6 +56,7 @@ This document centralizes the current state of the monorepo so other docs (READM
 The image pipeline already supports S3-compatible storage via `apps/web/src/server/services/storage/`.
 
 Required env vars:
+
 - `STORAGE_PROVIDER=s3`
 - `S3_BUCKET`
 - `S3_ACCESS_KEY_ID`
@@ -63,6 +64,7 @@ Required env vars:
 - `S3_REGION`
 
 Optional env vars:
+
 - `S3_ENDPOINT` (required for non-AWS providers like R2, DO Spaces, B2, Hetzner Object Storage)
 - `S3_FORCE_PATH_STYLE=true` (only if your provider requires path-style URLs)
 - `S3_PUBLIC_URL_PREFIX` (CDN/custom domain prefix for public URLs)

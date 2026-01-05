@@ -143,19 +143,21 @@ Return JSON that validates against a strict Zod schema (no extra keys). Example 
 ## MVP Prompt Template
 
 System:
+
 - "You are a professional recipe developer. Return JSON only."
 
 User:
+
 - "Create a recipe with: cuisine={cuisine}, diet={diet}, servings={servings}, totalTime={time}, difficulty={difficulty}, mustInclude=[...], avoid=[...]. Output in the JSON schema."
 
 ## Zod Schema Sketch (MVP)
 
 ```ts
-import { z } from 'zod';
+import { z } from "zod";
 
-const mealTypeSchema = z.enum(['breakfast', 'lunch', 'dinner']);
-const difficultySchema = z.enum(['EASY', 'MEDIUM', 'HARD']);
-const stepTypeSchema = z.enum(['PREP', 'COOK', 'REST', 'ASSEMBLE']);
+const mealTypeSchema = z.enum(["breakfast", "lunch", "dinner"]);
+const difficultySchema = z.enum(["EASY", "MEDIUM", "HARD"]);
+const stepTypeSchema = z.enum(["PREP", "COOK", "REST", "ASSEMBLE"]);
 
 export const recipeDraftSchema = z
   .object({
@@ -174,7 +176,7 @@ export const recipeDraftSchema = z
           quantity: z.number().positive().max(5000),
           unit: z.string().min(1).max(20),
           notes: z.string().max(120).optional(),
-        })
+        }),
       )
       .min(5),
     steps: z
@@ -184,7 +186,7 @@ export const recipeDraftSchema = z
           stepType: stepTypeSchema.optional(),
           durationMinutes: z.number().int().min(0).max(240).optional(),
           tips: z.string().max(280).optional(),
-        })
+        }),
       )
       .min(3),
     nutrition: z

@@ -85,9 +85,7 @@ export default function AdminRecipesClient({ initialRecipes }: AdminRecipesClien
                       {recipe.status.replace('_', ' ')}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-gray-600">
-                    {recipe.mealTypes.join(', ')}
-                  </td>
+                  <td className="px-6 py-4 text-gray-600">{recipe.mealTypes.join(', ')}</td>
                   <td className="px-6 py-4 text-gray-600">{formatDate(recipe.updatedAt)}</td>
                   <td className="px-6 py-4 text-right">
                     <Link

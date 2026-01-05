@@ -23,9 +23,6 @@ export default async function AdminRecipeEditPage({ params }: AdminRecipeEditPag
   const recipe = await api.adminRecipe.get({ id: params.id });
 
   return (
-    <AdminRecipeBuilderClient
-      isConfigured={isGeminiRecipeConfigured()}
-      initialRecipe={recipe}
-    />
+    <AdminRecipeBuilderClient isConfigured={isGeminiRecipeConfigured()} initialRecipe={recipe} />
   );
 }

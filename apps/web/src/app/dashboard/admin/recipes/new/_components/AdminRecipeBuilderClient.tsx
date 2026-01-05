@@ -566,9 +566,7 @@ export default function AdminRecipeBuilderClient({
         <section className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
           <div className="mb-4 flex items-center justify-between">
             <h2 className="text-xl font-semibold text-gray-900">Draft editor</h2>
-            {draft.sourcePrompt && (
-              <span className="text-xs text-gray-400">AI draft ready</span>
-            )}
+            {draft.sourcePrompt && <span className="text-xs text-gray-400">AI draft ready</span>}
           </div>
 
           <div className="space-y-6">
@@ -782,15 +780,16 @@ export default function AdminRecipeBuilderClient({
                 {draft.steps.map((step, index) => (
                   <div key={`step-${index}`} className="rounded-2xl border border-gray-100 p-3">
                     <div className="mb-2 flex items-center gap-2">
-                      <span className="text-xs font-semibold text-gray-500">
-                        Step {index + 1}
-                      </span>
+                      <span className="text-xs font-semibold text-gray-500">Step {index + 1}</span>
                       <select
                         className="rounded-full border border-gray-200 px-3 py-1 text-xs"
                         value={step.stepType ?? 'COOK'}
                         onChange={(event) => {
                           const next = [...draft.steps];
-                          next[index] = { ...step, stepType: event.target.value as DraftStep['stepType'] };
+                          next[index] = {
+                            ...step,
+                            stepType: event.target.value as DraftStep['stepType'],
+                          };
                           setDraft({ ...draft, steps: next });
                         }}
                       >
@@ -869,39 +868,62 @@ export default function AdminRecipeBuilderClient({
                 <button
                   type="button"
                   className="text-xs font-semibold text-emerald-700 hover:text-emerald-800"
-                  onClick={() => setDraft({ ...draft, nutrition: draft.nutrition ? undefined : {
-                    calories: draft.calories,
-                    protein: 20,
-                    carbohydrates: 40,
-                    fat: 15,
-                  } })}
+                  onClick={() =>
+                    setDraft({
+                      ...draft,
+                      nutrition: draft.nutrition
+                        ? undefined
+                        : {
+                            calories: draft.calories,
+                            protein: 20,
+                            carbohydrates: 40,
+                            fat: 15,
+                          },
+                    })
+                  }
                 >
                   {draft.nutrition ? 'Remove nutrition' : 'Add nutrition'}
                 </button>
               </div>
               {draft.nutrition && (
                 <div className="grid gap-3 sm:grid-cols-3">
-                  {(['calories', 'protein', 'carbohydrates', 'fat', 'fiber', 'sugar', 'sodium'] as const).map(
-                    (field) => (
-                      <label key={field} className="text-xs font-semibold text-gray-600">
-                        {field}
-                        <input
-                          type="number"
-                          step="0.01"
-                          min={0}
-                          className="mt-1 w-full rounded-2xl border border-gray-200 px-3 py-2 text-sm"
-                          value={draft.nutrition?.[field] ?? ''}
-                          onChange={(event) => {
-                            const value = Number(event.target.value);
-                            setDraft({
-                              ...draft,
-                              nutrition: { ...(draft.nutrition ?? { calories: draft.calories, protein: 0, carbohydrates: 0, fat: 0 }), [field]: value },
-                            });
-                          }}
-                        />
-                      </label>
-                    )
-                  )}
+                  {(
+                    [
+                      'calories',
+                      'protein',
+                      'carbohydrates',
+                      'fat',
+                      'fiber',
+                      'sugar',
+                      'sodium',
+                    ] as const
+                  ).map((field) => (
+                    <label key={field} className="text-xs font-semibold text-gray-600">
+                      {field}
+                      <input
+                        type="number"
+                        step="0.01"
+                        min={0}
+                        className="mt-1 w-full rounded-2xl border border-gray-200 px-3 py-2 text-sm"
+                        value={draft.nutrition?.[field] ?? ''}
+                        onChange={(event) => {
+                          const value = Number(event.target.value);
+                          setDraft({
+                            ...draft,
+                            nutrition: {
+                              ...(draft.nutrition ?? {
+                                calories: draft.calories,
+                                protein: 0,
+                                carbohydrates: 0,
+                                fat: 0,
+                              }),
+                              [field]: value,
+                            },
+                          });
+                        }}
+                      />
+                    </label>
+                  ))}
                 </div>
               )}
             </div>
@@ -965,7 +987,10 @@ export default function AdminRecipeBuilderClient({
                   placeholder="Image URL"
                   value={draft.image?.url ?? ''}
                   onChange={(event) =>
-                    setDraft({ ...draft, image: { ...(draft.image ?? {}), url: event.target.value } })
+                    setDraft({
+                      ...draft,
+                      image: { ...(draft.image ?? {}), url: event.target.value },
+                    })
                   }
                 />
                 <input

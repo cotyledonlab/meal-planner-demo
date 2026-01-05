@@ -515,9 +515,7 @@ export const adminRecipeRouter = createTRPCRouter({
       }))
     );
 
-    const dietTagNames = Array.from(
-      new Set([...(input.dietTags ?? []), ...derivedTags.dietTags])
-    );
+    const dietTagNames = Array.from(new Set([...(input.dietTags ?? []), ...derivedTags.dietTags]));
     const allergenTagNames = Array.from(
       new Set([...(input.allergenTags ?? []), ...derivedTags.allergenTags])
     );
@@ -662,41 +660,39 @@ export const adminRecipeRouter = createTRPCRouter({
     return result;
   }),
 
-  publish: adminProcedure
-    .input(z.object({ id: z.string() }))
-    .mutation(async ({ ctx, input }) => {
-      const recipe = await ctx.db.recipe.findUnique({
+  publish: adminProcedure.input(z.object({ id: z.string() })).mutation(async ({ ctx, input }) => {
+    const recipe = await ctx.db.recipe.findUnique({
+      where: { id: input.id },
+    });
+
+    if (!recipe) {
+      throw new TRPCError({ code: 'NOT_FOUND', message: 'Recipe not found' });
+    }
+    if (recipe.status !== 'DRAFT') {
+      throw new TRPCError({ code: 'CONFLICT', message: 'Recipe is not in draft status' });
+    }
+
+    const updated = await ctx.db.$transaction(async (tx: Prisma.TransactionClient) => {
+      const updatedRecipe = await tx.recipe.update({
         where: { id: input.id },
+        data: {
+          status: 'APPROVED',
+          publishedAt: new Date(),
+        },
       });
 
-      if (!recipe) {
-        throw new TRPCError({ code: 'NOT_FOUND', message: 'Recipe not found' });
-      }
-      if (recipe.status !== 'DRAFT') {
-        throw new TRPCError({ code: 'CONFLICT', message: 'Recipe is not in draft status' });
-      }
-
-      const updated = await ctx.db.$transaction(async (tx: Prisma.TransactionClient) => {
-        const updatedRecipe = await tx.recipe.update({
-          where: { id: input.id },
-          data: {
-            status: 'APPROVED',
-            publishedAt: new Date(),
-          },
-        });
-
-        await tx.recipeStatusHistory.create({
-          data: {
-            recipeId: input.id,
-            status: 'APPROVED',
-            changedBy: ctx.session.user.id,
-            reason: 'Published via admin recipe builder',
-          },
-        });
-
-        return updatedRecipe;
+      await tx.recipeStatusHistory.create({
+        data: {
+          recipeId: input.id,
+          status: 'APPROVED',
+          changedBy: ctx.session.user.id,
+          reason: 'Published via admin recipe builder',
+        },
       });
 
-      return updated;
-    }),
+      return updatedRecipe;
+    });
+
+    return updated;
+  }),
 });
