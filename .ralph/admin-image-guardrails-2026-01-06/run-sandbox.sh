@@ -69,6 +69,7 @@ docker run "${DOCKER_RUN_ARGS[@]}" "\
     fi; \
     cd /work/meal-planner-demo; \
     export CODEX_PROFILE=default; \
+    pnpm install; \
     ./.ralph/admin-image-guardrails-2026-01-06/run-loop.sh 10 \
   "
 
