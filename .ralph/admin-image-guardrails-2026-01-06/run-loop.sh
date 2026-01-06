@@ -10,7 +10,6 @@ for ((i=1; i<=MAX_ITERATIONS; i++)); do
   [ "$remaining" -eq 0 ] && echo "All done!" && break
 
   echo "Iteration $i of $MAX_ITERATIONS ($remaining remaining)"
-  PROFILE="${CODEX_PROFILE:-default}"
-  codex -p --profile "$PROFILE" --dangerously-bypass-approvals-and-sandbox "$(cat PROMPT.md)"
+  codex -p --profile default --dangerously-bypass-approvals-and-sandbox "$(cat PROMPT.md)"
   sleep 2
 done
