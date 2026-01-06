@@ -112,9 +112,7 @@ cd apps/web && pnpm prisma db seed
 
 This will create:
 
-- **Admin user**: `admin@example.com` / `P@ssw0rd!` (access to image generation pipeline)
-- **Premium user**: `premium@example.com` / `P@ssw0rd!`
-- **Basic user**: `basic@example.com` / `P@ssw0rd!`
+- Demo users (admin/premium/basic). Set `SEED_USER_PASSWORD` in `.env` before seeding; it is required for production seeding.
 - 22 diverse sample recipes with ingredients (quick meals, batch-prep options, and one-pot dinners)
 - Price baselines for Irish supermarkets (Aldi, Lidl, Tesco, Dunnes)
 

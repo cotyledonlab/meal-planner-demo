@@ -68,6 +68,7 @@ If you have direct database access via DATABASE_URL:
 ```bash
 # Set the production DATABASE_URL
 export DATABASE_URL="postgresql://user:pass@production-host:5432/meal-planner-demo"
+export SEED_USER_PASSWORD="replace-with-strong-password"
 
 # Run seed locally (connects to remote DB)
 cd apps/web
@@ -82,10 +83,7 @@ The seed script populates:
 
 - **12 recipes** (various cuisines, dietary preferences)
 - **29 ingredients** (categorized: protein, vegetables, dairy, grains, pantry)
-- **3 test users:**
-  - `admin@example.com` / `P@ssw0rd!` (admin access to image generation)
-  - `premium@example.com` / `P@ssw0rd!` (7-day meal plans)
-  - `basic@example.com` / `P@ssw0rd!` (3-day meal plans)
+- **3 demo users (admin/premium/basic)** with password set via `SEED_USER_PASSWORD`
 - **Price baselines** for shopping list cost estimation
 
 ## Idempotency

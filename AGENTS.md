@@ -9,7 +9,7 @@ These instructions apply to the entire repository. Keep documentation DRY by lea
 - Next.js 15 (App Router) with React Server Components where practical
 - Strict TypeScript; avoid `any`
 - tRPC v11 + React Query 5
-- Prisma 6 on PostgreSQL; seed users `admin@example.com` / `premium@example.com` / `basic@example.com` with password `P@ssw0rd!`
+- Prisma 6 on PostgreSQL; seed users include admin/premium/basic demo accounts (password set via `SEED_USER_PASSWORD`)
 - Tailwind CSS 4, Prettier + ESLint formatting and linting
 - Monorepo managed by pnpm workspaces (root scripts delegate to `apps/web`)
 

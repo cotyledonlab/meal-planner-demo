@@ -139,7 +139,17 @@ async function main() {
           outputLen: 32,
           parallelism: 1,
         };
-  const passwordHash = await hash('P@ssw0rd!', argon2Params);
+  const defaultSeedPassword = 'P@ssw0rd!';
+  const seedPassword = process.env.SEED_USER_PASSWORD ?? defaultSeedPassword;
+  const usingDefaultPassword = seedPassword === defaultSeedPassword;
+
+  if (process.env.NODE_ENV === 'production' && usingDefaultPassword) {
+    throw new Error(
+      'SEED_USER_PASSWORD must be set to a non-default value when seeding production data.'
+    );
+  }
+
+  const passwordHash = await hash(seedPassword, argon2Params);
 
   const premiumUser = await prisma.user.create({
     data: {
@@ -183,7 +193,11 @@ async function main() {
   console.log(`✅ Created premium user: ${premiumUser.email}`);
   console.log(`✅ Created basic user: ${basicUser.email}`);
   console.log(`✅ Created admin user: ${adminUser.email}`);
-  console.log(`🔑 Password for all users: P@ssw0rd!`);
+  console.log(
+    usingDefaultPassword
+      ? '🔑 Seed user password: using default dev password (set SEED_USER_PASSWORD to override).'
+      : '🔑 Seed user password: set via SEED_USER_PASSWORD.'
+  );
 
   // Create canonical ingredients using batch operations for better performance
   console.log('📚 Creating canonical ingredients...');

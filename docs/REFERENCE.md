@@ -7,7 +7,7 @@ This document centralizes the current state of the monorepo so other docs (READM
 - Next.js 15 (App Router) with React Server Components where practical
 - TypeScript-first with strict settings; avoid `any`
 - tRPC v11 + React Query 5 for client/server contracts
-- Prisma 6 with PostgreSQL; seed users include `admin@example.com`, `premium@example.com`, and `basic@example.com` (password: `P@ssw0rd!`)
+- Prisma 6 with PostgreSQL; seed users include admin/premium/basic demo accounts (password set via `SEED_USER_PASSWORD`)
 - Tailwind CSS 4 for styling, Prettier + ESLint for formatting and linting
 
 ## Monorepo Layout
@@ -25,7 +25,7 @@ This document centralizes the current state of the monorepo so other docs (READM
    - Postgres only: `docker compose up -d postgres` or `./start-database.sh`
    - Full local stack (web + Postgres + Mailpit): `pnpm docker:dev` / tear down with `pnpm docker:dev:down`
 3. Apply schema: `pnpm db:push`
-4. Seed demo data: `pnpm db:seed` (creates admin/premium/basic users plus recipes; password `P@ssw0rd!`)
+4. Seed demo data: `pnpm db:seed` (creates admin/premium/basic users plus recipes; set `SEED_USER_PASSWORD` beforehand, required in production)
 5. Run the app: `pnpm dev` (http://localhost:3000)
 
 ## Common Commands (run from repo root)

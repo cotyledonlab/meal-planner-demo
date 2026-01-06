@@ -3,8 +3,12 @@ const puppeteer = require("puppeteer");
 const URL =
   process.env.TEST_URL ||
   "https://meal-plan-demo-monostack-i9woau-78f535-65-108-56-181.traefik.me/";
-const EMAIL = process.env.TEST_EMAIL || "premium@example.com";
-const PASSWORD = process.env.TEST_PASSWORD || "P@ssw0rd!";
+const EMAIL = process.env.TEST_EMAIL;
+const PASSWORD = process.env.TEST_PASSWORD;
+
+if (!EMAIL || !PASSWORD) {
+  throw new Error("Set TEST_EMAIL and TEST_PASSWORD before running this script.");
+}
 
 async function testMealPlanGeneration() {
   console.log("Starting Puppeteer test...\n");
