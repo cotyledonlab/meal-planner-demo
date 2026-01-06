@@ -1,0 +1,113 @@
+{
+  "meta": {
+    "project": "meal-planner-demo",
+    "description": "Admin image generation guardrails (rate limits, quotas, usage dashboard)",
+    "total_items": 8
+  },
+  "items": [
+    {
+      "id": "IMG-001",
+      "category": "config",
+      "title": "Define guardrail config and env schema",
+      "description": "Add environment/configurable limits for admin image generation.",
+      "acceptance_criteria": [
+        "Config supports 100 images/day default",
+        "Config supports per-minute burst limit",
+        "Env schema validates new variables",
+        "Docs note new variables in REFERENCE"
+      ],
+      "completed": false
+    },
+    {
+      "id": "IMG-002",
+      "category": "infrastructure",
+      "title": "Redis-backed rate limiter",
+      "description": "Implement Redis-based rate limiting for image generation keyed by user and IP.",
+      "acceptance_criteria": [
+        "Rate limit uses Redis with TTL",
+        "Keys are scoped to user id and IP",
+        "Graceful fallback when Redis unavailable",
+        "Excess requests return a 429-style error"
+      ],
+      "completed": false
+    },
+    {
+      "id": "IMG-003",
+      "category": "quotas",
+      "title": "Daily quota enforcement",
+      "description": "Track and enforce 100 images/day per admin user.",
+      "acceptance_criteria": [
+        "Daily usage counter stored in Redis",
+        "Quota check runs before generation",
+        "Quota exceed returns clear error message",
+        "Usage increments on successful generation"
+      ],
+      "completed": false
+    },
+    {
+      "id": "IMG-004",
+      "category": "logging",
+      "title": "Audit log for generation attempts",
+      "description": "Record admin image generation attempts for visibility and debugging.",
+      "acceptance_criteria": [
+        "Audit log captures user id, model, prompt length, and status",
+        "Failures and successes are logged",
+        "Log data avoids storing full prompts",
+        "Logs are queryable for dashboard"
+      ],
+      "completed": false
+    },
+    {
+      "id": "IMG-005",
+      "category": "api",
+      "title": "Expose usage stats endpoint",
+      "description": "Add a tRPC endpoint to return usage and limits for admin users.",
+      "acceptance_criteria": [
+        "Endpoint returns daily used + limit",
+        "Endpoint returns rate limit window + remaining",
+        "Access restricted to admin role",
+        "Response used by UI"
+      ],
+      "completed": false
+    },
+    {
+      "id": "IMG-006",
+      "category": "ui",
+      "title": "Admin dashboard usage widget",
+      "description": "Show image generation usage on the admin dashboard.",
+      "acceptance_criteria": [
+        "Usage widget visible on admin dashboard",
+        "Shows daily usage and remaining quota",
+        "Shows rate limit status",
+        "Empty/error states handled"
+      ],
+      "completed": false
+    },
+    {
+      "id": "IMG-007",
+      "category": "controls",
+      "title": "Maintenance mode toggle",
+      "description": "Allow disabling image generation without redeploy.",
+      "acceptance_criteria": [
+        "Config flag disables generation",
+        "UI shows disabled state",
+        "API returns clear error when disabled",
+        "Documented in REFERENCE"
+      ],
+      "completed": false
+    },
+    {
+      "id": "IMG-008",
+      "category": "tests",
+      "title": "Add guardrail tests",
+      "description": "Add tests for rate limit and quota enforcement.",
+      "acceptance_criteria": [
+        "Unit tests cover quota exceed behavior",
+        "Unit tests cover rate limit behavior",
+        "Tests cover maintenance mode",
+        "pnpm test and pnpm typecheck pass"
+      ],
+      "completed": false
+    }
+  ]
+}
