@@ -58,6 +58,12 @@ DOCKER_RUN_ARGS+=(
 docker run "${DOCKER_RUN_ARGS[@]}" "\
     if [ ! -d /work/meal-planner-demo ]; then \
       git clone https://github.com/cotyledonlab/meal-planner-demo.git /work/meal-planner-demo; \
+    else \
+      git -C /work/meal-planner-demo fetch --all --prune; \
+      git -C /work/meal-planner-demo pull --ff-only; \
+    fi; \
+    if ! command -v codex >/dev/null 2>&1; then \
+      npm install -g @openai/codex; \
     fi; \
     cd /work/meal-planner-demo; \
     ./.ralph/admin-image-guardrails-2026-01-06/run-loop.sh 10 \
