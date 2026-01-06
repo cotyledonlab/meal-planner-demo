@@ -19,18 +19,18 @@ Deliver the initial MealMind experience that walks invited or guest households t
 **Constraints**: Enforce 21-meal cap per generation, per-user daily token/cost ceilings, background job concurrency limits, nutrition disclaimer on every surface  
 **Scale/Scope**: Invite-only demo supporting ~100 households concurrently with single active plan per household and guest session retention limited to active browser session
 
-## Constitution Check
+## Plan Alignment Check
 
-- **Language & Runtime**: Plan uses TypeScript and Node 20+ exclusively — compliant.
-- **Package & Build**: Turborepo with pnpm maintained; no conflicting tooling introduced.
+- **Language & Runtime**: TypeScript and Node 20+.
+- **Package & Build**: pnpm workspace monorepo; no conflicting tooling introduced.
 - **Web & API**: Next.js App Router with server actions and tRPC/Zod contracts covered in design.
 - **Data & Infra**: PostgreSQL via Prisma with Docker Compose for local dev; deployment notes include Hetzner + AWS targets; Redis usage documented.
-- **Auth & Exports**: NextAuth magic links and server-side PDF/CSV exports included.
+- **Auth & Exports**: NextAuth and server-side PDF/CSV exports included.
 - **Quality Gates**: Strict TS, ESLint, Prettier, Vitest, and Playwright coverage planned; performance and accessibility budgets embedded.
 - **Security & Cost**: Rate limiting, token caps, secret handling, and cache reuse addressed in requirements.
 - **Process**: Following `/specify → /plan → /tasks`; migrations via Prisma with rollback scripts planned.
 
-**Post-Design Validation (2025-10-09)**: Design assets (research, data model, contracts) reinforce the same constitution-compliant stack decisions; no deviations detected.
+**Post-Design Validation (2025-10-09)**: Design assets (research, data model, contracts) reinforce the same stack decisions; no deviations detected.
 
 ## Project Structure
 

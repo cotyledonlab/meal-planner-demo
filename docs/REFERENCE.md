@@ -43,8 +43,7 @@ This document centralizes the current state of the monorepo so other docs (READM
 - Testing workflows: `TESTING.md`
 - Deployment notes: `DEPLOYMENT.md` and `SEEDING_DEPLOYMENT.md`
 - Auth flows and dashboard UX: `docs/AUTH.md`, `docs/AUTH_DASHBOARD_UI_PLAN.md`
-- Database configuration and fixes: `docs/DATABASE_CONFIGURATION.md`, `docs/DATABASE_FIXES_SUMMARY.md`
-- Meal planning feature notes: `docs/MEAL_PLANNING_FEATURE.md`
+- Database configuration: `docs/DATABASE_CONFIGURATION.md`
 
 ## Admin Tools
 
