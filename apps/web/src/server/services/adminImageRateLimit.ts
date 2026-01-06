@@ -6,6 +6,16 @@ const log = createLogger('admin-image-rate-limit');
 
 const WINDOW_SECONDS = 60;
 
+// Lua script for atomic INCR + EXPIRE to prevent race conditions.
+// Defined at module level to avoid recreating the string on each call.
+const ATOMIC_INCR_SCRIPT = `
+  local current = redis.call("INCR", KEYS[1])
+  if current == 1 then
+    redis.call("EXPIRE", KEYS[1], ARGV[1])
+  end
+  return current
+`;
+
 export interface RateLimitResult {
   allowed: boolean;
   remaining: number;
@@ -78,17 +88,8 @@ export async function checkAdminImageRateLimit(params: {
 
   const key = getClientKey(params.userId, params.clientIp);
 
-  // Lua script for atomic INCR + EXPIRE to prevent race conditions
-  const atomicIncrScript = `
-    local current = redis.call("INCR", KEYS[1])
-    if current == 1 then
-      redis.call("EXPIRE", KEYS[1], ARGV[1])
-    end
-    return current
-  `;
-
   try {
-    const count = (await redis.eval(atomicIncrScript, {
+    const count = (await redis.eval(ATOMIC_INCR_SCRIPT, {
       keys: [key],
       arguments: [String(WINDOW_SECONDS)],
     })) as number;

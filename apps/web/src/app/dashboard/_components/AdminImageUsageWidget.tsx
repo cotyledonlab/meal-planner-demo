@@ -28,6 +28,7 @@ export default function AdminImageUsageWidget() {
           <button
             type="button"
             disabled
+            aria-label="Image generation disabled during maintenance"
             className="inline-flex items-center gap-2 rounded-full border border-amber-200 bg-white px-4 py-2 text-sm font-semibold text-amber-800 opacity-60 shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500"
           >
             <ImageIcon className="h-4 w-4" />

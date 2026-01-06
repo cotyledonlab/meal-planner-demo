@@ -4,6 +4,16 @@ import { createLogger } from '~/lib/logger';
 
 const log = createLogger('admin-image-quota');
 
+// Lua script for atomic INCR + EXPIRE to prevent race conditions.
+// Defined at module level to avoid recreating the string on each call.
+const ATOMIC_INCR_SCRIPT = `
+  local current = redis.call("INCR", KEYS[1])
+  if current == 1 then
+    redis.call("EXPIRE", KEYS[1], ARGV[1])
+  end
+  return current
+`;
+
 export interface DailyQuotaResult {
   allowed: boolean;
   remaining: number;
@@ -95,18 +105,9 @@ export async function incrementAdminImageDailyUsage(params: { userId: string }):
   const dateKey = getUtcDateKey(now);
   const key = getQuotaKey(params.userId, dateKey);
 
-  // Lua script for atomic INCR + EXPIRE to prevent race conditions
-  const atomicIncrScript = `
-    local current = redis.call("INCR", KEYS[1])
-    if current == 1 then
-      redis.call("EXPIRE", KEYS[1], ARGV[1])
-    end
-    return current
-  `;
-
   try {
     const ttlSeconds = getSecondsUntilUtcReset(now);
-    await redis.eval(atomicIncrScript, {
+    await redis.eval(ATOMIC_INCR_SCRIPT, {
       keys: [key],
       arguments: [String(ttlSeconds)],
     });
