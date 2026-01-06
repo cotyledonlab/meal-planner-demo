@@ -29,6 +29,7 @@ You are implementing admin image generation guardrails for the meal-planner-demo
 ## Output Format
 
 Append to `progress.txt`:
+
 - Date
 - Item id/title
 - Summary of changes
