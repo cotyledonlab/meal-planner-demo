@@ -56,12 +56,8 @@ DOCKER_RUN_ARGS+=(
 )
 
 docker run "${DOCKER_RUN_ARGS[@]}" "\
-    if [ ! -d /work/meal-planner-demo ]; then \
-      git clone https://github.com/cotyledonlab/meal-planner-demo.git /work/meal-planner-demo; \
-    else \
-      git -C /work/meal-planner-demo fetch --all --prune; \
-      git -C /work/meal-planner-demo pull --ff-only; \
-    fi; \
+    rm -rf /work/meal-planner-demo; \
+    git clone https://github.com/cotyledonlab/meal-planner-demo.git /work/meal-planner-demo; \
     mkdir -p /root/.codex; \
     if [ ! -f /root/.codex/config.toml ]; then \
       printf '%s\n' '[profiles.default]' > /root/.codex/config.toml; \
