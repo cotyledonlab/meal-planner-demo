@@ -32,10 +32,7 @@ export async function getRedisClient(): Promise<RedisClient | null> {
 
   // Handle connection errors on an established connection
   redisClient.on('error', (error: Error) => {
-    log.warn(
-      { error: error.message },
-      'Redis connection error'
-    );
+    log.warn({ error: error.message }, 'Redis connection error');
     // Reset client so next call will attempt to reconnect
     if (client === redisClient) {
       client = null;

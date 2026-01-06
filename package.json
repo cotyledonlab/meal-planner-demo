@@ -32,7 +32,7 @@
   "lint-staged": {
     "*.{ts,tsx}": [
       "prettier --write --ignore-unknown",
-      "pnpm exec eslint --config apps/web/eslint.config.js --fix"
+      "pnpm --filter @meal-planner-demo/web exec eslint --config eslint.config.js --fix"
     ],
     "*.{js,jsx,json,md,mdx,yml,yaml}": [
       "prettier --write --ignore-unknown"
