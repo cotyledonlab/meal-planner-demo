@@ -32,7 +32,16 @@ export const env = createEnv({
     GEMINI_TEXT_MODEL: z.string().optional().default('gemini-2.5-flash'),
     ADMIN_IMAGE_DAILY_LIMIT: z.coerce.number().int().positive().optional().default(100),
     ADMIN_IMAGE_RATE_LIMIT_PER_MINUTE: z.coerce.number().int().positive().optional().default(20),
-    ADMIN_IMAGE_MAINTENANCE_MODE: z.enum(['true', 'false']).optional().default('false'),
+    ADMIN_IMAGE_MAINTENANCE_MODE: z
+      .string()
+      .optional()
+      .default('false')
+      .transform((value) => {
+        const normalized = value.toLowerCase();
+        return normalized === 'true' || normalized === '1' || normalized === 'yes'
+          ? 'true'
+          : 'false';
+      }),
     REDIS_URL: z.string().optional(),
     // Storage provider configuration
     STORAGE_PROVIDER: z.enum(['local', 's3']).optional().default('local'),

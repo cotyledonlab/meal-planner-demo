@@ -200,7 +200,21 @@ export const adminImageRouter = createTRPCRouter({
           },
         });
 
-        await incrementAdminImageDailyUsage({ userId: ctx.session.user.id });
+        // Increment quota usage - if this fails, we still allow the image since it was generated
+        // but log the failure for monitoring
+        try {
+          await incrementAdminImageDailyUsage({ userId: ctx.session.user.id });
+        } catch (quotaError) {
+          log.error(
+            {
+              error: quotaError instanceof Error ? quotaError.message : String(quotaError),
+              userId: ctx.session.user.id,
+              recordId: record.id,
+            },
+            'Failed to increment quota usage after successful image generation'
+          );
+          // Continue - the image was already generated successfully
+        }
 
         const basePath = env.NEXT_PUBLIC_BASE_PATH ?? '';
 

@@ -4,14 +4,7 @@ import Link from 'next/link';
 import { Activity, ImageIcon } from 'lucide-react';
 
 import { api } from '~/trpc/react';
-
-function formatResetTime(value: Date | string): string {
-  const date = value instanceof Date ? value : new Date(value);
-  if (Number.isNaN(date.getTime())) {
-    return 'soon';
-  }
-  return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-}
+import { formatResetTime } from '~/lib/formatResetTime';
 
 export default function AdminImageUsageWidget() {
   const usageQuery = api.adminImage.usage.useQuery();
@@ -31,18 +24,24 @@ export default function AdminImageUsageWidget() {
             Track quota and rate limits before jumping into the generator.
           </p>
         </div>
-        <Link
-          href="/dashboard/admin/images"
-          aria-disabled={isMaintenanceMode}
-          className={`inline-flex items-center gap-2 rounded-full border border-amber-200 bg-white px-4 py-2 text-sm font-semibold text-amber-800 shadow-sm transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500 ${
-            isMaintenanceMode
-              ? 'pointer-events-none opacity-60'
-              : 'hover:-translate-y-0.5 hover:border-amber-300 hover:shadow-md'
-          }`}
-        >
-          <ImageIcon className="h-4 w-4" />
-          Open generator
-        </Link>
+        {isMaintenanceMode ? (
+          <button
+            type="button"
+            disabled
+            className="inline-flex items-center gap-2 rounded-full border border-amber-200 bg-white px-4 py-2 text-sm font-semibold text-amber-800 opacity-60 shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500"
+          >
+            <ImageIcon className="h-4 w-4" />
+            Open generator
+          </button>
+        ) : (
+          <Link
+            href="/dashboard/admin/images"
+            className="inline-flex items-center gap-2 rounded-full border border-amber-200 bg-white px-4 py-2 text-sm font-semibold text-amber-800 shadow-sm transition hover:-translate-y-0.5 hover:border-amber-300 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500"
+          >
+            <ImageIcon className="h-4 w-4" />
+            Open generator
+          </Link>
+        )}
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">

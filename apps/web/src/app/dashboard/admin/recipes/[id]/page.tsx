@@ -6,21 +6,22 @@ import { api } from '~/trpc/server';
 import { isGeminiRecipeConfigured } from '~/server/services/geminiRecipe';
 
 interface AdminRecipeEditPageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 export default async function AdminRecipeEditPage({ params }: AdminRecipeEditPageProps) {
+  const { id } = await params;
   const session = await auth();
 
   if (!session?.user) {
-    redirect(`/auth/signin?callbackUrl=/dashboard/admin/recipes/${params.id}`);
+    redirect(`/auth/signin?callbackUrl=/dashboard/admin/recipes/${id}`);
   }
 
   if (session.user.role !== 'admin') {
     redirect('/dashboard');
   }
 
-  const recipe = await api.adminRecipe.get({ id: params.id });
+  const recipe = await api.adminRecipe.get({ id });
 
   return (
     <AdminRecipeBuilderClient isConfigured={isGeminiRecipeConfigured()} initialRecipe={recipe} />

@@ -95,11 +95,21 @@ export async function incrementAdminImageDailyUsage(params: { userId: string }):
   const dateKey = getUtcDateKey(now);
   const key = getQuotaKey(params.userId, dateKey);
 
+  // Lua script for atomic INCR + EXPIRE to prevent race conditions
+  const atomicIncrScript = `
+    local current = redis.call("INCR", KEYS[1])
+    if current == 1 then
+      redis.call("EXPIRE", KEYS[1], ARGV[1])
+    end
+    return current
+  `;
+
   try {
-    const count = await redis.incr(key);
-    if (count === 1) {
-      await redis.expire(key, getSecondsUntilUtcReset(now));
-    }
+    const ttlSeconds = getSecondsUntilUtcReset(now);
+    await redis.eval(atomicIncrScript, {
+      keys: [key],
+      arguments: [String(ttlSeconds)],
+    });
   } catch (error) {
     log.warn(
       { error: error instanceof Error ? error.message : String(error) },

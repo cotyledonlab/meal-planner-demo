@@ -15,8 +15,13 @@ export async function getRedisClient(): Promise<RedisClient | null> {
     return null;
   }
 
+  // Check if existing client is still connected
   if (client) {
-    return client;
+    if (client.isOpen) {
+      return client;
+    }
+    // Client exists but connection dropped - reset and reconnect
+    client = null;
   }
 
   if (connectPromise) {
@@ -25,19 +30,31 @@ export async function getRedisClient(): Promise<RedisClient | null> {
 
   const redisClient = createClient({ url: env.REDIS_URL });
 
+  // Handle connection errors on an established connection
+  redisClient.on('error', (error: Error) => {
+    log.warn(
+      { error: error instanceof Error ? error.message : String(error) },
+      'Redis connection error'
+    );
+    // Reset client so next call will attempt to reconnect
+    if (client === redisClient) {
+      client = null;
+    }
+  });
+
   connectPromise = redisClient
     .connect()
     .then(() => {
       client = redisClient;
       return client;
     })
-    .catch((error) => {
+    .catch((error: unknown) => {
       log.warn(
         { error: error instanceof Error ? error.message : String(error) },
         'Redis unavailable; falling back to in-memory behavior'
       );
       try {
-        redisClient.disconnect();
+        void redisClient.disconnect();
       } catch {
         // Ignore disconnect failures on partial connections.
       }
@@ -48,4 +65,27 @@ export async function getRedisClient(): Promise<RedisClient | null> {
     });
 
   return connectPromise;
+}
+
+export async function disconnectRedisClient(): Promise<void> {
+  if (!client) {
+    return;
+  }
+
+  const currentClient = client;
+  client = null;
+
+  try {
+    await currentClient.quit();
+  } catch (err) {
+    log.warn(
+      { error: err instanceof Error ? err.message : String(err) },
+      'Failed to gracefully disconnect Redis client'
+    );
+    try {
+      void currentClient.disconnect();
+    } catch {
+      // Ignore disconnect failures during shutdown.
+    }
+  }
 }

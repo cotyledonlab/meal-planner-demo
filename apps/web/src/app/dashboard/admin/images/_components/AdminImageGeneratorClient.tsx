@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { ImageIcon, Loader2, ShieldCheck, Sparkles } from 'lucide-react';
 import type { RouterOutputs } from '~/trpc/react';
 import { api } from '~/trpc/react';
+import { formatResetTime } from '~/lib/formatResetTime';
 
 type GeneratedImage = RouterOutputs['adminImage']['list'][number];
 
@@ -23,14 +24,6 @@ const MODEL_OPTIONS = [
 function truncateAltText(text: string, maxLength = 125): string {
   if (text.length <= maxLength) return text;
   return text.slice(0, maxLength - 1).trim() + '…';
-}
-
-function formatResetTime(value: Date | string): string {
-  const date = value instanceof Date ? value : new Date(value);
-  if (Number.isNaN(date.getTime())) {
-    return 'soon';
-  }
-  return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 }
 
 interface AdminImageGeneratorClientProps {

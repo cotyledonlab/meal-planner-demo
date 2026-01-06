@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { TRPCError } from '@trpc/server';
+import type { TRPCError } from '@trpc/server';
 import { AdminImageAuditStatus } from '@prisma/client';
 
 vi.mock('~/server/auth', () => ({ auth: vi.fn() }));
