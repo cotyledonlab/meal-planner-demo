@@ -42,7 +42,9 @@ describe('adminImageRateLimit', () => {
       ttl: vi.fn().mockResolvedValue(30),
     };
 
-    mockedGetRedisClient.mockResolvedValue(redis as unknown as Awaited<ReturnType<typeof getRedisClient>>);
+    mockedGetRedisClient.mockResolvedValue(
+      redis as unknown as Awaited<ReturnType<typeof getRedisClient>>
+    );
 
     const result = await checkAdminImageRateLimit({ userId: 'admin-user', clientIp: '127.0.0.1' });
 

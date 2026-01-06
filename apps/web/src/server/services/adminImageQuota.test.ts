@@ -42,7 +42,9 @@ describe('adminImageQuota', () => {
       expire: vi.fn(),
     };
 
-    mockedGetRedisClient.mockResolvedValue(redis as unknown as Awaited<ReturnType<typeof getRedisClient>>);
+    mockedGetRedisClient.mockResolvedValue(
+      redis as unknown as Awaited<ReturnType<typeof getRedisClient>>
+    );
 
     const result = await checkAdminImageDailyQuota({ userId: 'admin-user' });
 
@@ -61,11 +63,16 @@ describe('adminImageQuota', () => {
       expire: vi.fn().mockResolvedValue(true),
     };
 
-    mockedGetRedisClient.mockResolvedValue(redis as unknown as Awaited<ReturnType<typeof getRedisClient>>);
+    mockedGetRedisClient.mockResolvedValue(
+      redis as unknown as Awaited<ReturnType<typeof getRedisClient>>
+    );
 
     await incrementAdminImageDailyUsage({ userId: 'admin-user' });
 
     expect(redis.incr).toHaveBeenCalledWith('admin-image:quota:admin-user:2026-01-06');
-    expect(redis.expire).toHaveBeenCalledWith('admin-image:quota:admin-user:2026-01-06', expect.any(Number));
+    expect(redis.expire).toHaveBeenCalledWith(
+      'admin-image:quota:admin-user:2026-01-06',
+      expect.any(Number)
+    );
   });
 });

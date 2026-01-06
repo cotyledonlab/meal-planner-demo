@@ -18,7 +18,9 @@ function getUtcDateKey(date: Date): string {
 }
 
 function getUtcResetAt(date: Date): Date {
-  return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate() + 1, 0, 0, 0));
+  return new Date(
+    Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate() + 1, 0, 0, 0)
+  );
 }
 
 function getSecondsUntilUtcReset(date: Date): number {

@@ -113,9 +113,7 @@ export default function AdminImageGeneratorClient({
           )}
         </div>
         <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
-          <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">
-            Rate limit
-          </p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">Rate limit</p>
           {usageQuery.isLoading ? (
             <p className="mt-2 text-sm text-gray-500">Loading rate limit...</p>
           ) : usageQuery.isError || !usage ? (

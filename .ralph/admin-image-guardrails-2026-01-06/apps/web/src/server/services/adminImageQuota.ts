@@ -1,8 +1,8 @@
-import { adminImageGuardrails } from '~/server/services/adminImageGuardrails';
-import { getRedisClient } from '~/server/services/redis';
-import { createLogger } from '~/lib/logger';
+import { adminImageGuardrails } from "~/server/services/adminImageGuardrails";
+import { getRedisClient } from "~/server/services/redis";
+import { createLogger } from "~/lib/logger";
 
-const log = createLogger('admin-image-quota');
+const log = createLogger("admin-image-quota");
 
 export interface DailyQuotaResult {
   allowed: boolean;
@@ -18,7 +18,16 @@ function getUtcDateKey(date: Date): string {
 }
 
 function getUtcResetAt(date: Date): Date {
-  return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate() + 1, 0, 0, 0));
+  return new Date(
+    Date.UTC(
+      date.getUTCFullYear(),
+      date.getUTCMonth(),
+      date.getUTCDate() + 1,
+      0,
+      0,
+      0,
+    ),
+  );
 }
 
 function getSecondsUntilUtcReset(date: Date): number {
@@ -70,7 +79,7 @@ export async function checkAdminImageDailyQuota(params: {
   } catch (error) {
     log.warn(
       { error: error instanceof Error ? error.message : String(error) },
-      'Redis quota check failed; allowing request'
+      "Redis quota check failed; allowing request",
     );
     return {
       allowed: true,
@@ -83,7 +92,9 @@ export async function checkAdminImageDailyQuota(params: {
   }
 }
 
-export async function incrementAdminImageDailyUsage(params: { userId: string }): Promise<void> {
+export async function incrementAdminImageDailyUsage(params: {
+  userId: string;
+}): Promise<void> {
   const redis = await getRedisClient();
   if (!redis) {
     return;
@@ -101,7 +112,7 @@ export async function incrementAdminImageDailyUsage(params: { userId: string }):
   } catch (error) {
     log.warn(
       { error: error instanceof Error ? error.message : String(error) },
-      'Redis quota increment failed'
+      "Redis quota increment failed",
     );
   }
 }
