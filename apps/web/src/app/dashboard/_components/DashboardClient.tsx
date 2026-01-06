@@ -18,6 +18,7 @@ import {
 import PremiumFeatureCard from '~/app/_components/dashboard/PremiumFeatureCard';
 import { PremiumPreviewModal } from '~/components/features/dashboard/PremiumPreviewModal';
 import { EmptyState } from '~/components/shared/EmptyState';
+import AdminImageUsageWidget from '~/app/dashboard/_components/AdminImageUsageWidget';
 
 type DashboardUser = {
   name?: string | null;
@@ -231,6 +232,8 @@ export default function DashboardClient({ user, hasMealPlan, recentPlans }: Dash
             </div>
           </div>
         </div>
+
+        {isAdminUser ? <AdminImageUsageWidget /> : null}
 
         {/* Quick Actions */}
         <div className="mb-12">

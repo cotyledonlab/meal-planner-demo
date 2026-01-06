@@ -30,6 +30,19 @@ export const env = createEnv({
     GEMINI_IMAGE_MODEL: z.string().optional().default('gemini-3-pro-image-preview'),
     GEMINI_IMAGE_FALLBACK_MODEL: z.string().optional().default('gemini-2.5-flash-image'),
     GEMINI_TEXT_MODEL: z.string().optional().default('gemini-2.5-flash'),
+    ADMIN_IMAGE_DAILY_LIMIT: z.coerce.number().int().positive().optional().default(100),
+    ADMIN_IMAGE_RATE_LIMIT_PER_MINUTE: z.coerce.number().int().positive().optional().default(20),
+    ADMIN_IMAGE_MAINTENANCE_MODE: z
+      .string()
+      .optional()
+      .default('false')
+      .transform((value) => {
+        const normalized = value.toLowerCase();
+        return normalized === 'true' || normalized === '1' || normalized === 'yes'
+          ? 'true'
+          : 'false';
+      }),
+    REDIS_URL: z.string().optional(),
     // Storage provider configuration
     STORAGE_PROVIDER: z.enum(['local', 's3']).optional().default('local'),
     // S3-compatible storage configuration (required when STORAGE_PROVIDER=s3)
@@ -74,6 +87,10 @@ export const env = createEnv({
     GEMINI_IMAGE_MODEL: process.env.GEMINI_IMAGE_MODEL,
     GEMINI_IMAGE_FALLBACK_MODEL: process.env.GEMINI_IMAGE_FALLBACK_MODEL,
     GEMINI_TEXT_MODEL: process.env.GEMINI_TEXT_MODEL,
+    ADMIN_IMAGE_DAILY_LIMIT: process.env.ADMIN_IMAGE_DAILY_LIMIT,
+    ADMIN_IMAGE_RATE_LIMIT_PER_MINUTE: process.env.ADMIN_IMAGE_RATE_LIMIT_PER_MINUTE,
+    ADMIN_IMAGE_MAINTENANCE_MODE: process.env.ADMIN_IMAGE_MAINTENANCE_MODE,
+    REDIS_URL: process.env.REDIS_URL,
     STORAGE_PROVIDER: process.env.STORAGE_PROVIDER,
     S3_BUCKET: process.env.S3_BUCKET,
     S3_REGION: process.env.S3_REGION,

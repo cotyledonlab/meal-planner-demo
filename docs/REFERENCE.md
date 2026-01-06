@@ -43,12 +43,12 @@ This document centralizes the current state of the monorepo so other docs (READM
 - Testing workflows: `TESTING.md`
 - Deployment notes: `DEPLOYMENT.md` and `SEEDING_DEPLOYMENT.md`
 - Auth flows and dashboard UX: `docs/AUTH.md`, `docs/AUTH_DASHBOARD_UI_PLAN.md`
-- Database configuration and fixes: `docs/DATABASE_CONFIGURATION.md`, `docs/DATABASE_FIXES_SUMMARY.md`
-- Meal planning feature notes: `docs/MEAL_PLANNING_FEATURE.md`
+- Database configuration: `docs/DATABASE_CONFIGURATION.md`
 
 ## Admin Tools
 
 - Gemini image pipeline: `/dashboard/admin/images` (requires admin role). Supports two model options: "Nano Banana Pro" (`gemini-3-pro-image-preview`) and "Nano Banana" (`gemini-2.5-flash-image`). Configure via `GEMINI_API_KEY` env variable. Generated files are written to `apps/web/public/generated-images/` by default; configure object storage to persist images in production.
+- Admin image guardrails: defaults to 100 images/day and 20 images/minute. Override with `ADMIN_IMAGE_DAILY_LIMIT` and `ADMIN_IMAGE_RATE_LIMIT_PER_MINUTE`. Set `ADMIN_IMAGE_MAINTENANCE_MODE=true` to disable generation. Set `REDIS_URL` to enable rate limiting and quota tracking.
 - Recipe builder: `/dashboard/admin/recipes` (requires admin role). Uses Gemini text generation when `GEMINI_API_KEY` (or Vertex AI) is configured; model can be overridden with `GEMINI_TEXT_MODEL`.
 
 ## Object Storage (Images)

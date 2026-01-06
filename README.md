@@ -10,8 +10,6 @@ This Next.js 15 (App Router) monorepo uses strict TypeScript, tRPC v11, Prisma 6
 - **Deployment:** [`DEPLOYMENT.md`](DEPLOYMENT.md) and [`SEEDING_DEPLOYMENT.md`](SEEDING_DEPLOYMENT.md)
 - **Testing:** [`TESTING.md`](TESTING.md)
 - **Auth & UX Plans:** [`docs/AUTH.md`](docs/AUTH.md), [`docs/AUTH_DASHBOARD_UI_PLAN.md`](docs/AUTH_DASHBOARD_UI_PLAN.md)
-- **Database Notes:** [`docs/DATABASE_CONFIGURATION.md`](docs/DATABASE_CONFIGURATION.md), [`docs/DATABASE_FIXES_SUMMARY.md`](docs/DATABASE_FIXES_SUMMARY.md)
-- **Meal Planning Feature:** [`docs/MEAL_PLANNING_FEATURE.md`](docs/MEAL_PLANNING_FEATURE.md)
 - **Recipe & Meal Plan Flow:** [`docs/recipes/current-state.md`](docs/recipes/current-state.md) — architecture, data models, and gaps
 - **AI Assistant Guidelines:** [`AGENTS.md`](AGENTS.md)
 
