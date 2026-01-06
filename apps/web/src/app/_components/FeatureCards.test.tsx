@@ -13,10 +13,10 @@ describe('FeatureCards', () => {
   });
 
   it('renders premium badges with correct styling', () => {
-    const { container } = render(<FeatureCards />);
+    render(<FeatureCards />);
 
-    // Find all premium badge spans (they have the lock icon)
-    const premiumBadges = container.querySelectorAll('span.bg-amber-100.px-2\\.5');
+    // Find premium badges by text content (updated design uses gradient background)
+    const premiumBadges = screen.getAllByText('Premium');
 
     // Should have 2 premium features
     expect(premiumBadges).toHaveLength(2);
@@ -27,17 +27,17 @@ describe('FeatureCards', () => {
     });
   });
 
-  it('renders lock icons in premium badges', () => {
+  it('renders sparkles icons in premium badges', () => {
     const { container } = render(<FeatureCards />);
 
-    // Find all SVG lock icons in premium badges (more specific selector)
-    const lockIcons = container.querySelectorAll('span.bg-amber-100.px-2\\.5 svg');
+    // Find all SVG sparkles icons in premium badges (updated from lock to sparkles)
+    const sparklesIcons = container.querySelectorAll('.lucide-sparkles');
 
-    // Should have 2 lock icons (one per premium feature)
-    expect(lockIcons).toHaveLength(2);
+    // Should have 2 sparkles icons (one per premium feature)
+    expect(sparklesIcons).toHaveLength(2);
 
     // Verify SVG attributes
-    lockIcons.forEach((icon) => {
+    sparklesIcons.forEach((icon) => {
       expect(icon.getAttribute('viewBox')).toBe('0 0 24 24');
       expect(icon.getAttribute('stroke')).toBe('currentColor');
     });
@@ -70,10 +70,10 @@ describe('FeatureCards', () => {
   });
 
   it('renders premium badge with inline-flex layout', () => {
-    const { container } = render(<FeatureCards />);
+    render(<FeatureCards />);
 
-    // Get premium badge spans
-    const premiumBadges = container.querySelectorAll('span.bg-amber-100.px-2\\.5');
+    // Get premium badge spans by text
+    const premiumBadges = screen.getAllByText('Premium');
 
     // Should have 2 premium badges
     expect(premiumBadges).toHaveLength(2);
@@ -82,7 +82,6 @@ describe('FeatureCards', () => {
     premiumBadges.forEach((badge) => {
       expect(badge.classList.contains('inline-flex')).toBe(true);
       expect(badge.classList.contains('items-center')).toBe(true);
-      expect(badge.classList.contains('gap-1')).toBe(true);
     });
   });
 });
