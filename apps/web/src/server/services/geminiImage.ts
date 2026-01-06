@@ -5,7 +5,7 @@ import { createLogger } from '~/lib/logger';
 
 const log = createLogger('gemini-image');
 
-const DEFAULT_MODEL = 'gemini-2.5-flash-image';
+export const DEFAULT_GEMINI_IMAGE_MODEL = 'gemini-2.5-flash-image';
 const DEFAULT_VERTEX_LOCATION = 'us-central1';
 
 type AspectRatio = '1:1' | '16:9' | '4:5';
@@ -68,10 +68,10 @@ export class GeminiImageClient {
     this.apiKey = options?.apiKey ?? env.GEMINI_API_KEY;
 
     // Model configuration
-    this.model = options?.model ?? env.GEMINI_IMAGE_MODEL ?? DEFAULT_MODEL;
+    this.model = options?.model ?? env.GEMINI_IMAGE_MODEL ?? DEFAULT_GEMINI_IMAGE_MODEL;
 
     // Smart fallback: if model is explicitly set by user, disable fallback
-    const defaultFallback = env.GEMINI_IMAGE_FALLBACK_MODEL ?? 'gemini-2.5-flash-image';
+    const defaultFallback = env.GEMINI_IMAGE_FALLBACK_MODEL ?? DEFAULT_GEMINI_IMAGE_MODEL;
     if (options?.disableFallback) {
       // User explicitly selected a model, don't fallback
       this.fallbackModel = this.model;
@@ -219,4 +219,8 @@ export function isGeminiConfigured() {
   }
   // Check for API key configuration
   return Boolean(env.GEMINI_API_KEY);
+}
+
+export function resolveGeminiImageModel(modelOverride?: string): string {
+  return modelOverride ?? env.GEMINI_IMAGE_MODEL ?? DEFAULT_GEMINI_IMAGE_MODEL;
 }

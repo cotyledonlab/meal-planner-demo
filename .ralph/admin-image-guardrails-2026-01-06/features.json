@@ -16,7 +16,7 @@
         "Env schema validates new variables",
         "Docs note new variables in REFERENCE"
       ],
-      "completed": false
+      "completed": true
     },
     {
       "id": "IMG-002",
@@ -29,7 +29,7 @@
         "Graceful fallback when Redis unavailable",
         "Excess requests return a 429-style error"
       ],
-      "completed": false
+      "completed": true
     },
     {
       "id": "IMG-003",
@@ -42,7 +42,7 @@
         "Quota exceed returns clear error message",
         "Usage increments on successful generation"
       ],
-      "completed": false
+      "completed": true
     },
     {
       "id": "IMG-004",
@@ -55,7 +55,7 @@
         "Log data avoids storing full prompts",
         "Logs are queryable for dashboard"
       ],
-      "completed": false
+      "completed": true
     },
     {
       "id": "IMG-005",
@@ -68,7 +68,7 @@
         "Access restricted to admin role",
         "Response used by UI"
       ],
-      "completed": false
+      "completed": true
     },
     {
       "id": "IMG-006",
@@ -81,7 +81,7 @@
         "Shows rate limit status",
         "Empty/error states handled"
       ],
-      "completed": false
+      "completed": true
     },
     {
       "id": "IMG-007",
@@ -94,7 +94,7 @@
         "API returns clear error when disabled",
         "Documented in REFERENCE"
       ],
-      "completed": false
+      "completed": true
     },
     {
       "id": "IMG-008",
@@ -107,7 +107,7 @@
         "Tests cover maintenance mode",
         "pnpm test and pnpm typecheck pass"
       ],
-      "completed": false
+      "completed": true
     }
   ]
 }

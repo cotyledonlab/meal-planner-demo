@@ -25,6 +25,14 @@ function truncateAltText(text: string, maxLength = 125): string {
   return text.slice(0, maxLength - 1).trim() + '…';
 }
 
+function formatResetTime(value: Date | string): string {
+  const date = value instanceof Date ? value : new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return 'soon';
+  }
+  return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+
 interface AdminImageGeneratorClientProps {
   initialImages: GeneratedImage[];
   isConfigured: boolean;
@@ -42,6 +50,7 @@ export default function AdminImageGeneratorClient({
   const [formError, setFormError] = useState<string | null>(null);
 
   const utils = api.useUtils();
+  const usageQuery = api.adminImage.usage.useQuery();
   const generateMutation = api.adminImage.generate.useMutation({
     onSuccess: (image) => {
       setPrompt('');
@@ -54,14 +63,19 @@ export default function AdminImageGeneratorClient({
     },
   });
 
-  const isDisabled = !isConfigured || generateMutation.isPending;
+  const usage = usageQuery.data;
+  const isMaintenanceMode = usage?.maintenanceMode ?? false;
+  const isDisabled = !isConfigured || isMaintenanceMode || generateMutation.isPending;
 
   const subtitle = useMemo(() => {
+    if (isMaintenanceMode) {
+      return 'Image generation is temporarily disabled for maintenance.';
+    }
     if (!isConfigured) {
       return 'Add GEMINI_API_KEY to your environment to unlock this workflow.';
     }
     return 'Use Nano Banana Pro to prototype recipe artwork and marketing assets.';
-  }, [isConfigured]);
+  }, [isConfigured, isMaintenanceMode]);
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
@@ -78,6 +92,46 @@ export default function AdminImageGeneratorClient({
         </div>
         <h1 className="text-3xl font-bold text-gray-900">Image generation pipeline</h1>
         <p className="mt-2 text-base text-gray-600">{subtitle}</p>
+      </div>
+
+      <div className="mb-8 grid gap-4 sm:grid-cols-2">
+        <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+          <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">Daily quota</p>
+          {usageQuery.isLoading ? (
+            <p className="mt-2 text-sm text-gray-500">Loading usage...</p>
+          ) : usageQuery.isError || !usage ? (
+            <p className="mt-2 text-sm text-red-600">Usage unavailable</p>
+          ) : (
+            <>
+              <p className="mt-2 text-2xl font-semibold text-gray-900">
+                {usage.daily.used} / {usage.daily.limit}
+              </p>
+              <p className="mt-1 text-sm text-gray-500">
+                {usage.daily.remaining} remaining • resets at {formatResetTime(usage.daily.resetAt)}
+              </p>
+            </>
+          )}
+        </div>
+        <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+          <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+            Rate limit
+          </p>
+          {usageQuery.isLoading ? (
+            <p className="mt-2 text-sm text-gray-500">Loading rate limit...</p>
+          ) : usageQuery.isError || !usage ? (
+            <p className="mt-2 text-sm text-red-600">Rate limit unavailable</p>
+          ) : (
+            <>
+              <p className="mt-2 text-2xl font-semibold text-gray-900">
+                {usage.rateLimit.remaining} / {usage.rateLimit.limit}
+              </p>
+              <p className="mt-1 text-sm text-gray-500">
+                {usage.rateLimit.windowSeconds}s window • resets at{' '}
+                {formatResetTime(usage.rateLimit.resetAt)}
+              </p>
+            </>
+          )}
+        </div>
       </div>
 
       <form
@@ -103,7 +157,7 @@ export default function AdminImageGeneratorClient({
             className="mt-2 min-h-[120px] w-full rounded-2xl border border-gray-300 px-4 py-3 text-base shadow-inner focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-200 disabled:bg-gray-50"
             value={prompt}
             onChange={(event) => setPrompt(event.target.value)}
-            disabled={!isConfigured || generateMutation.isPending}
+            disabled={isDisabled}
           />
         </div>
 
@@ -116,7 +170,7 @@ export default function AdminImageGeneratorClient({
                   key={option.value}
                   type="button"
                   onClick={() => setModel(option.value)}
-                  disabled={!isConfigured || generateMutation.isPending}
+                  disabled={isDisabled}
                   className={`rounded-2xl border px-4 py-2 text-sm font-semibold transition ${
                     model === option.value
                       ? 'border-emerald-500 bg-emerald-50 text-emerald-700'
@@ -136,7 +190,7 @@ export default function AdminImageGeneratorClient({
                   key={option.value}
                   type="button"
                   onClick={() => setAspectRatio(option.value)}
-                  disabled={!isConfigured || generateMutation.isPending}
+                  disabled={isDisabled}
                   className={`rounded-2xl border px-4 py-2 text-sm font-semibold transition ${
                     aspectRatio === option.value
                       ? 'border-emerald-500 bg-emerald-50 text-emerald-700'
@@ -151,7 +205,12 @@ export default function AdminImageGeneratorClient({
         </div>
 
         {formError && <p className="mb-4 text-sm font-semibold text-red-600">{formError}</p>}
-        {!isConfigured && (
+        {isMaintenanceMode && (
+          <p className="mb-4 text-sm text-amber-700">
+            Maintenance mode is enabled. Disable it to resume admin image generation.
+          </p>
+        )}
+        {!isConfigured && !isMaintenanceMode && (
           <p className="mb-4 text-sm text-amber-700">
             Provide <code className="rounded bg-amber-100 px-1">GEMINI_API_KEY</code> in your env
             files to enable this workflow.

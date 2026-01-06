@@ -7,3 +7,101 @@ Items to complete: 8
 Items completed: 0
 
 ================================================================================
+Date: 2026-01-06
+Item: IMG-001 - Define guardrail config and env schema
+Summary:
+- Added admin image guardrail env vars with defaults and runtime mapping.
+- Introduced admin image guardrail config export.
+- Documented guardrail env vars in docs/REFERENCE.md.
+Tests:
+- pnpm typecheck (pass)
+- pnpm test (pass)
+Notes:
+- None.
+
+================================================================================
+Date: 2026-01-06
+Item: IMG-002 - Redis-backed rate limiter
+Summary:
+- Added Redis client helper and admin image rate limit service (user + IP scoped keys).
+- Enforced per-minute rate limit in admin image generation with TOO_MANY_REQUESTS response.
+- Documented Redis env var for guardrails and added REDIS_URL to env example/schema.
+Tests:
+- pnpm typecheck (pass)
+- pnpm test (pass)
+Notes:
+- None.
+
+================================================================================
+================================================================================
+Date: 2026-01-06
+Item: IMG-003 - Daily quota enforcement
+Summary:
+- Added Redis-backed daily quota tracking service with UTC reset handling.
+- Enforced quota checks before admin image generation and incremented usage after success.
+Tests:
+- pnpm typecheck (pass)
+- pnpm test (pass)
+Notes:
+- pnpm test initially timed out at 10s; reran with longer timeout.
+================================================================================
+Date: 2026-01-06
+Item: IMG-004 - Audit log for generation attempts
+Summary:
+- Added admin image audit log model and Prisma enum for status tracking.
+- Recorded audit log entries for success, failure, quota, rate-limit, and config blocks without storing prompts.
+- Added audit log writer service and model resolution helper for consistent model logging.
+Tests:
+- pnpm typecheck (pass)
+- pnpm test (pass)
+Notes:
+- pnpm db:generate failed without DATABASE_URL; ran `pnpm --filter @meal-planner-demo/web exec prisma generate` with a dummy DATABASE_URL.
+================================================================================
+Date: 2026-01-06
+Item: IMG-005 - Expose usage stats endpoint
+Summary:
+- Added read-only rate limit status helper and admin image usage tRPC query.
+- Wired usage query into the admin image generator UI for daily quota and rate-limit stats.
+Tests:
+- pnpm typecheck (pass)
+- pnpm test (pass)
+Notes:
+- None.
+Date: 2026-01-06
+Item: IMG-006 - Admin dashboard usage widget
+Summary:
+- Added an admin-only usage widget on the dashboard with quota/rate limit cards and fallback notice.
+- Linked the widget to the admin image generator and handled loading/error states.
+Tests:
+- pnpm typecheck (pass)
+- pnpm test (pass)
+Notes:
+- None.
+
+================================================================================
+Date: 2026-01-06
+Item: IMG-007 - Maintenance mode toggle
+Summary:
+- Added maintenance mode env flag and guardrails config to disable admin image generation.
+- Blocked generate API calls with a clear maintenance error and surfaced maintenance state in usage responses.
+- Updated admin image generator, dashboard widget, and recipe builder to show disabled maintenance state.
+- Documented the new maintenance env flag in docs/REFERENCE.md.
+Tests:
+- pnpm typecheck (pass)
+- pnpm test (pass; initial run timed out at 10s, reran with longer timeout)
+Notes:
+- None.
+
+================================================================================
+Date: 2026-01-06
+Item: IMG-008 - Add guardrail tests
+Summary:
+- Added unit tests for admin image quota and rate limit behavior with mocked Redis.
+- Added admin image router test to enforce maintenance mode behavior with audit logging.
+Tests:
+- pnpm typecheck (pass)
+- pnpm test (pass; initial run timed out at 10s, reran with longer timeout)
+Notes:
+- None.
+
+================================================================================

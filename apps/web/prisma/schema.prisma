@@ -71,6 +71,7 @@ model User {
   mealPlans           MealPlan[]
   pantryItems         PantryItem[]
   generatedImages     GeneratedImage[]
+  adminImageAuditLogs AdminImageAuditLog[]
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
 }
@@ -125,6 +126,14 @@ enum StepType {
   COOK
   REST
   ASSEMBLE
+}
+
+enum AdminImageAuditStatus {
+  SUCCESS
+  FAILED
+  RATE_LIMITED
+  QUOTA_EXCEEDED
+  CONFIG_UNAVAILABLE
 }
 
 // Meal Planning Models
@@ -383,6 +392,21 @@ model GeneratedImage {
 
   @@index([createdAt])
   @@index([createdById])
+}
+
+model AdminImageAuditLog {
+  id           String                @id @default(cuid())
+  userId       String?
+  user         User?                 @relation(fields: [userId], references: [id], onDelete: SetNull)
+  model        String?
+  promptLength Int
+  status       AdminImageAuditStatus
+  errorMessage String?
+  createdAt    DateTime              @default(now())
+
+  @@index([createdAt])
+  @@index([userId])
+  @@index([status])
 }
 
 // Normalized Recipe Schema Models

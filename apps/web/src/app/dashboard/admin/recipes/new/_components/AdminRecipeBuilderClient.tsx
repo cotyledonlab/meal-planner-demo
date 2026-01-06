@@ -339,8 +339,11 @@ export default function AdminRecipeBuilderClient({
     },
   });
 
+  const imageUsageQuery = api.adminImage.usage.useQuery();
+  const isImageMaintenanceMode = imageUsageQuery.data?.maintenanceMode ?? false;
+
   const canGenerate = isConfigured && !generateMutation.isPending;
-  const canGenerateImage = isConfigured && !imageMutation.isPending;
+  const canGenerateImage = isConfigured && !imageMutation.isPending && !isImageMaintenanceMode;
   const isSaving = saveMutation.isPending || publishMutation.isPending;
   const hasImage = Boolean(draft.image?.url?.trim());
 
@@ -979,7 +982,12 @@ export default function AdminRecipeBuilderClient({
                     </>
                   )}
                 </button>
-                {!isConfigured && (
+                {isImageMaintenanceMode && (
+                  <p className="text-xs text-amber-700">
+                    Maintenance mode is enabled. Image generation is currently disabled.
+                  </p>
+                )}
+                {!isConfigured && !isImageMaintenanceMode && (
                   <p className="text-xs text-amber-700">
                     Provide <code className="rounded bg-amber-100 px-1">GEMINI_API_KEY</code> to
                     enable image generation.
