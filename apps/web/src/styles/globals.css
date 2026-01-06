@@ -1,11 +1,16 @@
-@import "tailwindcss";
-@import "tw-animate-css";
+@import 'tailwindcss';
+@import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  /* Display font for headings - Fraunces: warm, organic serif */
+  --font-display: var(--font-display), 'Georgia', serif;
+  /* Body font - DM Sans: friendly, readable */
+  --font-body: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  --font-sans:
+    var(--font-body), ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    'Segoe UI Symbol', 'Noto Color Emoji';
 }
 
 /* Accessibility: Respect reduced motion preferences */
@@ -258,28 +263,39 @@
 
 :root {
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
+  --background: oklch(0.995 0.002 90);
+  --foreground: oklch(0.205 0.015 50);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
+  --card-foreground: oklch(0.205 0.015 50);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  /* Emerald-600 as primary */
-  --primary: oklch(0.596 0.145 163.225);
-  --primary-foreground: oklch(0.982 0.018 155.826);
-  /* Emerald-50 as secondary */
-  --secondary: oklch(0.979 0.021 166.113);
-  --secondary-foreground: oklch(0.418 0.076 155.996);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  /* Emerald-100 as accent */
-  --accent: oklch(0.95 0.052 163.051);
-  --accent-foreground: oklch(0.418 0.076 155.996);
+  --popover-foreground: oklch(0.205 0.015 50);
+  /* Emerald-600 as primary - slightly warmer */
+  --primary: oklch(0.596 0.145 160);
+  --primary-foreground: oklch(0.985 0.015 155);
+  /* Warm cream as secondary */
+  --secondary: oklch(0.985 0.015 85);
+  --secondary-foreground: oklch(0.35 0.05 50);
+  --muted: oklch(0.97 0.008 90);
+  --muted-foreground: oklch(0.5 0.02 50);
+  /* Soft sage as accent */
+  --accent: oklch(0.94 0.04 155);
+  --accent-foreground: oklch(0.35 0.08 155);
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
+  --border: oklch(0.91 0.015 85);
+  --input: oklch(0.91 0.015 85);
   /* Emerald-500 as ring */
   --ring: oklch(0.696 0.17 162.48);
+
+  /* NEW: Warm accent colors for visual interest */
+  --terracotta: oklch(0.65 0.14 45);
+  --terracotta-light: oklch(0.92 0.04 45);
+  --coral: oklch(0.72 0.15 30);
+  --coral-light: oklch(0.94 0.04 30);
+  --lavender: oklch(0.75 0.08 290);
+  --lavender-light: oklch(0.94 0.03 290);
+  --honey: oklch(0.78 0.14 85);
+  --honey-light: oklch(0.95 0.05 85);
+
   --chart-1: oklch(0.765 0.177 163.223);
   --chart-2: oklch(0.696 0.17 162.48);
   --chart-3: oklch(0.596 0.145 163.225);
@@ -340,4 +356,172 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Custom utility classes for elevated design */
+@layer utilities {
+  /* Font families */
+  .font-display {
+    font-family: var(--font-display);
+  }
+  .font-body {
+    font-family: var(--font-body);
+  }
+
+  /* Noise/grain texture overlay */
+  .texture-grain {
+    position: relative;
+  }
+  .texture-grain::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    opacity: 0.03;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* Paper texture */
+  .texture-paper {
+    background-image:
+      radial-gradient(ellipse at 20% 30%, rgba(255, 251, 235, 0.4) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 70%, rgba(236, 253, 245, 0.3) 0%, transparent 50%);
+  }
+
+  /* Organic blob shapes */
+  .blob-shape {
+    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+  }
+
+  /* Diagonal stripe pattern */
+  .pattern-diagonal {
+    background-image: repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 8px,
+      currentColor 8px,
+      currentColor 9px
+    );
+    opacity: 0.03;
+  }
+
+  /* Warm gradient mesh */
+  .gradient-mesh-warm {
+    background:
+      radial-gradient(at 40% 20%, rgba(251, 146, 60, 0.15) 0px, transparent 50%),
+      radial-gradient(at 80% 0%, rgba(167, 139, 250, 0.1) 0px, transparent 50%),
+      radial-gradient(at 0% 50%, rgba(52, 211, 153, 0.1) 0px, transparent 50%),
+      radial-gradient(at 80% 50%, rgba(251, 191, 36, 0.1) 0px, transparent 50%),
+      radial-gradient(at 0% 100%, rgba(167, 139, 250, 0.1) 0px, transparent 50%);
+  }
+
+  /* Staggered animation delays for orchestrated reveals */
+  .stagger-1 {
+    animation-delay: 0ms;
+  }
+  .stagger-2 {
+    animation-delay: 75ms;
+  }
+  .stagger-3 {
+    animation-delay: 150ms;
+  }
+  .stagger-4 {
+    animation-delay: 225ms;
+  }
+  .stagger-5 {
+    animation-delay: 300ms;
+  }
+  .stagger-6 {
+    animation-delay: 375ms;
+  }
+}
+
+/* New animations for elevated design */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(2deg);
+  }
+}
+
+@keyframes float-slow {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes wiggle {
+  0%,
+  100% {
+    transform: rotate(-3deg);
+  }
+  50% {
+    transform: rotate(3deg);
+  }
+}
+
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes reveal-scale {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes draw-line {
+  from {
+    stroke-dashoffset: 1000;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-float-slow {
+  animation: float-slow 8s ease-in-out infinite;
+}
+
+.animate-wiggle {
+  animation: wiggle 2s ease-in-out infinite;
+}
+
+.animate-reveal-up {
+  animation: reveal-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  opacity: 0;
+}
+
+.animate-reveal-scale {
+  animation: reveal-scale 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  opacity: 0;
+}
+
+.animate-draw-line {
+  stroke-dasharray: 1000;
+  animation: draw-line 2s ease-out forwards;
 }
