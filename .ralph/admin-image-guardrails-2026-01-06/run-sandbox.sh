@@ -46,7 +46,7 @@ DOCKER_RUN_ARGS=(
 
 if [[ -f "$CODEX_AUTH_FILE" ]]; then
   DOCKER_RUN_ARGS+=(
-    -v "$HOME/.codex:/root/.codex:ro"
+    -v "$HOME/.codex/auth.json:/root/.codex/auth.json:ro"
   )
 fi
 
@@ -62,10 +62,17 @@ docker run "${DOCKER_RUN_ARGS[@]}" "\
       git -C /work/meal-planner-demo fetch --all --prune; \
       git -C /work/meal-planner-demo pull --ff-only; \
     fi; \
+    mkdir -p /root/.codex; \
+    if [ ! -f /root/.codex/config.toml ]; then \
+      printf '%s\n' '[profiles.default]' > /root/.codex/config.toml; \
+    elif ! grep -q '^[[]profiles\\.default[]]' /root/.codex/config.toml; then \
+      printf '\n[profiles.default]\n' >> /root/.codex/config.toml; \
+    fi; \
     if ! command -v codex >/dev/null 2>&1; then \
       npm install -g @openai/codex; \
     fi; \
     cd /work/meal-planner-demo; \
+    export CODEX_PROFILE=default; \
     ./.ralph/admin-image-guardrails-2026-01-06/run-loop.sh 10 \
   "
 
