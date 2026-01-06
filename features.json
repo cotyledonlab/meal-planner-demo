@@ -1,0 +1,62 @@
+[
+  {
+    "id": "F001",
+    "title": "User Login Flow",
+    "description": "Test that users can successfully log in with seeded credentials",
+    "acceptance_criteria": [
+      "Navigate to login page",
+      "Enter valid seeded admin credentials",
+      "Successfully redirected to dashboard after login",
+      "User information displayed correctly"
+    ],
+    "completed": true
+  },
+  {
+    "id": "F002",
+    "title": "Meal Plan Generation",
+    "description": "Test that users can generate a 7-day meal plan",
+    "acceptance_criteria": [
+      "Navigate to meal plan creation",
+      "Enter dietary preferences",
+      "Generate meal plan",
+      "Verify 7 days of meals are displayed"
+    ],
+    "completed": true
+  },
+  {
+    "id": "F003",
+    "title": "Recipe View",
+    "description": "Test that users can view recipe details",
+    "acceptance_criteria": [
+      "Click on a meal from the plan",
+      "Recipe details page loads",
+      "Ingredients list is visible",
+      "Cooking instructions are displayed"
+    ],
+    "completed": true
+  },
+  {
+    "id": "F004",
+    "title": "Shopping List Generation",
+    "description": "Test that users can generate a shopping list from meal plan",
+    "acceptance_criteria": [
+      "View meal plan",
+      "Generate shopping list",
+      "All ingredients from meals included",
+      "Quantities properly aggregated"
+    ],
+    "completed": true
+  },
+  {
+    "id": "F005",
+    "title": "User Logout",
+    "description": "Test that users can successfully log out",
+    "acceptance_criteria": [
+      "Click logout button",
+      "Successfully redirected to home/login",
+      "Session cleared",
+      "Cannot access protected pages after logout"
+    ],
+    "completed": true
+  }
+]

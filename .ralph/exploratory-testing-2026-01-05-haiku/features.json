@@ -1,0 +1,154 @@
+{
+  "meta": {
+    "project": "meal-planner-demo",
+    "description": "Exploratory testing across core meal planning flows using Chrome DevTools MCP.",
+    "total_items": 12
+  },
+  "items": [
+    {
+      "id": "ENV-001",
+      "category": "environment",
+      "title": "Baseline smoke check",
+      "description": "Verify the app loads, unauthenticated nav renders, and core landing CTAs are visible.",
+      "acceptance_criteria": [
+        "Homepage renders without console errors",
+        "Primary CTAs link to signup/login",
+        "No blocking UI errors are visible"
+      ],
+      "completed": true
+    },
+    {
+      "id": "AUTH-001",
+      "category": "auth",
+      "title": "Seeded user sign-in",
+      "description": "Log in with seeded basic, premium, and admin accounts and confirm role-specific redirects.",
+      "acceptance_criteria": [
+        "basic@example.com signs in and reaches dashboard",
+        "premium@example.com signs in and reaches dashboard",
+        "admin@example.com signs in and can access admin routes",
+        "Logout returns to public state"
+      ],
+      "completed": true
+    },
+    {
+      "id": "PREF-001",
+      "category": "preferences",
+      "title": "Preferences onboarding",
+      "description": "Walk through preferences setup and confirm selections persist on reload.",
+      "acceptance_criteria": [
+        "Preferences flow is reachable from dashboard",
+        "Selections are saved and visible after reload",
+        "Validation errors are shown for missing required fields"
+      ],
+      "completed": true
+    },
+    {
+      "id": "PLAN-001",
+      "category": "meal-plans",
+      "title": "Generate 7-day plan",
+      "description": "Generate a plan from preferences and verify all seven days render.",
+      "acceptance_criteria": [
+        "Generate action completes without errors",
+        "Seven days render with meals",
+        "Loading and empty states are sensible"
+      ],
+      "completed": false
+    },
+    {
+      "id": "PLAN-002",
+      "category": "meal-plans",
+      "title": "Edit meal plan",
+      "description": "Swap a meal, regenerate a day, and verify changes persist.",
+      "acceptance_criteria": [
+        "Swap/regenerate controls are discoverable",
+        "Updated meals render correctly",
+        "Edits persist after refresh"
+      ],
+      "completed": false
+    },
+    {
+      "id": "RECIPE-001",
+      "category": "recipes",
+      "title": "Recipe details",
+      "description": "Open a recipe from the plan and validate ingredients, steps, and navigation.",
+      "acceptance_criteria": [
+        "Recipe detail page opens from plan",
+        "Ingredients and steps render fully",
+        "Back navigation returns to plan"
+      ],
+      "completed": false
+    },
+    {
+      "id": "SHOP-001",
+      "category": "shopping-lists",
+      "title": "Shopping list generation",
+      "description": "Generate a list from the current plan and validate grouping and totals.",
+      "acceptance_criteria": [
+        "Shopping list generates without errors",
+        "Items are grouped logically",
+        "Toggles/checkboxes update UI state"
+      ],
+      "completed": false
+    },
+    {
+      "id": "SHOP-002",
+      "category": "shopping-lists",
+      "title": "Export or copy shopping list",
+      "description": "Use export/copy/print affordances and confirm output content.",
+      "acceptance_criteria": [
+        "Export/copy action is available",
+        "Exported content includes all list items",
+        "No broken links or empty exports"
+      ],
+      "completed": false
+    },
+    {
+      "id": "PLAN-003",
+      "category": "meal-plans",
+      "title": "Plan history",
+      "description": "Navigate plan history and ensure previous plans are accessible.",
+      "acceptance_criteria": [
+        "History list renders",
+        "Selecting an older plan loads correctly",
+        "Active plan indicator updates"
+      ],
+      "completed": false
+    },
+    {
+      "id": "ACCOUNT-001",
+      "category": "account",
+      "title": "Account settings",
+      "description": "Review account/profile settings and verify updates or validations.",
+      "acceptance_criteria": [
+        "Account settings page is reachable",
+        "Updates show confirmation or errors",
+        "Session remains valid after changes"
+      ],
+      "completed": false
+    },
+    {
+      "id": "UPGRADE-001",
+      "category": "billing",
+      "title": "Upgrade/downgrade prompts",
+      "description": "Validate premium upsell messaging and upgrade flows from free user.",
+      "acceptance_criteria": [
+        "Upgrade CTA appears for free users",
+        "Pricing details match shared constants",
+        "Upgrade flow does not crash"
+      ],
+      "completed": false
+    },
+    {
+      "id": "ADMIN-001",
+      "category": "admin",
+      "title": "Admin tools access",
+      "description": "Verify admin-only tools access and that non-admins are blocked.",
+      "acceptance_criteria": [
+        "Admin can open image/recipe tools",
+        "Non-admin users cannot access admin routes",
+        "Missing credentials show helpful states"
+      ],
+      "completed": false
+    }
+  ]
+}

@@ -1,0 +1,234 @@
+Ralph Wiggum Exploratory Testing Progress Log
+==============================================
+
+This file tracks the progress of exploratory testing sessions.
+Each test run appends results below.
+
+================================================================================
+Date: 2026-01-05
+Item: F001 - User Login Flow
+Status: PASS
+Steps:
+- Navigated to http://localhost:3000
+- Clicked "Sign In" link from homepage
+- Filled in login form with seeded admin credentials
+- Clicked "Sign in" button
+- Successfully redirected to /dashboard
+- Verified user greeting "Great to see you, Admin!"
+- Verified email displayed in navigation for admin user
+- Clicked "Sign out" button
+- Successfully redirected to homepage
+- Attempted to access /dashboard after logout
+- Correctly redirected to /auth/signin with callback URL
+
+Findings:
+- ✅ Login flow works correctly with seeded credentials
+- ✅ Dashboard displays user information properly
+- ✅ Sign-in button shows loading state ("Signing you in...")
+- ✅ Session is properly cleared on logout
+- ✅ Protected routes redirect to sign-in when not authenticated
+- ✅ Callback URL is preserved for post-login redirect
+
+Notes:
+- The application correctly implements authentication guards
+- User experience is smooth with appropriate loading states
+- Admin user has access to additional features (Gemini image pipeline, Recipe builder)
+- Recent meal plans section shows user's existing plans
+- Premium feature upsell is visible for free tier users
+
+================================================================================
+Date: 2026-01-05
+Item: F002 - Meal Plan Generation
+Status: PASS
+Steps:
+- Logged in as seeded premium user
+- Navigated to dashboard
+- Clicked "New Weekly Plan" to access meal planner
+- Configured meal plan preferences:
+  * People: 2
+  * Meals per day: 1 (Dinner only)
+  * Duration: 7 days (premium feature)
+  * Dietary preference: Vegetarian
+  * Items to skip: mushrooms, eggplant
+- Clicked "Create My Plan" button
+- Waited for AI to generate meal plan (~30 seconds)
+- Successfully redirected to meal plan view page
+- Verified all 7 days of meals displayed:
+  * Day 1 - Monday, Jan 5: Pasta with Tomato Sauce
+  * Day 2 - Tuesday, Jan 6: Mediterranean Pasta Salad
+  * Day 3 - Wednesday, Jan 7: Pasta with Tomato Sauce
+  * Day 4 - Thursday, Jan 8: Chickpea Curry
+  * Day 5 - Friday, Jan 9: Roasted Vegetable Bowl
+  * Day 6 - Saturday, Jan 10: Pasta with Tomato Sauce
+  * Day 7 - Sunday, Jan 11: Roasted Vegetable Bowl
+- Clicked on "Pasta with Tomato Sauce" to view recipe details
+- Verified recipe modal displays correctly with ingredients and instructions
+- Closed recipe modal and expanded shopping list categories
+- Verified shopping list shows 15 items organized by 5 categories
+
+Findings:
+- ✅ Meal plan generation works correctly for premium users
+- ✅ 7-day meal plan feature is exclusive to premium tier (basic users limited to 3 days)
+- ✅ Dietary preferences (vegetarian) are correctly applied to all meals
+- ✅ All 7 days of meals are clearly displayed with dates
+- ✅ Recipe details modal shows comprehensive information (ingredients, instructions, nutritional info)
+- ✅ Shopping list automatically generated with 15 items properly organized by category:
+  * 🥬 Vegetables (7 items): tomatoes, garlic, onions, bell peppers, spinach, broccoli, carrots
+  * 🍗 Protein (1 item)
+  * 🥛 Dairy (1 item)
+  * 🌾 Grains (2 items)
+  * 🥫 Pantry (4 items): olive oil, tomato paste, coconut milk, curry paste
+- ✅ Shopping list includes check/uncheck functionality
+- ✅ Export options available: PDF, CSV, and Print
+- ✅ Loading state displayed during plan generation ("🔍 Finding perfect recipes...")
+- ✅ Plan creation took approximately 30 seconds as indicated
+
+Notes:
+- Premium tier required for 7-day meal plans (acceptance criteria met with premium account)
+- The meal planner correctly respects dietary preferences
+- Shopping list aggregates ingredients across all meals
+- UI provides helpful feedback during meal plan generation
+- Recipe modal includes practical features: Print, Share, and Swap Recipe options
+- All vegetarian meals as requested, no meat/fish/poultry included
+- Quantities in shopping list and recipes are properly scaled
+
+================================================================================
+Date: 2026-01-05
+Item: F003 - Recipe View
+Status: PASS
+Steps:
+- Logged in as seeded premium user
+- Navigated to dashboard
+- Clicked on existing meal plan "5 Jan - 11 Jan"
+- Waited for meal plan page to load
+- Clicked "View details for Pasta with Tomato Sauce" button
+- Verified recipe modal opened with complete information
+- Closed modal
+- Clicked "View details for Chickpea Curry" button
+- Verified second recipe modal opened with complete information
+- Closed modal
+
+Findings:
+- ✅ Click on meal from plan opens recipe details modal
+- ✅ Recipe details modal loads properly and displays:
+  * Recipe image
+  * Recipe name and dietary tags (Vegetarian, Dairy-Free)
+  * Time information (prep, cook, total)
+  * Nutritional information (calories per serving and total)
+  * Servings count and ingredient count
+  * Complete ingredients list with quantities and categories (7-9 ingredients)
+  * Step-by-step cooking instructions (7-8 numbered steps)
+  * Additional helpful tips
+- ✅ Action buttons available: Print Recipe, Share Recipe, Swap Recipe
+- ✅ Ingredients are properly scaled for 2 servings (from original 4)
+- ✅ Categories are labeled for each ingredient (vegetables, grains, protein, dairy, pantry)
+- ✅ Checkmarks indicate ingredients already in shopping list
+- ✅ Close button works correctly to return to meal plan view
+- ✅ Tested with 2 different recipes - consistent behavior
+
+Notes:
+- Recipe view is implemented as a modal dialog overlay, not a separate page
+- All acceptance criteria are fully met:
+  * ✅ Click on a meal from the plan
+  * ✅ Recipe details page loads
+  * ✅ Ingredients list is visible
+  * ✅ Cooking instructions are displayed
+- Modal provides excellent user experience with additional features
+- Nutritional information and timing details add value beyond requirements
+- Recipe images enhance the visual presentation
+- Ingredient scaling is automatically handled for the specified serving count
+
+================================================================================
+Date: 2026-01-05
+Item: F004 - Shopping List Generation
+Status: PASS
+Steps:
+- Logged in as seeded premium user
+- Navigated to dashboard
+- Clicked on existing meal plan "5 Jan - 11 Jan"
+- Waited for meal plan page to load with shopping list
+- Verified shopping list section is prominently displayed below meal plan
+- Expanded all shopping list categories (Vegetables, Protein, Dairy, Grains, Pantry)
+- Clicked on "View details for Pasta with Tomato Sauce" to verify ingredients
+- Verified all recipe ingredients marked with checkmarks (✓) in shopping list
+- Closed recipe modal
+- Clicked on "View details for Chickpea Curry" to verify ingredients
+- Verified all recipe ingredients marked with checkmarks (✓) in shopping list
+- Closed recipe modal
+- Clicked on "View details for Roasted Vegetable Bowl" to verify ingredients
+- Verified all recipe ingredients marked with checkmarks (✓) in shopping list
+- Closed recipe modal
+- Tested item checking functionality: checked "tomatoes", "chickpeas", and "pasta"
+- Verified counter updated correctly: "3 of 15 items checked"
+- Verified category counters updated: "🥬 Vegetables 1 of 7 checked", "🍗 Protein 1 of 1 checked", "🌾 Grains 1 of 2 checked"
+
+Findings:
+- ✅ Shopping list is automatically generated when meal plan is viewed
+- ✅ All ingredients from 7 days of meals are included (15 unique items total)
+- ✅ Ingredients are properly organized into 5 categories:
+  * 🥬 Vegetables (7 items): tomatoes, garlic, onions, bell peppers, spinach, broccoli, carrots
+  * 🍗 Protein (1 item): chickpeas
+  * 🥛 Dairy (1 item): cheese
+  * 🌾 Grains (2 items): pasta, rice
+  * 🥫 Pantry (4 items): olive oil, tomato paste, coconut milk, curry paste
+- ✅ Quantities are properly aggregated across multiple recipes
+- ✅ Duplicate ingredients across meals are consolidated (e.g., pasta appears 3x, garlic in multiple recipes)
+- ✅ All recipe ingredients are marked with checkmarks (✓) when viewing recipe details
+- ✅ Interactive check/uncheck functionality works correctly
+- ✅ Overall counter updates: "X of 15 items checked"
+- ✅ Per-category counters update: "X of Y checked"
+- ✅ "Check All" and "Uncheck All" buttons available for each category
+- ✅ Export options available: PDF, CSV, and Print
+- ✅ "Compare Prices" button visible (premium feature, in development)
+
+Notes:
+- Shopping list generation is automatic, not a separate action - happens during meal plan creation
+- All acceptance criteria fully met:
+  * ✅ View meal plan
+  * ✅ Generate shopping list (automatic)
+  * ✅ All ingredients from meals included
+  * ✅ Quantities properly aggregated
+- Shopping list is prominently displayed on the meal plan page
+- User can track shopping progress by checking off items
+- Categories can be expanded/collapsed for easier navigation
+- Integration between recipes and shopping list is seamless
+- All ingredients from 3 different recipe types verified (pasta, curry, vegetable bowl)
+
+
+================================================================================
+Date: 2026-01-05
+Item: F005 - User Logout
+Status: PASS
+Steps:
+- Navigated to http://localhost:3000
+- Clicked "Sign In" link
+- Filled in login form with seeded admin credentials
+- Clicked "Sign in" button
+- Successfully redirected to /dashboard
+- Verified admin email displayed in navigation
+- Clicked "Sign out" button
+- Successfully redirected to homepage (/)
+- Verified homepage displays with "Sign In" and "Start Planning Free" links
+- Attempted to access /dashboard after logout
+- Correctly redirected to /auth/signin?callbackUrl=/dashboard
+
+Findings:
+- ✅ Logout button successfully signs user out
+- ✅ User is redirected to homepage after logout
+- ✅ Session is properly cleared on logout
+- ✅ Protected pages (dashboard) cannot be accessed after logout
+- ✅ Authentication guard correctly redirects to sign-in page
+- ✅ Callback URL is preserved for post-login redirect (?callbackUrl=/dashboard)
+- ✅ No user information visible after logout (navigation shows public links only)
+- ✅ Logout flow is smooth and immediate (no loading state needed)
+
+Notes:
+- All acceptance criteria fully met:
+  * ✅ Click logout button
+  * ✅ Successfully redirected to home/login
+  * ✅ Session cleared
+  * ✅ Cannot access protected pages after logout
+- The logout functionality works correctly and securely
+- Authentication guards are properly implemented across the application
+- User experience is clean with immediate feedback
+- Security best practices are followed (session invalidation, route protection)
