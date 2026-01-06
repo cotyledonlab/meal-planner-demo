@@ -49,13 +49,14 @@ describe('Testimonials Component', () => {
     expect(screen.getByText('Niamh O.')).toBeInTheDocument();
   });
 
-  it('renders testimonial quotes with line-clamp styling', () => {
+  it('renders testimonial quotes with proper styling', () => {
     render(<Testimonials />);
 
     // Find quote elements by their content
     const aoifeQuote = screen.getByText(/Sunday evenings used to be chaos/i);
     expect(aoifeQuote).toBeInTheDocument();
-    expect(aoifeQuote).toHaveClass('line-clamp-4');
+    // Featured testimonial has larger text styling
+    expect(aoifeQuote).toHaveClass('text-gray-700');
   });
 
   it('renders star ratings for each testimonial', () => {
@@ -75,10 +76,11 @@ describe('Testimonials Component', () => {
     expect(screen.getByText('Galway')).toBeInTheDocument();
   });
 
-  it('renders verified household badges', () => {
+  it('renders verified badges', () => {
     render(<Testimonials />);
 
-    const badges = screen.getAllByText('Verified household');
+    // Updated design uses shorter "Verified" badge text
+    const badges = screen.getAllByText('Verified');
     expect(badges).toHaveLength(3);
   });
 

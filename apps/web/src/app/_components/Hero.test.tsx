@@ -62,8 +62,9 @@ describe('Hero Component', () => {
     const heading = screen.getByRole('heading', { level: 1 });
     expect(heading).toBeInTheDocument();
 
-    // Check that the new emotional tagline is present
-    expect(heading.textContent).toContain('Your Family, Fed and Happy');
+    // Check that the new emotional tagline is present (uses & instead of "and")
+    expect(heading.textContent).toContain('Your Family,');
+    expect(heading.textContent).toContain('Fed & Happy');
   });
 
   it('renders call-to-action buttons', () => {
