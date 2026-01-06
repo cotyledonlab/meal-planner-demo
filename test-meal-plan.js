@@ -7,7 +7,9 @@ const EMAIL = process.env.TEST_EMAIL;
 const PASSWORD = process.env.TEST_PASSWORD;
 
 if (!EMAIL || !PASSWORD) {
-  throw new Error("Set TEST_EMAIL and TEST_PASSWORD before running this script.");
+  throw new Error(
+    "Set TEST_EMAIL and TEST_PASSWORD before running this script.",
+  );
 }
 
 async function testMealPlanGeneration() {
