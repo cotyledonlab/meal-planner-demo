@@ -27,7 +27,7 @@ export function CTA() {
 
             {/* Floating illustrations */}
             <div className="absolute left-8 top-8 opacity-15 animate-float-slow hidden lg:block">
-              <CarrotIllustration className="w-12 h-18 rotate-[-20deg]" />
+              <CarrotIllustration className="w-12 h-[4.5rem] rotate-[-20deg]" />
             </div>
             <div className="absolute right-12 bottom-12 opacity-15 animate-float hidden lg:block">
               <TomatoIllustration className="w-14 h-14" />

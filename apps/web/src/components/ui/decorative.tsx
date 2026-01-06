@@ -1,3 +1,4 @@
+import { useId } from 'react';
 import { cn } from '~/lib/utils';
 
 interface DecorativeProps {
@@ -6,18 +7,19 @@ interface DecorativeProps {
 
 // Hand-drawn style carrot illustration
 export function CarrotIllustration({ className }: DecorativeProps) {
+  const gradientId = useId();
   return (
     <svg
       viewBox="0 0 80 120"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className={cn('w-20 h-30', className)}
+      className={cn('w-20 h-[7.5rem]', className)}
       aria-hidden="true"
     >
       {/* Carrot body - organic shape */}
       <path
         d="M40 20 C55 25, 58 45, 55 70 C52 95, 45 110, 40 115 C35 110, 28 95, 25 70 C22 45, 25 25, 40 20Z"
-        fill="url(#carrot-gradient)"
+        fill={`url(#carrot-gradient-${gradientId})`}
         stroke="#C2410C"
         strokeWidth="2"
         strokeLinecap="round"
@@ -66,7 +68,7 @@ export function CarrotIllustration({ className }: DecorativeProps) {
       />
       <defs>
         <linearGradient
-          id="carrot-gradient"
+          id={`carrot-gradient-${gradientId}`}
           x1="40"
           y1="20"
           x2="40"
@@ -83,6 +85,7 @@ export function CarrotIllustration({ className }: DecorativeProps) {
 
 // Hand-drawn style tomato illustration
 export function TomatoIllustration({ className }: DecorativeProps) {
+  const gradientId = useId();
   return (
     <svg
       viewBox="0 0 100 100"
@@ -97,7 +100,7 @@ export function TomatoIllustration({ className }: DecorativeProps) {
         cy="55"
         rx="38"
         ry="35"
-        fill="url(#tomato-gradient)"
+        fill={`url(#tomato-gradient-${gradientId})`}
         stroke="#B91C1C"
         strokeWidth="2"
       />
@@ -131,7 +134,7 @@ export function TomatoIllustration({ className }: DecorativeProps) {
         strokeWidth="1.5"
       />
       <defs>
-        <radialGradient id="tomato-gradient" cx="0.4" cy="0.4" r="0.6">
+        <radialGradient id={`tomato-gradient-${gradientId}`} cx="0.4" cy="0.4" r="0.6">
           <stop stopColor="#EF4444" />
           <stop offset="1" stopColor="#DC2626" />
         </radialGradient>
@@ -142,18 +145,19 @@ export function TomatoIllustration({ className }: DecorativeProps) {
 
 // Hand-drawn style herb/basil leaf
 export function HerbIllustration({ className }: DecorativeProps) {
+  const gradientId = useId();
   return (
     <svg
       viewBox="0 0 60 80"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className={cn('w-15 h-20', className)}
+      className={cn('w-[3.75rem] h-20', className)}
       aria-hidden="true"
     >
       {/* Main leaf */}
       <path
         d="M30 75 C30 60, 10 45, 15 25 C20 10, 30 5, 30 5 C30 5, 40 10, 45 25 C50 45, 30 60, 30 75Z"
-        fill="url(#herb-gradient)"
+        fill={`url(#herb-gradient-${gradientId})`}
         stroke="#15803D"
         strokeWidth="2"
       />
@@ -167,7 +171,7 @@ export function HerbIllustration({ className }: DecorativeProps) {
       <path d="M30 55 C34 58, 38 59, 39 57" stroke="#15803D" strokeWidth="1" opacity="0.4" />
       <defs>
         <linearGradient
-          id="herb-gradient"
+          id={`herb-gradient-${gradientId}`}
           x1="30"
           y1="5"
           x2="30"
@@ -207,6 +211,7 @@ export function SquiggleDivider({ className }: DecorativeProps) {
 
 // Decorative dots pattern
 export function DotPattern({ className }: DecorativeProps) {
+  const patternId = useId();
   return (
     <svg
       viewBox="0 0 100 100"
@@ -215,10 +220,17 @@ export function DotPattern({ className }: DecorativeProps) {
       className={cn('w-full h-full', className)}
       aria-hidden="true"
     >
-      <pattern id="dots" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+      <pattern
+        id={`dots-${patternId}`}
+        x="0"
+        y="0"
+        width="20"
+        height="20"
+        patternUnits="userSpaceOnUse"
+      >
         <circle cx="2" cy="2" r="1.5" fill="currentColor" opacity="0.15" />
       </pattern>
-      <rect width="100%" height="100%" fill="url(#dots)" />
+      <rect width="100%" height="100%" fill={`url(#dots-${patternId})`} />
     </svg>
   );
 }
@@ -228,6 +240,7 @@ export function BlobShape({
   className,
   variant = 'primary',
 }: DecorativeProps & { variant?: 'primary' | 'secondary' | 'accent' }) {
+  const gradientId = useId();
   const colors = {
     primary: ['#10B981', '#059669'],
     secondary: ['#F59E0B', '#D97706'],
@@ -247,11 +260,11 @@ export function BlobShape({
       <path
         d="M45.3,-51.2C58.3,-40.7,68.3,-25.1,71.4,-7.8C74.5,9.5,70.6,28.5,60.1,42.4C49.6,56.3,32.5,65.1,14.1,68.8C-4.3,72.5,-23.9,71.2,-40.6,62.5C-57.2,53.9,-70.8,38,-75.1,20.1C-79.4,2.2,-74.3,-17.6,-63.4,-32.4C-52.5,-47.2,-35.7,-57,-18.8,-63.4C-1.9,-69.8,15.2,-72.8,31.6,-67.2C48,-61.6,63.7,-47.4,45.3,-51.2Z"
         transform="translate(100 100)"
-        fill={`url(#blob-${variant})`}
+        fill={`url(#blob-${variant}-${gradientId})`}
         opacity="0.1"
       />
       <defs>
-        <linearGradient id={`blob-${variant}`} x1="0" y1="0" x2="200" y2="200">
+        <linearGradient id={`blob-${variant}-${gradientId}`} x1="0" y1="0" x2="200" y2="200">
           <stop stopColor={start} />
           <stop offset="1" stopColor={end} />
         </linearGradient>
@@ -289,7 +302,7 @@ export function SpoonIllustration({ className }: DecorativeProps) {
       viewBox="0 0 30 120"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className={cn('w-8 h-30', className)}
+      className={cn('w-8 h-[7.5rem]', className)}
       aria-hidden="true"
     >
       <ellipse cx="15" cy="20" rx="12" ry="18" fill="#D4D4D8" stroke="#A1A1AA" strokeWidth="2" />

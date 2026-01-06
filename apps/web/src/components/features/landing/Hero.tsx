@@ -23,7 +23,7 @@ export function Hero() {
       {/* Decorative floating illustrations */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
         <div className="absolute -left-4 top-1/4 opacity-20 animate-float-slow">
-          <CarrotIllustration className="w-16 h-24 sm:w-20 sm:h-30 rotate-[-15deg]" />
+          <CarrotIllustration className="w-16 h-24 sm:w-20 sm:h-[7.5rem] rotate-[-15deg]" />
         </div>
         <div className="absolute right-8 top-16 opacity-20 animate-float hidden sm:block">
           <TomatoIllustration className="w-16 h-16 sm:w-20 sm:h-20" />
