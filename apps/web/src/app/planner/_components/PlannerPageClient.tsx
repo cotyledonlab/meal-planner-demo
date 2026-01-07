@@ -67,29 +67,42 @@ export default function PlannerPageClient({
   const handleWizardComplete = (preferences: MealPreferences) => {
     setShowWizard(false);
 
-    // Save preferences for next time (fire and forget, don't block plan generation)
-    savePreferences.mutate({
-      householdSize: preferences.householdSize,
-      mealsPerDay: preferences.mealsPerDay,
-      days: preferences.days,
-      isVegetarian: preferences.isVegetarian,
-      isDairyFree: preferences.isDairyFree,
-      dislikes: preferences.dislikes,
-    });
+    const generatePlanWithPreferences = () => {
+      generatePlan.mutate({
+        startDate: new Date(),
+        days: preferences.days,
+        mealsPerDay: preferences.mealsPerDay,
+        householdSize: preferences.householdSize,
+        isVegetarian: preferences.isVegetarian,
+        isDairyFree: preferences.isDairyFree,
+        dislikes: preferences.dislikes,
+        // Advanced filters
+        difficulty: preferences.difficulty,
+        maxTotalTime: preferences.maxTotalTime,
+        excludeAllergenNames: preferences.excludeAllergens,
+      });
+    };
 
-    generatePlan.mutate({
-      startDate: new Date(),
-      days: preferences.days,
-      mealsPerDay: preferences.mealsPerDay,
-      householdSize: preferences.householdSize,
-      isVegetarian: preferences.isVegetarian,
-      isDairyFree: preferences.isDairyFree,
-      dislikes: preferences.dislikes,
-      // Advanced filters
-      difficulty: preferences.difficulty,
-      maxTotalTime: preferences.maxTotalTime,
-      excludeAllergenNames: preferences.excludeAllergens,
-    });
+    savePreferences.mutate(
+      {
+        householdSize: preferences.householdSize,
+        mealsPerDay: preferences.mealsPerDay,
+        days: preferences.days,
+        isVegetarian: preferences.isVegetarian,
+        isDairyFree: preferences.isDairyFree,
+        dislikes: preferences.dislikes,
+        weeknightMaxTimeMinutes: preferences.weeknightMaxTimeMinutes,
+        weeklyTimeBudgetMinutes: preferences.weeklyTimeBudgetMinutes,
+        prioritizeWeeknights: preferences.prioritizeWeeknights,
+      },
+      {
+        onSuccess: generatePlanWithPreferences,
+        onError: (error) => {
+          console.error('Failed to save preferences:', error);
+          generatePlanWithPreferences();
+        },
+      }
+    );
   };
 
   const handleWizardClose = () => {

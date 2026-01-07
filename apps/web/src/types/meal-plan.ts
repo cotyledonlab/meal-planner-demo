@@ -45,6 +45,9 @@ export interface MealPreferences {
   isVegetarian: boolean;
   isDairyFree: boolean;
   dislikes: string;
+  weeknightMaxTimeMinutes: number | null;
+  weeklyTimeBudgetMinutes: number | null;
+  prioritizeWeeknights: boolean;
   // Advanced filters
   difficulty?: 'EASY' | 'MEDIUM' | 'HARD' | null;
   maxTotalTime?: number | null;

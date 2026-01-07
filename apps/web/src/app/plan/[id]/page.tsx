@@ -5,6 +5,7 @@ import { api, HydrateClient } from '~/trpc/server';
 import PlanPageClient from '~/app/_components/PlanPageClient';
 import { ExportButtons } from '~/components/features/plan/ExportButtons';
 import { ShoppingListWithPriceComparison } from '~/components/features/shopping/ShoppingListWithPriceComparison';
+import { isPremiumUser } from '~/lib/auth';
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -17,6 +18,7 @@ export default async function PlanPage({ params }: PageProps) {
   if (!session?.user) {
     redirect('/auth/signin');
   }
+  const isPremium = isPremiumUser(session.user);
 
   // Fetch the meal plan
   const plan = await api.plan.getById({ planId: id }).catch((error) => {
@@ -85,6 +87,7 @@ export default async function PlanPage({ params }: PageProps) {
               planId={id}
               initialPlan={plan}
               shoppingListAnchorId={shoppingListAnchorId}
+              isPremium={isPremium}
             />
           </div>
 

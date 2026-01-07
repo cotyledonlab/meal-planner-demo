@@ -1,7 +1,10 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import PlanFilterPanel, { type PlanFilters } from '~/components/features/meal-plan/PlanFilterPanel';
+import PlanFilterPanel, {
+  type PlanFilters,
+  type TimePreferences,
+} from '~/components/features/meal-plan/PlanFilterPanel';
 
 const defaultFilters: PlanFilters = {
   difficulty: null,
@@ -11,10 +14,17 @@ const defaultFilters: PlanFilters = {
   isDairyFree: false,
 };
 
+const defaultTimePreferences: TimePreferences = {
+  weeknightMaxTimeMinutes: null,
+  weeklyTimeBudgetMinutes: null,
+  prioritizeWeeknights: true,
+};
+
 describe('PlanFilterPanel', () => {
   it('should render collapsed by default', () => {
     const mockOnFiltersChange = vi.fn();
     const mockOnRegenerate = vi.fn();
+    const mockOnTimePreferencesChange = vi.fn();
 
     render(
       <PlanFilterPanel
@@ -22,6 +32,9 @@ describe('PlanFilterPanel', () => {
         onFiltersChange={mockOnFiltersChange}
         onRegenerate={mockOnRegenerate}
         isRegenerating={false}
+        isPremium={true}
+        timePreferences={defaultTimePreferences}
+        onTimePreferencesChange={mockOnTimePreferencesChange}
       />
     );
 
@@ -34,6 +47,7 @@ describe('PlanFilterPanel', () => {
     const user = userEvent.setup();
     const mockOnFiltersChange = vi.fn();
     const mockOnRegenerate = vi.fn();
+    const mockOnTimePreferencesChange = vi.fn();
 
     render(
       <PlanFilterPanel
@@ -41,6 +55,9 @@ describe('PlanFilterPanel', () => {
         onFiltersChange={mockOnFiltersChange}
         onRegenerate={mockOnRegenerate}
         isRegenerating={false}
+        isPremium={true}
+        timePreferences={defaultTimePreferences}
+        onTimePreferencesChange={mockOnTimePreferencesChange}
       />
     );
 
@@ -51,6 +68,7 @@ describe('PlanFilterPanel', () => {
     expect(screen.getByText('Dietary Preferences')).toBeInTheDocument();
     expect(screen.getByText('Recipe Difficulty')).toBeInTheDocument();
     expect(screen.getByText('Maximum Cooking Time')).toBeInTheDocument();
+    expect(screen.getByText('Time-first planning')).toBeInTheDocument();
     expect(screen.getByText('Exclude Allergens')).toBeInTheDocument();
   });
 
@@ -58,6 +76,7 @@ describe('PlanFilterPanel', () => {
     const user = userEvent.setup();
     const mockOnFiltersChange = vi.fn();
     const mockOnRegenerate = vi.fn();
+    const mockOnTimePreferencesChange = vi.fn();
 
     render(
       <PlanFilterPanel
@@ -65,6 +84,9 @@ describe('PlanFilterPanel', () => {
         onFiltersChange={mockOnFiltersChange}
         onRegenerate={mockOnRegenerate}
         isRegenerating={false}
+        isPremium={true}
+        timePreferences={defaultTimePreferences}
+        onTimePreferencesChange={mockOnTimePreferencesChange}
       />
     );
 
@@ -86,6 +108,7 @@ describe('PlanFilterPanel', () => {
     const user = userEvent.setup();
     const mockOnFiltersChange = vi.fn();
     const mockOnRegenerate = vi.fn();
+    const mockOnTimePreferencesChange = vi.fn();
 
     render(
       <PlanFilterPanel
@@ -93,6 +116,9 @@ describe('PlanFilterPanel', () => {
         onFiltersChange={mockOnFiltersChange}
         onRegenerate={mockOnRegenerate}
         isRegenerating={false}
+        isPremium={true}
+        timePreferences={defaultTimePreferences}
+        onTimePreferencesChange={mockOnTimePreferencesChange}
       />
     );
 
@@ -114,6 +140,7 @@ describe('PlanFilterPanel', () => {
     const user = userEvent.setup();
     const mockOnFiltersChange = vi.fn();
     const mockOnRegenerate = vi.fn();
+    const mockOnTimePreferencesChange = vi.fn();
 
     render(
       <PlanFilterPanel
@@ -121,6 +148,9 @@ describe('PlanFilterPanel', () => {
         onFiltersChange={mockOnFiltersChange}
         onRegenerate={mockOnRegenerate}
         isRegenerating={false}
+        isPremium={true}
+        timePreferences={defaultTimePreferences}
+        onTimePreferencesChange={mockOnTimePreferencesChange}
       />
     );
 
@@ -139,6 +169,7 @@ describe('PlanFilterPanel', () => {
     const user = userEvent.setup();
     const mockOnFiltersChange = vi.fn();
     const mockOnRegenerate = vi.fn();
+    const mockOnTimePreferencesChange = vi.fn();
 
     render(
       <PlanFilterPanel
@@ -146,6 +177,9 @@ describe('PlanFilterPanel', () => {
         onFiltersChange={mockOnFiltersChange}
         onRegenerate={mockOnRegenerate}
         isRegenerating={true}
+        isPremium={true}
+        timePreferences={defaultTimePreferences}
+        onTimePreferencesChange={mockOnTimePreferencesChange}
       />
     );
 
@@ -160,6 +194,7 @@ describe('PlanFilterPanel', () => {
   it('should show active filter count badge', async () => {
     const mockOnFiltersChange = vi.fn();
     const mockOnRegenerate = vi.fn();
+    const mockOnTimePreferencesChange = vi.fn();
 
     const filtersWithActive: PlanFilters = {
       difficulty: 'EASY',
@@ -175,6 +210,9 @@ describe('PlanFilterPanel', () => {
         onFiltersChange={mockOnFiltersChange}
         onRegenerate={mockOnRegenerate}
         isRegenerating={false}
+        isPremium={true}
+        timePreferences={defaultTimePreferences}
+        onTimePreferencesChange={mockOnTimePreferencesChange}
       />
     );
 
@@ -186,6 +224,7 @@ describe('PlanFilterPanel', () => {
     const user = userEvent.setup();
     const mockOnFiltersChange = vi.fn();
     const mockOnRegenerate = vi.fn();
+    const mockOnTimePreferencesChange = vi.fn();
 
     render(
       <PlanFilterPanel
@@ -193,6 +232,9 @@ describe('PlanFilterPanel', () => {
         onFiltersChange={mockOnFiltersChange}
         onRegenerate={mockOnRegenerate}
         isRegenerating={false}
+        isPremium={true}
+        timePreferences={defaultTimePreferences}
+        onTimePreferencesChange={mockOnTimePreferencesChange}
       />
     );
 
@@ -208,5 +250,60 @@ describe('PlanFilterPanel', () => {
       ...defaultFilters,
       excludeAllergenTagIds: ['gluten'],
     });
+  });
+
+  it('should update time preferences when weeknight max time changes', async () => {
+    const user = userEvent.setup();
+    const mockOnFiltersChange = vi.fn();
+    const mockOnRegenerate = vi.fn();
+    const mockOnTimePreferencesChange = vi.fn();
+
+    render(
+      <PlanFilterPanel
+        currentFilters={defaultFilters}
+        onFiltersChange={mockOnFiltersChange}
+        onRegenerate={mockOnRegenerate}
+        isRegenerating={false}
+        isPremium={true}
+        timePreferences={defaultTimePreferences}
+        onTimePreferencesChange={mockOnTimePreferencesChange}
+      />
+    );
+
+    const header = screen.getByRole('button', { name: /Adjust Filters/i });
+    await user.click(header);
+
+    const weeknightSelect = screen.getByLabelText('Weeknight max time');
+    await user.selectOptions(weeknightSelect, '30');
+
+    expect(mockOnTimePreferencesChange).toHaveBeenCalledWith({
+      ...defaultTimePreferences,
+      weeknightMaxTimeMinutes: 30,
+    });
+  });
+
+  it('should show premium lock state for free users', async () => {
+    const user = userEvent.setup();
+    const mockOnFiltersChange = vi.fn();
+    const mockOnRegenerate = vi.fn();
+    const mockOnTimePreferencesChange = vi.fn();
+
+    render(
+      <PlanFilterPanel
+        currentFilters={defaultFilters}
+        onFiltersChange={mockOnFiltersChange}
+        onRegenerate={mockOnRegenerate}
+        isRegenerating={false}
+        isPremium={false}
+        timePreferences={defaultTimePreferences}
+        onTimePreferencesChange={mockOnTimePreferencesChange}
+      />
+    );
+
+    const header = screen.getByRole('button', { name: /Adjust Filters/i });
+    await user.click(header);
+
+    expect(screen.getByText('Upgrade to Premium')).toBeInTheDocument();
+    expect(screen.getByLabelText('Weeknight max time')).toBeDisabled();
   });
 });

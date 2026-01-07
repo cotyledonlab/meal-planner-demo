@@ -10,6 +10,9 @@ export interface InitialPreferences {
   isVegetarian?: boolean;
   isDairyFree?: boolean;
   dislikes?: string;
+  weeknightMaxTimeMinutes?: number | null;
+  weeklyTimeBudgetMinutes?: number | null;
+  prioritizeWeeknights?: boolean;
 }
 
 interface MealPlanWizardProps {
@@ -26,6 +29,9 @@ export interface MealPreferences {
   isVegetarian: boolean;
   isDairyFree: boolean;
   dislikes: string;
+  weeknightMaxTimeMinutes: number | null;
+  weeklyTimeBudgetMinutes: number | null;
+  prioritizeWeeknights: boolean;
   // Advanced filters
   difficulty?: 'EASY' | 'MEDIUM' | 'HARD' | null;
   maxTotalTime?: number | null;
@@ -73,6 +79,15 @@ export function MealPlanWizard({
   const [isVegetarian, setIsVegetarian] = useState(initialPreferences?.isVegetarian ?? false);
   const [isDairyFree, setIsDairyFree] = useState(initialPreferences?.isDairyFree ?? false);
   const [dislikes, setDislikes] = useState(initialPreferences?.dislikes ?? '');
+  const [weeknightMaxTimeMinutes, setWeeknightMaxTimeMinutes] = useState<number | null>(
+    initialPreferences?.weeknightMaxTimeMinutes ?? null
+  );
+  const [weeklyTimeBudgetMinutes, setWeeklyTimeBudgetMinutes] = useState<number | null>(
+    initialPreferences?.weeklyTimeBudgetMinutes ?? null
+  );
+  const [prioritizeWeeknights, setPrioritizeWeeknights] = useState(
+    initialPreferences?.prioritizeWeeknights ?? true
+  );
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [justChanged, setJustChanged] = useState<string | null>(null);
   // Advanced filters
@@ -89,6 +104,9 @@ export function MealPlanWizard({
   const initialVegetarian = initialPreferences?.isVegetarian ?? false;
   const initialDairyFree = initialPreferences?.isDairyFree ?? false;
   const initialDislikes = initialPreferences?.dislikes ?? '';
+  const initialWeeknightMaxTimeMinutes = initialPreferences?.weeknightMaxTimeMinutes ?? null;
+  const initialWeeklyTimeBudgetMinutes = initialPreferences?.weeklyTimeBudgetMinutes ?? null;
+  const initialPrioritizeWeeknights = initialPreferences?.prioritizeWeeknights ?? true;
 
   const hasUserInput =
     householdSize !== initialHouseholdSize ||
@@ -97,6 +115,9 @@ export function MealPlanWizard({
     isVegetarian !== initialVegetarian ||
     isDairyFree !== initialDairyFree ||
     dislikes.trim() !== initialDislikes.trim() ||
+    weeknightMaxTimeMinutes !== initialWeeknightMaxTimeMinutes ||
+    weeklyTimeBudgetMinutes !== initialWeeklyTimeBudgetMinutes ||
+    prioritizeWeeknights !== initialPrioritizeWeeknights ||
     difficulty !== null ||
     maxTotalTime !== null ||
     excludeAllergens.length > 0;
@@ -139,6 +160,9 @@ export function MealPlanWizard({
       isVegetarian,
       isDairyFree,
       dislikes,
+      weeknightMaxTimeMinutes,
+      weeklyTimeBudgetMinutes,
+      prioritizeWeeknights,
       difficulty,
       maxTotalTime,
       excludeAllergens,
@@ -553,6 +577,134 @@ export function MealPlanWizard({
                   <p className="mt-2 text-xs text-gray-700">
                     💬 Separate multiple items with commas
                   </p>
+                </div>
+
+                {/* Time-first planning */}
+                <div className="rounded-2xl border-2 border-emerald-100 bg-emerald-50/40 p-4 shadow-sm">
+                  <div className="flex items-center justify-between">
+                    <span className="flex items-center gap-2 text-sm font-semibold text-gray-900">
+                      <span>⏱️</span>
+                      <span>Time-first planning</span>
+                    </span>
+                    {!isPremium && (
+                      <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-700">
+                        Premium
+                      </span>
+                    )}
+                  </div>
+                  <p className="mt-1 text-xs text-gray-600">
+                    Keep weeknights shorter and stay on budget for the week.
+                  </p>
+                  <div className="mt-4 space-y-4">
+                    <div className="group">
+                      <label
+                        htmlFor="weeknightMaxTimeMinutes"
+                        className="flex items-center gap-2 text-sm font-semibold text-gray-900"
+                      >
+                        <span>Weeknight max time</span>
+                        <span
+                          className="text-sm leading-none sm:text-base"
+                          role="img"
+                          aria-label="weeknight time"
+                        >
+                          🌙
+                        </span>
+                      </label>
+                      <div className="relative mt-2">
+                        <select
+                          id="weeknightMaxTimeMinutes"
+                          value={weeknightMaxTimeMinutes ?? ''}
+                          onChange={(e) =>
+                            setWeeknightMaxTimeMinutes(
+                              e.target.value === '' ? null : Number(e.target.value)
+                            )
+                          }
+                          disabled={!isPremium}
+                          className="block w-full appearance-none rounded-xl border-2 border-gray-200 bg-white px-4 py-3 pr-12 text-base text-gray-900 shadow-sm transition hover:border-emerald-300 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600 disabled:cursor-not-allowed disabled:opacity-60"
+                        >
+                          {MAX_TIME_OPTIONS.map((option) => (
+                            <option key={option.label} value={option.value ?? ''}>
+                              {option.label}
+                            </option>
+                          ))}
+                        </select>
+                        <ChevronDown
+                          className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-600"
+                          aria-hidden="true"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="group">
+                      <label
+                        htmlFor="weeklyTimeBudgetMinutes"
+                        className="flex items-center gap-2 text-sm font-semibold text-gray-900"
+                      >
+                        <span>Weekly time budget (minutes)</span>
+                        <span
+                          className="text-sm leading-none sm:text-base"
+                          role="img"
+                          aria-label="weekly budget"
+                        >
+                          📆
+                        </span>
+                      </label>
+                      <input
+                        type="number"
+                        id="weeklyTimeBudgetMinutes"
+                        min={0}
+                        max={600}
+                        step={5}
+                        value={weeklyTimeBudgetMinutes ?? ''}
+                        onChange={(e) => {
+                          const nextValue = e.target.value === '' ? null : Number(e.target.value);
+                          if (nextValue === null || Number.isNaN(nextValue)) {
+                            setWeeklyTimeBudgetMinutes(null);
+                            return;
+                          }
+                          setWeeklyTimeBudgetMinutes(Math.min(600, Math.max(0, nextValue)));
+                        }}
+                        placeholder="e.g., 240"
+                        disabled={!isPremium}
+                        className="mt-2 block w-full rounded-xl border-2 border-gray-200 bg-white px-4 py-3 text-base text-gray-900 placeholder-gray-600 shadow-sm transition hover:border-emerald-300 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600 disabled:cursor-not-allowed disabled:opacity-60"
+                      />
+                      <p className="mt-2 text-xs text-gray-600">
+                        Spread across all meals in your plan.
+                      </p>
+                    </div>
+
+                    <label
+                      className={`flex min-h-[52px] items-center gap-3 rounded-xl border-2 border-gray-200 bg-white px-4 py-3 text-sm text-gray-700 shadow-sm transition hover:border-emerald-400 hover:bg-emerald-50/30 focus-within:border-emerald-500 focus-within:ring-2 focus-within:ring-emerald-600 ${
+                        isPremium ? 'cursor-pointer' : 'cursor-not-allowed opacity-60'
+                      }`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={prioritizeWeeknights}
+                        onChange={(e) => setPrioritizeWeeknights(e.target.checked)}
+                        className="h-5 w-5 shrink-0 rounded-md border-2 border-gray-300 text-emerald-600 transition-all focus:ring-2 focus:ring-emerald-600 checked:bg-emerald-600 checked:border-emerald-600 active:scale-90 disabled:opacity-60"
+                        disabled={!isPremium}
+                      />
+                      <span className="flex items-center gap-2">
+                        <span>⚡</span>
+                        <span>Prioritize quicker weeknights</span>
+                      </span>
+                    </label>
+                  </div>
+
+                  {!isPremium && (
+                    <div className="mt-4 rounded-xl border border-amber-200 bg-white px-4 py-3 text-xs text-amber-700">
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <span>Unlock time-first planning with Premium.</span>
+                        <a
+                          href="/#pricing"
+                          className="font-semibold text-amber-700 underline underline-offset-2"
+                        >
+                          View pricing
+                        </a>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Advanced Options (Collapsible) */}

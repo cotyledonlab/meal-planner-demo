@@ -14,19 +14,22 @@ describe('MealPlanWizard', () => {
     expect(screen.getByLabelText(/Vegetarian/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/Dairy-free/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/Anything you'd rather skip/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Weeknight max time/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Weekly time budget/i)).toBeInTheDocument();
+    expect(screen.getByText(/Prioritize quicker weeknights/i)).toBeInTheDocument();
   });
 
   it('should render chevron icons for all select elements', () => {
     const mockOnComplete = vi.fn();
     const { container } = render(<MealPlanWizard onComplete={mockOnComplete} />);
 
-    // Check that all three select elements have the appearance-none class
+    // Check that all select elements have the appearance-none class
     const selects = container.querySelectorAll('select.appearance-none');
-    expect(selects).toHaveLength(3);
+    expect(selects).toHaveLength(4);
 
-    // Check that all three chevron icons are present
+    // Check that all chevron icons are present
     const chevronIcons = container.querySelectorAll('svg.pointer-events-none');
-    expect(chevronIcons).toHaveLength(3);
+    expect(chevronIcons).toHaveLength(4);
 
     // Verify chevrons are positioned correctly
     chevronIcons.forEach((icon) => {
@@ -71,6 +74,9 @@ describe('MealPlanWizard', () => {
       isVegetarian: true,
       isDairyFree: false,
       dislikes: '',
+      weeknightMaxTimeMinutes: null,
+      weeklyTimeBudgetMinutes: null,
+      prioritizeWeeknights: true,
       // Advanced filters (defaults)
       difficulty: null,
       maxTotalTime: null,
@@ -133,6 +139,7 @@ describe('MealPlanWizard', () => {
 
     expect(screen.getByText(/Basic users limited to 3 days/i)).toBeInTheDocument();
     expect(screen.getByText(/Upgrade to premium for 4-7 day plans/i)).toBeInTheDocument();
+    expect(screen.getByText(/Unlock time-first planning with Premium/i)).toBeInTheDocument();
   });
 
   it('should not display premium notice for premium users', () => {
@@ -140,6 +147,23 @@ describe('MealPlanWizard', () => {
     render(<MealPlanWizard onComplete={mockOnComplete} isPremium={true} />);
 
     expect(screen.queryByText(/Basic users limited to 3 days/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Unlock time-first planning with Premium/i)).not.toBeInTheDocument();
+  });
+
+  it('should disable time-first controls for non-premium users', () => {
+    const mockOnComplete = vi.fn();
+    render(<MealPlanWizard onComplete={mockOnComplete} isPremium={false} />);
+
+    expect(screen.getByLabelText(/Weeknight max time/i)).toBeDisabled();
+    expect(screen.getByLabelText(/Weekly time budget/i)).toBeDisabled();
+  });
+
+  it('should enable time-first controls for premium users', () => {
+    const mockOnComplete = vi.fn();
+    render(<MealPlanWizard onComplete={mockOnComplete} isPremium={true} />);
+
+    expect(screen.getByLabelText(/Weeknight max time/i)).not.toBeDisabled();
+    expect(screen.getByLabelText(/Weekly time budget/i)).not.toBeDisabled();
   });
 
   it('should maintain accessibility with chevron icons', () => {

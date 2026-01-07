@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ChevronDown, ChevronUp, RefreshCw, Loader2 } from 'lucide-react';
+import { ChevronDown, ChevronUp, RefreshCw, Loader2, Lock } from 'lucide-react';
 import { Button } from '~/components/ui/button';
 import { Card } from '~/components/ui/card';
 import { Label } from '~/components/ui/label';
@@ -36,11 +36,21 @@ export interface PlanFilters {
   isDairyFree: boolean;
 }
 
+export interface TimePreferences {
+  weeknightMaxTimeMinutes: number | null;
+  weeklyTimeBudgetMinutes: number | null;
+  prioritizeWeeknights: boolean;
+}
+
 interface PlanFilterPanelProps {
   currentFilters: PlanFilters;
   onFiltersChange: (filters: PlanFilters) => void;
   onRegenerate: () => void;
   isRegenerating: boolean;
+  isPremium: boolean;
+  timePreferences: TimePreferences;
+  onTimePreferencesChange: (preferences: TimePreferences) => void;
+  isSavingPreferences?: boolean;
 }
 
 export function PlanFilterPanel({
@@ -48,8 +58,13 @@ export function PlanFilterPanel({
   onFiltersChange,
   onRegenerate,
   isRegenerating,
+  isPremium,
+  timePreferences,
+  onTimePreferencesChange,
+  isSavingPreferences = false,
 }: PlanFilterPanelProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const timeControlsDisabled = !isPremium || isSavingPreferences || isRegenerating;
 
   const updateFilter = <K extends keyof PlanFilters>(key: K, value: PlanFilters[K]) => {
     onFiltersChange({ ...currentFilters, [key]: value });
@@ -210,6 +225,118 @@ export function PlanFilterPanel({
               </select>
               <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
             </div>
+          </div>
+
+          {/* Time-first planning */}
+          <div className="rounded-xl border border-emerald-100 bg-emerald-50/40 p-4 space-y-4">
+            <div className="flex items-center justify-between">
+              <Label className="text-sm font-semibold text-gray-900">Time-first planning</Label>
+              {!isPremium && (
+                <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700">
+                  <Lock className="h-3 w-3" />
+                  Premium
+                </span>
+              )}
+            </div>
+            <p className="text-xs text-gray-600">
+              Prioritize quicker weeknights and keep total weekly cooking time in check.
+            </p>
+
+            <div>
+              <Label
+                htmlFor="filter-weeknightMaxTime"
+                className="block text-xs font-semibold text-gray-900 mb-2"
+              >
+                Weeknight max time
+              </Label>
+              <div className="relative">
+                <select
+                  id="filter-weeknightMaxTime"
+                  value={timePreferences.weeknightMaxTimeMinutes ?? ''}
+                  onChange={(e) =>
+                    onTimePreferencesChange({
+                      ...timePreferences,
+                      weeknightMaxTimeMinutes:
+                        e.target.value === '' ? null : Number(e.target.value),
+                    })
+                  }
+                  disabled={timeControlsDisabled}
+                  className="block w-full appearance-none rounded-lg border border-gray-300 bg-white px-3 py-2 pr-10 text-sm text-gray-900 transition hover:border-gray-400 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {MAX_TIME_OPTIONS.map((option) => (
+                    <option key={option.label} value={option.value ?? ''}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
+              </div>
+            </div>
+
+            <div>
+              <Label
+                htmlFor="filter-weeklyBudget"
+                className="block text-xs font-semibold text-gray-900 mb-2"
+              >
+                Weekly time budget (minutes)
+              </Label>
+              <input
+                id="filter-weeklyBudget"
+                type="number"
+                min={0}
+                max={600}
+                step={5}
+                value={timePreferences.weeklyTimeBudgetMinutes ?? ''}
+                onChange={(e) => {
+                  const nextValue = e.target.value === '' ? null : Number(e.target.value);
+                  if (nextValue === null || Number.isNaN(nextValue)) {
+                    onTimePreferencesChange({
+                      ...timePreferences,
+                      weeklyTimeBudgetMinutes: null,
+                    });
+                    return;
+                  }
+                  onTimePreferencesChange({
+                    ...timePreferences,
+                    weeklyTimeBudgetMinutes: Math.min(600, Math.max(0, nextValue)),
+                  });
+                }}
+                disabled={timeControlsDisabled}
+                placeholder="e.g. 240"
+                className="block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 transition hover:border-gray-400 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 disabled:cursor-not-allowed disabled:opacity-60"
+              />
+            </div>
+
+            <label
+              className={cn(
+                'flex items-center gap-2 rounded-lg border-2 px-3 py-2 text-sm transition',
+                timePreferences.prioritizeWeeknights
+                  ? 'border-emerald-400 bg-emerald-50 text-emerald-700'
+                  : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300',
+                timeControlsDisabled && 'cursor-not-allowed opacity-60'
+              )}
+            >
+              <input
+                type="checkbox"
+                checked={timePreferences.prioritizeWeeknights}
+                onChange={(e) =>
+                  onTimePreferencesChange({
+                    ...timePreferences,
+                    prioritizeWeeknights: e.target.checked,
+                  })
+                }
+                className="sr-only"
+                disabled={timeControlsDisabled}
+              />
+              <span>⚡</span>
+              <span>Prioritize quicker weeknights</span>
+            </label>
+
+            {!isPremium && (
+              <Button asChild variant="outline" size="sm" className="w-full">
+                <a href="/#pricing">Upgrade to Premium</a>
+              </Button>
+            )}
           </div>
 
           {/* Allergen exclusions */}

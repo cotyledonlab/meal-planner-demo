@@ -1,9 +1,13 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { api, type RouterOutputs } from '~/trpc/react';
 import MealPlanView from './MealPlanView';
-import { PlanFilterPanel, type PlanFilters } from '~/components/features/meal-plan/PlanFilterPanel';
+import {
+  PlanFilterPanel,
+  type PlanFilters,
+  type TimePreferences,
+} from '~/components/features/meal-plan/PlanFilterPanel';
 
 // Use the actual type returned by the API
 type PlanData = NonNullable<RouterOutputs['plan']['getById']>;
@@ -12,12 +16,14 @@ interface PlanPageClientProps {
   planId: string;
   initialPlan: PlanData;
   shoppingListAnchorId: string;
+  isPremium: boolean;
 }
 
 export default function PlanPageClient({
   planId,
   initialPlan,
   shoppingListAnchorId,
+  isPremium,
 }: PlanPageClientProps) {
   const utils = api.useUtils();
 
@@ -29,6 +35,26 @@ export default function PlanPageClient({
     isVegetarian: false,
     isDairyFree: false,
   });
+
+  const { data: preferences, isLoading: preferencesLoading } = api.preferences.get.useQuery();
+  const savePreferences = api.preferences.update.useMutation();
+  const [timePreferences, setTimePreferences] = useState<TimePreferences>({
+    weeknightMaxTimeMinutes: null,
+    weeklyTimeBudgetMinutes: null,
+    prioritizeWeeknights: true,
+  });
+
+  useEffect(() => {
+    if (!preferences) {
+      return;
+    }
+
+    setTimePreferences({
+      weeknightMaxTimeMinutes: preferences.weeknightMaxTimeMinutes ?? null,
+      weeklyTimeBudgetMinutes: preferences.weeklyTimeBudgetMinutes ?? null,
+      prioritizeWeeknights: preferences.prioritizeWeeknights ?? true,
+    });
+  }, [preferences]);
 
   // Regeneration mutation
   const regenerateMutation = api.plan.regenerate.useMutation({
@@ -52,6 +78,29 @@ export default function PlanPageClient({
     });
   }, [planId, filters, regenerateMutation]);
 
+  const handleTimePreferencesChange = useCallback(
+    (next: TimePreferences) => {
+      setTimePreferences(next);
+
+      if (!isPremium || !preferences) {
+        return;
+      }
+
+      savePreferences.mutate({
+        householdSize: preferences.householdSize,
+        mealsPerDay: preferences.mealsPerDay,
+        days: preferences.days,
+        isVegetarian: preferences.isVegetarian,
+        isDairyFree: preferences.isDairyFree,
+        dislikes: preferences.dislikes ?? '',
+        weeknightMaxTimeMinutes: next.weeknightMaxTimeMinutes,
+        weeklyTimeBudgetMinutes: next.weeklyTimeBudgetMinutes,
+        prioritizeWeeknights: next.prioritizeWeeknights,
+      });
+    },
+    [isPremium, preferences, savePreferences]
+  );
+
   // Get current plan data (use query to get updates after regeneration)
   const { data: currentPlan } = api.plan.getById.useQuery(
     { planId },
@@ -71,6 +120,10 @@ export default function PlanPageClient({
         onFiltersChange={setFilters}
         onRegenerate={handleRegenerate}
         isRegenerating={regenerateMutation.isPending}
+        isPremium={isPremium}
+        timePreferences={timePreferences}
+        onTimePreferencesChange={handleTimePreferencesChange}
+        isSavingPreferences={preferencesLoading || savePreferences.isPending}
       />
 
       {/* Regeneration error message */}

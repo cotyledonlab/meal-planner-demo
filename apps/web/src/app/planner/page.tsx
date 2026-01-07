@@ -28,6 +28,9 @@ export default async function PlannerPage() {
         isVegetarian: savedPreferences.isVegetarian,
         isDairyFree: savedPreferences.isDairyFree,
         dislikes: savedPreferences.dislikes ?? '',
+        weeknightMaxTimeMinutes: savedPreferences.weeknightMaxTimeMinutes ?? null,
+        weeklyTimeBudgetMinutes: savedPreferences.weeklyTimeBudgetMinutes ?? null,
+        prioritizeWeeknights: savedPreferences.prioritizeWeeknights ?? true,
       };
     }
   } catch {
