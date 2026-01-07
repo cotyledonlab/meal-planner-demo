@@ -47,6 +47,12 @@ interface MealPlanOutput {
   createdAt: Date;
 }
 
+type TimePreferences = {
+  weeknightMaxTimeMinutes: number | null;
+  weeklyTimeBudgetMinutes: number | null;
+  prioritizeWeeknights: boolean;
+};
+
 export class PlanGenerator {
   private log = createLogger('PlanGenerator');
   private recipeRepository: RecipeRepository;
@@ -92,8 +98,23 @@ export class PlanGenerator {
     }
     const days = requestedDays;
 
+    const preferences = await this.prisma.userPreferences.findUnique({
+      where: { userId },
+    });
+
+    const timePreferences: TimePreferences = {
+      weeknightMaxTimeMinutes: preferences?.weeknightMaxTimeMinutes ?? null,
+      weeklyTimeBudgetMinutes: preferences?.weeklyTimeBudgetMinutes ?? null,
+      prioritizeWeeknights: preferences?.prioritizeWeeknights ?? true,
+    };
+
     // Determine which meal types to include based on mealsPerDay
     const mealTypes = this.getMealTypesForCount(mealsPerDay);
+    const totalMeals = days * mealTypes.length;
+    const weeklyBudgetPerMealMinutes =
+      timePreferences.weeklyTimeBudgetMinutes != null
+        ? timePreferences.weeklyTimeBudgetMinutes / totalMeals
+        : null;
     const dislikeTerms = parseDislikes(dislikes);
 
     // Get available recipes with dietary filters using repository
@@ -157,9 +178,12 @@ export class PlanGenerator {
           );
         }
 
-        // Shuffle and pick a random recipe for variety
-        const shuffled = this.shuffleArray(appropriateRecipes);
-        const recipe = shuffled[0];
+        const recipe = this.selectRecipeForSlot(appropriateRecipes, {
+          dayIndex,
+          startDate,
+          timePreferences,
+          weeklyBudgetPerMealMinutes,
+        });
         if (!recipe) continue;
 
         this.log.debug(
@@ -351,6 +375,113 @@ export class PlanGenerator {
     );
   }
 
+  private selectRecipeForSlot(
+    recipes: RecipeForPlanning[],
+    options: {
+      dayIndex: number;
+      startDate: Date;
+      timePreferences: TimePreferences;
+      weeklyBudgetPerMealMinutes: number | null;
+    }
+  ): RecipeForPlanning | undefined {
+    if (recipes.length === 0) return undefined;
+
+    const { weeknightMaxTimeMinutes, prioritizeWeeknights } = options.timePreferences;
+    const { weeklyBudgetPerMealMinutes } = options;
+
+    const isWeeknight =
+      prioritizeWeeknights && this.isWeeknight(options.startDate, options.dayIndex);
+    const ranked = this.sortRecipesByTime(recipes);
+    const preferredMaxTime = this.resolvePreferredMaxTime({
+      isWeeknight,
+      weeknightMaxTimeMinutes,
+      weeklyBudgetPerMealMinutes,
+    });
+
+    const timeFiltered =
+      preferredMaxTime != null
+        ? ranked.filter((recipe) => {
+            const time = this.resolveRecipeTime(recipe);
+            return time != null && time <= preferredMaxTime;
+          })
+        : ranked;
+
+    const candidates = timeFiltered.length > 0 ? timeFiltered : ranked;
+
+    if (isWeeknight) {
+      return candidates[0];
+    }
+
+    if (weeklyBudgetPerMealMinutes != null) {
+      return candidates[0];
+    }
+
+    if (prioritizeWeeknights && ranked.length > 1) {
+      return ranked[ranked.length - 1];
+    }
+
+    const shuffled = this.shuffleArray(recipes);
+    return shuffled[0];
+  }
+
+  private resolvePreferredMaxTime({
+    isWeeknight,
+    weeknightMaxTimeMinutes,
+    weeklyBudgetPerMealMinutes,
+  }: {
+    isWeeknight: boolean;
+    weeknightMaxTimeMinutes: number | null;
+    weeklyBudgetPerMealMinutes: number | null;
+  }): number | null {
+    const limits: number[] = [];
+
+    if (isWeeknight && weeknightMaxTimeMinutes != null) {
+      limits.push(weeknightMaxTimeMinutes);
+    }
+
+    if (weeklyBudgetPerMealMinutes != null) {
+      limits.push(weeklyBudgetPerMealMinutes);
+    }
+
+    if (limits.length === 0) {
+      return null;
+    }
+
+    return Math.min(...limits);
+  }
+
+  private resolveRecipeTime(recipe: RecipeForPlanning): number | null {
+    if (recipe.totalTimeMinutes != null) {
+      return recipe.totalTimeMinutes;
+    }
+
+    if (recipe.prepTimeMinutes != null || recipe.cookTimeMinutes != null) {
+      return (recipe.prepTimeMinutes ?? 0) + (recipe.cookTimeMinutes ?? 0);
+    }
+
+    return null;
+  }
+
+  private sortRecipesByTime(recipes: RecipeForPlanning[]): RecipeForPlanning[] {
+    return recipes
+      .map((recipe, index) => ({
+        recipe,
+        index,
+        time: this.resolveRecipeTime(recipe),
+      }))
+      .sort((a, b) => {
+        const timeA = a.time ?? Number.POSITIVE_INFINITY;
+        const timeB = b.time ?? Number.POSITIVE_INFINITY;
+
+        if (timeA !== timeB) {
+          return timeA - timeB;
+        }
+
+        return a.index - b.index;
+      })
+      .map((entry) => entry.recipe);
+  }
+
   /**
    * Get the next Monday from today
    */
@@ -362,6 +493,13 @@ export class PlanGenerator {
     nextMonday.setDate(today.getDate() + daysUntilMonday);
     nextMonday.setHours(0, 0, 0, 0);
     return nextMonday;
+  }
+
+  private isWeeknight(startDate: Date, dayIndex: number): boolean {
+    const date = new Date(startDate);
+    date.setDate(date.getDate() + dayIndex);
+    const dayOfWeek = date.getDay();
+    return dayOfWeek >= 1 && dayOfWeek <= 5;
   }
 
   /**

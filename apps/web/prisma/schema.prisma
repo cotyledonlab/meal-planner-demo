@@ -148,6 +148,9 @@ model UserPreferences {
   isVegetarian  Boolean  @default(false)
   isDairyFree   Boolean  @default(false)
   dislikes      String? // comma-separated list
+  weeknightMaxTimeMinutes  Int?
+  weeklyTimeBudgetMinutes  Int?
+  prioritizeWeeknights     Boolean  @default(true)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 }

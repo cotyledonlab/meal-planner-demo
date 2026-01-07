@@ -530,6 +530,10 @@ export class RecipeRepository {
       mealTypes: prismaRecipe.mealTypes as MealType[],
       servingsDefault: prismaRecipe.servingsDefault,
       calories: prismaRecipe.calories,
+      prepTimeMinutes: prismaRecipe.prepTimeMinutes,
+      cookTimeMinutes: prismaRecipe.cookTimeMinutes,
+      totalTimeMinutes: prismaRecipe.totalTimeMinutes,
+      minutes: prismaRecipe.minutes,
       isVegetarian: prismaRecipe.isVegetarian,
       isDairyFree: prismaRecipe.isDairyFree,
       ingredients: prismaRecipe.ingredients.map((ri) => ({

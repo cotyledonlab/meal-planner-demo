@@ -310,3 +310,54 @@ describe('planRouter.swapRecipe', () => {
     } satisfies Partial<TRPCError>);
   });
 });
+
+describe('planRouter.getById', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('normalizes totalTimeMinutes using prep and cook times', async () => {
+    const { planRouter } = await import('./plan');
+
+    const mockPlan = {
+      id: 'plan-1',
+      userId: 'test-user-id',
+      items: [
+        {
+          id: 'item-1',
+          dayIndex: 0,
+          mealType: 'dinner',
+          servings: 2,
+          recipe: {
+            id: 'recipe-1',
+            prepTimeMinutes: 10,
+            cookTimeMinutes: 15,
+            totalTimeMinutes: null,
+          },
+        },
+        {
+          id: 'item-2',
+          dayIndex: 1,
+          mealType: 'dinner',
+          servings: 2,
+          recipe: {
+            id: 'recipe-2',
+            prepTimeMinutes: null,
+            cookTimeMinutes: null,
+            totalTimeMinutes: null,
+          },
+        },
+      ],
+    };
+
+    mockPrismaClient.mealPlan.findUnique.mockResolvedValue(mockPlan as never);
+
+    const ctx = createMockContext();
+    const caller = planRouter.createCaller(ctx);
+
+    const result = await caller.getById({ planId: 'plan-1' });
+
+    expect(result?.items[0]?.recipe.totalTimeMinutes).toBe(25);
+    expect(result?.items[1]?.recipe.totalTimeMinutes).toBeNull();
+  });
+});

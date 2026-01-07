@@ -4,6 +4,7 @@ import { createTRPCRouter, protectedProcedure } from '../trpc';
 import { PlanGenerator, type PlanGenerationErrorCode } from '../../services/planGenerator';
 import { ShoppingListService } from '../../services/shoppingList';
 import { createLogger } from '~/lib/logger';
+import { normalizePlanRecipeTimes } from '../../services/planNormalization';
 
 const log = createLogger('plan-router');
 
@@ -151,7 +152,7 @@ export const planRouter = createTRPCRouter({
         throw new Error('Unauthorized');
       }
 
-      return plan;
+      return normalizePlanRecipeTimes(plan) ?? plan;
     }),
 
   getLast: protectedProcedure.query(async ({ ctx }) => {
@@ -186,7 +187,7 @@ export const planRouter = createTRPCRouter({
       },
     });
 
-    return plan;
+    return normalizePlanRecipeTimes(plan);
   }),
 
   list: protectedProcedure.query(async ({ ctx }) => {
@@ -367,7 +368,7 @@ export const planRouter = createTRPCRouter({
         },
       });
 
-      return updatedPlan;
+      return normalizePlanRecipeTimes(updatedPlan);
     }),
 
   regenerate: protectedProcedure
@@ -500,7 +501,7 @@ export const planRouter = createTRPCRouter({
           },
         });
 
-        return updatedPlan;
+        return normalizePlanRecipeTimes(updatedPlan);
       } catch (error) {
         log.error({ error, planId }, 'Failed to regenerate meal plan');
 

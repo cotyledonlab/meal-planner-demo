@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
 import type { Recipe, PrismaClient } from '@prisma/client';
+import { normalizePlanRecipeTimes } from '~/server/services/planNormalization';
 
 /**
  * Rule-based meal plan generator
@@ -110,7 +111,7 @@ export const mealPlanRouter = createTRPCRouter({
       },
     });
 
-    return latestPlan;
+    return normalizePlanRecipeTimes(latestPlan);
   }),
 
   // Generate a new meal plan
@@ -197,7 +198,7 @@ export const mealPlanRouter = createTRPCRouter({
         },
       });
 
-      return mealPlan;
+      return normalizePlanRecipeTimes(mealPlan) ?? mealPlan;
     }),
 
   // Delete a meal plan

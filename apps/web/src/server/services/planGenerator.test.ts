@@ -15,6 +15,10 @@ type TestRecipe = {
   title: string;
   mealTypes: string[];
   ingredients: Array<{ ingredient: { name: string } }>;
+  prepTimeMinutes?: number | null;
+  cookTimeMinutes?: number | null;
+  totalTimeMinutes?: number | null;
+  minutes?: number | null;
 };
 
 type MockPrismaTransaction = {
@@ -23,10 +27,11 @@ type MockPrismaTransaction = {
 };
 
 describe('PlanGenerator', () => {
-  const startDate = new Date('2025-01-06T00:00:00.000Z');
+  const startDate = new Date(2025, 0, 6);
 
   let mockPrisma: {
     user: { findUnique: ReturnType<typeof vi.fn> };
+    userPreferences: { findUnique: ReturnType<typeof vi.fn> };
     recipe: { findMany: ReturnType<typeof vi.fn> };
     mealPlanItem: { findMany: ReturnType<typeof vi.fn> };
     $transaction: ReturnType<typeof vi.fn>;
@@ -87,6 +92,9 @@ describe('PlanGenerator', () => {
     mockPrisma = {
       user: {
         findUnique: vi.fn().mockResolvedValue({ id: 'user-1', role: 'basic' }),
+      },
+      userPreferences: {
+        findUnique: vi.fn().mockResolvedValue(null),
       },
       recipe: {
         findMany: vi.fn().mockImplementation(() => Promise.resolve(currentRecipes)),
@@ -434,6 +442,135 @@ describe('PlanGenerator', () => {
         'dinner',
         'lunch',
       ]);
+    });
+  });
+
+  describe('Time Preferences', () => {
+    it('prioritizes shorter recipes on weeknights', async () => {
+      mockPrisma.user.findUnique.mockResolvedValue({ id: 'user-1', role: 'premium' });
+      mockPrisma.userPreferences.findUnique.mockResolvedValue({
+        weeknightMaxTimeMinutes: null,
+        weeklyTimeBudgetMinutes: null,
+        prioritizeWeeknights: true,
+      });
+      currentRecipes = [
+        {
+          id: 'quick-dinner',
+          title: 'Quick Dinner',
+          mealTypes: ['dinner'],
+          ingredients: [{ ingredient: { name: 'chicken' } }],
+          totalTimeMinutes: 20,
+        },
+        {
+          id: 'medium-dinner',
+          title: 'Medium Dinner',
+          mealTypes: ['dinner'],
+          ingredients: [{ ingredient: { name: 'rice' } }],
+          totalTimeMinutes: 45,
+        },
+        {
+          id: 'slow-dinner',
+          title: 'Slow Dinner',
+          mealTypes: ['dinner'],
+          ingredients: [{ ingredient: { name: 'beef' } }],
+          totalTimeMinutes: 90,
+        },
+      ];
+
+      const generator = new PlanGenerator(mockPrisma as unknown as PrismaClient);
+
+      await generator.generatePlan({
+        userId: 'user-1',
+        startDate,
+        days: 7,
+        mealsPerDay: 1,
+      });
+
+      const itemsArg = mockCreateItems.mock.calls[0]?.[0];
+      const itemsByDay = new Map(
+        itemsArg?.data.map((item: TestMealPlanItem) => [item.dayIndex, item.recipeId])
+      );
+
+      const weeknightRecipeIds = [0, 1, 2, 3, 4].map((dayIndex) => itemsByDay.get(dayIndex));
+      const weekendRecipeIds = [5, 6].map((dayIndex) => itemsByDay.get(dayIndex));
+
+      expect(new Set(weeknightRecipeIds)).toEqual(new Set(['quick-dinner']));
+      expect(new Set(weekendRecipeIds)).toEqual(new Set(['slow-dinner']));
+    });
+
+    it('falls back to shortest recipe when weeknight cap is too strict', async () => {
+      mockPrisma.userPreferences.findUnique.mockResolvedValue({
+        weeknightMaxTimeMinutes: 10,
+        weeklyTimeBudgetMinutes: null,
+        prioritizeWeeknights: true,
+      });
+      currentRecipes = [
+        {
+          id: 'shortish-dinner',
+          title: 'Shortish Dinner',
+          mealTypes: ['dinner'],
+          ingredients: [{ ingredient: { name: 'lentils' } }],
+          totalTimeMinutes: 25,
+        },
+        {
+          id: 'long-dinner',
+          title: 'Long Dinner',
+          mealTypes: ['dinner'],
+          ingredients: [{ ingredient: { name: 'beef' } }],
+          totalTimeMinutes: 40,
+        },
+      ];
+
+      const generator = new PlanGenerator(mockPrisma as unknown as PrismaClient);
+
+      await generator.generatePlan({
+        userId: 'user-1',
+        startDate,
+        days: 1,
+        mealsPerDay: 1,
+      });
+
+      const itemsArg = mockCreateItems.mock.calls[0]?.[0];
+      expect(itemsArg?.data[0]?.recipeId).toBe('shortish-dinner');
+    });
+
+    it('prefers shorter recipes overall when weekly budget is set', async () => {
+      const weekendStart = new Date(startDate);
+      weekendStart.setDate(startDate.getDate() + 5);
+
+      mockPrisma.userPreferences.findUnique.mockResolvedValue({
+        weeknightMaxTimeMinutes: null,
+        weeklyTimeBudgetMinutes: 120,
+        prioritizeWeeknights: true,
+      });
+      currentRecipes = [
+        {
+          id: 'quick-weekend',
+          title: 'Quick Weekend',
+          mealTypes: ['dinner'],
+          ingredients: [{ ingredient: { name: 'tofu' } }],
+          totalTimeMinutes: 20,
+        },
+        {
+          id: 'slow-weekend',
+          title: 'Slow Weekend',
+          mealTypes: ['dinner'],
+          ingredients: [{ ingredient: { name: 'pork' } }],
+          totalTimeMinutes: 80,
+        },
+      ];
+
+      const generator = new PlanGenerator(mockPrisma as unknown as PrismaClient);
+
+      await generator.generatePlan({
+        userId: 'user-1',
+        startDate: weekendStart,
+        days: 1,
+        mealsPerDay: 1,
+      });
+
+      const itemsArg = mockCreateItems.mock.calls[0]?.[0];
+      expect(itemsArg?.data[0]?.recipeId).toBe('quick-weekend');
     });
   });
 

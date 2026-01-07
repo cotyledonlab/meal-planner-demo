@@ -166,6 +166,10 @@ export interface RecipeForPlanning {
   mealTypes: MealType[];
   servingsDefault: number;
   calories: number;
+  prepTimeMinutes?: number | null;
+  cookTimeMinutes?: number | null;
+  totalTimeMinutes?: number | null;
+  minutes?: number | null;
   /**
    * @deprecated Use dietTags instead
    */

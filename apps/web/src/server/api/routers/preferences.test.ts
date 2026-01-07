@@ -31,6 +31,9 @@ describe('preferencesRouter', () => {
         isVegetarian: true,
         isDairyFree: false,
         dislikes: 'mushrooms, olives',
+        weeknightMaxTimeMinutes: 30,
+        weeklyTimeBudgetMinutes: 300,
+        prioritizeWeeknights: true,
         createdAt: new Date(),
         updatedAt: new Date(),
       };
@@ -66,6 +69,9 @@ describe('preferencesRouter', () => {
         isVegetarian: false,
         isDairyFree: false,
         dislikes: '',
+        weeknightMaxTimeMinutes: null,
+        weeklyTimeBudgetMinutes: null,
+        prioritizeWeeknights: true,
       });
     });
 
@@ -92,6 +98,9 @@ describe('preferencesRouter', () => {
         isVegetarian: true,
         isDairyFree: false,
         dislikes: 'mushrooms',
+        weeknightMaxTimeMinutes: 25,
+        weeklyTimeBudgetMinutes: 280,
+        prioritizeWeeknights: true,
       };
 
       const mockPreferences = {
@@ -188,6 +197,44 @@ describe('preferencesRouter', () => {
           days: 2,
           isVegetarian: false,
           isDairyFree: false,
+        })
+      ).rejects.toThrow();
+    });
+
+    it('should validate weeknight max time range', async () => {
+      const { preferencesRouter } = await import('./preferences');
+      const { createMockContext } = await import('~/test/mocks');
+
+      const ctx = createMockContext();
+      const caller = preferencesRouter.createCaller(ctx);
+
+      await expect(
+        caller.update({
+          householdSize: 2,
+          mealsPerDay: 1,
+          days: 7,
+          isVegetarian: false,
+          isDairyFree: false,
+          weeknightMaxTimeMinutes: 601,
+        })
+      ).rejects.toThrow();
+    });
+
+    it('should validate weekly time budget range', async () => {
+      const { preferencesRouter } = await import('./preferences');
+      const { createMockContext } = await import('~/test/mocks');
+
+      const ctx = createMockContext();
+      const caller = preferencesRouter.createCaller(ctx);
+
+      await expect(
+        caller.update({
+          householdSize: 2,
+          mealsPerDay: 1,
+          days: 7,
+          isVegetarian: false,
+          isDairyFree: false,
+          weeklyTimeBudgetMinutes: -1,
         })
       ).rejects.toThrow();
     });

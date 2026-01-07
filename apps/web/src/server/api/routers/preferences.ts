@@ -17,6 +17,9 @@ export const preferencesRouter = createTRPCRouter({
         isVegetarian: false,
         isDairyFree: false,
         dislikes: '',
+        weeknightMaxTimeMinutes: null,
+        weeklyTimeBudgetMinutes: null,
+        prioritizeWeeknights: true,
       };
     }
 
@@ -33,6 +36,9 @@ export const preferencesRouter = createTRPCRouter({
         isVegetarian: z.boolean(),
         isDairyFree: z.boolean(),
         dislikes: z.string().optional(),
+        weeknightMaxTimeMinutes: z.number().int().min(0).max(600).optional().nullable(),
+        weeklyTimeBudgetMinutes: z.number().int().min(0).max(600).optional().nullable(),
+        prioritizeWeeknights: z.boolean().optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {
