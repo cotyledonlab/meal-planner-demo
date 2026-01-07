@@ -54,6 +54,12 @@ export interface MealPreferences {
   excludeAllergens?: string[];
 }
 
+export interface TimePreferences {
+  weeknightMaxTimeMinutes: number | null;
+  weeklyTimeBudgetMinutes: number | null;
+  prioritizeWeeknights: boolean;
+}
+
 /**
  * Allergen option for the meal wizard
  */

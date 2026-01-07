@@ -6,6 +6,7 @@ import { Button } from '~/components/ui/button';
 import { Card } from '~/components/ui/card';
 import { Label } from '~/components/ui/label';
 import { cn } from '~/lib/utils';
+import type { TimePreferences } from '~/types/meal-plan';
 
 const ALLERGEN_OPTIONS = [
   { id: 'gluten', label: 'Gluten', emoji: '🌾' },
@@ -36,11 +37,7 @@ export interface PlanFilters {
   isDairyFree: boolean;
 }
 
-export interface TimePreferences {
-  weeknightMaxTimeMinutes: number | null;
-  weeklyTimeBudgetMinutes: number | null;
-  prioritizeWeeknights: boolean;
-}
+export type { TimePreferences };
 
 interface PlanFilterPanelProps {
   currentFilters: PlanFilters;

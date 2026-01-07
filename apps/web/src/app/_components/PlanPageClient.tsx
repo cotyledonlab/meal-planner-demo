@@ -143,7 +143,11 @@ export default function PlanPageClient({
 
       {/* Loading overlay during regeneration */}
       <div className={regenerateMutation.isPending ? 'opacity-50 pointer-events-none' : ''}>
-        <MealPlanView plan={plan} shoppingListAnchorId={shoppingListAnchorId} />
+        <MealPlanView
+          plan={plan}
+          shoppingListAnchorId={shoppingListAnchorId}
+          timePreferences={timePreferences}
+        />
       </div>
     </div>
   );

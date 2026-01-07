@@ -7,13 +7,20 @@ import { RecipeCard } from '~/components/features/recipe/RecipeCard';
 import { RecipeDetailModal } from '~/components/features/recipe/RecipeDetailModal';
 import { EmptyState } from '~/components/shared/EmptyState';
 import { api } from '~/trpc/react';
-import type { MealPreferences, MealPlanItem, MealPlan } from '~/types/meal-plan';
+import {
+  type MealPreferences,
+  type MealPlanItem,
+  type MealPlan,
+  type TimePreferences,
+  getDisplayTime,
+} from '~/types/meal-plan';
 
 interface MealPlanViewProps {
   plan?: MealPlan;
   preferences?: MealPreferences;
   onViewShoppingList?: () => void;
   shoppingListAnchorId?: string;
+  timePreferences?: TimePreferences;
 }
 
 /**
@@ -25,11 +32,22 @@ function ensureDate(date: Date | string): Date {
   return new Date(date);
 }
 
+const formatMinutes = (minutes: number): string => `${minutes} min`;
+
+const getItemMinutes = (item: MealPlanItem): number => getDisplayTime(item.recipe);
+
+const getTotalMinutes = (items: MealPlanItem[]): number =>
+  items.reduce((total, item) => total + getItemMinutes(item), 0);
+
+const hasTimeData = (items: MealPlanItem[]): boolean =>
+  items.some((item) => getItemMinutes(item) > 0);
+
 export default function MealPlanView({
   plan,
   preferences,
   onViewShoppingList,
   shoppingListAnchorId,
+  timePreferences,
 }: MealPlanViewProps) {
   const [selectedItem, setSelectedItem] = useState<MealPlanItem | null>(null);
   const [isNavigatorOpen, setIsNavigatorOpen] = useState(false);
@@ -108,8 +126,19 @@ export default function MealPlanView({
               (mealOrder[b.mealType as keyof typeof mealOrder] ?? 99)
             );
           }),
+        totalMinutes: getTotalMinutes(plan.items.filter((item) => item.dayIndex === i)),
+        hasTimeData: hasTimeData(plan.items.filter((item) => item.dayIndex === i)),
       }))
     : [];
+
+  const weeklyTotalMinutes = plan ? getTotalMinutes(plan.items) : 0;
+  const weeklyHasTimeData = plan ? hasTimeData(plan.items) : false;
+  const weeklyBudgetMinutes = timePreferences?.weeklyTimeBudgetMinutes ?? null;
+  const isOverBudget =
+    weeklyBudgetMinutes != null &&
+    weeklyTotalMinutes > weeklyBudgetMinutes &&
+    weeklyTotalMinutes > 0;
+  const showTimeFirst = Boolean(timePreferences?.prioritizeWeeknights);
 
   const handleOpenDetail = (item: MealPlanItem) => {
     setSelectedItem(item);
@@ -158,20 +187,65 @@ export default function MealPlanView({
         {plan ? (
           // Real plan view with enhanced recipe cards
           <>
+            <div className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-gray-200 sm:rounded-xl sm:p-6">
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                    Weekly total time
+                  </p>
+                  <p className="text-2xl font-semibold text-gray-900">
+                    {formatMinutes(weeklyTotalMinutes)}
+                  </p>
+                  {weeklyBudgetMinutes != null && (
+                    <p className="text-xs text-gray-500">
+                      Budget: {formatMinutes(weeklyBudgetMinutes)}
+                    </p>
+                  )}
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {showTimeFirst && (
+                    <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
+                      Time-First
+                    </span>
+                  )}
+                  {weeklyBudgetMinutes != null && (
+                    <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+                      Weekly budget set
+                    </span>
+                  )}
+                </div>
+              </div>
+              {!weeklyHasTimeData && (
+                <p className="mt-3 text-xs text-gray-500">
+                  Time estimates are missing for this plan.
+                </p>
+              )}
+              {isOverBudget && (
+                <p className="mt-3 text-xs text-amber-700">
+                  Over weekly budget by {formatMinutes(weeklyTotalMinutes - weeklyBudgetMinutes)}.
+                </p>
+              )}
+            </div>
+
             {dayGroups.map((day) => (
               <div
                 key={day.dayIndex}
                 id={`plan-day-${day.dayIndex}`}
                 className="scroll-mt-28 rounded-2xl bg-white p-5 shadow-sm ring-1 ring-gray-200 sm:rounded-xl sm:p-6"
               >
-                <h3 className="mb-4 text-lg font-semibold text-gray-900">
-                  Day {day.dayIndex + 1} -{' '}
-                  {day.date.toLocaleDateString('en-US', {
-                    weekday: 'long',
-                    month: 'short',
-                    day: 'numeric',
-                  })}
-                </h3>
+                <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    Day {day.dayIndex + 1} -{' '}
+                    {day.date.toLocaleDateString('en-US', {
+                      weekday: 'long',
+                      month: 'short',
+                      day: 'numeric',
+                    })}
+                  </h3>
+                  <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
+                    ⏱️ {day.hasTimeData ? formatMinutes(day.totalMinutes) : 'Time TBD'}
+                  </span>
+                </div>
                 <div className="space-y-4">
                   {day.items.map((item) => (
                     <RecipeCard key={item.id} item={item} onOpenDetail={handleOpenDetail} />
