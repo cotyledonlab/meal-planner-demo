@@ -73,11 +73,7 @@ export function ShoppingList({ planId, onComparePrices }: ShoppingListProps) {
   const shoppingListId = shoppingList?.id;
   const itemsRef = useRef(items);
   const budgetEstimate = shoppingList?.budgetEstimate;
-  const availableModes = (budgetEstimate?.modes ?? [
-    'cheap',
-    'standard',
-    'premium',
-  ]);
+  const availableModes = budgetEstimate?.modes ?? ['cheap', 'standard', 'premium'];
   const [selectedMode, setSelectedMode] = useState<BudgetEstimateMode>(DEFAULT_ESTIMATE_MODE);
   const activeMode = availableModes.includes(selectedMode)
     ? selectedMode
