@@ -6,6 +6,11 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { ShoppingBag, Check } from 'lucide-react';
 import { isPremiumUser } from '~/lib/auth';
 import { CATEGORY_ORDER, CATEGORY_EMOJI, CATEGORY_LABELS } from '~/lib/categoryConfig';
+import {
+  DEFAULT_ESTIMATE_MODE,
+  type BudgetEstimateConfidence,
+  type BudgetEstimateMode,
+} from '~/lib/estimate';
 import { api } from '~/trpc/react';
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
@@ -33,9 +38,6 @@ interface ShoppingListProps {
   planId: string;
   onComparePrices?: () => void;
 }
-
-type BudgetEstimateMode = 'cheap' | 'standard' | 'premium';
-type BudgetEstimateConfidence = 'high' | 'medium' | 'low';
 
 const budgetModeLabels: Record<BudgetEstimateMode, string> = {
   cheap: 'Cheap',
@@ -75,11 +77,11 @@ export function ShoppingList({ planId, onComparePrices }: ShoppingListProps) {
     'cheap',
     'standard',
     'premium',
-  ]) as BudgetEstimateMode[];
-  const [selectedMode, setSelectedMode] = useState<BudgetEstimateMode>('standard');
+  ]);
+  const [selectedMode, setSelectedMode] = useState<BudgetEstimateMode>(DEFAULT_ESTIMATE_MODE);
   const activeMode = availableModes.includes(selectedMode)
     ? selectedMode
-    : (availableModes[0] ?? 'standard');
+    : (availableModes[0] ?? DEFAULT_ESTIMATE_MODE);
   const estimateValue = budgetEstimate?.totals?.[activeMode];
   const isEstimateLocked = budgetEstimate?.locked !== false;
   const confidence = (budgetEstimate?.confidence ?? 'low') as BudgetEstimateConfidence;

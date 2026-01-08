@@ -10,6 +10,7 @@ import {
   hasDietTagInExport,
   normalizeMealPlanForExport,
 } from '~/lib/export/plan';
+import { DEFAULT_ESTIMATE_MODE, ESTIMATE_DISCLAIMER } from '~/lib/estimate';
 import { auth } from '~/server/auth';
 import { api } from '~/trpc/server';
 
@@ -39,6 +40,24 @@ export default async function PlanPrintPage({ params }: PageProps) {
   const { label } = buildPlanDateMetadata(normalizedPlan.startDate, normalizedPlan.days);
 
   const shoppingList = await api.shoppingList.getForPlan({ planId: id }).catch(() => null);
+  const estimateMode = DEFAULT_ESTIMATE_MODE;
+  const estimateGeneratedAt = new Date();
+  const budgetEstimate = shoppingList?.budgetEstimate;
+  const isEstimateLocked = budgetEstimate?.locked !== false;
+  const estimateTotal = isEstimateLocked ? null : (budgetEstimate?.totals?.[estimateMode] ?? null);
+  const estimateConfidence = isEstimateLocked ? null : (budgetEstimate?.confidence ?? null);
+  const estimateMissingItems = isEstimateLocked ? null : (budgetEstimate?.missingItemCount ?? null);
+  const estimateModeLabel = `${estimateMode.charAt(0).toUpperCase()}${estimateMode.slice(1)}`;
+  const estimateGeneratedLabel = estimateGeneratedAt.toLocaleString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+  const estimateConfidenceLabel = estimateConfidence
+    ? `${estimateConfidence.charAt(0).toUpperCase()}${estimateConfidence.slice(1)}`
+    : null;
 
   const shoppingListByCategory = shoppingList
     ? Array.from(
@@ -165,6 +184,37 @@ export default async function PlanPrintPage({ params }: PageProps) {
             <p className="text-sm text-gray-700">
               Organised by category to speed up your grocery run.
             </p>
+            {shoppingList && (
+              <div className="mt-4 rounded-xl border border-gray-100 bg-gray-50 p-4">
+                <div className="flex flex-wrap items-baseline justify-between gap-2">
+                  <h3 className="text-base font-semibold text-gray-900">Budget estimate</h3>
+                  <span className="text-xs font-medium uppercase tracking-wide text-gray-500">
+                    {isEstimateLocked ? 'Premium required' : 'Premium estimate'}
+                  </span>
+                </div>
+                <div className="mt-2 grid gap-2 text-sm text-gray-700 sm:grid-cols-2">
+                  <p>
+                    <span className="font-semibold">Mode:</span> {estimateModeLabel}
+                  </p>
+                  <p>
+                    <span className="font-semibold">Generated:</span> {estimateGeneratedLabel}
+                  </p>
+                  <p>
+                    <span className="font-semibold">Total:</span>{' '}
+                    {estimateTotal != null ? `€${estimateTotal.toFixed(2)}` : '—'}
+                  </p>
+                  <p>
+                    <span className="font-semibold">Confidence:</span>{' '}
+                    {estimateConfidenceLabel ?? '—'}
+                  </p>
+                  <p>
+                    <span className="font-semibold">Missing items:</span>{' '}
+                    {estimateMissingItems ?? '—'}
+                  </p>
+                </div>
+                <p className="mt-2 text-xs text-gray-600">{ESTIMATE_DISCLAIMER}</p>
+              </div>
+            )}
             <div className="mt-4 grid gap-6 md:grid-cols-2">
               {shoppingListByCategory.map(([category, items]) => (
                 <div key={category} className="space-y-2 rounded-xl border border-gray-100 p-4">

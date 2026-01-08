@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { createCaller } from '~/server/api/root';
 import { createTRPCContext } from '~/server/api/trpc';
 import { normalizeMealPlanForExport } from '~/lib/export/plan';
+import { DEFAULT_ESTIMATE_MODE, ESTIMATE_DISCLAIMER } from '~/lib/estimate';
 import {
   createShoppingListCsvFilename,
   generateShoppingListCsv,
@@ -21,6 +22,14 @@ export async function GET(
     const normalizedPlan = normalizeMealPlanForExport(plan);
 
     const shoppingList = await trpc.shoppingList.getForPlan({ planId: id });
+    const estimateMode = DEFAULT_ESTIMATE_MODE;
+    const estimateGeneratedAt = new Date();
+    const budgetEstimate = shoppingList.budgetEstimate;
+    const isEstimateLocked = budgetEstimate?.locked !== false;
+    const estimateTotal = isEstimateLocked
+      ? null
+      : (budgetEstimate?.totals?.[estimateMode] ?? null);
+
     const csv = generateShoppingListCsv(
       shoppingList.items.map((item) => ({
         name: item.name,
@@ -28,7 +37,16 @@ export async function GET(
         unit: item.unit,
         category: item.category,
         checked: item.checked,
-      }))
+      })),
+      {
+        mode: estimateMode,
+        total: estimateTotal,
+        confidence: isEstimateLocked ? null : (budgetEstimate?.confidence ?? null),
+        missingItemCount: isEstimateLocked ? null : (budgetEstimate?.missingItemCount ?? null),
+        generatedAt: estimateGeneratedAt,
+        disclaimer: ESTIMATE_DISCLAIMER,
+        locked: isEstimateLocked,
+      }
     );
 
     const filename = createShoppingListCsvFilename(normalizedPlan.startDate, normalizedPlan.days);
