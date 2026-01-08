@@ -90,6 +90,10 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-modules-
 
+      - name: Generate Prisma client
+        if: matrix.check != 'format'
+        run: pnpm --filter @meal-planner-demo/web exec prisma generate
+
       - name: Setup environment
         if: matrix.check != 'format'
         run: |
@@ -144,6 +148,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-modules-
 
+      - name: Generate Prisma client
+        run: pnpm --filter @meal-planner-demo/web exec prisma generate
+
       - name: Setup environment
         run: |
           echo "AUTH_SECRET=ci-test-secret-$(openssl rand -hex 32)" >> $GITHUB_ENV
@@ -181,6 +188,9 @@ jobs:
           key: ${{ runner.os }}-node-modules-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-node-modules-
+
+      - name: Generate Prisma client
+        run: pnpm --filter @meal-planner-demo/web exec prisma generate
 
       - name: Setup environment
         run: |
