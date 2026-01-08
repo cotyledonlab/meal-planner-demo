@@ -1,11 +1,13 @@
 'use client';
 
+import Link from 'next/link';
 import { useSession } from 'next-auth/react';
-import { useEffect, useMemo, useRef } from 'react';
-import { ShoppingBag, ChevronDown, Check } from 'lucide-react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { ShoppingBag, Check } from 'lucide-react';
 import { isPremiumUser } from '~/lib/auth';
 import { CATEGORY_ORDER, CATEGORY_EMOJI, CATEGORY_LABELS } from '~/lib/categoryConfig';
 import { api } from '~/trpc/react';
+import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
 import { Card } from '~/components/ui/card';
 import {
@@ -32,6 +34,27 @@ interface ShoppingListProps {
   onComparePrices?: () => void;
 }
 
+type BudgetEstimateMode = 'cheap' | 'standard' | 'premium';
+type BudgetEstimateConfidence = 'high' | 'medium' | 'low';
+
+const budgetModeLabels: Record<BudgetEstimateMode, string> = {
+  cheap: 'Cheap',
+  standard: 'Standard',
+  premium: 'Premium',
+};
+
+const confidenceLabels: Record<BudgetEstimateConfidence, string> = {
+  high: 'High confidence',
+  medium: 'Medium confidence',
+  low: 'Low confidence',
+};
+
+const confidenceClasses: Record<BudgetEstimateConfidence, string> = {
+  high: 'bg-emerald-100 text-emerald-700',
+  medium: 'bg-amber-100 text-amber-700',
+  low: 'bg-rose-100 text-rose-700',
+};
+
 export function ShoppingList({ planId, onComparePrices }: ShoppingListProps) {
   const { data: session, status } = useSession();
   const isPremium = isPremiumUser(session?.user);
@@ -47,6 +70,20 @@ export function ShoppingList({ planId, onComparePrices }: ShoppingListProps) {
   const items = useMemo(() => shoppingList?.items ?? [], [shoppingList?.items]);
   const shoppingListId = shoppingList?.id;
   const itemsRef = useRef(items);
+  const budgetEstimate = shoppingList?.budgetEstimate;
+  const availableModes = (budgetEstimate?.modes ?? [
+    'cheap',
+    'standard',
+    'premium',
+  ]) as BudgetEstimateMode[];
+  const [selectedMode, setSelectedMode] = useState<BudgetEstimateMode>('standard');
+  const activeMode = availableModes.includes(selectedMode)
+    ? selectedMode
+    : (availableModes[0] ?? 'standard');
+  const estimateValue = budgetEstimate?.totals?.[activeMode];
+  const isEstimateLocked = budgetEstimate?.locked !== false;
+  const confidence = (budgetEstimate?.confidence ?? 'low') as BudgetEstimateConfidence;
+  const missingItemCount = budgetEstimate?.missingItemCount ?? 0;
 
   useEffect(() => {
     itemsRef.current = items;
@@ -185,6 +222,99 @@ export function ShoppingList({ planId, onComparePrices }: ShoppingListProps) {
         </p>
       </Card>
 
+      <Card className="p-4 sm:p-6">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <div className="flex flex-wrap items-center gap-2">
+              <h3 className="text-lg font-semibold text-gray-900">Budget estimate</h3>
+              {isEstimateLocked && (
+                <Badge
+                  variant="secondary"
+                  className="bg-amber-100 text-amber-700 hover:bg-amber-100"
+                >
+                  Premium
+                </Badge>
+              )}
+            </div>
+            <p className="mt-1 text-sm text-gray-600">
+              {isEstimateLocked
+                ? 'Unlock cheap, standard, and premium estimates for your list.'
+                : 'Estimates use baseline ingredient pricing.'}
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-4 flex flex-wrap gap-2">
+          {availableModes.map((mode) => {
+            const isActive = activeMode === mode;
+            return (
+              <Button
+                key={mode}
+                type="button"
+                size="sm"
+                variant={isActive ? 'default' : 'outline'}
+                onClick={() => setSelectedMode(mode)}
+                disabled={isEstimateLocked}
+                className={cn(
+                  !isActive && 'border-gray-200 text-gray-700',
+                  isEstimateLocked && 'cursor-not-allowed'
+                )}
+              >
+                {budgetModeLabels[mode]}
+              </Button>
+            );
+          })}
+        </div>
+
+        <div className="mt-5 flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p
+              className={cn(
+                'text-3xl font-semibold',
+                isEstimateLocked ? 'text-gray-300' : 'text-gray-900'
+              )}
+            >
+              {estimateValue != null ? `€${estimateValue.toFixed(2)}` : '€—'}
+            </p>
+            <p className="text-sm text-gray-600">{budgetModeLabels[activeMode]} estimate</p>
+          </div>
+          {!isEstimateLocked && (
+            <Badge
+              className={cn(
+                'h-fit border border-transparent bg-transparent',
+                confidenceClasses[confidence]
+              )}
+            >
+              {confidenceLabels[confidence]}
+            </Badge>
+          )}
+        </div>
+
+        {isEstimateLocked ? (
+          <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-sm text-gray-600">
+              Upgrade to see mode totals, confidence, and missing-item coverage.
+            </p>
+            <Button asChild variant="premium" size="sm" className="w-full sm:w-auto">
+              <Link href="/#pricing">Upgrade to Premium</Link>
+            </Button>
+          </div>
+        ) : (
+          <div className="mt-3 space-y-1 text-sm text-gray-600">
+            <p>
+              {missingItemCount === 0
+                ? 'All items matched to baseline pricing.'
+                : `${missingItemCount} item${
+                    missingItemCount === 1 ? '' : 's'
+                  } missing baseline data.`}
+            </p>
+            <p className="text-xs text-gray-500">
+              Estimates are based on ingredient category baselines.
+            </p>
+          </div>
+        )}
+      </Card>
+
       {/* Grouped Shopping List */}
       <Accordion type="multiple" className="space-y-4">
         {Array.from(groupedItems.entries()).map(([category, categoryItems]) => {
@@ -290,12 +420,12 @@ export function ShoppingList({ planId, onComparePrices }: ShoppingListProps) {
       {onComparePrices && (
         <div className="text-center">
           <Button onClick={onComparePrices} disabled={isLoading} className="w-full sm:w-auto">
-            {isPremium ? 'Compare Prices' : 'Compare Prices (Premium Preview)'}
+            {isPremium ? 'Compare Store Estimates' : 'Compare Store Estimates (Preview)'}
           </Button>
           <p className="mt-3 text-sm text-gray-700">
             {isPremium
-              ? 'See real-time price comparisons across stores'
-              : 'See how much you could save at different stores'}
+              ? 'See estimated totals across stores based on baseline pricing'
+              : 'Preview how estimates compare across stores'}
           </p>
         </div>
       )}

@@ -33,7 +33,7 @@ export function PriceComparisonModal({
   planId,
   isPremium,
 }: PriceComparisonModalProps) {
-  // Fetch real price data for premium users
+  // Fetch estimate data for premium users
   const { data: shoppingListData, isLoading } = api.shoppingList.getForMealPlan.useQuery(
     { mealPlanId: planId },
     { enabled: open && isPremium }
@@ -42,7 +42,7 @@ export function PriceComparisonModal({
   const storePrices = shoppingListData?.storePrices ?? null;
   const cheapestStore = shoppingListData?.cheapestStore ?? null;
 
-  // Calculate savings relative to cheapest store for real data
+  // Calculate savings relative to cheapest store for estimate data
   const calculateSavings = (prices: StorePrice[]) => {
     if (!prices.length) return [];
     const cheapest = prices[0]!; // Already sorted by price
@@ -55,7 +55,7 @@ export function PriceComparisonModal({
 
   const pricesWithSavings = storePrices ? calculateSavings(storePrices) : null;
 
-  // Render premium user content with real data
+  // Render premium user content with estimate data
   if (isPremium) {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
@@ -63,14 +63,14 @@ export function PriceComparisonModal({
           <DialogHeader>
             <DialogTitle className="text-2xl">Price Comparison</DialogTitle>
             <DialogDescription>
-              Compare prices across supermarkets for your shopping list
+              Compare estimated totals across supermarkets for your shopping list
             </DialogDescription>
           </DialogHeader>
 
           {isLoading ? (
             <div className="flex items-center justify-center py-12">
               <Loader2 className="h-8 w-8 animate-spin text-emerald-600" />
-              <span className="ml-2 text-gray-600">Loading prices...</span>
+              <span className="ml-2 text-gray-600">Loading estimates...</span>
             </div>
           ) : pricesWithSavings && pricesWithSavings.length > 0 ? (
             <>
@@ -84,7 +84,7 @@ export function PriceComparisonModal({
                           Store
                         </th>
                         <th className="px-6 py-3 text-right text-sm font-semibold text-gray-900">
-                          Total
+                          Estimated Total
                         </th>
                         <th className="px-6 py-3 text-right text-sm font-semibold text-gray-900">
                           Compared to Best
@@ -130,16 +130,17 @@ export function PriceComparisonModal({
                 <div className="rounded-lg bg-emerald-50 p-4">
                   <p className="text-sm text-emerald-900">
                     💡 <strong>Best deal:</strong> Shop at {cheapestStore.store} to get the lowest
-                    price of €{cheapestStore.totalPrice.toFixed(2)} for your shopping list!
+                    estimated total of €{cheapestStore.totalPrice.toFixed(2)} for your shopping
+                    list!
                   </p>
                 </div>
               )}
             </>
           ) : (
             <div className="py-8 text-center text-gray-600">
-              <p>No price data available for this shopping list.</p>
+              <p>No estimate data available for this shopping list.</p>
               <p className="mt-2 text-sm">
-                Price comparisons are based on available ingredient pricing data.
+                Estimates are based on available ingredient pricing baselines.
               </p>
             </div>
           )}
@@ -161,7 +162,7 @@ export function PriceComparisonModal({
         <DialogHeader>
           <DialogTitle className="text-2xl">Price Comparison</DialogTitle>
           <DialogDescription>
-            See which supermarket offers the best value for your shopping list
+            See which supermarket offers the best estimated value for your shopping list
           </DialogDescription>
         </DialogHeader>
 
@@ -182,7 +183,7 @@ export function PriceComparisonModal({
                 <tr>
                   <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Store</th>
                   <th className="px-6 py-3 text-right text-sm font-semibold text-gray-900">
-                    Total
+                    Estimated Total
                   </th>
                   <th className="px-6 py-3 text-right text-sm font-semibold text-gray-900">
                     Estimated Savings
@@ -222,19 +223,18 @@ export function PriceComparisonModal({
         {/* Info box */}
         <div className="rounded-lg bg-emerald-50 p-4">
           <p className="text-sm text-emerald-900">
-            💡 <strong>With Premium:</strong> Shop at {sampleCheapest?.name} this week and save up
-            to €{Math.abs(storesData[storesData.length - 1]?.savings ?? 0).toFixed(2)} compared to
-            other stores!
+            💡 <strong>With Premium:</strong> See your full estimate breakdown and compare stores to
+            save up to €{Math.abs(storesData[storesData.length - 1]?.savings ?? 0).toFixed(2)}.
           </p>
         </div>
 
         {/* CTA */}
         <div className="space-y-3">
           <Button asChild className="w-full">
-            <Link href="/#pricing">Upgrade to Premium for Real Prices</Link>
+            <Link href="/#pricing">Upgrade to Premium for Full Estimates</Link>
           </Button>
           <p className="text-center text-xs text-gray-700">
-            This example uses sample data • Get actual supermarket prices with Premium
+            This example uses sample data • Premium unlocks personalized estimates
           </p>
         </div>
       </DialogContent>
