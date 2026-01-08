@@ -153,9 +153,6 @@ export function PriceComparisonModal({
     );
   }
 
-  // Render free user content with sample data
-  const sampleCheapest = storesData.find((store) => store.isCheapest);
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
