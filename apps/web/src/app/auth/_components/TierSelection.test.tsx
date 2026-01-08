@@ -82,7 +82,7 @@ describe('TierSelection', () => {
     render(<TierSelection selectedTier="premium" onTierSelect={mockOnTierSelect} />);
 
     expect(screen.getByText('Everything in Free')).toBeInTheDocument();
-    expect(screen.getByText(/Find the best value supermarkets/)).toBeInTheDocument();
+    expect(screen.getByText(/Budget estimates across supermarkets/)).toBeInTheDocument();
     expect(screen.getByText(/Advanced customisation for picky eaters/)).toBeInTheDocument();
     expect(screen.getByText(/Multiple meal plans for busy weeks/)).toBeInTheDocument();
   });
@@ -101,7 +101,7 @@ describe('TierSelection', () => {
     const mockOnTierSelect = vi.fn();
     render(<TierSelection selectedTier="premium" onTierSelect={mockOnTierSelect} />);
 
-    expect(screen.getByText(/Less than the price of a coffee/)).toBeInTheDocument();
+    expect(screen.getByText(/Plan the week in minutes, not hours/)).toBeInTheDocument();
     expect(screen.getByText(/Just €0.17\/day/)).toBeInTheDocument();
   });
 
@@ -111,7 +111,7 @@ describe('TierSelection', () => {
 
     expect(screen.getByText(/Meal kits/)).toBeInTheDocument();
     expect(screen.getByText(/€50-80\/week/)).toBeInTheDocument();
-    expect(screen.getByText(/Save €20\/week on groceries/)).toBeInTheDocument();
+    expect(screen.getByText(/Plan in minutes with a weekly budget estimate/)).toBeInTheDocument();
   });
 
   it('should show trust signals when premium is selected', () => {

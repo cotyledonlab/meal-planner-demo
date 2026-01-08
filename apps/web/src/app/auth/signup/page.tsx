@@ -248,8 +248,8 @@ function SignUpForm() {
                   {isPaymentStep ? 'Mock payment' : 'Account details'}
                 </p>
                 <p className="mt-1 text-sm text-emerald-800">
-                  Premium Tier: €4.99/month • Advanced plan settings, longer plans, and supermarket
-                  comparisons.
+                  Premium Tier: €4.99/month • Advanced plan settings, longer plans, and budget
+                  estimates.
                 </p>
                 {isPaymentStep && (
                   <p className="mt-2 text-xs text-emerald-700">

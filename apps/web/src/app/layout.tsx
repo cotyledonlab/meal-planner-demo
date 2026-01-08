@@ -28,7 +28,7 @@ const dmSans = DM_Sans({
 export const metadata: Metadata = {
   title: 'MealMind AI - Your Family, Fed and Happy',
   description:
-    'Stop stressing about "What\'s for dinner?" Join Irish families saving time, money, and sanity with smart meal planning. Free meal plans, shopping lists, and supermarket savings.',
+    'Stop stressing about "What\'s for dinner?" Join Irish families saving time and sanity with smart meal planning. Free meal plans, shopping lists, and budget estimates.',
   icons: { icon: '/favicon.svg' },
 };
 

@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { X, Sparkles } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -20,15 +20,13 @@ interface PremiumPreviewModalProps {
 }
 
 export function PremiumPreviewModal({ open, onOpenChange }: PremiumPreviewModalProps) {
-  const cheapestStore = storesData.find((store) => store.isCheapest);
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-2xl">Price Comparison</DialogTitle>
+          <DialogTitle className="text-2xl">Budget Estimate Preview</DialogTitle>
           <DialogDescription>
-            See which supermarket offers the best value for your shopping list
+            Compare estimated totals across supermarkets for your shopping list
           </DialogDescription>
         </DialogHeader>
 
@@ -89,19 +87,18 @@ export function PremiumPreviewModal({ open, onOpenChange }: PremiumPreviewModalP
         {/* Info box */}
         <div className="rounded-lg bg-emerald-50 p-4">
           <p className="text-sm text-emerald-900">
-            💡 <strong>With Premium:</strong> Shop at {cheapestStore?.name} this week and save up to
-            €{Math.abs(storesData[storesData.length - 1]?.savings ?? 0).toFixed(2)} compared to
-            other stores!
+            💡 <strong>With Premium:</strong> Compare estimates and spot where you could save up to
+            €{Math.abs(storesData[storesData.length - 1]?.savings ?? 0).toFixed(2)} this week.
           </p>
         </div>
 
         {/* CTA */}
         <div className="space-y-3">
           <Button asChild className="w-full">
-            <Link href="/#pricing">Upgrade to Premium for Real Prices</Link>
+            <Link href="/#pricing">Upgrade to Premium for full estimates</Link>
           </Button>
           <p className="text-center text-xs text-gray-700">
-            This example uses sample data • Get actual supermarket prices with Premium
+            This example uses sample data • Premium unlocks full budget estimates
           </p>
         </div>
       </DialogContent>

@@ -61,8 +61,8 @@ const PREMIUM_FEATURES: PremiumFeature[] = [
   },
   {
     id: 'price-comparison',
-    title: 'Supermarket Price Comparison',
-    description: 'See estimated totals across Aldi, Lidl, Tesco & Dunnes to save more.',
+    title: 'Budget Estimates by Store',
+    description: 'See estimated totals across Aldi, Lidl, Tesco & Dunnes before you shop.',
     Icon: Store,
     color: 'amber',
   },
@@ -407,7 +407,7 @@ export default function DashboardClient({ user, hasMealPlan, recentPlans }: Dash
                   feature.id === 'price-comparison' ? () => setShowPremiumModal(true) : undefined
                 }
                 previewLabel={
-                  feature.id === 'price-comparison' ? 'View sample price comparison' : undefined
+                  feature.id === 'price-comparison' ? 'View sample budget estimate' : undefined
                 }
                 onLearnMore={() => {
                   // TODO: Add feature-specific learn more pages

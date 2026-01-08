@@ -44,7 +44,7 @@ export default function CelebrationModal({ userName, tier }: CelebrationModalPro
           { icon: '📅', text: 'Generate 7-day meal plans' },
           { icon: '🎯', text: 'Advanced dietary filters' },
           { icon: '📊', text: 'Premium shopping list exports' },
-          { icon: '💰', text: 'Supermarket price comparisons' },
+          { icon: '💰', text: 'Budget estimates by store' },
         ]
       : [
           { icon: '📅', text: 'Create 3-day meal plans' },

@@ -75,11 +75,11 @@ describe('PremiumFeatureCard', () => {
         <PremiumFeatureCard
           {...defaultProps}
           onPreview={onPreview}
-          previewLabel="View sample price comparison"
+          previewLabel="View sample budget estimate"
         />
       );
 
-      expect(screen.getByText('View sample price comparison')).toBeInTheDocument();
+      expect(screen.getByText('View sample budget estimate')).toBeInTheDocument();
     });
 
     it('does not show preview button when onPreview is not provided', () => {

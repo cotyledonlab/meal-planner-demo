@@ -65,9 +65,11 @@ describe('Pricing', () => {
   it('should display psychological pricing for premium tier', () => {
     render(<Pricing />);
 
-    expect(screen.getByText(/Less than the price of a coffee/)).toBeInTheDocument();
+    expect(screen.getByText(/Plan the week in minutes, not hours/)).toBeInTheDocument();
     expect(screen.getByText(/Just €0.17\/day/)).toBeInTheDocument();
-    expect(screen.getByText(/Avg. user saves 3 hours and €20\/week/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Avg. user saves 3 hours\/week and keeps a weekly budget estimate/)
+    ).toBeInTheDocument();
   });
 
   it('should show value comparison for premium tier', () => {
@@ -98,7 +100,9 @@ describe('Pricing', () => {
   it('should show social proof message', () => {
     render(<Pricing />);
 
-    expect(screen.getByText(/Join 1,000\+ families saving time & money/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Join 1,000\+ families planning faster and staying on budget/)
+    ).toBeInTheDocument();
   });
 
   it('should display premium as most popular', () => {
@@ -132,9 +136,7 @@ describe('Pricing', () => {
     render(<Pricing />);
 
     expect(screen.getByText('Everything in Free')).toBeInTheDocument();
-    expect(
-      screen.getByText(/Find the best value supermarkets – save €20\+ weekly/)
-    ).toBeInTheDocument();
+    expect(screen.getByText(/Budget estimates across supermarkets/)).toBeInTheDocument();
     expect(screen.getByText(/Advanced customisation for picky eaters/)).toBeInTheDocument();
     expect(screen.getByText(/Multiple meal plans for busy weeks/)).toBeInTheDocument();
     expect(screen.getByText(/Priority support when you need us/)).toBeInTheDocument();

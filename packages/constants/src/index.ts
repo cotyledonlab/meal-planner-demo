@@ -58,13 +58,13 @@ export const PRICING = {
     annualSavings: "18%",
     annualMonthlyEquivalent: "€4.08",
     dailyCost: "€0.17",
-    description: "More family time, less kitchen stress",
-    valueProposition: "Less than the price of a coffee",
-    socialProof: "Join 1,000+ families saving time & money",
-    roi: "Avg. user saves 3 hours and €20/week",
+    description: "More family time, clearer weekly budget",
+    valueProposition: "Plan the week in minutes, not hours",
+    socialProof: "Join 1,000+ families planning faster and staying on budget",
+    roi: "Avg. user saves 3 hours/week and keeps a weekly budget estimate",
     features: [
       "Everything in Free",
-      "Find the best value supermarkets – save €20+ weekly",
+      "Budget estimates across supermarkets",
       "Advanced customisation for picky eaters",
       "Multiple meal plans for busy weeks",
       "Priority support when you need us",
@@ -73,7 +73,7 @@ export const PRICING = {
   },
   VALUE_COMPARISON: {
     mealKitServices: "€50-80/week",
-    grocerySavings: "Save €20/week on groceries",
+    grocerySavings: "Plan in minutes with a weekly budget estimate",
   },
   TRUST_SIGNALS: {
     moneyBackGuarantee: "30-day money-back guarantee",

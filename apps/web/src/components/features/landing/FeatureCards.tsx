@@ -34,11 +34,11 @@ export function FeatureCards() {
     {
       title: 'Save Money Without the Hassle',
       description:
-        "We scan supermarket prices so you don't have to. Find the best deals and save €20+ every week.",
+        'Get a quick budget estimate across supermarkets so you can plan before you shop.',
       Icon: Euro,
       color: 'honey',
       premium: true,
-      highlight: '€1,000+ saved per year',
+      highlight: 'Budget clarity, fast',
     },
     {
       title: 'Actually Works for Your Family',
