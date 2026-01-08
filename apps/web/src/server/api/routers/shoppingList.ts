@@ -3,6 +3,7 @@ import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
 import { aggregateIngredients, formatQuantity } from '~/lib/unitConverter';
 import type { NormalizedUnit } from '~/lib/unitConverter';
 import { ShoppingListService } from '../../services/shoppingList';
+import { estimateBudget, type BudgetEstimateMode } from '~/server/services/budgetEstimator';
 
 interface ShoppingListItem {
   ingredientId: string;
@@ -17,6 +18,8 @@ interface StorePrice {
   store: string;
   totalPrice: number;
 }
+
+const budgetEstimateModes: BudgetEstimateMode[] = ['cheap', 'standard', 'premium'];
 
 export const shoppingListRouter = createTRPCRouter({
   // Get stored shopping list for a meal plan
@@ -38,8 +41,42 @@ export const shoppingListRouter = createTRPCRouter({
 
       const service = new ShoppingListService(ctx.db);
       const shoppingList = await service.getForPlan(input.planId);
+      const isPremium = ctx.session.user.role === 'premium';
 
-      return shoppingList;
+      let budgetEstimate: {
+        locked: boolean;
+        modes?: BudgetEstimateMode[];
+        totals?: { cheap: number; standard: number; premium: number };
+        missingItemCount?: number;
+        confidence?: 'high' | 'medium' | 'low';
+      } = {
+        locked: true,
+        modes: budgetEstimateModes,
+      };
+
+      if (isPremium) {
+        const priceBaselines = await ctx.db.priceBaseline.findMany();
+        const estimate = estimateBudget(
+          shoppingList.items.map((item) => ({
+            category: item.category,
+            quantity: item.quantity,
+            unit: item.unit,
+          })),
+          priceBaselines
+        );
+
+        budgetEstimate = {
+          locked: false,
+          totals: estimate.totals,
+          missingItemCount: estimate.missingItemCount,
+          confidence: estimate.confidence,
+        };
+      }
+
+      return {
+        ...shoppingList,
+        budgetEstimate,
+      };
     }),
 
   // Generate shopping list for a meal plan
@@ -147,47 +184,77 @@ export const shoppingListRouter = createTRPCRouter({
         {} as Record<string, ShoppingListItem[]>
       );
 
-      // Calculate price estimates per store
-      const priceBaselines = await ctx.db.priceBaseline.findMany();
-      const pricesByStore = new Map<string, number>();
+      const isPremium = ctx.session.user.role === 'premium';
+      let storePrices: StorePrice[] | null = null;
+      let cheapestStore: StorePrice | null = null;
+      let budgetEstimate: {
+        locked: boolean;
+        modes?: BudgetEstimateMode[];
+        totals?: { cheap: number; standard: number; premium: number };
+        missingItemCount?: number;
+        confidence?: 'high' | 'medium' | 'low';
+      } = {
+        locked: true,
+        modes: budgetEstimateModes,
+      };
 
-      for (const item of shoppingListItems) {
-        const categoryBaselines = priceBaselines.filter(
-          (pb) => pb.ingredientCategory === item.category
+      if (isPremium) {
+        // Calculate price estimates per store
+        const priceBaselines = await ctx.db.priceBaseline.findMany();
+        const pricesByStore = new Map<string, number>();
+
+        for (const item of shoppingListItems) {
+          const categoryBaselines = priceBaselines.filter(
+            (pb) => pb.ingredientCategory === item.category
+          );
+
+          for (const baseline of categoryBaselines) {
+            // Convert to baseline unit for price calculation
+            if (baseline.unit !== item.unit) {
+              // Skip if units don't match (simplified - could add conversion)
+              continue;
+            }
+
+            const itemCost = item.quantity * baseline.pricePerUnit;
+            const currentTotal = pricesByStore.get(baseline.store) ?? 0;
+            pricesByStore.set(baseline.store, currentTotal + itemCost);
+          }
+        }
+
+        // Convert to array and sort by price
+        storePrices = Array.from(pricesByStore.entries())
+          .map(([store, totalPrice]) => ({
+            store,
+            totalPrice: Math.round(totalPrice * 100) / 100, // Round to 2 decimals
+          }))
+          .sort((a, b) => a.totalPrice - b.totalPrice);
+
+        cheapestStore = storePrices[0] ?? null;
+
+        const estimate = estimateBudget(
+          shoppingListItems.map((item) => ({
+            category: item.category,
+            quantity: item.quantity,
+            unit: item.unit,
+          })),
+          priceBaselines
         );
 
-        for (const baseline of categoryBaselines) {
-          // Convert to baseline unit for price calculation
-          if (baseline.unit !== item.unit) {
-            // Skip if units don't match (simplified - could add conversion)
-            continue;
-          }
-
-          const itemCost = item.quantity * baseline.pricePerUnit;
-          const currentTotal = pricesByStore.get(baseline.store) ?? 0;
-          pricesByStore.set(baseline.store, currentTotal + itemCost);
-        }
+        budgetEstimate = {
+          locked: false,
+          totals: estimate.totals,
+          missingItemCount: estimate.missingItemCount,
+          confidence: estimate.confidence,
+        };
       }
-
-      // Convert to array and sort by price
-      const storePrices: StorePrice[] = Array.from(pricesByStore.entries())
-        .map(([store, totalPrice]) => ({
-          store,
-          totalPrice: Math.round(totalPrice * 100) / 100, // Round to 2 decimals
-        }))
-        .sort((a, b) => a.totalPrice - b.totalPrice);
-
-      const cheapestStore = storePrices[0];
-
-      // Only return price data for premium users - free users get null
-      const isPremium = ctx.session.user.role === 'premium';
 
       return {
         mealPlanId: input.mealPlanId,
         items: shoppingListItems,
         grouped,
-        storePrices: isPremium ? storePrices : null,
-        cheapestStore: isPremium ? cheapestStore : null,
+        storePrices,
+        cheapestStore,
+        budgetEstimate,
         totalItems: shoppingListItems.length,
       };
     }),

@@ -108,6 +108,10 @@ describe('shoppingListRouter', () => {
       // Free users should not receive price comparison data
       expect(result.storePrices).toBeNull();
       expect(result.cheapestStore).toBeNull();
+      expect(result.budgetEstimate).toEqual({
+        locked: true,
+        modes: ['cheap', 'standard', 'premium'],
+      });
     });
 
     it('should return store prices only for premium users', async () => {
@@ -195,6 +199,16 @@ describe('shoppingListRouter', () => {
       // Premium users should receive price comparison data
       expect(result.storePrices).toHaveLength(2);
       expect(result.cheapestStore?.store).toBe('Aldi');
+      expect(result.budgetEstimate).toEqual({
+        locked: false,
+        totals: {
+          cheap: 1.6,
+          standard: 1.8,
+          premium: 2,
+        },
+        missingItemCount: 0,
+        confidence: 'high',
+      });
     });
 
     it("should not allow access to another user's meal plan", async () => {
