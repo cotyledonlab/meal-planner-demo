@@ -1,12 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import {
-  getRecipeTotalTime,
-  getPrimaryImageUrl,
-  type RecipeImage,
-  type RecipeStep,
-} from '@meal-planner-demo/types';
+import { getRecipeTotalTime, getPrimaryImageUrl, type RecipeImage } from '@meal-planner-demo/types';
 import { Printer, Share2, RefreshCw, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '~/components/ui/dialog';

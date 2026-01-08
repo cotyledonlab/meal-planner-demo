@@ -5,7 +5,14 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { Menu, X } from 'lucide-react';
 import { Button } from '~/components/ui/button';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '~/components/ui/sheet';
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+  SheetTrigger,
+} from '~/components/ui/sheet';
 import { cn } from '~/lib/utils';
 
 function Logo() {
@@ -98,6 +105,9 @@ export function Header() {
                 <SheetContent side="right" className="w-72">
                   <SheetHeader>
                     <SheetTitle className="sr-only">Navigation menu</SheetTitle>
+                    <SheetDescription className="sr-only">
+                      Quick access to navigation and account actions
+                    </SheetDescription>
                   </SheetHeader>
                   <div className="mt-6 space-y-3">
                     {navItems.map((item, index) => (

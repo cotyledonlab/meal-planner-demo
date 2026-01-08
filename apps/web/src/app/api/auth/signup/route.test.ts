@@ -133,7 +133,8 @@ describe('Sign Up Schema Validation', () => {
     });
 
     it('rejects missing confirm password', () => {
-      const { confirmPassword: _, ...payloadWithoutConfirm } = basePayload;
+      const { confirmPassword, ...payloadWithoutConfirm } = basePayload;
+      void confirmPassword;
       const result = signUpSchema.safeParse({
         ...payloadWithoutConfirm,
         tier: 'basic',

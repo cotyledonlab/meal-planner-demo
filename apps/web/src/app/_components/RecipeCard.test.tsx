@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { ImageProps } from 'next/image';
 import RecipeCard from '~/components/features/recipe/RecipeCard';
@@ -85,7 +85,9 @@ describe('RecipeCard Component', () => {
 
     // Simulate image load error
     expect(capturedOnError).toBeDefined();
-    capturedOnError?.();
+    act(() => {
+      capturedOnError?.();
+    });
 
     rerender(<RecipeCard item={mockMealPlanItem} onOpenDetail={vi.fn()} />);
 
@@ -97,7 +99,9 @@ describe('RecipeCard Component', () => {
     const { rerender } = render(<RecipeCard item={mockMealPlanItem} onOpenDetail={vi.fn()} />);
 
     // First error - should switch to placeholder
-    capturedOnError?.();
+    act(() => {
+      capturedOnError?.();
+    });
     rerender(<RecipeCard item={mockMealPlanItem} onOpenDetail={vi.fn()} />);
 
     expect(screen.getByTestId('recipe-image')).toHaveAttribute(
@@ -106,7 +110,9 @@ describe('RecipeCard Component', () => {
     );
 
     // Second error - guard should prevent state update
-    capturedOnError?.();
+    act(() => {
+      capturedOnError?.();
+    });
     rerender(<RecipeCard item={mockMealPlanItem} onOpenDetail={vi.fn()} />);
 
     // Should still be placeholder (no change)
@@ -120,7 +126,9 @@ describe('RecipeCard Component', () => {
     const { rerender } = render(<RecipeCard item={mockMealPlanItem} onOpenDetail={vi.fn()} />);
 
     // Trigger error to switch to placeholder
-    capturedOnError?.();
+    act(() => {
+      capturedOnError?.();
+    });
     rerender(<RecipeCard item={mockMealPlanItem} onOpenDetail={vi.fn()} />);
     expect(screen.getByTestId('recipe-image')).toHaveAttribute(
       'src',

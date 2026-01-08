@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, act } from '@testing-library/react';
 import { beforeEach, describe, it, expect, vi } from 'vitest';
 import type { ImageProps } from 'next/image';
 import HeroImage from '~/components/features/landing/HeroImage';
@@ -49,7 +49,9 @@ describe('HeroImage Component', () => {
 
     // Simulate image load error
     expect(capturedOnError).toBeDefined();
-    capturedOnError?.();
+    act(() => {
+      capturedOnError?.();
+    });
 
     // Re-render to pick up state change
     rerender(<HeroImage />);
@@ -65,7 +67,9 @@ describe('HeroImage Component', () => {
     const { rerender } = render(<HeroImage />);
 
     // First error - should switch to fallback
-    capturedOnError?.();
+    act(() => {
+      capturedOnError?.();
+    });
     rerender(<HeroImage />);
 
     const image = screen.getByTestId('hero-image');
@@ -74,7 +78,9 @@ describe('HeroImage Component', () => {
     expect(image).toHaveAttribute('src', fallbackUrl);
 
     // Second error - should NOT change src (guard against infinite loop)
-    capturedOnError?.();
+    act(() => {
+      capturedOnError?.();
+    });
     rerender(<HeroImage />);
 
     // Image should still have fallback URL (not changed)
