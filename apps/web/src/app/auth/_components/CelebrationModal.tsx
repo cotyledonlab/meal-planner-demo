@@ -30,8 +30,17 @@ export default function CelebrationModal({ userName, tier }: CelebrationModalPro
     }));
     setConfettiPieces(pieces);
 
-    return () => clearTimeout(timer);
-  }, []);
+    // Auto-redirect to dashboard after 4 seconds
+    const redirectTimer = setTimeout(() => {
+      router.push('/dashboard');
+      router.refresh();
+    }, 4000);
+
+    return () => {
+      clearTimeout(timer);
+      clearTimeout(redirectTimer);
+    };
+  }, [router]);
 
   const handleGetStarted = () => {
     router.push('/dashboard');

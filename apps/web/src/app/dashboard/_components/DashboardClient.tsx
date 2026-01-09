@@ -297,7 +297,7 @@ export default function DashboardClient({ user, hasMealPlan, recentPlans }: Dash
               />
             ) : (
               <Link
-                href="/planner"
+                href={`/plan/${recentPlans[0]!.id}#plan-shopping-list-section`}
                 className="group h-full rounded-2xl border border-gray-200 bg-white p-6 shadow-md transition-all duration-200 hover:shadow-xl hover:-translate-y-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
               >
                 <div className="flex items-start gap-4">
