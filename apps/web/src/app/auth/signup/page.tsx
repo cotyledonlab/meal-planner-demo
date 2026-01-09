@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { Suspense, useState } from 'react';
+import type { ZodError } from 'zod';
 
 import AuthLayout from '../_components/AuthLayout';
 import CelebrationModal from '../_components/CelebrationModal';
@@ -10,6 +11,20 @@ import PasswordInput from '../_components/PasswordInput';
 import ProgressIndicator from '../_components/ProgressIndicator';
 import StepTransition from '../_components/StepTransition';
 import TierSelection from '../_components/TierSelection';
+import { signUpSchema } from '~/lib/validation/auth';
+
+const buildValidationErrors = (error: ZodError) => {
+  const fieldErrors = error.flatten().fieldErrors;
+  const errors: Record<string, string> = {};
+
+  Object.entries(fieldErrors).forEach(([key, value]) => {
+    if (value?.[0]) {
+      errors[key] = value[0];
+    }
+  });
+
+  return errors;
+};
 
 function SignUpForm() {
   const searchParams = useSearchParams();
@@ -42,6 +57,20 @@ function SignUpForm() {
     confirmMock: false,
   });
 
+  const validateAccountDetails = () => {
+    const result = signUpSchema.safeParse({
+      ...formData,
+      tier: selectedTier === 'premium' ? 'premium' : 'basic',
+    });
+
+    if (!result.success) {
+      setValidationErrors(buildValidationErrors(result.error));
+      return false;
+    }
+
+    return true;
+  };
+
   const validatePaymentStep = () => {
     if (
       !paymentData.cardName ||
@@ -67,14 +96,22 @@ function SignUpForm() {
       return;
     }
 
+    setError('');
+    setValidationErrors({});
+    setPaymentError('');
+
+    const isValid = validateAccountDetails();
+    if (!isValid) {
+      if (currentStep === 'payment') {
+        setCurrentStep('details');
+      }
+      return;
+    }
+
     if (isPremium && currentStep === 'details') {
       setCurrentStep('payment');
       return;
     }
-
-    setError('');
-    setValidationErrors({});
-    setPaymentError('');
 
     if (isPaymentStep && !validatePaymentStep()) {
       return;

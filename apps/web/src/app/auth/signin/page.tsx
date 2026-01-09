@@ -4,10 +4,30 @@ import { signIn } from 'next-auth/react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useState } from 'react';
+import type { ZodError } from 'zod';
+import { z } from 'zod';
 
 import AuthLayout from '../_components/AuthLayout';
 import PasswordInput from '../_components/PasswordInput';
 import { isInternalUrl } from '~/lib/url';
+
+const signInSchema = z.object({
+  email: z.string().min(1, 'Email is required').email('Enter a valid email'),
+  password: z.string().min(1, 'Password is required'),
+});
+
+const buildValidationErrors = (error: ZodError) => {
+  const fieldErrors = error.flatten().fieldErrors;
+  const errors: Record<string, string> = {};
+
+  Object.entries(fieldErrors).forEach(([key, value]) => {
+    if (value?.[0]) {
+      errors[key] = value[0];
+    }
+  });
+
+  return errors;
+};
 
 function SignInForm() {
   const router = useRouter();
@@ -15,6 +35,7 @@ function SignInForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
 
   const rawCallbackUrl = searchParams.get('callbackUrl');
@@ -25,6 +46,14 @@ function SignInForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setValidationErrors({});
+
+    const validation = signInSchema.safeParse({ email, password });
+    if (!validation.success) {
+      setValidationErrors(buildValidationErrors(validation.error));
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -124,11 +153,31 @@ function SignInForm() {
                 type="email"
                 autoComplete="email"
                 required
-                className="mt-1 block w-full rounded-lg border border-gray-200 px-4 py-3 text-base text-gray-900 shadow-sm transition-all duration-150 placeholder:text-gray-600 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/50 focus:shadow-md"
+                className={`mt-1 block w-full rounded-lg border px-4 py-3 text-base text-gray-900 shadow-sm transition-all duration-150 placeholder:text-gray-600 focus:outline-none focus:ring-2 focus:shadow-md ${
+                  validationErrors.email
+                    ? 'border-red-300 focus:border-red-500 focus:ring-red-500/40'
+                    : 'border-gray-200 focus:border-emerald-600 focus:ring-emerald-600/50'
+                }`}
                 placeholder="you@example.com"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  if (validationErrors.email) {
+                    setValidationErrors((prev) => {
+                      const next = { ...prev };
+                      delete next.email;
+                      return next;
+                    });
+                  }
+                }}
+                aria-invalid={Boolean(validationErrors.email)}
+                aria-describedby={validationErrors.email ? 'signin-email-error' : undefined}
               />
+              {validationErrors.email && (
+                <p id="signin-email-error" className="mt-1 text-sm text-red-600" role="alert">
+                  {validationErrors.email}
+                </p>
+              )}
             </div>
 
             <div>
@@ -148,11 +197,31 @@ function SignInForm() {
                 name="password"
                 autoComplete="current-password"
                 required
-                className="mt-1 block w-full rounded-lg border border-gray-200 px-4 py-3 pr-12 text-base text-gray-900 shadow-sm transition-all duration-150 placeholder:text-gray-600 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/50 focus:shadow-md"
+                className={`mt-1 block w-full rounded-lg border px-4 py-3 pr-12 text-base text-gray-900 shadow-sm transition-all duration-150 placeholder:text-gray-600 focus:outline-none focus:ring-2 focus:shadow-md ${
+                  validationErrors.password
+                    ? 'border-red-300 focus:border-red-500 focus:ring-red-500/40'
+                    : 'border-gray-200 focus:border-emerald-600 focus:ring-emerald-600/50'
+                }`}
                 placeholder="Enter your password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  if (validationErrors.password) {
+                    setValidationErrors((prev) => {
+                      const next = { ...prev };
+                      delete next.password;
+                      return next;
+                    });
+                  }
+                }}
+                aria-invalid={Boolean(validationErrors.password)}
+                aria-describedby={validationErrors.password ? 'signin-password-error' : undefined}
               />
+              {validationErrors.password && (
+                <p id="signin-password-error" className="mt-1 text-sm text-red-600" role="alert">
+                  {validationErrors.password}
+                </p>
+              )}
             </div>
           </div>
 

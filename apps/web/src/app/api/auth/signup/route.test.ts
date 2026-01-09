@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 
-import { signUpSchema } from './schema';
+import { signUpSchema } from '~/lib/validation/auth';
 
 const basePayload = {
   name: 'John Doe',

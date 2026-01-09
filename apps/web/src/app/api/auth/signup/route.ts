@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 import { db } from '~/server/db';
 import { signIn } from '~/server/auth';
 
-import { signUpSchema } from './schema';
+import { signUpSchema } from '~/lib/validation/auth';
 
 export async function POST(request: Request) {
   try {
