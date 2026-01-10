@@ -29,11 +29,16 @@ function truncateAltText(text: string, maxLength = 125): string {
 interface AdminImageGeneratorClientProps {
   initialImages: GeneratedImage[];
   isConfigured: boolean;
+  storageInfo: {
+    provider: 'local' | 's3';
+    location: string;
+  };
 }
 
 export default function AdminImageGeneratorClient({
   initialImages,
   isConfigured,
+  storageInfo,
 }: AdminImageGeneratorClientProps) {
   const [prompt, setPrompt] = useState('');
   const [aspectRatio, setAspectRatio] = useState<(typeof ASPECT_OPTIONS)[number]['value']>('1:1');
@@ -50,6 +55,7 @@ export default function AdminImageGeneratorClient({
       setFormError(null);
       setImages((prev) => [image, ...prev].slice(0, 24));
       void utils.adminImage.list.invalidate();
+      void utils.adminImage.usage.invalidate();
     },
     onError: (error) => {
       setFormError(error.message || 'Unable to generate image right now');
@@ -232,7 +238,11 @@ export default function AdminImageGeneratorClient({
       <section>
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-2xl font-semibold text-gray-900">Recent images</h2>
-          <p className="text-sm text-gray-500">Stored locally under /public/generated-images</p>
+          <p className="text-sm text-gray-500">
+            {storageInfo.provider === 's3'
+              ? `Stored in S3: ${storageInfo.location}`
+              : `Stored locally under ${storageInfo.location}`}
+          </p>
         </div>
         {images.length === 0 ? (
           <div className="flex flex-col items-center rounded-3xl border border-dashed border-gray-300 bg-gray-50 px-6 py-16 text-center text-gray-600">

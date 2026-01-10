@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 
 interface CelebrationModalProps {
   userName: string;
@@ -9,7 +8,6 @@ interface CelebrationModalProps {
 }
 
 export default function CelebrationModal({ userName, tier }: CelebrationModalProps) {
-  const router = useRouter();
   const [isVisible, setIsVisible] = useState(false);
   const [confettiPieces, setConfettiPieces] = useState<
     Array<{ id: number; left: number; delay: number; duration: number }>
@@ -31,20 +29,22 @@ export default function CelebrationModal({ userName, tier }: CelebrationModalPro
     setConfettiPieces(pieces);
 
     // Auto-redirect to dashboard after 4 seconds
+    // Use hard navigation to ensure fresh session is loaded from server
     const redirectTimer = setTimeout(() => {
-      router.push('/dashboard');
-      router.refresh();
+      const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
+      window.location.href = `${basePath}/dashboard`;
     }, 4000);
 
     return () => {
       clearTimeout(timer);
       clearTimeout(redirectTimer);
     };
-  }, [router]);
+  }, []);
 
   const handleGetStarted = () => {
-    router.push('/dashboard');
-    router.refresh();
+    // Use hard navigation to ensure fresh session is loaded from server
+    const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
+    window.location.href = `${basePath}/dashboard`;
   };
 
   const keyFeatures =

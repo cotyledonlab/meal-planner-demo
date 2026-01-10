@@ -277,7 +277,7 @@ export function BlobShape({
 export function HandDrawnUnderline({ className }: DecorativeProps) {
   return (
     <svg
-      viewBox="0 0 200 12"
+      viewBox="-2 0 204 12"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={cn('w-full h-3', className)}
@@ -285,7 +285,7 @@ export function HandDrawnUnderline({ className }: DecorativeProps) {
       preserveAspectRatio="none"
     >
       <path
-        d="M2 8 Q30 2, 60 7 T120 6 T180 8 T198 5"
+        d="M0 8 Q30 2, 60 7 T120 6 T180 8 T200 5"
         stroke="currentColor"
         strokeWidth="3"
         strokeLinecap="round"

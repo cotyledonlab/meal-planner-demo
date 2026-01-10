@@ -20,6 +20,10 @@ const config = {
         protocol: 'https',
         hostname: 'images.pexels.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'hel1.your-objectstorage.com',
+      },
     ],
   },
 };

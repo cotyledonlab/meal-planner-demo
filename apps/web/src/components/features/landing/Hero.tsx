@@ -90,7 +90,7 @@ export function Hero() {
                 </div>
               ))}
             </div>
-            <span>Join 500+ Irish families planning smarter</span>
+            <span>Join 1,000+ Irish families planning smarter</span>
           </div>
         </div>
       </div>

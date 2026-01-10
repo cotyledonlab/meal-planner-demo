@@ -6,3 +6,14 @@ services:
       - "127.0.0.1:${MAILPIT_SMTP_PORT:-1025}:1025"
     networks:
       - app-network
+
+  # Override web service to remove dokploy-network for local dev
+  web:
+    networks:
+      - app-network
+
+# Override networks to remove external dokploy-network requirement
+networks:
+  dokploy-network:
+    external: false
+    driver: bridge

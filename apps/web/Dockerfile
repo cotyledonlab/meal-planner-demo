@@ -144,7 +144,7 @@ COPY --from=builder /app/apps/web/prisma ./prisma
 # Standalone output contains runtime deps already
 
 # Copy and setup entrypoint script for Google Cloud credentials
-COPY apps/web/docker-entrypoint.sh /docker-entrypoint.sh
+COPY --chown=nextjs:nodejs apps/web/docker-entrypoint.sh /docker-entrypoint.sh
 RUN chmod +x /docker-entrypoint.sh
 
 USER nextjs

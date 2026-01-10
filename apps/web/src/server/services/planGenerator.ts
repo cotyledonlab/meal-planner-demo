@@ -154,6 +154,9 @@ export class PlanGenerator {
       servings: number;
     }> = [];
 
+    // Track used recipes to ensure diversity
+    const usedRecipeIds = new Set<string>();
+
     for (let dayIndex = 0; dayIndex < days; dayIndex++) {
       for (const mealType of mealTypes) {
         // Filter recipes that are appropriate for this meal type
@@ -183,8 +186,12 @@ export class PlanGenerator {
           startDate,
           timePreferences,
           weeklyBudgetPerMealMinutes,
+          usedRecipeIds,
         });
         if (!recipe) continue;
+
+        // Track this recipe as used to avoid repetition
+        usedRecipeIds.add(recipe.id);
 
         this.log.debug(
           {
@@ -382,16 +389,22 @@ export class PlanGenerator {
       startDate: Date;
       timePreferences: TimePreferences;
       weeklyBudgetPerMealMinutes: number | null;
+      usedRecipeIds?: Set<string>;
     }
   ): RecipeForPlanning | undefined {
     if (recipes.length === 0) return undefined;
 
     const { weeknightMaxTimeMinutes, prioritizeWeeknights } = options.timePreferences;
-    const { weeklyBudgetPerMealMinutes } = options;
+    const { weeklyBudgetPerMealMinutes, usedRecipeIds } = options;
+
+    // Filter out already-used recipes to ensure diversity
+    // Only allow repeats if we've exhausted all unique options
+    const unusedRecipes = usedRecipeIds ? recipes.filter((r) => !usedRecipeIds.has(r.id)) : recipes;
+    const candidatePool = unusedRecipes.length > 0 ? unusedRecipes : recipes;
 
     const isWeeknight =
       prioritizeWeeknights && this.isWeeknight(options.startDate, options.dayIndex);
-    const ranked = this.sortRecipesByTime(recipes);
+    const ranked = this.sortRecipesByTime(candidatePool);
     const preferredMaxTime = this.resolvePreferredMaxTime({
       isWeeknight,
       weeknightMaxTimeMinutes,
@@ -420,7 +433,7 @@ export class PlanGenerator {
       return ranked[ranked.length - 1];
     }
 
-    const shuffled = this.shuffleArray(recipes);
+    const shuffled = this.shuffleArray(candidatePool);
     return shuffled[0];
   }
 

@@ -26,7 +26,7 @@ export function Testimonials() {
       role: 'Primary school teacher • Mum of 2',
       timeframe: 'Using MealMind for 4 months',
       avatar:
-        'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=240&q=80',
+        'https://hel1.your-objectstorage.com/recipe-store/professional-headshot-portrait-o-1768002148744-b35a6746-d204-4994-92a7-6c6dbbd82bd5.png',
       proof: 'Reduced weekly shop by €20 and cooks 2 extra home meals/week',
       rating: 5,
       featured: true,
@@ -39,7 +39,7 @@ export function Testimonials() {
       role: 'Operations manager • Dad of teens',
       timeframe: 'Switched from meal kits 6 months ago',
       avatar:
-        'https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=240&q=80',
+        'https://hel1.your-objectstorage.com/recipe-store/professional-headshot-portrait-o-1768002260013-36830c63-912a-43a6-996d-77c7e5aca47b.png',
       proof: 'Replaced meal kits, saving €45/month and 2 hours weekly',
       rating: 5,
     },
@@ -51,7 +51,7 @@ export function Testimonials() {
       role: 'Product designer • Marathon runner',
       timeframe: '3 months with Premium',
       avatar:
-        'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=240&q=80',
+        'https://hel1.your-objectstorage.com/recipe-store/professional-headshot-portrait-o-1768002352879-186cec9d-4ec4-4138-81dc-05ecb010f734.png',
       proof: 'Uses batch-cook flow to prep lunches; cut takeaway by 30%',
       rating: 5,
     },
@@ -98,7 +98,7 @@ export function Testimonials() {
                   asChild
                   key={testimonial.author}
                   className={cn(
-                    'group relative flex flex-col overflow-hidden transition-all duration-300 ease-out',
+                    'group relative flex flex-col transition-all duration-300 ease-out',
                     'hover:-translate-y-2 hover:shadow-2xl',
                     'ring-1 ring-gray-100',
                     isFeatured
@@ -113,7 +113,7 @@ export function Testimonials() {
                 >
                   <figure
                     aria-label={`Testimonial from ${testimonial.author} in ${testimonial.location}`}
-                    className="h-full flex flex-col"
+                    className="flex flex-col"
                   >
                     {/* Gradient background */}
                     <div
@@ -149,7 +149,7 @@ export function Testimonials() {
                     </div>
 
                     {/* Quote */}
-                    <blockquote className="relative flex-1">
+                    <blockquote className="relative">
                       <p
                         className={cn(
                           'leading-relaxed text-gray-700',

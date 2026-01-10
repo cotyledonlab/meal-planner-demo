@@ -34,6 +34,20 @@ services:
       - app-network
     restart: "no"
 
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "127.0.0.1:${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+
   postgres:
     image: postgres:15-alpine
     environment:
@@ -92,9 +106,13 @@ services:
       - GOOGLE_CREDENTIALS_BASE64=${GOOGLE_CREDENTIALS_BASE64:-}
       - GEMINI_IMAGE_MODEL=${GEMINI_IMAGE_MODEL:-gemini-3-pro-image-preview}
       - GEMINI_IMAGE_FALLBACK_MODEL=${GEMINI_IMAGE_FALLBACK_MODEL:-gemini-2.5-flash-image}
+      # Redis for rate limiting and quota tracking
+      - REDIS_URL=${REDIS_URL:-redis://redis:6379}
       - SKIP_ENV_VALIDATION=1
     depends_on:
       postgres:
+        condition: service_healthy
+      redis:
         condition: service_healthy
       migrate:
         condition: service_completed_successfully
@@ -128,6 +146,7 @@ services:
 
 volumes:
   postgres-data:
+  redis-data:
 
 networks:
   app-network:

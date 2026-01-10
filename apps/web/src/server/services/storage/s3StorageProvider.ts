@@ -39,6 +39,7 @@ export class S3StorageProvider implements StorageProvider {
         Key: input.key,
         Body: input.data,
         ContentType: input.mimeType,
+        ACL: 'public-read',
       })
     );
 
