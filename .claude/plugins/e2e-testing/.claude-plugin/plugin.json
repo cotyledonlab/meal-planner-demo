@@ -1,0 +1,9 @@
+{
+  "name": "e2e-testing",
+  "version": "1.0.0",
+  "description": "E2E testing skill using Claude in Chrome browser automation",
+  "author": {
+    "name": "Meal Planner Team",
+    "email": "team@mealmind.app"
+  }
+}
