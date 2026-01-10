@@ -1,10 +1,28 @@
 ---
 name: e2e-testing
-description: Execute comprehensive end-to-end tests for the Meal Planner application using Claude in Chrome browser automation. Use this skill when the user asks to run E2E tests, verify user journeys, check accessibility, or test professional polish criteria.
+description: Execute comprehensive end-to-end tests for the Meal Planner application using Claude in Chrome browser automation. Supports regression testing (checklist-based) and exploratory testing (discovery-focused). Use this skill when the user asks to run E2E tests, verify user journeys, check accessibility, or test professional polish criteria.
 license: MIT
 ---
 
 This skill guides execution of end-to-end tests for the Meal Planner application using Claude in Chrome MCP browser automation tools instead of traditional Playwright tests.
+
+## Testing Modes
+
+This plugin supports two testing approaches:
+
+| Mode            | Purpose                                        | When to Use                                                   |
+| --------------- | ---------------------------------------------- | ------------------------------------------------------------- |
+| **Regression**  | Verify known functionality against checklists  | CI/CD, release validation, specific feature verification      |
+| **Exploratory** | Discover unknown bugs through creative testing | New features, pre-release, investigating user-reported issues |
+
+### Invoking Different Modes
+
+```
+/e2e-test regression auth-signup    # Run regression tests for signup
+/e2e-test regression meal-planning  # Run regression tests for meal planning
+/e2e-test exploratory               # Run exploratory testing session
+/e2e-test exploratory dashboard     # Focus exploratory testing on dashboard
+```
 
 ## When to Use This Skill
 
@@ -15,6 +33,7 @@ Use this skill when:
 - User wants to verify "professional polish" quality standards
 - User wants to test authentication flows, meal planning, shopping lists, or admin features
 - User asks to run `/e2e-test` or similar commands
+- User wants to explore the app for undiscovered bugs
 
 ## Application Context
 
@@ -46,16 +65,21 @@ Use this skill when:
 4. Take initial screenshot for baseline
 ```
 
-### Step 2: Execute Test Checklist
+### Step 2: Execute Test Checklist (Regression Mode)
 
-Load the appropriate checklist from `checklists/` directory based on the test type:
+For **regression testing**, load the appropriate checklist from `checklists/` directory:
 
-- `auth-signup.md` - Signup flow tests
-- `auth-signin.md` - Signin flow tests
-- `meal-planning.md` - Plan generation and viewing
-- `shopping-list.md` - Shopping list functionality
-- `accessibility.md` - A11y compliance checks
-- `professional-polish.md` - Quality standards verification
+| Checklist                | Tests              | Description                    |
+| ------------------------ | ------------------ | ------------------------------ |
+| `auth-signup.md`         | SU-01 to SU-07     | Signup flow tests              |
+| `auth-signin.md`         | SI-01 to SI-07     | Signin flow tests              |
+| `meal-planning.md`       | MP-01 to MP-10     | Plan generation and viewing    |
+| `shopping-list.md`       | SL-01 to SL-07     | Shopping list functionality    |
+| `accessibility.md`       | A11Y-01 to A11Y-20 | WCAG 2.1 AA compliance         |
+| `admin-features.md`      | AD-01 to AD-10     | Admin dashboard tests          |
+| `professional-polish.md` | PP-01 to PP-28     | Quality standards verification |
+
+For **exploratory testing**, skip checklists and follow the Exploratory Testing Guide below.
 
 ### Step 3: Test Execution Pattern
 
@@ -246,3 +270,191 @@ For new signups, use unique emails like:
 - Verify network requests complete successfully
 - Test at multiple viewport sizes (mobile: 375x667, tablet: 768x1024, desktop: 1280x800)
 - Record GIFs for complex multi-step flows to show test execution
+
+---
+
+# Exploratory Testing Guide
+
+Exploratory testing is a creative, discovery-focused approach where the tester simultaneously learns, designs tests, and executes them. Unlike regression testing which follows predefined checklists, exploratory testing adapts in real-time based on findings.
+
+## Exploratory Testing Principles
+
+1. **Charter-Based Sessions**: Define a time-boxed mission (e.g., "Explore the meal planning wizard for edge cases")
+2. **Note Everything**: Document unexpected behaviors, even if not bugs
+3. **Follow Hunches**: If something seems suspicious, investigate deeper
+4. **Think Like Users**: Consider different user personas and their workflows
+5. **Break Things**: Try unexpected inputs, rapid actions, edge cases
+
+## Session Charter Template
+
+Before starting, define:
+
+```
+Charter: [What area to explore]
+Duration: [Time limit, e.g., 30 minutes]
+Focus: [Specific concerns - performance, edge cases, mobile, etc.]
+Personas: [Which user types to test as]
+```
+
+## Exploration Techniques
+
+### 1. Boundary Testing
+
+- Empty inputs, very long strings, special characters
+- Maximum/minimum values for numbers
+- Future/past dates at extremes
+
+### 2. State Manipulation
+
+- Refresh during operations
+- Back button during multi-step flows
+- Multiple tabs with same session
+- Network interruption simulation
+
+### 3. Rapid Interactions
+
+- Double-click instead of single click
+- Submit forms multiple times quickly
+- Rapid navigation between pages
+
+### 4. Cross-Feature Interactions
+
+- Create content in one area, verify in another
+- Test feature combinations (e.g., vegetarian + time constraints)
+- Switch between user roles mid-session
+
+### 5. Environment Variations
+
+- Different viewport sizes
+- Slow network simulation
+- Browser zoom levels (67%, 150%, 200%)
+
+## Exploratory Session Workflow
+
+### Phase 1: Reconnaissance (5 min)
+
+```
+1. Navigate through the target area
+2. Note the main user flows
+3. Identify inputs, buttons, states
+4. Check console for existing errors
+```
+
+### Phase 2: Structured Exploration (20 min)
+
+```
+1. Pick a user persona
+2. Attempt realistic tasks
+3. Try variations and edge cases
+4. Document findings in real-time
+5. Take screenshots of anomalies
+```
+
+### Phase 3: Chaos Testing (5 min)
+
+```
+1. Try to break things intentionally
+2. Unexpected sequences of actions
+3. Invalid data combinations
+4. Stress test with rapid actions
+```
+
+### Phase 4: Documentation (5 min)
+
+```
+1. Summarize bugs found
+2. Note areas of concern
+3. Suggest regression test additions
+4. Rate areas by risk level
+```
+
+## Bug Classification
+
+When discovering issues, classify by:
+
+| Severity     | Description                                 | Example                   |
+| ------------ | ------------------------------------------- | ------------------------- |
+| **Critical** | Data loss, security issue, complete failure | Payment processed twice   |
+| **High**     | Feature broken, no workaround               | Cannot generate meal plan |
+| **Medium**   | Feature impaired, workaround exists         | Filter doesn't persist    |
+| **Low**      | Minor issue, cosmetic                       | Slight misalignment       |
+
+## Exploratory Testing Report Template
+
+```markdown
+## Exploratory Testing Session Report
+
+**Date**: [Date]
+**Tester**: Claude via Browser Automation
+**Duration**: [X minutes]
+**Charter**: [Mission statement]
+
+### Areas Explored
+
+- [Area 1]
+- [Area 2]
+
+### Bugs Discovered
+
+| ID     | Severity | Description | Steps to Reproduce | Screenshot |
+| ------ | -------- | ----------- | ------------------ | ---------- |
+| EX-001 | High     | ...         | 1. ... 2. ...      | [link]     |
+
+### Observations (Not Bugs)
+
+- [Observation 1 - potential UX improvement]
+- [Observation 2 - performance concern]
+
+### Risk Assessment
+
+- **High Risk Areas**: [Areas that need more testing]
+- **Stable Areas**: [Areas that performed well]
+
+### Recommended Regression Tests
+
+- [New test case to add to checklist]
+
+### Session Notes
+
+[Free-form notes about the testing session]
+```
+
+## Example Exploratory Session
+
+```
+User: Run exploratory testing on the shopping list feature
+
+Claude:
+1. Define charter: "Explore shopping list for data integrity and UX issues"
+2. Initialize browser, sign in as premium user
+3. Generate a meal plan to create shopping list
+4. Exploration:
+   - Check all items, then uncheck rapidly
+   - Add very long custom item names
+   - Try adding same item twice
+   - Check items then regenerate plan
+   - Test on mobile viewport
+   - Open shopping list in two tabs, modify both
+5. Document findings with screenshots
+6. Generate exploratory testing report
+```
+
+## Transitioning Findings to Regression Tests
+
+When exploratory testing reveals bugs:
+
+1. **Fix the bug**
+2. **Create regression test** - Add to appropriate checklist:
+
+   ```markdown
+   ### EX-001: [Bug Title] → [NEW-ID]
+
+   - **Priority**: P1
+   - **Precondition**: [Setup needed]
+   - **Steps**:
+     1. [Step that caused the bug]
+     2. [Verification step]
+   - **Expected**: [Correct behavior]
+   ```
+
+3. **Link to issue** - Reference GitHub issue if created
