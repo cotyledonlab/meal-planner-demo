@@ -20,6 +20,72 @@ interface PriceBaselineData {
   >;
 }
 
+interface RecipeIngredientData {
+  name: string;
+  quantity: number;
+  unit: string;
+}
+
+interface RecipeStepData {
+  stepNumber: number;
+  instruction: string;
+  durationMinutes?: number | null;
+}
+
+interface RecipeNutritionData {
+  calories: number;
+  protein: number;
+  carbohydrates: number;
+  fat: number;
+  fiber?: number | null;
+  sugar?: number | null;
+  sodium?: number | null;
+  cholesterol?: number | null;
+  saturatedFat?: number | null;
+}
+
+interface RecipeImageData {
+  url: string;
+  isPrimary: boolean;
+}
+
+interface RecipeData {
+  title: string;
+  slug?: string | null;
+  description?: string | null;
+  mealTypes: string[];
+  servingsDefault: number;
+  prepTimeMinutes?: number | null;
+  cookTimeMinutes?: number | null;
+  totalTimeMinutes?: number | null;
+  calories?: number | null;
+  difficulty?: string | null;
+  sourceUrl?: string | null;
+  sourceAttribution?: string | null;
+  isVegetarian: boolean;
+  isDairyFree: boolean;
+  instructionsMd?: string | null;
+  imageUrl?: string | null;
+  steps: RecipeStepData[];
+  ingredients: RecipeIngredientData[];
+  dietTags: string[];
+  allergenTags: string[];
+  nutrition?: RecipeNutritionData | null;
+  images: RecipeImageData[];
+}
+
+interface SeedIngredientData {
+  name: string;
+  category: string;
+}
+
+interface SeedRecipesFile {
+  version: string;
+  generatedAt: string;
+  ingredients: SeedIngredientData[];
+  recipes: RecipeData[];
+}
+
 interface CanonicalIngredientData {
   name: string;
   category: string;
@@ -64,6 +130,10 @@ async function main() {
   const canonicalIngredientsData = JSON.parse(
     fs.readFileSync(canonicalIngredientsPath, 'utf-8')
   ) as CanonicalIngredientsFile;
+
+  // Load seed recipes
+  const seedRecipesPath = path.join(__dirname, 'seed-recipes.json');
+  const seedRecipesData = JSON.parse(fs.readFileSync(seedRecipesPath, 'utf-8')) as SeedRecipesFile;
 
   // Clear existing data in development
   if (process.env.NODE_ENV !== 'production') {
@@ -249,118 +319,33 @@ async function main() {
     return canonicalIngredientMap.get(name.toLowerCase());
   }
 
-  // Create ingredients
+  // Create ingredients from seed data
   console.log('🥕 Creating ingredients...');
-  const ingredients = [
-    // Proteins
-    { name: 'chicken breast', category: 'protein' },
-    { name: 'ground beef', category: 'protein' },
-    { name: 'salmon fillet', category: 'protein' },
-    { name: 'eggs', category: 'protein' },
-    { name: 'tofu', category: 'protein' },
-    { name: 'chickpeas', category: 'protein' },
-    { name: 'bacon', category: 'protein' },
-    { name: 'sausages', category: 'protein' },
-    { name: 'chicken thighs', category: 'protein' },
-    { name: 'pork chops', category: 'protein' },
-    { name: 'lentils', category: 'protein' },
-    { name: 'kidney beans', category: 'protein' },
-    { name: 'tuna', category: 'protein' },
-    // Vegetables
-    { name: 'bell peppers', category: 'vegetables' },
-    { name: 'broccoli', category: 'vegetables' },
-    { name: 'carrots', category: 'vegetables' },
-    { name: 'onions', category: 'vegetables' },
-    { name: 'garlic', category: 'vegetables' },
-    { name: 'tomatoes', category: 'vegetables' },
-    { name: 'spinach', category: 'vegetables' },
-    { name: 'potatoes', category: 'vegetables' },
-    { name: 'mushrooms', category: 'vegetables' },
-    { name: 'courgette', category: 'vegetables' },
-    { name: 'leek', category: 'vegetables' },
-    { name: 'cabbage', category: 'vegetables' },
-    { name: 'peas', category: 'vegetables' },
-    { name: 'sweetcorn', category: 'vegetables' },
-    { name: 'celery', category: 'vegetables' },
-    { name: 'parsnips', category: 'vegetables' },
-    // Fruits
-    { name: 'berries', category: 'fruits' },
-    { name: 'banana', category: 'fruits' },
-    { name: 'avocado', category: 'fruits' },
-    { name: 'lemon juice', category: 'fruits' },
-    // Dairy
-    { name: 'milk', category: 'dairy' },
-    { name: 'cheese', category: 'dairy' },
-    { name: 'butter', category: 'dairy' },
-    { name: 'yogurt', category: 'dairy' },
-    { name: 'cream', category: 'dairy' },
-    { name: 'cheddar cheese', category: 'dairy' },
-    { name: 'buttermilk', category: 'dairy' },
-    { name: 'greek yogurt', category: 'dairy' },
-    { name: 'almond milk', category: 'dairy' },
-    // Grains
-    { name: 'rice', category: 'grains' },
-    { name: 'pasta', category: 'grains' },
-    { name: 'bread', category: 'grains' },
-    { name: 'flour', category: 'grains' },
-    { name: 'oats', category: 'grains' },
-    { name: 'tortillas', category: 'grains' },
-    { name: 'noodles', category: 'grains' },
-    // Pantry
-    { name: 'olive oil', category: 'pantry' },
-    { name: 'soy sauce', category: 'pantry' },
-    { name: 'coconut milk', category: 'pantry' },
-    { name: 'curry paste', category: 'pantry' },
-    { name: 'tomato paste', category: 'pantry' },
-    { name: 'stock cube', category: 'pantry' },
-    { name: 'tinned tomatoes', category: 'pantry' },
-    { name: 'worcestershire sauce', category: 'pantry' },
-    { name: 'chilli powder', category: 'pantry' },
-    { name: 'cumin', category: 'pantry' },
-    { name: 'paprika', category: 'pantry' },
-    { name: 'mixed herbs', category: 'pantry' },
-    { name: 'honey', category: 'pantry' },
-    { name: 'balsamic vinegar', category: 'pantry' },
-    { name: 'vegetable oil', category: 'pantry' },
-    { name: 'baked beans', category: 'pantry' },
-    { name: 'sugar', category: 'pantry' },
-    { name: 'baking powder', category: 'pantry' },
-    { name: 'maple syrup', category: 'pantry' },
-    { name: 'chia seeds', category: 'pantry' },
-    { name: 'chili flakes', category: 'pantry' },
-    { name: 'cinnamon', category: 'pantry' },
-    { name: 'granola', category: 'pantry' },
-    { name: 'nuts', category: 'pantry' },
-    { name: 'vanilla extract', category: 'pantry' },
-  ];
+  const ingredients = seedRecipesData.ingredients;
 
-  await Promise.all(
-    ingredients.map((ing) =>
-      prisma.ingredient.create({
-        data: {
-          ...ing,
-          canonicalIngredientId: findCanonicalIngredientId(ing.name),
-        },
-      })
-    )
-  );
+  // Create ingredients in batches to avoid overwhelming the database
+  const ingredientMap = new Map<string, string>();
+  for (const ing of ingredients) {
+    const created = await prisma.ingredient.create({
+      data: {
+        name: ing.name,
+        category: ing.category,
+        canonicalIngredientId: findCanonicalIngredientId(ing.name),
+      },
+    });
+    ingredientMap.set(ing.name.toLowerCase(), created.id);
+  }
 
   console.log(`✅ Created ${ingredients.length} ingredients`);
 
-  // Create diet tags
+  // Create diet tags (includes all unique tags from recipes)
   console.log('🏷️ Creating diet tags...');
-  const dietTagNames = [
-    'vegetarian',
-    'vegan',
-    'pescatarian',
-    'keto',
-    'paleo',
-    'low-carb',
-    'gluten-free',
-    'dairy-free',
-    'halal',
-    'kosher',
-  ];
+  // Collect unique diet tags from recipes
+  const recipeDietTags = new Set<string>();
+  seedRecipesData.recipes.forEach((r) =>
+    r.dietTags.forEach((t) => recipeDietTags.add(t.toLowerCase()))
+  );
+  const dietTagNames = Array.from(recipeDietTags);
 
   await Promise.all(
     dietTagNames.map((name) =>
@@ -372,22 +357,14 @@ async function main() {
 
   console.log(`✅ Created ${dietTagNames.length} diet tags`);
 
-  // Create allergen tags
+  // Create allergen tags (includes all unique tags from recipes)
   console.log('⚠️ Creating allergen tags...');
-  const allergenTagNames = [
-    'gluten',
-    'dairy',
-    'eggs',
-    'nuts',
-    'peanuts',
-    'soy',
-    'shellfish',
-    'fish',
-    'sesame',
-    'mustard',
-    'celery',
-    'sulphites',
-  ];
+  // Collect unique allergen tags from recipes
+  const recipeAllergenTags = new Set<string>();
+  seedRecipesData.recipes.forEach((r) =>
+    r.allergenTags.forEach((t) => recipeAllergenTags.add(t.toLowerCase()))
+  );
+  const allergenTagNames = Array.from(recipeAllergenTags);
 
   await Promise.all(
     allergenTagNames.map((name) =>
@@ -399,8 +376,136 @@ async function main() {
 
   console.log(`✅ Created ${allergenTagNames.length} allergen tags`);
 
-  // Note: Recipe seeding has been removed. Use the admin tools at /dashboard/admin/recipes/new
-  // to create recipes with AI-generated content and images.
+  // Create recipes from seed data
+  console.log('🍳 Creating recipes...');
+
+  // Build diet tag and allergen tag maps
+  const dietTagMap = new Map<string, string>();
+  const allergenTagMap = new Map<string, string>();
+
+  const allDietTags = await prisma.dietTag.findMany();
+  const allAllergenTags = await prisma.allergenTag.findMany();
+
+  allDietTags.forEach((tag) => dietTagMap.set(tag.name.toLowerCase(), tag.id));
+  allAllergenTags.forEach((tag) => allergenTagMap.set(tag.name.toLowerCase(), tag.id));
+
+  // Seed recipes
+  let recipeCount = 0;
+  for (const recipe of seedRecipesData.recipes) {
+    try {
+      // Create the recipe
+      const createdRecipe = await prisma.recipe.create({
+        data: {
+          title: recipe.title,
+          slug: recipe.slug,
+          description: recipe.description,
+          mealTypes: recipe.mealTypes,
+          servingsDefault: recipe.servingsDefault,
+          prepTimeMinutes: recipe.prepTimeMinutes,
+          cookTimeMinutes: recipe.cookTimeMinutes,
+          totalTimeMinutes: recipe.totalTimeMinutes,
+          calories: recipe.calories ?? 0,
+          status: 'APPROVED',
+          difficulty: (recipe.difficulty as 'EASY' | 'MEDIUM' | 'HARD') ?? undefined,
+          publishedAt: new Date(),
+          sourceUrl: recipe.sourceUrl,
+          sourceAttribution: recipe.sourceAttribution,
+          isVegetarian: recipe.isVegetarian,
+          isDairyFree: recipe.isDairyFree,
+          instructionsMd: recipe.instructionsMd,
+          imageUrl: recipe.imageUrl,
+        },
+      });
+
+      // Create recipe steps
+      if (recipe.steps.length > 0) {
+        await prisma.recipeStep.createMany({
+          data: recipe.steps.map((step) => ({
+            recipeId: createdRecipe.id,
+            stepNumber: step.stepNumber,
+            instruction: step.instruction,
+            durationMinutes: step.durationMinutes,
+          })),
+        });
+      }
+
+      // Create recipe ingredients
+      for (const ing of recipe.ingredients) {
+        const ingredientId = ingredientMap.get(ing.name.toLowerCase());
+        if (ingredientId) {
+          await prisma.recipeIngredient.create({
+            data: {
+              recipeId: createdRecipe.id,
+              ingredientId,
+              quantity: ing.quantity,
+              unit: ing.unit,
+            },
+          });
+        }
+      }
+
+      // Create recipe diet tags
+      for (const tagName of recipe.dietTags) {
+        const tagId = dietTagMap.get(tagName.toLowerCase());
+        if (tagId) {
+          await prisma.recipeDietTag.create({
+            data: {
+              recipeId: createdRecipe.id,
+              dietTagId: tagId,
+            },
+          });
+        }
+      }
+
+      // Create recipe allergen tags
+      for (const tagName of recipe.allergenTags) {
+        const tagId = allergenTagMap.get(tagName.toLowerCase());
+        if (tagId) {
+          await prisma.recipeAllergenTag.create({
+            data: {
+              recipeId: createdRecipe.id,
+              allergenTagId: tagId,
+            },
+          });
+        }
+      }
+
+      // Create recipe nutrition
+      if (recipe.nutrition) {
+        await prisma.recipeNutrition.create({
+          data: {
+            recipeId: createdRecipe.id,
+            calories: recipe.nutrition.calories,
+            protein: recipe.nutrition.protein,
+            carbohydrates: recipe.nutrition.carbohydrates,
+            fat: recipe.nutrition.fat,
+            fiber: recipe.nutrition.fiber,
+            sugar: recipe.nutrition.sugar,
+            sodium: recipe.nutrition.sodium,
+            cholesterol: recipe.nutrition.cholesterol,
+            saturatedFat: recipe.nutrition.saturatedFat,
+          },
+        });
+      }
+
+      // Create recipe images
+      if (recipe.images.length > 0) {
+        await prisma.recipeImage.createMany({
+          data: recipe.images.map((img) => ({
+            recipeId: createdRecipe.id,
+            url: img.url,
+            isPrimary: img.isPrimary,
+          })),
+        });
+      }
+
+      recipeCount++;
+    } catch (error) {
+      console.warn(`⚠️ Failed to create recipe "${recipe.title}":`, error);
+    }
+  }
+
+  console.log(`✅ Created ${recipeCount} recipes`);
 
   // Create price baselines
   console.log('💰 Creating price baselines...');
