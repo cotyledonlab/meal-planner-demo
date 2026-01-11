@@ -106,22 +106,16 @@ export function ExportButtons({ planId, planStartDateIso, planDays }: ExportButt
   };
 
   return (
-    <div className="no-print flex flex-wrap items-center gap-3 rounded-2xl bg-white/80 p-4 shadow-sm ring-1 ring-gray-200 backdrop-blur-sm sm:flex-nowrap sm:p-5">
-      <div className="min-w-0 flex-1">
+    <div className="no-print rounded-2xl bg-white/80 p-4 shadow-sm ring-1 ring-gray-200 backdrop-blur-sm sm:p-5">
+      <div className="mb-3">
         <p className="text-sm font-medium text-gray-900">Export your plan</p>
         <p className="text-xs text-gray-600">
           Download a PDF (recipes included), export the shopping list, or open a print-friendly
           view.
         </p>
       </div>
-      <div className="flex flex-wrap gap-2 sm:flex-nowrap">
-        <Button
-          type="button"
-          onClick={() => handleExport('pdf')}
-          disabled={isPdfLoading}
-          size="sm"
-          className="min-w-[140px]"
-        >
+      <div className="flex flex-wrap gap-2">
+        <Button type="button" onClick={() => handleExport('pdf')} disabled={isPdfLoading} size="sm">
           <FileText className="h-4 w-4" />
           {isPdfLoading ? 'Generating…' : 'Export PDF'}
         </Button>
@@ -131,25 +125,16 @@ export function ExportButtons({ planId, planStartDateIso, planDays }: ExportButt
           disabled={isCsvLoading}
           variant="secondary"
           size="sm"
-          className="min-w-[150px]"
         >
           <Download className="h-4 w-4" />
           {isCsvLoading ? 'Preparing…' : 'Export CSV'}
         </Button>
-        <Button
-          type="button"
-          onClick={handlePrint}
-          variant="outline"
-          size="sm"
-          className="min-w-[120px]"
-        >
+        <Button type="button" onClick={handlePrint} variant="outline" size="sm">
           <Printer className="h-4 w-4" />
           Print
         </Button>
       </div>
-      {errorMessage && (
-        <p className="mt-2 w-full text-sm text-red-600 sm:mt-0 sm:text-right">{errorMessage}</p>
-      )}
+      {errorMessage && <p className="mt-2 text-sm text-red-600">{errorMessage}</p>}
     </div>
   );
 }

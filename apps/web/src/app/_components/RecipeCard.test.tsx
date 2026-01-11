@@ -30,7 +30,8 @@ vi.mock('next/image', () => ({
 vi.mock('~/lib/recipeUtils', () => ({
   calculateDifficulty: () => 'Easy',
   getDifficultyColor: () => 'bg-green-100 text-green-800',
-  RECIPE_PLACEHOLDER_IMAGE: '/images/placeholder-recipe.jpg',
+  RECIPE_PLACEHOLDER_IMAGE:
+    'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=400&fit=crop&q=80',
 }));
 
 const mockMealPlanItem = {
@@ -92,7 +93,10 @@ describe('RecipeCard Component', () => {
     rerender(<RecipeCard item={mockMealPlanItem} onOpenDetail={vi.fn()} />);
 
     const image = screen.getByTestId('recipe-image');
-    expect(image).toHaveAttribute('src', '/images/placeholder-recipe.jpg');
+    expect(image).toHaveAttribute(
+      'src',
+      'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=400&fit=crop&q=80'
+    );
   });
 
   it('does not trigger infinite loop when placeholder also fails', () => {
@@ -106,7 +110,7 @@ describe('RecipeCard Component', () => {
 
     expect(screen.getByTestId('recipe-image')).toHaveAttribute(
       'src',
-      '/images/placeholder-recipe.jpg'
+      'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=400&fit=crop&q=80'
     );
 
     // Second error - guard should prevent state update
@@ -118,7 +122,7 @@ describe('RecipeCard Component', () => {
     // Should still be placeholder (no change)
     expect(screen.getByTestId('recipe-image')).toHaveAttribute(
       'src',
-      '/images/placeholder-recipe.jpg'
+      'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=400&fit=crop&q=80'
     );
   });
 
@@ -132,7 +136,7 @@ describe('RecipeCard Component', () => {
     rerender(<RecipeCard item={mockMealPlanItem} onOpenDetail={vi.fn()} />);
     expect(screen.getByTestId('recipe-image')).toHaveAttribute(
       'src',
-      '/images/placeholder-recipe.jpg'
+      'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=400&fit=crop&q=80'
     );
 
     // Update item with new recipe image

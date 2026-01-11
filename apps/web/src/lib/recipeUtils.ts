@@ -8,9 +8,11 @@ const DIFFICULTY_MEDIUM_THRESHOLD = 70;
 const INGREDIENT_WEIGHT_FACTOR = 2;
 
 /**
- * Placeholder image path for recipes without images
+ * Placeholder image URL for recipes without images
+ * Using Unsplash food image as fallback
  */
-export const RECIPE_PLACEHOLDER_IMAGE = '/placeholder-recipe.jpg';
+export const RECIPE_PLACEHOLDER_IMAGE =
+  'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=400&fit=crop&q=80';
 
 /**
  * Calculate difficulty level based on recipe time and number of ingredients
