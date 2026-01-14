@@ -172,9 +172,9 @@ export function RecipeDetailModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-4xl p-0 gap-0 max-h-[90vh] overflow-hidden">
+      <DialogContent className="flex max-w-4xl flex-col gap-0 p-0 max-h-[90vh] overflow-hidden">
         {/* Hero Image */}
-        <div className="relative h-56 w-full overflow-hidden bg-gray-200 sm:h-64">
+        <div className="relative h-56 w-full shrink-0 overflow-hidden bg-gray-200 sm:h-64">
           <Image
             src={imageUrl ?? RECIPE_PLACEHOLDER_IMAGE}
             alt={recipe.title}

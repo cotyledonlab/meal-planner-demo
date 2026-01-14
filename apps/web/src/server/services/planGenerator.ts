@@ -111,10 +111,8 @@ export class PlanGenerator {
     // Determine which meal types to include based on mealsPerDay
     const mealTypes = this.getMealTypesForCount(mealsPerDay);
     const totalMeals = days * mealTypes.length;
-    const weeklyBudgetPerMealMinutes =
-      timePreferences.weeklyTimeBudgetMinutes != null
-        ? timePreferences.weeklyTimeBudgetMinutes / totalMeals
-        : null;
+    let remainingBudgetMinutes = timePreferences.weeklyTimeBudgetMinutes ?? null;
+    let remainingMeals = totalMeals;
     const dislikeTerms = parseDislikes(dislikes);
 
     // Get available recipes with dietary filters using repository
@@ -181,6 +179,10 @@ export class PlanGenerator {
           );
         }
 
+        const weeklyBudgetPerMealMinutes =
+          remainingBudgetMinutes != null
+            ? Math.max(remainingBudgetMinutes / remainingMeals, 0)
+            : null;
         const recipe = this.selectRecipeForSlot(appropriateRecipes, {
           dayIndex,
           startDate,
@@ -203,6 +205,14 @@ export class PlanGenerator {
           },
           'Recipe assigned to meal slot'
         );
+
+        if (remainingBudgetMinutes != null) {
+          const recipeTime = this.resolveRecipeTime(recipe);
+          if (recipeTime != null) {
+            remainingBudgetMinutes -= recipeTime;
+          }
+        }
+        remainingMeals = Math.max(remainingMeals - 1, 0);
 
         mealPlanItemsData.push({
           dayIndex,
@@ -397,9 +407,11 @@ export class PlanGenerator {
     const { weeknightMaxTimeMinutes, prioritizeWeeknights } = options.timePreferences;
     const { weeklyBudgetPerMealMinutes, usedRecipeIds } = options;
 
-    // Filter out already-used recipes to ensure diversity
-    // Only allow repeats if we've exhausted all unique options
-    const unusedRecipes = usedRecipeIds ? recipes.filter((r) => !usedRecipeIds.has(r.id)) : recipes;
+    // When a weekly budget is set, allow repeats to prioritize shorter total time.
+    const shouldPreferUnique = weeklyBudgetPerMealMinutes == null && usedRecipeIds != null;
+    const unusedRecipes = shouldPreferUnique
+      ? recipes.filter((r) => !usedRecipeIds.has(r.id))
+      : recipes;
     const candidatePool = unusedRecipes.length > 0 ? unusedRecipes : recipes;
 
     const isWeeknight =

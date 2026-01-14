@@ -1,6 +1,6 @@
 # meal-planner-demo Development Guidelines
 
-_Last updated: 2026-01-10_
+_Last updated: 2026-01-14_
 
 These instructions apply to the entire repository. Keep documentation DRY by leaning on `docs/REFERENCE.md` for canonical commands and stack notes.
 
@@ -18,6 +18,7 @@ These instructions apply to the entire repository. Keep documentation DRY by lea
 - Prefer workspace scripts in `package.json` over ad-hoc commands. Canonical lists live in [`docs/REFERENCE.md`](docs/REFERENCE.md).
 - Environment setup: copy `.env.example` to `.env` and `apps/web/.env`, then run `pnpm db:push` and `pnpm db:seed` after starting Postgres (`docker compose up -d postgres`, `pnpm docker:dev`, or `./start-database.sh`).
 - Tests and quality gates: use `pnpm check`, `pnpm test`, `pnpm typecheck`, `pnpm lint`, and `pnpm format:write` from the repo root. See [`TESTING.md`](TESTING.md) for details.
+- We generally push directly to `main`. To avoid GitHub Actions failures, run the local CI preflight: `pnpm check`, `pnpm test`, and `pnpm build` (see [`TESTING.md`](TESTING.md) for CI details).
 - Deployment specifics and SMTP configuration are in [`DEPLOYMENT.md`](DEPLOYMENT.md) and [`SEEDING_DEPLOYMENT.md`](SEEDING_DEPLOYMENT.md).
 
 ## Code & Documentation Style
@@ -200,34 +201,3 @@ Located at `.claude/plugins/e2e-testing/` with 96 test cases across 7 checklists
 | professional-polish.md | 28         | PP-01 to PP-28     |
 
 Run with: `/e2e-test` skill against production URL.
-
----
-
-## Recent Actions Log (2026-01-10)
-
-### Recipe Migration
-
-Successfully migrated 100 recipes from local database to production:
-
-| Table             | Records |
-| ----------------- | ------- |
-| Recipe            | 100     |
-| RecipeIngredient  | 1,085   |
-| RecipeStep        | 586     |
-| RecipeNutrition   | 99      |
-| RecipeImage       | 100     |
-| RecipeDietTag     | 208     |
-| RecipeAllergenTag | 274     |
-
-**Migration challenges resolved:**
-
-- Column order differences between local/production schemas - used explicit column names
-- Foreign key ID mismatches - used name-based lookups for ingredients/tags
-- CanonicalIngredient FK - set to NULL (IDs differ between environments)
-
-### SSH Setup
-
-- Generated SSH key for Claude: `~/.ssh/id_ed25519_claude`
-- Added both Claude and user keys to server's authorized_keys
-- Fixed SSH config: `/etc/ssh/sshd_config.d/99-hardening.conf` updated to allow root login
-- Resolved fail2ban blocking issue
