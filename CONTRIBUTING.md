@@ -20,10 +20,7 @@ Thank you for your interest in contributing to the Meal Planner Demo project! Th
    pnpm install
    ```
 
-   This command installs all dependencies and automatically sets up git hooks (via the `prepare` script):
-   - **Pre-commit hook**: Formats and lints staged files, runs type checking and tests
-   - **Pre-push hook**: Checks formatting, linting, and type checking before push
-   - These hooks help maintain consistent code quality across the project
+   This command installs all dependencies and automatically sets up git hooks (via the `prepare` script). Hook behavior is documented in [`docs/REFERENCE.md`](docs/REFERENCE.md).
 
 3. **Set up environment variables**:
    ```bash
@@ -68,7 +65,7 @@ Thank you for your interest in contributing to the Meal Planner Demo project! Th
    pnpm format:write # Auto-format your code
    ```
 
-   **Note**: The pre-commit hook will automatically run formatting, linting, type checking, and tests when you commit. If the hook isn't working, you can run these commands manually or use the convenience script:
+   **Note**: The pre-commit hook runs `lint-staged` (format + lint on staged files), and the pre-push hook runs the full quality gate including tests. If the hook isn't working, you can run these commands manually or use the convenience script:
 
    ```bash
    pnpm precommit    # Run all pre-commit checks manually
@@ -86,7 +83,7 @@ Thank you for your interest in contributing to the Meal Planner Demo project! Th
 
 6. Push to your fork and create a pull request
 
-   Before pushing, the pre-push hook will run format checking, linting, and type checking to catch issues before they reach CI.
+   Before pushing, the pre-push hook will run formatting checks, linting, type checking, and tests to catch issues before they reach CI.
 
 ## Code Quality Standards
 

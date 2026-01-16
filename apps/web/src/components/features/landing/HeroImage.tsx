@@ -6,9 +6,9 @@ import { useState } from 'react';
 const BLUR_DATA_URL =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAADCAIAAAA7ljmRAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAMElEQVR4nGO49+7Jt/+f61tL8ivSGeQ0NCLTkgsq82cuns7AzcygryeVVhiXnh0OAHsJD/ki5q1xAAAAAElFTkSuQmCC';
 
-const PRIMARY_IMAGE_URL =
-  'https://hel1.your-objectstorage.com/recipe-store/warm-cozy-irish-family-kitchen-m-1768001948017-b0a9f8de-ff8f-45a1-abf3-8f017ba7d237.png';
-const FALLBACK_IMAGE_URL = '/images/hero-cooking.jpg';
+const PRIMARY_IMAGE_URL = '/images/hero-cooking.jpg';
+const FALLBACK_IMAGE_URL =
+  'https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=2070&q=80';
 
 export function HeroImage() {
   const [imgSrc, setImgSrc] = useState(PRIMARY_IMAGE_URL);

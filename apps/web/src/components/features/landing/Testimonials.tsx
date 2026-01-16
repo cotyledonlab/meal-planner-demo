@@ -113,7 +113,7 @@ export function Testimonials() {
                 >
                   <figure
                     aria-label={`Testimonial from ${testimonial.author} in ${testimonial.location}`}
-                    className="flex flex-col"
+                    className="flex flex-col h-full"
                   >
                     {/* Gradient background */}
                     <div

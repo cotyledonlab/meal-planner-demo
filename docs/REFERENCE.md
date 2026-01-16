@@ -37,6 +37,13 @@ This document centralizes the current state of the monorepo so other docs (READM
 - Tests: `pnpm test`, `pnpm test:watch`, `pnpm test:coverage`, `pnpm test:ui`
 - Database: `pnpm db:push`, `pnpm db:migrate`, `pnpm db:generate`, `pnpm db:seed`, `pnpm db:studio`
 
+## Git Hooks (Husky)
+
+- Installed automatically by `pnpm install` via the `prepare` script.
+- Pre-commit: runs `lint-staged` (Prettier + ESLint fixes on staged files).
+- Pre-push: runs `pnpm format:check`, `pnpm lint`, `pnpm typecheck`, and `pnpm test`.
+- Bypass in emergencies: `SKIP_HOOKS=1 git commit` / `SKIP_HOOKS=1 git push`.
+
 ## Documentation Map
 
 - Setup & Quick Start: See `README.md` (links back here for details)

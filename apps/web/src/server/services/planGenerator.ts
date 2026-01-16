@@ -407,8 +407,10 @@ export class PlanGenerator {
     const { weeknightMaxTimeMinutes, prioritizeWeeknights } = options.timePreferences;
     const { weeklyBudgetPerMealMinutes, usedRecipeIds } = options;
 
-    // When a weekly budget is set, allow repeats to prioritize shorter total time.
-    const shouldPreferUnique = weeklyBudgetPerMealMinutes == null && usedRecipeIds != null;
+    // Only enforce variety when time-first preferences are disabled.
+    const hasTimePriority =
+      prioritizeWeeknights || weeknightMaxTimeMinutes != null || weeklyBudgetPerMealMinutes != null;
+    const shouldPreferUnique = !hasTimePriority && usedRecipeIds != null;
     const unusedRecipes = shouldPreferUnique
       ? recipes.filter((r) => !usedRecipeIds.has(r.id))
       : recipes;
