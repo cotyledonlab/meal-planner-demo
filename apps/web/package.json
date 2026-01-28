@@ -55,7 +55,7 @@
     "clsx": "^2.1.1",
     "csv-stringify": "^6.6.0",
     "lucide-react": "^0.562.0",
-    "next": "^15.5.9",
+    "next": "^16.1.5",
     "next-auth": "5.0.0-beta.30",
     "nodemailer": "^7.0.11",
     "pino": "^10.1.0",
